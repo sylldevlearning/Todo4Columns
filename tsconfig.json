@@ -1,0 +1,18 @@
+{
+  "extends": "expo/tsconfig.base", // on étend la config de base Expo
+
+  "compilerOptions": {
+    "jsx": "react-native",
+    "strict": true,
+    "skipLibCheck": true, // ignore les .d.ts des modules (dont les erreurs jest)
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "moduleResolution": "bundler"
+  },
+
+  "include": ["App.tsx", "src/**/*.ts", "src/**/*.tsx"],
+
+  "exclude": ["node_modules", "node_modules/expo-notifications/tsconfig.json"]
+}
