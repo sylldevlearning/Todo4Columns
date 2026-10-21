@@ -1,9 +1,10 @@
 // App.tsx
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   SafeAreaView,
@@ -31,8 +32,30 @@ interface Task {
 // Clé de stockage dans AsyncStorage
 const STORAGE_KEY = "TASKS_4COLS";
 
+// setTimeout ne gère pas les délais > ~24,8 jours : on plafonne et on revérifie
+const MAX_TIMEOUT_MS = 60 * 60 * 1000;
+
+// Compte à rebours "MM:SS" : seul ce composant se re-rend chaque seconde
+function Countdown({ endTs }: { endTs: number }) {
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const diffSec = Math.max(Math.ceil((endTs - now) / 1000), 0);
+  const m = Math.floor(diffSec / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = (diffSec % 60).toString().padStart(2, "0");
+  return <Text style={styles.timerText}>⏱ {`${m}:${s}`}</Text>;
+}
+
 export default function App() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
+  // Empêche la sauvegarde tant que les tâches n'ont pas été chargées
+  const [isLoaded, setIsLoaded] = useState(false);
   const [inputText, setInputText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<Category>("UI");
 
@@ -40,9 +63,6 @@ export default function App() {
   const [timerModalVisible, setTimerModalVisible] = useState(false);
   const [timerTaskId, setTimerTaskId] = useState<string | null>(null);
   const [timerInput, setTimerInput] = useState(""); // saisie en minutes
-
-  // Référence vers l’intervalle de mise à jour du compteur
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Charger les tâches sauvegardées au démarrage
   useEffect(() => {
@@ -55,12 +75,15 @@ export default function App() {
         }
       } catch (e) {
         console.warn("Erreur récupération tâches :", e);
+      } finally {
+        setIsLoaded(true);
       }
     })();
   }, []);
 
-  // Sauvegarder à chaque modification de la liste
+  // Sauvegarder à chaque modification de la liste (une fois le chargement terminé)
   useEffect(() => {
+    if (!isLoaded) return;
     (async () => {
       try {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
@@ -68,32 +91,49 @@ export default function App() {
         console.warn("Erreur sauvegarde tâches :", e);
       }
     })();
-  }, [allTasks]);
+  }, [allTasks, isLoaded]);
 
-  // ---- Gestion du compte à rebours ----
+  // ---- Expiration des timers ----
+  // Un seul setTimeout calé sur le prochain timer : l'état ne change que lorsqu'un timer expire
   useEffect(() => {
-    // À chaque seconde, on vérifie s'il y a des timers actifs
-    intervalRef.current = setInterval(() => {
-      setAllTasks((prev) => {
-        const now = Date.now();
-        return prev.map((task) => {
-          if (task.timerEnd && now >= task.timerEnd) {
-            // Timer écoulé : on déclenche une alerte (une seule fois)
-            Alert.alert(
-              "Temps écoulé",
-              `Le délai pour la tâche "${task.title}" est terminé !`
-            );
-            return { ...task, timerEnd: null };
-          }
-          return task;
-        });
-      });
-    }, 1000);
+    const ends = allTasks
+      .map((t) => t.timerEnd)
+      .filter((end): end is number => end !== null);
+    if (ends.length === 0) return;
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+    const nextEnd = Math.min(...ends);
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const check = () => {
+      const now = Date.now();
+      const expired = allTasks.filter(
+        (t) => t.timerEnd !== null && t.timerEnd <= now
+      );
+      if (expired.length === 0) {
+        timeout = setTimeout(check, Math.min(nextEnd - now, MAX_TIMEOUT_MS));
+        return;
+      }
+
+      const expiredIds = new Set(expired.map((t) => t.id));
+      setAllTasks((prev) =>
+        prev.map((t) => (expiredIds.has(t.id) ? { ...t, timerEnd: null } : t))
+      );
+      Alert.alert(
+        "Temps écoulé",
+        expired.length === 1
+          ? `Le délai pour la tâche "${expired[0].title}" est terminé !`
+          : `Le délai est terminé pour les tâches : ${expired
+              .map((t) => `"${t.title}"`)
+              .join(", ")}`
+      );
     };
-  }, []);
+
+    timeout = setTimeout(
+      check,
+      Math.max(0, Math.min(nextEnd - Date.now(), MAX_TIMEOUT_MS))
+    );
+    return () => clearTimeout(timeout);
+  }, [allTasks]);
 
   // Ajouter une tâche
   const addTask = () => {
@@ -178,17 +218,6 @@ export default function App() {
   // Récupérer la largeur de l'écran pour déterminer la largeur minimale des colonnes
   const windowWidth = Dimensions.get("window").width;
   const columnWidth = Math.max(windowWidth / 4, 260);
-
-  // Formate le temps restant en "MM:SS"
-  const formatRemaining = (endTs: number | null): string => {
-    if (!endTs) return "";
-    const diffSec = Math.max(Math.ceil((endTs - Date.now()) / 1000), 0);
-    const m = Math.floor(diffSec / 60)
-      .toString()
-      .padStart(2, "0");
-    const s = (diffSec % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -295,10 +324,8 @@ export default function App() {
                       >
                         {task.title}
                       </Text>
-                      {task.timerEnd && (
-                        <Text style={styles.timerText}>
-                          ⏱ {formatRemaining(task.timerEnd)}
-                        </Text>
+                      {task.timerEnd !== null && (
+                        <Countdown endTs={task.timerEnd} />
                       )}
                     </View>
                     <View style={styles.iconsRight}>
@@ -318,9 +345,14 @@ export default function App() {
           ))}
         </ScrollView>
 
-        {/* --- "Modal" de saisie du timer (overlay) --- */}
-        {timerModalVisible && (
-          <View style={styles.modalOverlay}>
+        {/* --- Modal de saisie du timer (le bouton retour Android la ferme) --- */}
+        <Modal
+          visible={timerModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={cancelTimer}
+        >
+          <KeyboardAvoidingView style={styles.modalOverlay} behavior="padding">
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Durée du Timer (en min)</Text>
               <TextInput
@@ -346,8 +378,8 @@ export default function App() {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
-        )}
+          </KeyboardAvoidingView>
+        </Modal>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -514,11 +546,7 @@ const styles = StyleSheet.create({
 
   // Modal (overlay) pour le timer
   modalOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
