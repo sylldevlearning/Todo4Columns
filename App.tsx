@@ -7,7 +7,6 @@ import {
   Modal,
   Platform,
   ScrollView,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -17,6 +16,10 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from "react-native-safe-area-context";
 
 // Types de catégorie
 type Category = "UI" | "INU" | "UDI" | "NDNI";
@@ -220,6 +223,7 @@ export default function App() {
   const columnWidth = Math.max(windowWidth / 4, 260);
 
   return (
+    <SafeAreaProvider>
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.container}
@@ -382,6 +386,7 @@ export default function App() {
         </Modal>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -391,7 +396,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#121212",
-    paddingTop: SPACING,
   },
   container: {
     flex: 1,
