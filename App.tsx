@@ -1,10 +1,10 @@
 // App.tsx
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
+  Dimensions,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -12,152 +12,31 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Dimensions,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
 import {
   SafeAreaProvider,
   SafeAreaView,
 } from "react-native-safe-area-context";
-
-// Types de catégorie
-type Category = "UI" | "INU" | "UDI" | "NDNI";
-
-interface Task {
-  id: string;
-  title: string;
-  category: Category;
-  isDone: boolean;
-  timerEnd: number | null; // timestamp en ms où le timer se termine, ou null
-}
-
-// Clé de stockage dans AsyncStorage
-const STORAGE_KEY = "TASKS_4COLS";
-
-// setTimeout ne gère pas les délais > ~24,8 jours : on plafonne et on revérifie
-const MAX_TIMEOUT_MS = 60 * 60 * 1000;
-
-// Compte à rebours "MM:SS" : seul ce composant se re-rend chaque seconde
-function Countdown({ endTs }: { endTs: number }) {
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const diffSec = Math.max(Math.ceil((endTs - now) / 1000), 0);
-  const m = Math.floor(diffSec / 60)
-    .toString()
-    .padStart(2, "0");
-  const s = (diffSec % 60).toString().padStart(2, "0");
-  return <Text style={styles.timerText}>⏱ {`${m}:${s}`}</Text>;
-}
+import Column from "./src/components/Column";
+import TimerModal from "./src/components/TimerModal";
+import { CATEGORIES } from "./src/constants/categories";
+import { SPACING } from "./src/constants/layout";
+import { useTasks } from "./src/hooks/useTasks";
+import { Category } from "./src/types";
 
 export default function App() {
-  const [allTasks, setAllTasks] = useState<Task[]>([]);
-  // Empêche la sauvegarde tant que les tâches n'ont pas été chargées
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { tasks, addTask, toggleDone, removeTask, startTimer } = useTasks();
   const [inputText, setInputText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<Category>("UI");
-
-  // ---- États pour gérer le "modal" de saisie du timer ----
-  const [timerModalVisible, setTimerModalVisible] = useState(false);
+  // Tâche dont on saisit la durée du timer (null = modal fermée)
   const [timerTaskId, setTimerTaskId] = useState<string | null>(null);
-  const [timerInput, setTimerInput] = useState(""); // saisie en minutes
-
-  // Charger les tâches sauvegardées au démarrage
-  useEffect(() => {
-    (async () => {
-      try {
-        const json = await AsyncStorage.getItem(STORAGE_KEY);
-        if (json) {
-          const saved: Task[] = JSON.parse(json);
-          setAllTasks(saved);
-        }
-      } catch (e) {
-        console.warn("Erreur récupération tâches :", e);
-      } finally {
-        setIsLoaded(true);
-      }
-    })();
-  }, []);
-
-  // Sauvegarder à chaque modification de la liste (une fois le chargement terminé)
-  useEffect(() => {
-    if (!isLoaded) return;
-    (async () => {
-      try {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
-      } catch (e) {
-        console.warn("Erreur sauvegarde tâches :", e);
-      }
-    })();
-  }, [allTasks, isLoaded]);
-
-  // ---- Expiration des timers ----
-  // Un seul setTimeout calé sur le prochain timer : l'état ne change que lorsqu'un timer expire
-  useEffect(() => {
-    const ends = allTasks
-      .map((t) => t.timerEnd)
-      .filter((end): end is number => end !== null);
-    if (ends.length === 0) return;
-
-    const nextEnd = Math.min(...ends);
-    let timeout: ReturnType<typeof setTimeout>;
-
-    const check = () => {
-      const now = Date.now();
-      const expired = allTasks.filter(
-        (t) => t.timerEnd !== null && t.timerEnd <= now
-      );
-      if (expired.length === 0) {
-        timeout = setTimeout(check, Math.min(nextEnd - now, MAX_TIMEOUT_MS));
-        return;
-      }
-
-      const expiredIds = new Set(expired.map((t) => t.id));
-      setAllTasks((prev) =>
-        prev.map((t) => (expiredIds.has(t.id) ? { ...t, timerEnd: null } : t))
-      );
-      Alert.alert(
-        "Temps écoulé",
-        expired.length === 1
-          ? `Le délai pour la tâche "${expired[0].title}" est terminé !`
-          : `Le délai est terminé pour les tâches : ${expired
-              .map((t) => `"${t.title}"`)
-              .join(", ")}`
-      );
-    };
-
-    timeout = setTimeout(
-      check,
-      Math.max(0, Math.min(nextEnd - Date.now(), MAX_TIMEOUT_MS))
-    );
-    return () => clearTimeout(timeout);
-  }, [allTasks]);
 
   // Ajouter une tâche
-  const addTask = () => {
+  const handleAdd = () => {
     const title = inputText.trim();
     if (!title) return;
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title,
-      category: selectedCategory,
-      isDone: false,
-      timerEnd: null,
-    };
-    setAllTasks((prev) => [...prev, newTask]);
+    addTask(title, selectedCategory);
     setInputText("");
-  };
-
-  // Basculer le statut "terminée"
-  const toggleDone = (id: string) => {
-    setAllTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, isDone: !t.isDone } : t))
-    );
   };
 
   // Confirmation avant suppression
@@ -170,53 +49,16 @@ export default function App() {
         {
           text: "SUPPRIMER",
           style: "destructive",
-          onPress: () => {
-            setAllTasks((prev) => prev.filter((t) => t.id !== id));
-          },
+          onPress: () => removeTask(id),
         },
       ]
     );
   };
 
-  // Ouvre le "modal" de saisie de durée pour la tâche sélectionnée
-  const openTimerModal = (id: string) => {
-    setTimerTaskId(id);
-    setTimerInput("");
-    setTimerModalVisible(true);
-  };
-
-  // Valide la saisie de la durée (en minutes) et calcule timerEnd
-  const validateTimer = () => {
-    if (!timerTaskId) return;
-    const minutes = parseInt(timerInput, 10);
-    if (isNaN(minutes) || minutes <= 0) {
-      Alert.alert(
-        "Durée invalide",
-        "Veuillez entrer un nombre de minutes valide."
-      );
-      return;
-    }
-    const endTimestamp = Date.now() + minutes * 60 * 1000;
-    setAllTasks((prev) =>
-      prev.map((t) =>
-        t.id === timerTaskId ? { ...t, timerEnd: endTimestamp } : t
-      )
-    );
-    setTimerModalVisible(false);
+  const validateTimer = (minutes: number) => {
+    if (timerTaskId) startTimer(timerTaskId, minutes);
     setTimerTaskId(null);
-    setTimerInput("");
   };
-
-  // Fermeture du "modal" sans validation
-  const cancelTimer = () => {
-    setTimerModalVisible(false);
-    setTimerTaskId(null);
-    setTimerInput("");
-  };
-
-  // Filtrer par catégorie
-  const tasksByCategory = (cat: Category) =>
-    allTasks.filter((t) => t.category === cat);
 
   // Récupérer la largeur de l'écran pour déterminer la largeur minimale des colonnes
   const windowWidth = Dimensions.get("window").width;
@@ -224,173 +66,85 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        {/* --- HEADER : titre + auteur --- */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>MATRICE</Text>
-          <Text style={styles.headerSubtitle}>eiseinoeur</Text>
-        </View>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          {/* --- HEADER : titre + auteur --- */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>MATRICE</Text>
+            <Text style={styles.headerSubtitle}>eiseinoeur</Text>
+          </View>
 
-        {/* --- Zone de création de tâche --- */}
-        <View style={styles.inputSection}>
-          {/* Choix de catégorie (boutons centrés) */}
-          <View style={styles.categorySelector}>
-            {(["UI", "INU", "UDI", "NDNI"] as Category[]).map((cat) => {
-              let label = "";
-              switch (cat) {
-                case "UI":
-                  label = "U-I";
-                  break;
-                case "INU":
-                  label = "NU-I";
-                  break;
-                case "UDI":
-                  label = "U-NI";
-                  break;
-                case "NDNI":
-                  label = "NU-NI";
-                  break;
-              }
-              return (
+          {/* --- Zone de création de tâche --- */}
+          <View style={styles.inputSection}>
+            {/* Choix de catégorie (boutons centrés) */}
+            <View style={styles.categorySelector}>
+              {CATEGORIES.map((cat) => (
                 <TouchableOpacity
-                  key={cat}
-                  onPress={() => setSelectedCategory(cat)}
+                  key={cat.key}
+                  onPress={() => setSelectedCategory(cat.key)}
                   style={[
                     styles.catButton,
-                    selectedCategory === cat && styles.catButtonSelected,
+                    selectedCategory === cat.key && styles.catButtonSelected,
                   ]}
                 >
                   <Text
                     style={[
                       styles.catButtonText,
-                      selectedCategory === cat && styles.catTextSelected,
+                      selectedCategory === cat.key && styles.catTextSelected,
                     ]}
                   >
-                    {label}
+                    {cat.shortLabel}
                   </Text>
                 </TouchableOpacity>
-              );
-            })}
+              ))}
+            </View>
+
+            {/* Input pour nouvelle tâche */}
+            <TextInput
+              style={styles.input}
+              placeholder="Nouvelle tâche…"
+              placeholderTextColor="#888888"
+              value={inputText}
+              onChangeText={setInputText}
+            />
+
+            <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+              <Text style={styles.addButtonText}>AJOUTER</Text>
+            </TouchableOpacity>
           </View>
 
-          {/* Input pour nouvelle tâche */}
-          <TextInput
-            style={styles.input}
-            placeholder="Nouvelle tâche…"
-            placeholderTextColor="#888888"
-            value={inputText}
-            onChangeText={setInputText}
-          />
-
-          <TouchableOpacity style={styles.addButton} onPress={addTask}>
-            <Text style={styles.addButtonText}>AJOUTER</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* --- Affichage des colonnes avec scroll horizontal --- */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.columnsWrapper}
-        >
-          {(["UI", "INU", "UDI", "NDNI"] as Category[]).map((cat) => (
-            <View key={cat} style={[styles.column, { width: columnWidth }]}>
-              <Text style={styles.columnTitle}>
-                {cat === "UI"
-                  ? "Urgent + Important"
-                  : cat === "INU"
-                  ? "Important + Non-urgent"
-                  : cat === "UDI"
-                  ? "Urgent + Déléguer"
-                  : "Ni Urgent ni Important"}
-              </Text>
-              <ScrollView contentContainerStyle={styles.scrollContent}>
-                {tasksByCategory(cat).map((task) => (
-                  <View key={task.id} style={styles.taskItem}>
-                    <TouchableOpacity
-                      onPress={() => toggleDone(task.id)}
-                      style={styles.checkbox}
-                    >
-                      <Text style={styles.checkboxEmoji}>
-                        {task.isDone ? "✅" : "⬜️"}
-                      </Text>
-                    </TouchableOpacity>
-                    <View style={styles.textAndTimer}>
-                      <Text
-                        style={[
-                          styles.taskText,
-                          task.isDone && styles.taskTextDone,
-                        ]}
-                      >
-                        {task.title}
-                      </Text>
-                      {task.timerEnd !== null && (
-                        <Countdown endTs={task.timerEnd} />
-                      )}
-                    </View>
-                    <View style={styles.iconsRight}>
-                      <TouchableOpacity onPress={() => openTimerModal(task.id)}>
-                        <Text style={styles.timerIcon}>⏱️</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => confirmAndRemove(task.id)}
-                      >
-                        <Text style={styles.deleteText}>✕</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* --- Modal de saisie du timer (le bouton retour Android la ferme) --- */}
-        <Modal
-          visible={timerModalVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={cancelTimer}
-        >
-          <KeyboardAvoidingView style={styles.modalOverlay} behavior="padding">
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Durée du Timer (en min)</Text>
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Ex. : 10"
-                placeholderTextColor="#AAAAAA"
-                value={timerInput}
-                onChangeText={setTimerInput}
-                keyboardType="numeric"
+          {/* --- Affichage des colonnes avec scroll horizontal --- */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.columnsWrapper}
+          >
+            {CATEGORIES.map((cat) => (
+              <Column
+                key={cat.key}
+                category={cat}
+                tasks={tasks.filter((t) => t.category === cat.key)}
+                width={columnWidth}
+                onToggleDone={toggleDone}
+                onOpenTimer={setTimerTaskId}
+                onRemove={confirmAndRemove}
               />
-              <View style={styles.modalButtonsRow}>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.modalCancel]}
-                  onPress={cancelTimer}
-                >
-                  <Text style={styles.modalButtonText}>ANNULER</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.modalValidate]}
-                  onPress={validateTimer}
-                >
-                  <Text style={styles.modalButtonText}>VALIDER</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </KeyboardAvoidingView>
-        </Modal>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            ))}
+          </ScrollView>
+
+          <TimerModal
+            visible={timerTaskId !== null}
+            onCancel={() => setTimerTaskId(null)}
+            onValidate={validateTimer}
+          />
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
-
-const SPACING = Constants.statusBarHeight; // unité de marge/padding
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -478,130 +232,5 @@ const styles = StyleSheet.create({
   columnsWrapper: {
     paddingVertical: SPACING / 2,
     paddingHorizontal: SPACING / 2,
-  },
-  column: {
-    marginHorizontal: SPACING / 4,
-    borderWidth: 1,
-    borderColor: "#333333",
-    borderRadius: 8,
-    backgroundColor: "#1F1B24",
-    overflow: "hidden",
-  },
-  columnTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
-    paddingVertical: SPACING / 2,
-    backgroundColor: "#333333",
-    color: "#E5E5E5",
-  },
-  scrollContent: {
-    paddingBottom: SPACING / 2,
-  },
-  taskItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: SPACING / 1.5,
-    paddingVertical: SPACING / 3,
-    borderBottomWidth: 1,
-    borderBottomColor: "#333333",
-  },
-  checkbox: {
-    marginRight: SPACING / 2,
-  },
-  checkboxEmoji: {
-    fontSize: 22,
-    color: "#E5E5E5",
-  },
-  textAndTimer: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  taskText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#E5E5E5",
-  },
-  taskTextDone: {
-    textDecorationLine: "line-through",
-    color: "#777777",
-    fontStyle: "italic",
-  },
-  timerText: {
-    marginTop: 4,
-    fontSize: 14,
-    color: "#03DAC6",
-    fontWeight: "700",
-  },
-  iconsRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: SPACING / 2,
-  },
-  timerIcon: {
-    fontSize: 20,
-    color: "#BB86FC",
-    marginRight: SPACING / 2,
-  },
-  deleteText: {
-    fontSize: 18,
-    color: "#CF6679",
-  },
-
-  // Modal (overlay) pour le timer
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "#1F1B24",
-    borderRadius: 12,
-    padding: SPACING,
-    borderWidth: 1,
-    borderColor: "#333333",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#E5E5E5",
-    marginBottom: SPACING / 2,
-    textAlign: "center",
-  },
-  modalInput: {
-    height: 44,
-    borderWidth: 1,
-    borderColor: "#444444",
-    borderRadius: 8,
-    paddingHorizontal: SPACING / 2,
-    fontSize: 16,
-    color: "#E5E5E5",
-    backgroundColor: "#2C2A33",
-    marginBottom: SPACING,
-  },
-  modalButtonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: SPACING / 2,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  modalCancel: {
-    backgroundColor: "#CF6679",
-    marginRight: SPACING / 4,
-  },
-  modalValidate: {
-    backgroundColor: "#03DAC6",
-    marginLeft: SPACING / 4,
-  },
-  modalButtonText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#121212",
   },
 });
