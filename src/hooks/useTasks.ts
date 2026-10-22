@@ -97,7 +97,7 @@ export function useTasks(
   useEffect(() => {
     (async () => {
       try {
-        // Archive au passage les tâches « Éliminer » restées 7 jours
+        // Archive au passage les tâches « Si j'ai le temps » restées 7 jours
         setTasks(archiveStaleTasks(await loadTasks(), Date.now()));
         setIsLoaded(true);
       } catch (e) {

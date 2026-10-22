@@ -9,8 +9,8 @@ import { makeTask } from "../testing/makeTask";
 const NOW = 1_800_000_000_000;
 const DAY = 24 * 60 * 60 * 1000;
 
-describe("archivage des tâches « Éliminer »", () => {
-  it("archive une tâche Éliminer non terminée après 7 jours dans le quadrant", () => {
+describe("archivage des tâches « Si j'ai le temps »", () => {
+  it("archive une tâche « Si j'ai le temps » non terminée après 7 jours dans le quadrant", () => {
     const old = makeTask({ category: "NDNI", categoryChangedAt: NOW - ARCHIVE_AFTER_MS });
     const recent = makeTask({ category: "NDNI", categoryChangedAt: NOW - 6 * DAY });
 

@@ -142,7 +142,7 @@ describe("computeSchedule", () => {
     });
   });
 
-  describe("Minuteur et Éliminer", () => {
+  describe("Minuteur et Si j'ai le temps", () => {
     it("notifie à la fin du minuteur", () => {
       const task = makeTask({ category: "INU", timerEnd: at(10, 25) });
       expect(computeSchedule(task, NO_QUIET, NOW)).toEqual([
@@ -150,7 +150,7 @@ describe("computeSchedule", () => {
       ]);
     });
 
-    it("n'a aucune notification pour Éliminer, même avec un minuteur", () => {
+    it("n'a aucune notification pour Si j'ai le temps, même avec un minuteur", () => {
       const task = makeTask({ category: "NDNI", timerEnd: at(10, 25), nagInterval: 30 });
       expect(computeSchedule(task, NO_QUIET, NOW)).toEqual([]);
     });

@@ -35,10 +35,10 @@ export const fr = {
       description: "Urgent mais pas important : confie-la et relance la personne.",
     },
     NDNI: {
-      name: "Éliminer",
-      subtitle: "Laisser tomber",
+      name: "Si j'ai le temps",
+      subtitle: "Plus tard, peut-être",
       axisLabel: "Ni urgent ni important",
-      description: "Ni urgent ni important : laisse tomber.",
+      description: "Ni urgent ni important : à faire seulement s'il te reste du temps.",
     },
   } as Record<Category, { name: string; subtitle: string; axisLabel: string; description: string }>,
 
@@ -60,7 +60,7 @@ export const fr = {
     empty: "Rien à faire ici pour l'instant.",
     done: (n: number) => `Terminées · ${n}`,
     clearDone: "Vider les terminées",
-    newTaskIn: (name: string) => `Nouvelle tâche dans ${name}`,
+    newTaskIn: (name: string) => `Nouvelle tâche dans « ${name} »`,
   },
 
   // Bandeau « Annuler »
@@ -71,7 +71,7 @@ export const fr = {
     deleted: (n: number) => (n > 1 ? `${n} tâches supprimées` : "Tâche supprimée"),
     snoozed: "Relance reportée d'1 h",
     movedToDo: "Passée en Faire",
-    movedTo: (name: string) => `Déplacée vers ${name}`,
+    movedTo: (name: string) => `Déplacée vers « ${name} »`,
   },
 
   card: {
@@ -95,7 +95,7 @@ export const fr = {
   menu: {
     close: "Fermer le menu",
     moveTo: "Déplacer vers…",
-    moveToLabel: (name: string) => `Déplacer vers ${name}`,
+    moveToLabel: (name: string) => `Déplacer vers « ${name} »`,
     timer: "Minuteur",
   },
 
@@ -132,7 +132,7 @@ export const fr = {
     ndniNote: "Pas de rappel. La tâche sera archivée automatiquement dans 7 jours.",
     notificationsDenied: "Les notifications sont désactivées : ce rappel ne s'affichera pas.",
     save: "Enregistrer",
-    addTo: (name: string) => `Ajouter à ${name}`,
+    addTo: (name: string) => `Ajouter à « ${name} »`,
   },
 
   dueDate: {
@@ -181,7 +181,7 @@ export const fr = {
     },
     allowNotifications: "Autoriser les notifications",
     archives: (n: number) => `Archives · ${n}`,
-    archivesHint: "Les tâches « Éliminer » restées 7 jours sans être faites sont archivées ici.",
+    archivesHint: "Les tâches « Si j'ai le temps » restées 7 jours sans être faites sont archivées ici.",
     archivedOn: (date: string) => `Archivée ${date}`,
     restore: "Restaurer",
     deleteForever: "Supprimer définitivement",

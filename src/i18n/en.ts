@@ -34,10 +34,10 @@ export const en: Translations = {
       description: "Urgent but not important: hand it off and follow up.",
     },
     NDNI: {
-      name: "Delete",
-      subtitle: "Let it go",
+      name: "Someday",
+      subtitle: "Maybe later",
       axisLabel: "Neither urgent nor important",
-      description: "Neither urgent nor important: let it go.",
+      description: "Neither urgent nor important: only if you have time to spare.",
     },
   },
 
@@ -176,7 +176,7 @@ export const en: Translations = {
     },
     allowNotifications: "Allow notifications",
     archives: (n) => `Archive · ${n}`,
-    archivesHint: "“Delete” tasks left undone for 7 days are archived here.",
+    archivesHint: "“Someday” tasks left undone for 7 days are archived here.",
     archivedOn: (date) => `Archived ${date}`,
     restore: "Restore",
     deleteForever: "Delete permanently",

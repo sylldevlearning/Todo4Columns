@@ -22,10 +22,10 @@ describe("MatrixGrid", () => {
   it("affiche les quatre quadrants et les axes", async () => {
     await render(<MatrixGrid tasks={tasks} onOpenQuadrant={() => {}} />);
 
-    for (const name of ["Faire", "Planifier", "Déléguer", "Éliminer"]) {
+    for (const name of ["Faire", "Planifier", "Déléguer", "Si j'ai le temps"]) {
       expect(screen.getByText(name)).toBeOnTheScreen();
     }
-    for (const sub of ["Maintenant", "Bloquer un créneau", "Confier et relancer", "Laisser tomber"]) {
+    for (const sub of ["Maintenant", "Bloquer un créneau", "Confier et relancer", "Plus tard, peut-être"]) {
       expect(screen.getByText(sub)).toBeOnTheScreen();
     }
     for (const axis of ["Urgent", "Pas urgent", "Important", "Pas important"]) {

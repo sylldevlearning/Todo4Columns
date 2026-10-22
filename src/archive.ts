@@ -1,6 +1,6 @@
 import { Task } from "./types";
 
-// Une tâche « Éliminer » non terminée est archivée après 7 jours dans ce quadrant
+// Une tâche « Si j'ai le temps » (NDNI) non terminée est archivée après 7 jours dans ce quadrant
 export const ARCHIVE_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const isArchived = (task: Task) => task.archivedAt !== null;

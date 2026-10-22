@@ -32,12 +32,12 @@ describe("téléphone dans une autre langue que le français", () => {
     expect(t).toBe(en);
   });
 
-  it("nomme les quadrants Do / Schedule / Delegate / Delete, sans changer les clés", () => {
+  it("nomme les quadrants Do / Schedule / Delegate / Someday, sans changer les clés", () => {
     expect(CATEGORIES.map((c) => [c.key, c.name])).toEqual([
       ["UI", "Do"],
       ["INU", "Schedule"],
       ["UDI", "Delegate"],
-      ["NDNI", "Delete"],
+      ["NDNI", "Someday"],
     ]);
   });
 

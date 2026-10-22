@@ -41,7 +41,7 @@ function QuadrantCell({
     >
       <View style={styles.cellHeader}>
         <View style={[styles.dot, { backgroundColor: category.color }]} />
-        <Text style={[styles.name, { color: category.textColor }]} numberOfLines={1}>
+        <Text style={[styles.name, { color: category.textColor }]} numberOfLines={2}>
           {category.name}
         </Text>
         <View style={[styles.count, { backgroundColor: category.color }]}>

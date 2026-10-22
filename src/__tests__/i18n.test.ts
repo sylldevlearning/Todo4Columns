@@ -71,13 +71,13 @@ describe("téléphone en français (par défaut dans les tests)", () => {
     expect(t).toBe(fr);
   });
 
-  it("nomme les quadrants Faire / Planifier / Déléguer / Éliminer", () => {
+  it("nomme les quadrants Faire / Planifier / Déléguer / Si j'ai le temps", () => {
     const { CATEGORIES } = require("../constants/categories");
     expect(CATEGORIES.map((c: { name: string }) => c.name)).toEqual([
       "Faire",
       "Planifier",
       "Déléguer",
-      "Éliminer",
+      "Si j'ai le temps",
     ]);
   });
 });

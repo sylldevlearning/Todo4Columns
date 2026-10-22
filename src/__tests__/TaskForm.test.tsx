@@ -32,7 +32,7 @@ describe("TaskForm", () => {
     expect(screen.getByText("Relancer la personne")).toBeOnTheScreen();
 
     await fireEvent(screen.getByLabelText("C'est urgent ?"), "valueChange", false);
-    expect(screen.getByText("→ Éliminer")).toBeOnTheScreen();
+    expect(screen.getByText("→ Si j'ai le temps")).toBeOnTheScreen();
     expect(
       screen.getByText("Pas de rappel. La tâche sera archivée automatiquement dans 7 jours.")
     ).toBeOnTheScreen();
@@ -47,7 +47,7 @@ describe("TaskForm", () => {
     expect(screen.getByLabelText("C'est urgent ?")).toHaveProp("value", true);
     expect(screen.getByLabelText("C'est important ?")).toHaveProp("value", true);
 
-    const submit = screen.getByRole("button", { name: "Ajouter à Faire" });
+    const submit = screen.getByRole("button", { name: "Ajouter à « Faire »" });
     expect(submit).toBeDisabled();
 
     await fireEvent.changeText(screen.getByLabelText("Titre"), "  Appeler le client ");

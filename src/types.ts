@@ -19,7 +19,7 @@ export interface Task extends ReminderFields {
   createdAt: number; // timestamp en ms
   updatedAt: number; // timestamp en ms de la dernière modification
   categoryChangedAt: number; // arrivée dans le quadrant actuel (timestamp en ms)
-  archivedAt: number | null; // archivage automatique des tâches « Éliminer »
+  archivedAt: number | null; // archivage automatique des tâches « Si j'ai le temps » (NDNI)
   snoozedUntil: number | null; // « Reporter 1 h » : prochaine relance repoussée à cette date
   notificationIds: string[]; // notifications programmées pour cette tâche
 }
