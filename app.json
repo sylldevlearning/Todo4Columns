@@ -36,6 +36,7 @@
       [
         "expo-notifications",
         {
+          "icon": "./assets/notification-icon.png",
           "color": "#FF7A59",
           "defaultChannel": "reminders"
         }
