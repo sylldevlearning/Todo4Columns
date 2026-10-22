@@ -1,16 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
+import {
+  defaultReminderFields,
+  keepRelevantFields,
+  pickReminderFields,
+} from "../reminders";
+import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { loadTasks, saveTasks } from "../storage";
-import { Category, Task } from "../types";
+import { Category, ReminderFields, Task } from "../types";
 
 // setTimeout ne gère pas les délais > ~24,8 jours : on plafonne et on revérifie
 const MAX_TIMEOUT_MS = 60 * 60 * 1000;
 
-export function useTasks() {
+export interface TaskInput extends Partial<ReminderFields> {
+  title: string;
+  category: Category;
+}
+
+// Tâche retirée de la liste, avec sa position pour pouvoir l'annuler
+export interface RemovedTask {
+  task: Task;
+  index: number;
+}
+
+// Identifiant unique, même pour deux tâches créées dans la même milliseconde
+const newId = (now: number) =>
+  `${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
+// Supprime les clés à undefined pour qu'elles n'écrasent rien lors d'un spread
+function defined<T extends object>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined)
+  ) as Partial<T>;
+}
+
+export function useTasks(settings: Settings = DEFAULT_SETTINGS) {
   const [tasks, setTasks] = useState<Task[]>([]);
   // Empêche la sauvegarde tant que les tâches n'ont pas été chargées.
   // Si la lecture échoue, il reste à false : on ne risque pas d'écraser les données existantes.
   const [isLoaded, setIsLoaded] = useState(false);
+  // Dernière liste rendue, pour connaître la position des tâches supprimées
+  const tasksRef = useRef(tasks);
+  tasksRef.current = tasks;
 
   // Charger les tâches sauvegardées au démarrage
   useEffect(() => {
@@ -78,47 +109,114 @@ export function useTasks() {
     return () => clearTimeout(timeout);
   }, [tasks]);
 
-  const addTask = (title: string, category: Category) => {
+  // Applique une modification à une seule tâche
+  const updateOne = (id: string, change: (t: Task) => Task) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...change(t), updatedAt: Date.now() } : t))
+    );
+  };
+
+  const addTask = (input: TaskInput) => {
     const now = Date.now();
+    const fields = keepRelevantFields(input.category, {
+      ...defaultReminderFields(input.category, settings),
+      ...defined(input),
+    });
     const newTask: Task = {
-      id: now.toString(),
-      title,
-      category,
+      id: newId(now),
+      title: input.title,
+      category: input.category,
       isDone: false,
       timerEnd: null,
       createdAt: now,
       updatedAt: now,
-      dueAt: null,
-      reminderOffset: null,
-      nagInterval: null,
-      nagRepeat: false,
       notificationIds: [],
+      ...fields,
     };
     setTasks((prev) => [...prev, newTask]);
   };
 
-  const toggleDone = (id: string) => {
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, isDone: !t.isDone, updatedAt: Date.now() } : t
-      )
-    );
+  // Modifie le titre, le quadrant et/ou les réglages de rappel
+  const updateTask = (id: string, patch: Partial<TaskInput>) => {
+    updateOne(id, (t) => {
+      const category = patch.category ?? t.category;
+      return {
+        ...t,
+        title: patch.title ?? t.title,
+        category,
+        ...keepRelevantFields(category, {
+          ...pickReminderFields(t),
+          ...defined(patch),
+        }),
+      };
+    });
   };
 
-  const removeTask = (id: string) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+  // Déplace vers un autre quadrant : les rappels reprennent les valeurs par défaut du quadrant
+  const moveTask = (id: string, category: Category) => {
+    updateOne(id, (t) => ({
+      ...t,
+      category,
+      ...keepRelevantFields(category, {
+        ...defaultReminderFields(category, settings),
+        dueAt: t.dueAt,
+        delegatedTo: t.delegatedTo,
+      }),
+    }));
   };
+
+  const toggleDone = (id: string) => {
+    updateOne(id, (t) => ({ ...t, isDone: !t.isDone }));
+  };
+
+  // Retire des tâches et renvoie de quoi les restaurer avec restoreTasks
+  const removeTasks = (ids: string[]): RemovedTask[] => {
+    const idSet = new Set(ids);
+    const removed = tasksRef.current.flatMap((task, index) =>
+      idSet.has(task.id) ? [{ task, index }] : []
+    );
+    setTasks((prev) => prev.filter((t) => !idSet.has(t.id)));
+    return removed;
+  };
+
+  const removeTask = (id: string) => removeTasks([id]);
+
+  // Remet des tâches supprimées à leur place d'origine
+  const restoreTasks = (removed: RemovedTask[]) => {
+    setTasks((prev) => {
+      const next = [...prev];
+      for (const { task, index } of [...removed].sort((a, b) => a.index - b.index)) {
+        if (next.some((t) => t.id === task.id)) continue;
+        next.splice(Math.min(index, next.length), 0, task);
+      }
+      return next;
+    });
+  };
+
+  // Supprime les tâches terminées d'un quadrant
+  const clearDone = (category: Category): RemovedTask[] =>
+    removeTasks(
+      tasksRef.current
+        .filter((t) => t.category === category && t.isDone)
+        .map((t) => t.id)
+    );
 
   const startTimer = (id: string, minutes: number) => {
     const endTimestamp = Date.now() + minutes * 60 * 1000;
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? { ...t, timerEnd: endTimestamp, updatedAt: Date.now() }
-          : t
-      )
-    );
+    updateOne(id, (t) => ({ ...t, timerEnd: endTimestamp }));
   };
 
-  return { tasks, addTask, toggleDone, removeTask, startTimer };
+  return {
+    tasks,
+    isLoaded,
+    addTask,
+    updateTask,
+    moveTask,
+    toggleDone,
+    removeTask,
+    removeTasks,
+    restoreTasks,
+    clearDone,
+    startTimer,
+  };
 }

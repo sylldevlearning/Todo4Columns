@@ -26,10 +26,14 @@
         {
           "image": "./assets/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#121212",
+          "backgroundColor": "#0F1115",
           "imageWidth": 200
         }
-      ]
-    ]
+      ],
+      "expo-router",
+      "expo-font",
+      "@react-native-community/datetimepicker"
+    ],
+    "scheme": "todo4columns"
   }
 }

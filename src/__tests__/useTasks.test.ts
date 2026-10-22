@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { useTasks } from "../hooks/useTasks";
+import { DEFAULT_SETTINGS } from "../settings";
 import { STORAGE_KEY } from "../storage";
 
 // Contenu enregistré sous TASKS_4COLS
@@ -19,31 +20,51 @@ const setup = async () => {
 describe("useTasks", () => {
   beforeEach(() => AsyncStorage.clear());
 
-  it("ajoute une tâche avec les valeurs par défaut", async () => {
+  it("ajoute une tâche avec les rappels par défaut du quadrant", async () => {
     const { result } = await setup();
 
-    await act(() => result.current.addTask("Acheter du pain", "INU"));
+    await act(() => result.current.addTask({ title: "Rendre le dossier", category: "UI" }));
 
     expect(result.current.tasks).toHaveLength(1);
     expect(result.current.tasks[0]).toMatchObject({
-      title: "Acheter du pain",
-      category: "INU",
+      title: "Rendre le dossier",
+      category: "UI",
       isDone: false,
       timerEnd: null,
       dueAt: null,
       reminderOffset: null,
-      nagInterval: null,
+      nagInterval: DEFAULT_SETTINGS.doNagInterval,
       nagRepeat: false,
+      delegatedTo: null,
       notificationIds: [],
     });
-    expect(result.current.tasks[0].createdAt).toBe(
-      result.current.tasks[0].updatedAt
+    expect(result.current.tasks[0].createdAt).toBe(result.current.tasks[0].updatedAt);
+  });
+
+  it("enregistre les réglages de rappel choisis, sans ceux des autres quadrants", async () => {
+    const { result } = await setup();
+
+    await act(() =>
+      result.current.addTask({
+        title: "Relancer le devis",
+        category: "UDI",
+        delegatedTo: "  Marie ",
+        nagInterval: 4320,
+        dueAt: 123, // pas d'échéance pour Déléguer
+      })
     );
+
+    expect(result.current.tasks[0]).toMatchObject({
+      delegatedTo: "Marie",
+      nagInterval: 4320,
+      dueAt: null,
+      reminderOffset: null,
+    });
   });
 
   it("coche puis décoche une tâche", async () => {
     const { result } = await setup();
-    await act(() => result.current.addTask("Tâche", "UI"));
+    await act(() => result.current.addTask({ title: "Tâche", category: "UI" }));
     const id = result.current.tasks[0].id;
 
     await act(() => result.current.toggleDone(id));
@@ -53,33 +74,110 @@ describe("useTasks", () => {
     expect(result.current.tasks[0].isDone).toBe(false);
   });
 
-  it("supprime une tâche", async () => {
+  it("modifie le titre, le quadrant et les rappels d'une tâche", async () => {
     const { result } = await setup();
-    await act(() => result.current.addTask("À garder", "UI"));
-    await act(() => result.current.addTask("À supprimer", "NDNI"));
-    const toRemove = result.current.tasks.find((t) => t.title === "À supprimer")!;
+    await act(() => result.current.addTask({ title: "Brouillon", category: "UI" }));
+    const id = result.current.tasks[0].id;
 
-    await act(() => result.current.removeTask(toRemove.id));
+    await act(() =>
+      result.current.updateTask(id, {
+        title: "Préparer la réunion",
+        category: "INU",
+        dueAt: 1_900_000_000_000,
+        reminderOffset: 60,
+      })
+    );
 
-    expect(result.current.tasks.map((t) => t.title)).toEqual(["À garder"]);
+    expect(result.current.tasks[0]).toMatchObject({
+      id,
+      title: "Préparer la réunion",
+      category: "INU",
+      dueAt: 1_900_000_000_000,
+      reminderOffset: 60,
+      nagInterval: null, // réglage de Faire retiré
+    });
   });
 
-  it("enregistre les tâches au format v2 et les retrouve au redémarrage", async () => {
+  it("déplace une tâche vers un autre quadrant avec ses rappels par défaut", async () => {
+    const { result } = await setup();
+    await act(() => result.current.addTask({ title: "À confier", category: "UI" }));
+    const id = result.current.tasks[0].id;
+
+    await act(() => result.current.moveTask(id, "UDI"));
+    expect(result.current.tasks[0]).toMatchObject({
+      category: "UDI",
+      nagInterval: 1440, // « Demain »
+      nagRepeat: false,
+    });
+
+    await act(() => result.current.moveTask(id, "NDNI"));
+    expect(result.current.tasks[0]).toMatchObject({
+      category: "NDNI",
+      nagInterval: null,
+      reminderOffset: null,
+    });
+  });
+
+  it("supprime une tâche puis l'annule à sa place d'origine", async () => {
+    const { result } = await setup();
+    await act(() => result.current.addTask({ title: "Première", category: "UI" }));
+    await act(() => result.current.addTask({ title: "Deuxième", category: "UI" }));
+    await act(() => result.current.addTask({ title: "Troisième", category: "UI" }));
+    const middle = result.current.tasks[1];
+
+    let removed: ReturnType<typeof result.current.removeTask> = [];
+    await act(() => {
+      removed = result.current.removeTask(middle.id);
+    });
+    expect(result.current.tasks.map((t) => t.title)).toEqual(["Première", "Troisième"]);
+    expect(removed).toEqual([{ task: middle, index: 1 }]);
+
+    await act(() => result.current.restoreTasks(removed));
+    expect(result.current.tasks.map((t) => t.title)).toEqual([
+      "Première",
+      "Deuxième",
+      "Troisième",
+    ]);
+  });
+
+  it("vide les terminées d'un seul quadrant, avec annulation possible", async () => {
+    const { result } = await setup();
+    await act(() => result.current.addTask({ title: "Faite UI", category: "UI" }));
+    await act(() => result.current.addTask({ title: "En cours UI", category: "UI" }));
+    await act(() => result.current.addTask({ title: "Faite INU", category: "INU" }));
+    const [doneUI, , doneINU] = result.current.tasks;
+    await act(() => result.current.toggleDone(doneUI.id));
+    await act(() => result.current.toggleDone(doneINU.id));
+
+    let removed: ReturnType<typeof result.current.clearDone> = [];
+    await act(() => {
+      removed = result.current.clearDone("UI");
+    });
+    expect(result.current.tasks.map((t) => t.title)).toEqual(["En cours UI", "Faite INU"]);
+    expect(removed).toHaveLength(1);
+
+    await act(() => result.current.restoreTasks(removed));
+    expect(result.current.tasks.map((t) => t.title)).toEqual([
+      "Faite UI",
+      "En cours UI",
+      "Faite INU",
+    ]);
+  });
+
+  it("enregistre les tâches au format v3 et les retrouve au redémarrage", async () => {
     const first = await setup();
-    await act(() => first.result.current.addTask("Persistante", "UDI"));
+    await act(() => first.result.current.addTask({ title: "Persistante", category: "UDI" }));
 
     await waitFor(async () => {
       const data = await stored();
-      expect(data.schemaVersion).toBe(2);
+      expect(data.schemaVersion).toBe(3);
       expect(data.tasks).toHaveLength(1);
     });
     await first.unmount();
 
     const second = await renderHook(() => useTasks());
     await waitFor(() =>
-      expect(second.result.current.tasks.map((t) => t.title)).toEqual([
-        "Persistante",
-      ])
+      expect(second.result.current.tasks.map((t) => t.title)).toEqual(["Persistante"])
     );
   });
 
@@ -99,8 +197,9 @@ describe("useTasks", () => {
       category: "NDNI",
       isDone: true,
       createdAt: 1717000000000,
+      delegatedTo: null,
     });
-    await waitFor(async () => expect((await stored()).schemaVersion).toBe(2));
+    await waitFor(async () => expect((await stored()).schemaVersion).toBe(3));
   });
 
   it("ne sauvegarde rien si la lecture échoue", async () => {
@@ -110,7 +209,7 @@ describe("useTasks", () => {
     (AsyncStorage.setItem as jest.Mock).mockClear();
 
     const { result } = await renderHook(() => useTasks());
-    await act(() => result.current.addTask("Non sauvegardée", "UI"));
+    await act(() => result.current.addTask({ title: "Non sauvegardée", category: "UI" }));
 
     expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     expect(await AsyncStorage.getItem(STORAGE_KEY)).toBe("[]");

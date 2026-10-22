@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { useEffect, useState } from "react";
+import { formatRemaining } from "../format";
 
-// Compte à rebours "MM:SS" : seul ce composant se re-rend chaque seconde
-export default function Countdown({ endTs }: { endTs: number }) {
+// Temps restant avant endTs, rafraîchi chaque seconde : seul le composant qui l'utilise se re-rend
+export function useRemaining(endTs: number): string {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -10,19 +10,5 @@ export default function Countdown({ endTs }: { endTs: number }) {
     return () => clearInterval(id);
   }, []);
 
-  const diffSec = Math.max(Math.ceil((endTs - now) / 1000), 0);
-  const m = Math.floor(diffSec / 60)
-    .toString()
-    .padStart(2, "0");
-  const s = (diffSec % 60).toString().padStart(2, "0");
-  return <Text style={styles.timerText}>⏱ {`${m}:${s}`}</Text>;
+  return formatRemaining(endTs - now);
 }
-
-const styles = StyleSheet.create({
-  timerText: {
-    marginTop: 4,
-    fontSize: 14,
-    color: "#03DAC6",
-    fontWeight: "700",
-  },
-});

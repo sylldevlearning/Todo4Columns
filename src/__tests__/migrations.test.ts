@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { parseStoredTasks, serializeTasks } from "../migrations";
 import {
   BACKUP_V1_KEY,
+  backupKeyFor,
   CORRUPT_BACKUP_PREFIX,
   loadTasks,
   STORAGE_KEY,
@@ -39,7 +40,24 @@ describe("parseStoredTasks", () => {
       reminderOffset: null,
       nagInterval: null,
       nagRepeat: false,
+      delegatedTo: null,
       notificationIds: [],
+    });
+  });
+
+  it("migre le format v2 en ajoutant delegatedTo", () => {
+    const v2 = {
+      schemaVersion: 2,
+      tasks: [{ ...v1Tasks[2], createdAt: 5, updatedAt: 6, nagInterval: 1440 }],
+    };
+    const { tasks, fromVersion } = parseStoredTasks(JSON.stringify(v2), NOW);
+
+    expect(fromVersion).toBe(2);
+    expect(tasks[0]).toMatchObject({
+      createdAt: 5,
+      updatedAt: 6,
+      nagInterval: 1440,
+      delegatedTo: null,
     });
   });
 
@@ -66,12 +84,24 @@ describe("parseStoredTasks", () => {
     expect(tasks[1]).toMatchObject({ id: `${NOW}-1`, title: "42" });
   });
 
-  it("relit à l'identique le format v2", () => {
+  it("rend uniques les identifiants en double, sans perdre de tâche", () => {
+    const { tasks } = parseStoredTasks(
+      JSON.stringify([v1Tasks[0], { ...v1Tasks[1], id: v1Tasks[0].id }]),
+      NOW
+    );
+
+    expect(tasks.map((t) => t.title)).toEqual(["Faire", "Planifier"]);
+    expect(new Set(tasks.map((t) => t.id)).size).toBe(2);
+    expect(tasks[0].id).toBe("1717000000000");
+  });
+
+  it("relit à l'identique le format courant (v3)", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
+    tasks[0].delegatedTo = "Marie";
     const json = serializeTasks(tasks);
 
-    expect(JSON.parse(json).schemaVersion).toBe(2);
-    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 2 });
+    expect(JSON.parse(json).schemaVersion).toBe(3);
+    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 3 });
   });
 
   it("lève une erreur sur un contenu illisible", () => {
@@ -91,6 +121,14 @@ describe("loadTasks", () => {
 
     expect(tasks).toHaveLength(4);
     expect(await AsyncStorage.getItem(BACKUP_V1_KEY)).toBe(original);
+  });
+
+  it("garde aussi une copie du format v2 avant de passer en v3", async () => {
+    const original = JSON.stringify({ schemaVersion: 2, tasks: v1Tasks });
+    await AsyncStorage.setItem(STORAGE_KEY, original);
+
+    expect(await loadTasks()).toHaveLength(4);
+    expect(await AsyncStorage.getItem(backupKeyFor(2))).toBe(original);
   });
 
   it("met de côté un contenu illisible au lieu de le perdre", async () => {

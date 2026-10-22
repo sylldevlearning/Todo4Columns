@@ -3,22 +3,30 @@ import {
   Alert,
   KeyboardAvoidingView,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { SPACING } from "../constants/layout";
+import { colors, fonts, TOUCH_SIZE } from "../theme";
 
 interface Props {
   visible: boolean;
+  color: string; // couleur du quadrant
+  onColor: string;
   onCancel: () => void;
   onValidate: (minutes: number) => void;
 }
 
 // Fenêtre de saisie de la durée du timer (le bouton retour Android la ferme)
-export default function TimerModal({ visible, onCancel, onValidate }: Props) {
+export default function TimerModal({
+  visible,
+  color,
+  onColor,
+  onCancel,
+  onValidate,
+}: Props) {
   const [input, setInput] = useState(""); // saisie en minutes
 
   // Champ vide à chaque ouverture
@@ -45,30 +53,35 @@ export default function TimerModal({ visible, onCancel, onValidate }: Props) {
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <KeyboardAvoidingView style={styles.modalOverlay} behavior="padding">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Durée du Timer (en min)</Text>
+      <KeyboardAvoidingView style={styles.overlay} behavior="padding">
+        <View style={styles.container}>
+          <Text style={styles.title}>Minuteur</Text>
+          <Text style={styles.subtitle}>Durée en minutes</Text>
           <TextInput
-            style={styles.modalInput}
-            placeholder="Ex. : 10"
-            placeholderTextColor="#AAAAAA"
+            style={styles.input}
+            placeholder="Ex. : 25"
+            placeholderTextColor={colors.textMuted}
             value={input}
             onChangeText={setInput}
             keyboardType="numeric"
+            autoFocus
+            accessibilityLabel="Durée du minuteur en minutes"
           />
-          <View style={styles.modalButtonsRow}>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalCancel]}
+          <View style={styles.buttons}>
+            <Pressable
+              accessibilityRole="button"
+              style={[styles.button, styles.cancel]}
               onPress={onCancel}
             >
-              <Text style={styles.modalButtonText}>ANNULER</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalValidate]}
+              <Text style={styles.cancelText}>Annuler</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              style={[styles.button, { backgroundColor: color }]}
               onPress={validate}
             >
-              <Text style={styles.modalButtonText}>VALIDER</Text>
-            </TouchableOpacity>
+              <Text style={[styles.validateText, { color: onColor }]}>Démarrer</Text>
+            </Pressable>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -77,59 +90,65 @@ export default function TimerModal({ visible, onCancel, onValidate }: Props) {
 }
 
 const styles = StyleSheet.create({
-  modalOverlay: {
+  overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
   },
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "#1F1B24",
-    borderRadius: 12,
-    padding: SPACING,
+  container: {
+    width: "84%",
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 20,
     borderWidth: 1,
-    borderColor: "#333333",
+    borderColor: colors.border,
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#E5E5E5",
-    marginBottom: SPACING / 2,
-    textAlign: "center",
+  title: {
+    fontFamily: fonts.extrabold,
+    fontSize: 20,
+    color: colors.text,
   },
-  modalInput: {
-    height: 44,
-    borderWidth: 1,
-    borderColor: "#444444",
-    borderRadius: 8,
-    paddingHorizontal: SPACING / 2,
-    fontSize: 16,
-    color: "#E5E5E5",
-    backgroundColor: "#2C2A33",
-    marginBottom: SPACING,
-  },
-  modalButtonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: SPACING / 2,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  modalCancel: {
-    backgroundColor: "#CF6679",
-    marginRight: SPACING / 4,
-  },
-  modalValidate: {
-    backgroundColor: "#03DAC6",
-    marginLeft: SPACING / 4,
-  },
-  modalButtonText: {
+  subtitle: {
+    fontFamily: fonts.regular,
     fontSize: 14,
-    fontWeight: "700",
-    color: "#121212",
+    color: colors.textMuted,
+    marginTop: 2,
+    marginBottom: 16,
+  },
+  input: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    fontFamily: fonts.semibold,
+    fontSize: 16,
+    color: colors.text,
+    backgroundColor: colors.bg,
+    marginBottom: 20,
+  },
+  buttons: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  button: {
+    flex: 1,
+    minHeight: TOUCH_SIZE,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancel: {
+    backgroundColor: colors.surfaceRaised,
+  },
+  cancelText: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
+    color: colors.text,
+  },
+  validateText: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
   },
 });

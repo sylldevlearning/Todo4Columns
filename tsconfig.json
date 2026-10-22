@@ -13,7 +13,7 @@
     "types": ["jest"] // TypeScript 6 ne charge plus les @types globaux par défaut
   },
 
-  "include": ["App.tsx", "src/**/*.ts", "src/**/*.tsx"],
+  "include": ["app/**/*.ts", "app/**/*.tsx", "src/**/*.ts", "src/**/*.tsx"],
 
   "exclude": ["node_modules", "node_modules/expo-notifications/tsconfig.json"]
 }

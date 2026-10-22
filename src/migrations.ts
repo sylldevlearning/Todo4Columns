@@ -3,7 +3,8 @@ import { Category, Task } from "./types";
 // Version du format enregistré sous la clé TASKS_4COLS
 // v1 : tableau brut de tâches (versions 1.0.x)
 // v2 : { schemaVersion: 2, tasks: [...] }
-export const TASKS_SCHEMA_VERSION = 2;
+// v3 : même enveloppe, ajout de delegatedTo sur chaque tâche
+export const TASKS_SCHEMA_VERSION = 3;
 
 export interface StoredTasks {
   schemaVersion: typeof TASKS_SCHEMA_VERSION;
@@ -58,6 +59,10 @@ export function normalizeTask(
     reminderOffset: numberOrNull(raw.reminderOffset),
     nagInterval: numberOrNull(raw.nagInterval),
     nagRepeat: raw.nagRepeat === true,
+    delegatedTo:
+      typeof raw.delegatedTo === "string" && raw.delegatedTo.trim() !== ""
+        ? raw.delegatedTo
+        : null,
     notificationIds: Array.isArray(raw.notificationIds)
       ? raw.notificationIds.filter((n): n is string => typeof n === "string")
       : [],
@@ -90,6 +95,14 @@ export function parseStoredTasks(
   const tasks = rawTasks
     .map((raw, i) => normalizeTask(raw, i, now))
     .filter((t): t is Task => t !== null);
+
+  // Les versions 1.0.x utilisaient Date.now() comme id : deux tâches peuvent partager le même.
+  // On les rend uniques pour qu'une suppression ne touche qu'une seule tâche.
+  const seen = new Set<string>();
+  tasks.forEach((t, i) => {
+    if (seen.has(t.id)) t.id = `${t.id}-${i}`;
+    seen.add(t.id);
+  });
   return { tasks, fromVersion };
 }
 
