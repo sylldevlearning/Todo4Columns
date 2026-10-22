@@ -4,7 +4,7 @@ export interface CategoryInfo {
   key: Category; // clé enregistrée dans AsyncStorage
   shortLabel: string; // libellé du bouton de sélection
   title: string; // titre de la colonne
-  color: string; // couleur d'accent de la colonne
+  color: string; // couleur d'accent (pas encore affichée)
 }
 
 // Ordre d'affichage des boutons et des colonnes

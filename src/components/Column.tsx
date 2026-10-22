@@ -24,9 +24,7 @@ export default function Column({
 }: Props) {
   return (
     <View style={[styles.column, { width }]}>
-      <Text style={[styles.columnTitle, { borderBottomColor: category.color }]}>
-        {category.title}
-      </Text>
+      <Text style={styles.columnTitle}>{category.title}</Text>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {tasks.length === 0 && (
           <Text style={styles.emptyText}>Aucune tâche</Text>
@@ -61,7 +59,6 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING / 2,
     backgroundColor: "#333333",
     color: "#E5E5E5",
-    borderBottomWidth: 3,
   },
   scrollContent: {
     paddingBottom: SPACING / 2,
