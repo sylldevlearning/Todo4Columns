@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
+import { archiveStaleTasks } from "../archive";
 import {
   defaultReminderFields,
   keepRelevantFields,
@@ -47,7 +48,8 @@ export function useTasks(settings: Settings = DEFAULT_SETTINGS) {
   useEffect(() => {
     (async () => {
       try {
-        setTasks(await loadTasks());
+        // Archive au passage les tâches « Éliminer » restées 7 jours
+        setTasks(archiveStaleTasks(await loadTasks(), Date.now()));
         setIsLoaded(true);
       } catch (e) {
         console.warn("Erreur récupération tâches :", e);
@@ -109,10 +111,22 @@ export function useTasks(settings: Settings = DEFAULT_SETTINGS) {
     return () => clearTimeout(timeout);
   }, [tasks]);
 
-  // Applique une modification à une seule tâche
+  // Applique une modification à une seule tâche.
+  // updatedAt sert de point de départ aux relances : un report en cours n'a plus lieu d'être.
   const updateOne = (id: string, change: (t: Task) => Task) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...change(t), updatedAt: Date.now() } : t))
+      prev.map((t) => {
+        if (t.id !== id) return t;
+        const now = Date.now();
+        const next = change(t);
+        return {
+          ...next,
+          updatedAt: now,
+          snoozedUntil: null,
+          categoryChangedAt:
+            next.category !== t.category ? now : t.categoryChangedAt,
+        };
+      })
     );
   };
 
@@ -130,6 +144,9 @@ export function useTasks(settings: Settings = DEFAULT_SETTINGS) {
       timerEnd: null,
       createdAt: now,
       updatedAt: now,
+      categoryChangedAt: now,
+      archivedAt: null,
+      snoozedUntil: null,
       notificationIds: [],
       ...fields,
     };
@@ -201,6 +218,17 @@ export function useTasks(settings: Settings = DEFAULT_SETTINGS) {
         .map((t) => t.id)
     );
 
+  // Sort une tâche des archives ; le délai de 7 jours repart de zéro
+  const unarchiveTask = (id: string) => {
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? { ...t, archivedAt: null, categoryChangedAt: Date.now(), updatedAt: Date.now() }
+          : t
+      )
+    );
+  };
+
   const startTimer = (id: string, minutes: number) => {
     const endTimestamp = Date.now() + minutes * 60 * 1000;
     updateOne(id, (t) => ({ ...t, timerEnd: endTimestamp }));
@@ -217,6 +245,7 @@ export function useTasks(settings: Settings = DEFAULT_SETTINGS) {
     removeTasks,
     restoreTasks,
     clearDone,
+    unarchiveTask,
     startTimer,
   };
 }

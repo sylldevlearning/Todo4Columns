@@ -2,23 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import TaskForm from "../components/TaskForm";
 import { DEFAULT_SETTINGS } from "../settings";
-import { Task } from "../types";
+import { makeTask } from "../testing/makeTask";
 
-const existing: Task = {
-  id: "t1",
+const existing = makeTask({
   title: "Relancer le devis",
   category: "UDI",
-  isDone: false,
-  timerEnd: null,
-  createdAt: 1,
-  updatedAt: 1,
-  dueAt: null,
-  reminderOffset: null,
   nagInterval: 10080,
-  nagRepeat: false,
   delegatedTo: "Marie",
-  notificationIds: [],
-};
+});
 
 describe("TaskForm", () => {
   it("déduit le quadrant des interrupteurs et adapte les options", async () => {

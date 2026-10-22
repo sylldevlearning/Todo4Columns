@@ -1,24 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import MatrixGrid from "../components/MatrixGrid";
+import { makeTask } from "../testing/makeTask";
 import { Category, Task } from "../types";
 
-const task = (id: string, category: Category, extra: Partial<Task> = {}): Task => ({
-  id,
-  title: `Tâche ${id}`,
-  category,
-  isDone: false,
-  timerEnd: null,
-  createdAt: 1,
-  updatedAt: 1,
-  dueAt: null,
-  reminderOffset: null,
-  nagInterval: null,
-  nagRepeat: false,
-  delegatedTo: null,
-  notificationIds: [],
-  ...extra,
-});
+const task = (id: string, category: Category, extra: Partial<Task> = {}): Task =>
+  makeTask({ id, title: `Tâche ${id}`, category, ...extra });
 
 describe("MatrixGrid", () => {
   const tasks = [
@@ -29,6 +16,7 @@ describe("MatrixGrid", () => {
     task("5", "UI"),
     task("6", "UI", { isDone: true }),
     task("7", "INU", { dueAt: new Date(2026, 9, 23, 14, 0).getTime() }),
+    task("8", "NDNI", { archivedAt: 5 }),
   ];
 
   it("affiche les quatre quadrants et les axes", async () => {
@@ -52,6 +40,7 @@ describe("MatrixGrid", () => {
     expect(screen.getByText("Tâche 3")).toBeOnTheScreen();
     expect(screen.queryByText("Tâche 4")).toBeNull();
     expect(screen.queryByText("Tâche 6")).toBeNull(); // terminée
+    expect(screen.queryByText("Tâche 8")).toBeNull(); // archivée
     expect(screen.getByText("+2 autres")).toBeOnTheScreen();
     expect(screen.getByText("5")).toBeOnTheScreen();
     expect(screen.getAllByText("Aucune tâche")).toHaveLength(2);

@@ -4,7 +4,8 @@ import { Category, Task } from "./types";
 // v1 : tableau brut de tâches (versions 1.0.x)
 // v2 : { schemaVersion: 2, tasks: [...] }
 // v3 : même enveloppe, ajout de delegatedTo sur chaque tâche
-export const TASKS_SCHEMA_VERSION = 3;
+// v4 : ajout de categoryChangedAt, archivedAt et snoozedUntil
+export const TASKS_SCHEMA_VERSION = 4;
 
 export interface StoredTasks {
   schemaVersion: typeof TASKS_SCHEMA_VERSION;
@@ -55,6 +56,10 @@ export function normalizeTask(
     timerEnd: numberOrNull(raw.timerEnd),
     createdAt,
     updatedAt: numberOrNull(raw.updatedAt) ?? createdAt,
+    // Inconnu avant la v4 : on part de la migration, pour ne rien archiver dès la mise à jour
+    categoryChangedAt: numberOrNull(raw.categoryChangedAt) ?? now,
+    archivedAt: numberOrNull(raw.archivedAt),
+    snoozedUntil: numberOrNull(raw.snoozedUntil),
     dueAt: numberOrNull(raw.dueAt),
     reminderOffset: numberOrNull(raw.reminderOffset),
     nagInterval: numberOrNull(raw.nagInterval),

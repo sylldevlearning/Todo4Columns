@@ -18,5 +18,8 @@ export interface Task extends ReminderFields {
   timerEnd: number | null; // timestamp en ms où le timer se termine, ou null
   createdAt: number; // timestamp en ms
   updatedAt: number; // timestamp en ms de la dernière modification
+  categoryChangedAt: number; // arrivée dans le quadrant actuel (timestamp en ms)
+  archivedAt: number | null; // archivage automatique des tâches « Éliminer »
+  snoozedUntil: number | null; // « Reporter 1 h » : prochaine relance repoussée à cette date
   notificationIds: string[]; // notifications programmées pour cette tâche
 }

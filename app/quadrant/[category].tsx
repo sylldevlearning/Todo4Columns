@@ -42,7 +42,9 @@ export default function QuadrantScreen() {
   if (!isCategory(param)) return <Redirect href="/" />;
   const category = CATEGORY_BY_KEY[param];
 
-  const tasks = store.tasks.filter((t) => t.category === category.key);
+  const tasks = store.tasks.filter(
+    (t) => t.category === category.key && t.archivedAt === null
+  );
   const openTasks = tasks.filter((t) => !t.isDone);
   const doneTasks = tasks.filter((t) => t.isDone);
   const menuTask = store.tasks.find((t) => t.id === menuTaskId) ?? null;

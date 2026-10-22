@@ -77,7 +77,7 @@ function QuadrantCell({
 // Grille 2×2 avec les axes Urgent / Pas urgent et Important / Pas important
 export default function MatrixGrid({ tasks, onOpenQuadrant }: Props) {
   const openTasks = (key: Category) =>
-    tasks.filter((t) => t.category === key && !t.isDone);
+    tasks.filter((t) => t.category === key && !t.isDone && t.archivedAt === null);
   const rows = [CATEGORIES.slice(0, 2), CATEGORIES.slice(2, 4)];
   const rowLabels = ["Important", "Pas important"];
 

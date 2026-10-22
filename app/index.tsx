@@ -12,7 +12,7 @@ import { colors, fonts } from "../src/theme";
 // Écran d'accueil : la matrice d'Eisenhower
 export default function MatrixScreen() {
   const { tasks } = useTaskStore();
-  const openCount = tasks.filter((t) => !t.isDone).length;
+  const openCount = tasks.filter((t) => !t.isDone && t.archivedAt === null).length;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>

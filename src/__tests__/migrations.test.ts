@@ -36,6 +36,9 @@ describe("parseStoredTasks", () => {
       timerEnd: 1717000999999,
       createdAt: 1717000000002,
       updatedAt: 1717000000002,
+      categoryChangedAt: NOW, // inconnu : date de la migration
+      archivedAt: null,
+      snoozedUntil: null,
       dueAt: null,
       reminderOffset: null,
       nagInterval: null,
@@ -84,6 +87,21 @@ describe("parseStoredTasks", () => {
     expect(tasks[1]).toMatchObject({ id: `${NOW}-1`, title: "42" });
   });
 
+  it("migre le format v3 en conservant l'archivage et les reports déjà enregistrés", () => {
+    const v3 = {
+      schemaVersion: 3,
+      tasks: [
+        { ...v1Tasks[3], createdAt: 5, updatedAt: 6 },
+        { ...v1Tasks[0], categoryChangedAt: 7, archivedAt: 8, snoozedUntil: 9 },
+      ],
+    };
+    const { tasks, fromVersion } = parseStoredTasks(JSON.stringify(v3), NOW);
+
+    expect(fromVersion).toBe(3);
+    expect(tasks[0]).toMatchObject({ categoryChangedAt: NOW, archivedAt: null, snoozedUntil: null });
+    expect(tasks[1]).toMatchObject({ categoryChangedAt: 7, archivedAt: 8, snoozedUntil: 9 });
+  });
+
   it("rend uniques les identifiants en double, sans perdre de tâche", () => {
     const { tasks } = parseStoredTasks(
       JSON.stringify([v1Tasks[0], { ...v1Tasks[1], id: v1Tasks[0].id }]),
@@ -95,13 +113,13 @@ describe("parseStoredTasks", () => {
     expect(tasks[0].id).toBe("1717000000000");
   });
 
-  it("relit à l'identique le format courant (v3)", () => {
+  it("relit à l'identique le format courant (v4)", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
     tasks[0].delegatedTo = "Marie";
     const json = serializeTasks(tasks);
 
-    expect(JSON.parse(json).schemaVersion).toBe(3);
-    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 3 });
+    expect(JSON.parse(json).schemaVersion).toBe(4);
+    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 4 });
   });
 
   it("lève une erreur sur un contenu illisible", () => {
@@ -123,12 +141,20 @@ describe("loadTasks", () => {
     expect(await AsyncStorage.getItem(BACKUP_V1_KEY)).toBe(original);
   });
 
-  it("garde aussi une copie du format v2 avant de passer en v3", async () => {
+  it("garde aussi une copie du format v2 avant de passer en v4", async () => {
     const original = JSON.stringify({ schemaVersion: 2, tasks: v1Tasks });
     await AsyncStorage.setItem(STORAGE_KEY, original);
 
     expect(await loadTasks()).toHaveLength(4);
     expect(await AsyncStorage.getItem(backupKeyFor(2))).toBe(original);
+  });
+
+  it("garde une copie du format v3 avant de passer en v4", async () => {
+    const original = JSON.stringify({ schemaVersion: 3, tasks: v1Tasks });
+    await AsyncStorage.setItem(STORAGE_KEY, original);
+
+    expect(await loadTasks()).toHaveLength(4);
+    expect(await AsyncStorage.getItem(backupKeyFor(3))).toBe(original);
   });
 
   it("met de côté un contenu illisible au lieu de le perdre", async () => {
