@@ -7,16 +7,13 @@ export function formatToday(now: Date = new Date()): string {
   );
 }
 
-// « mer. 22 oct., 14:00 »
+// « Ven. 24 oct. · 09:00 »
 export function formatDue(ts: number): string {
   const d = new Date(ts);
-  const day = d.toLocaleDateString("fr-FR", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
+  const weekday = d.toLocaleDateString("fr-FR", { weekday: "short" });
+  const day = d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
   const time = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-  return `${day}, ${time}`;
+  return `${capitalize(weekday)} ${day} · ${time}`;
 }
 
 // « 1 tâche », « 3 tâches »
