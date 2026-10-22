@@ -36,7 +36,6 @@ describe("useTasks", () => {
       nagInterval: DEFAULT_SETTINGS.doNagInterval,
       nagRepeat: false,
       delegatedTo: null,
-      notificationIds: [],
     });
     expect(result.current.tasks[0].createdAt).toBe(result.current.tasks[0].updatedAt);
   });

@@ -45,12 +45,12 @@
   "private": true,
   "jest": {
     "preset": "jest-expo",
-    "setupFiles": [
-      "./jest.setup.js"
-    ],
     "moduleNameMapper": {
       "^(expo-asset|expo-file-system|expo-keep-awake)$": "<rootDir>/node_modules/expo/node_modules/$1",
       "^(expo-asset|expo-file-system|expo-keep-awake)/(.*)$": "<rootDir>/node_modules/expo/node_modules/$1/$2"
-    }
+    },
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ]
   }
 }
