@@ -8,7 +8,8 @@ const MAX_TIMEOUT_MS = 60 * 60 * 1000;
 
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  // Empêche la sauvegarde tant que les tâches n'ont pas été chargées
+  // Empêche la sauvegarde tant que les tâches n'ont pas été chargées.
+  // Si la lecture échoue, il reste à false : on ne risque pas d'écraser les données existantes.
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Charger les tâches sauvegardées au démarrage
@@ -16,10 +17,9 @@ export function useTasks() {
     (async () => {
       try {
         setTasks(await loadTasks());
+        setIsLoaded(true);
       } catch (e) {
         console.warn("Erreur récupération tâches :", e);
-      } finally {
-        setIsLoaded(true);
       }
     })();
   }, []);
