@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import { configureNotifications } from "../src/notifications/setup";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
 import { TasksProvider, useTaskStore } from "../src/store/TasksContext";
@@ -26,14 +27,23 @@ configureNotifications().catch((e) => console.warn("Erreur configuration notific
 // Applique les actions choisies dans les notifications
 function NotificationResponses() {
   const { isLoaded, tasks, completeTask, snoozeTask } = useTaskStore();
+  const { celebrate } = useCelebration();
   useNotificationResponses({
     isLoaded,
     tasks,
     completeTask,
     snoozeTask,
     openQuadrant: (category) => router.push(`/quadrant/${category}`),
+    // « Fait » touché pendant que l'app est à l'écran
+    onCompletedInApp: (task) => celebrate(task.category),
   });
   return null;
+}
+
+// Célébrations selon le réglage « Animations de célébration »
+function Celebrations({ children }: { children: React.ReactNode }) {
+  const { settings } = useTaskStore();
+  return <CelebrationProvider enabled={settings.celebrations}>{children}</CelebrationProvider>;
 }
 
 export default function RootLayout() {
@@ -55,27 +65,29 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <TasksProvider>
-          <NotificationResponses />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.bg },
-            }}
-          >
-            <Stack.Screen name="index" />
-            <Stack.Screen name="quadrant/[category]" />
-            <Stack.Screen name="settings" />
-            <Stack.Screen
-              name="task"
-              options={{
-                presentation: "formSheet",
-                sheetAllowedDetents: [0.9],
-                sheetGrabberVisible: true,
-                sheetCornerRadius: 24,
-                contentStyle: { backgroundColor: colors.surface },
+          <Celebrations>
+            <NotificationResponses />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.bg },
               }}
-            />
-          </Stack>
+            >
+              <Stack.Screen name="index" />
+              <Stack.Screen name="quadrant/[category]" />
+              <Stack.Screen name="settings" />
+              <Stack.Screen
+                name="task"
+                options={{
+                  presentation: "formSheet",
+                  sheetAllowedDetents: [0.9],
+                  sheetGrabberVisible: true,
+                  sheetCornerRadius: 24,
+                  contentStyle: { backgroundColor: colors.surface },
+                }}
+              />
+            </Stack>
+          </Celebrations>
         </TasksProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

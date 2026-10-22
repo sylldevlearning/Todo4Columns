@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import { useEffect, useRef } from "react";
+import { AppState } from "react-native";
 import { Category, Task } from "../types";
 import { handleNotificationResponse, responseKey } from "./setup";
 
@@ -13,6 +14,8 @@ interface Options {
   completeTask: (id: string) => void;
   snoozeTask: (id: string) => void;
   openQuadrant: (category: Category) => void;
+  // « Fait » reçu pendant que l'app est au premier plan (pour la célébration)
+  onCompletedInApp?: (task: Task) => void;
 }
 
 // Applique « Fait », « Reporter 1 h », « Ouvrir » et le tap sur une notification,
@@ -23,13 +26,21 @@ export function useNotificationResponses(options: Options): void {
   const pending = useRef<Notifications.NotificationResponse[]>([]);
   const handled = useRef(new Set<string>());
 
-  const applyOnce = (response: Notifications.NotificationResponse) => {
+  // live : réponse reçue pendant que l'app tourne et que les tâches sont chargées
+  const applyOnce = (response: Notifications.NotificationResponse, live = false) => {
     const key = responseKey(response);
     if (handled.current.has(key)) return;
     handled.current.add(key);
     AsyncStorage.setItem(HANDLED_RESPONSE_KEY, key).catch(() => {});
     handleNotificationResponse(response, {
-      complete: (id) => latest.current.completeTask(id),
+      complete: (id) => {
+        const task = latest.current.tasks.find((t) => t.id === id);
+        latest.current.completeTask(id);
+        // Jamais au démarrage (app fermée) ni en arrière-plan : personne ne verrait la célébration
+        if (live && task && !task.isDone && AppState.currentState === "active") {
+          latest.current.onCompletedInApp?.(task);
+        }
+      },
       snooze: (id) => latest.current.snoozeTask(id),
       open: (id) => {
         const task = latest.current.tasks.find((t) => t.id === id);
@@ -41,7 +52,7 @@ export function useNotificationResponses(options: Options): void {
   // Réponses reçues pendant que l'app tourne (mises en attente avant le chargement des tâches)
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      if (latest.current.isLoaded) applyOnce(response);
+      if (latest.current.isLoaded) applyOnce(response, true);
       else pending.current.push(response);
     });
     return () => subscription.remove();
@@ -58,7 +69,7 @@ export function useNotificationResponses(options: Options): void {
         else applyOnce(last);
         Notifications.clearLastNotificationResponse();
       }
-      pending.current.splice(0).forEach(applyOnce);
+      pending.current.splice(0).forEach((response) => applyOnce(response));
     })().catch((e) => console.warn("Erreur réponse notification :", e));
   }, [options.isLoaded]);
 }

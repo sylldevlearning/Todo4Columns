@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react-native";
 import * as Notifications from "expo-notifications";
 import React from "react";
+import { AppState } from "react-native";
 import TaskForm from "../components/TaskForm";
 import { useTasks } from "../hooks/useTasks";
 import { CATEGORY_ID } from "../notifications/service";
@@ -115,6 +116,51 @@ describe("useNotificationResponses", () => {
     await renderHook(() => useNotificationResponses(second));
     await waitFor(() => expect(Notifications.clearLastNotificationResponse).toHaveBeenCalled());
     expect(second.snoozeTask).not.toHaveBeenCalled();
+  });
+
+  describe("célébration du bouton « Fait »", () => {
+    const setAppState = (state: string) =>
+      Object.defineProperty(AppState, "currentState", { value: state, configurable: true });
+    afterEach(() => setAppState("active"));
+
+    const withCelebration = () => ({ ...options(), onCompletedInApp: jest.fn() });
+
+    it("célèbre quand l'app est à l'écran", async () => {
+      setAppState("active");
+      const opts = withCelebration();
+      await renderHook(() => useNotificationResponses(opts));
+      await act(() => mock.__emitResponse(response(ACTION_DONE)));
+
+      expect(opts.completeTask).toHaveBeenCalledWith("a");
+      expect(opts.onCompletedInApp).toHaveBeenCalledWith(expect.objectContaining({ id: "a" }));
+    });
+
+    it("ne célèbre pas quand l'app est en arrière-plan", async () => {
+      setAppState("background");
+      const opts = withCelebration();
+      await renderHook(() => useNotificationResponses(opts));
+      await act(() => mock.__emitResponse(response(ACTION_DONE)));
+
+      expect(opts.completeTask).toHaveBeenCalledWith("a");
+      expect(opts.onCompletedInApp).not.toHaveBeenCalled();
+    });
+
+    it("ne célèbre pas une tâche validée pendant que l'app était fermée", async () => {
+      setAppState("active");
+      mock.__state.lastResponse = response(ACTION_DONE);
+      const opts = withCelebration();
+      await renderHook(() => useNotificationResponses(opts));
+
+      await waitFor(() => expect(opts.completeTask).toHaveBeenCalledWith("a"));
+      expect(opts.onCompletedInApp).not.toHaveBeenCalled();
+    });
+
+    it("ne célèbre pas une tâche déjà terminée", async () => {
+      const opts = { ...withCelebration(), tasks: [makeTask({ id: "a", isDone: true })] };
+      await renderHook(() => useNotificationResponses(opts));
+      await act(() => mock.__emitResponse(response(ACTION_DONE)));
+      expect(opts.onCompletedInApp).not.toHaveBeenCalled();
+    });
   });
 
   it("attend le chargement des tâches avant d'appliquer une action", async () => {

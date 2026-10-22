@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
-import React from "react";
+import React, { useRef } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -25,7 +25,8 @@ const SWIPE_THRESHOLD = 96;
 interface Props {
   task: Task;
   category: CategoryInfo;
-  onToggleDone: (id: string) => void; // cercle à cocher et glissement vers la droite
+  // Cercle à cocher et glissement vers la droite ; anchor situe la carte pour la célébration
+  onToggleDone: (id: string, anchor?: View | null) => void;
   onDelete: (id: string) => void; // glissement vers la gauche
   onPress: (id: string) => void; // ouvre la modification
   onOpenMenu: (id: string) => void;
@@ -50,10 +51,15 @@ export default function TaskCard({
 }: Props) {
   const translateX = useSharedValue(0);
   const waiting = isWaiting(task, now);
+  const wrapperRef = useRef<View>(null);
 
+  const toggle = () => onToggleDone(task.id, wrapperRef.current);
   const complete = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    onToggleDone(task.id);
+    // Une tâche terminée avec célébration a déjà son retour haptique
+    if (task.isDone || !settings.celebrations) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    }
+    toggle();
   };
   const remove = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -87,7 +93,7 @@ export default function TaskCard({
   const completeLabel = task.isDone ? t.card.reopen : t.card.complete;
 
   return (
-    <View style={styles.wrapper}>
+    <View ref={wrapperRef} style={styles.wrapper}>
       <Animated.View style={[styles.action, styles.doneAction, doneBackground]}>
         <Ionicons name={task.isDone ? "arrow-undo" : "checkmark"} size={22} color={colors.white} />
         <Text style={styles.actionText}>{completeLabel}</Text>
@@ -108,7 +114,7 @@ export default function TaskCard({
               { name: "delete", label: t.common.delete },
             ]}
             onAccessibilityAction={(e) => {
-              if (e.nativeEvent.actionName === "complete") onToggleDone(task.id);
+              if (e.nativeEvent.actionName === "complete") toggle();
               else if (e.nativeEvent.actionName === "delete") onDelete(task.id);
               else onPress(task.id);
             }}
@@ -119,7 +125,7 @@ export default function TaskCard({
               accessibilityRole="checkbox"
               accessibilityState={{ checked: task.isDone }}
               accessibilityLabel={checkLabel}
-              onPress={() => onToggleDone(task.id)}
+              onPress={toggle}
               style={styles.checkArea}
             >
               <View

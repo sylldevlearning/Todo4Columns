@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCelebration } from "../../src/celebration/CelebrationProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Fab from "../../src/components/Fab";
 import IconButton from "../../src/components/IconButton";
@@ -28,6 +29,7 @@ interface Undo {
 export default function QuadrantScreen() {
   const { category: param } = useLocalSearchParams<{ category: string }>();
   const store = useTaskStore();
+  const celebration = useCelebration();
   const [menuTaskId, setMenuTaskId] = useState<string | null>(null);
   const [timerTaskId, setTimerTaskId] = useState<string | null>(null);
   const [showDone, setShowDone] = useState(false);
@@ -61,14 +63,16 @@ export default function QuadrantScreen() {
 
   const restoreLater = (removed: RemovedTask[]) => () => store.restoreTasks(removed);
 
-  const handleToggle = (id: string) => {
+  const handleToggle = (id: string, anchor?: View | null) => {
     const task = store.tasks.find((t) => t.id === id);
     if (!task) return;
     store.toggleDone(id);
-    offerUndo(
-      task.isDone ? t.undo.reopened : t.undo.completed,
-      () => store.toggleDone(id)
-    );
+    // Célébration seulement quand la tâche passe à « terminée » ; « Annuler » la fait disparaître
+    const celebrationId = task.isDone ? null : celebration.celebrate(task.category, anchor);
+    offerUndo(task.isDone ? t.undo.reopened : t.undo.completed, () => {
+      if (celebrationId !== null) celebration.dismiss(celebrationId);
+      store.toggleDone(id);
+    });
   };
 
   const handleDelete = (id: string) => {
