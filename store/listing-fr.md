@@ -17,7 +17,7 @@ Chaque tâche trouve sa place dans l'une des quatre cases :
 • Faire — urgent et important : tu t'y mets maintenant.
 • Planifier — important mais pas urgent : tu bloques un créneau.
 • Déléguer — urgent mais pas important : tu confies et tu relances.
-• Éliminer — ni urgent ni important : tu laisses tomber.
+• Si j'ai le temps — ni urgent ni important : seulement s'il te reste du temps.
 
 CRÉER UNE TÂCHE EN DEUX QUESTIONS
 « C'est urgent ? » « C'est important ? » Deux interrupteurs, et DoFirst range la tâche dans la bonne case. Tu vois toute ta matrice d'un coup d'œil, avec un aperçu des tâches de chaque case.
@@ -26,7 +26,7 @@ DES RAPPELS ADAPTÉS À CHAQUE CASE
 • Faire : une relance si la tâche n'est toujours pas faite après 30 min, 2 h ou 1 jour, répétée si tu le souhaites.
 • Planifier : une échéance, et un rappel le jour J, 1 h avant ou la veille.
 • Déléguer : le nom de la personne, et un rappel pour lui demander des nouvelles.
-• Éliminer : aucun rappel. Les tâches oubliées sont archivées automatiquement au bout de 7 jours, et restent récupérables dans les réglages.
+• Si j'ai le temps : aucun rappel, pour que ces tâches ne te pèsent pas. Si tu le souhaites, elles peuvent être archivées automatiquement au bout de 7 jours, et restent récupérables dans les réglages.
 
 AGIR DEPUIS LA NOTIFICATION
 Marque une tâche comme faite ou reporte-la d'une heure sans ouvrir l'app. Une plage silencieuse (22 h – 8 h par défaut) décale les rappels pour ne pas te réveiller.

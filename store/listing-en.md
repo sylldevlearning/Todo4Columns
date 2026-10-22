@@ -17,7 +17,7 @@ Every task gets a place in one of four boxes:
 • Do — urgent and important: get on it now.
 • Schedule — important but not urgent: block time for it.
 • Delegate — urgent but not important: hand it off and follow up.
-• Delete — neither urgent nor important: let it go.
+• Someday — neither urgent nor important: only if you have time to spare.
 
 ADD A TASK WITH TWO QUESTIONS
 "Is it urgent?" "Is it important?" Two switches, and DoFirst puts the task in the right box. See your whole matrix at a glance, with a preview of the tasks in each box.
@@ -26,7 +26,7 @@ REMINDERS THAT FIT EACH BOX
 • Do: a nudge if the task still isn't done after 30 min, 2 h or 1 day, repeated if you want.
 • Schedule: a due date, plus a reminder on the day, 1 h before or the day before.
 • Delegate: the person's name, and a reminder to check in with them.
-• Delete: no reminders. Forgotten tasks are archived automatically after 7 days and can be restored from the settings.
+• Someday: no reminders, so these tasks don't weigh on you. If you like, they can be archived automatically after 7 days and restored from the settings.
 
 ACT FROM THE NOTIFICATION
 Mark a task as done or snooze it for an hour without opening the app. Quiet hours (10 pm – 8 am by default) hold reminders back so they don't wake you up.
