@@ -293,7 +293,11 @@ export function useTasks(
   // « Reporter 1 h » : repousse la prochaine relance sans toucher à updatedAt
   // (le point de départ des relances et leur nombre maximum restent les mêmes)
   const snoozeTask = (id: string, minutes: number = SNOOZE_MINUTES) => {
-    const until = Date.now() + minutes * 60 * 1000;
+    setSnoozedUntil(id, Date.now() + minutes * 60 * 1000);
+  };
+
+  // Fixe directement le report (sert aussi à annuler un « Reporter 1 h »)
+  const setSnoozedUntil = (id: string, until: number | null) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id && !t.isDone ? { ...t, snoozedUntil: until } : t))
     );
@@ -356,6 +360,7 @@ export function useTasks(
     toggleDone,
     completeTask,
     snoozeTask,
+    setSnoozedUntil,
     removeTask,
     removeTasks,
     restoreTasks,

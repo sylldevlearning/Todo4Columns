@@ -10,6 +10,7 @@ import TaskMenu from "../../src/components/TaskMenu";
 import TimerModal from "../../src/components/TimerModal";
 import UndoBanner from "../../src/components/UndoBanner";
 import { CATEGORY_BY_KEY, isCategory } from "../../src/constants/categories";
+import { useNow } from "../../src/hooks/useNow";
 import { RemovedTask } from "../../src/hooks/useTasks";
 import { pickReminderFields } from "../../src/reminders";
 import { useTaskStore } from "../../src/store/TasksContext";
@@ -30,6 +31,7 @@ export default function QuadrantScreen() {
   const [timerTaskId, setTimerTaskId] = useState<string | null>(null);
   const [showDone, setShowDone] = useState(false);
   const [undo, setUndo] = useState<Undo | null>(null);
+  const now = useNow();
   const undoTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(
@@ -84,12 +86,33 @@ export default function QuadrantScreen() {
 
   const openEdit = (id: string) => router.push({ pathname: "/task", params: { id } });
 
+  const handleSnooze = (id: string) => {
+    const previous = store.tasks.find((t) => t.id === id)?.snoozedUntil ?? null;
+    store.snoozeTask(id);
+    store.requestNotificationPermission().catch(() => {});
+    offerUndo("Relance reportée d'1 h", () => store.setSnoozedUntil(id, previous));
+  };
+
+  const handleMoveToDo = (id: string) => {
+    const before = store.tasks.find((t) => t.id === id);
+    store.moveTask(id, "UI");
+    if (before) {
+      offerUndo("Passée en Faire", () =>
+        store.updateTask(id, { category: before.category, ...pickReminderFields(before) })
+      );
+    }
+  };
+
   const cardProps = {
     category,
     onToggleDone: handleToggle,
     onDelete: handleDelete,
     onPress: openEdit,
     onOpenMenu: setMenuTaskId,
+    onSnooze: handleSnooze,
+    onMoveToDo: handleMoveToDo,
+    settings: store.settings,
+    now,
   };
 
   return (

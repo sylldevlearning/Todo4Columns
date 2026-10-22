@@ -1,8 +1,11 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { CategoryInfo } from "../constants/categories";
-import { formatDue } from "../format";
+import { formatDue, formatDuration } from "../format";
+import { isWaiting, nextFollowUp } from "../notifications/status";
 import { reminderLabel } from "../reminders";
+import { DEFAULT_SETTINGS, Settings } from "../settings";
+import { colors } from "../theme";
 import { Task } from "../types";
 import Chip from "./Chip";
 import { useRemaining } from "./Countdown";
@@ -11,6 +14,8 @@ interface Props {
   task: Task;
   category: CategoryInfo;
   compact?: boolean; // grille : minuteur et échéance seulement
+  settings?: Settings;
+  now?: number;
 }
 
 function TimerChip({ endTs, category }: { endTs: number; category: CategoryInfo }) {
@@ -25,47 +30,78 @@ function TimerChip({ endTs, category }: { endTs: number; category: CategoryInfo 
   );
 }
 
-// Puces d'une tâche : minuteur restant, échéance, rappel, personne
-export default function TaskChips({ task, category, compact = false }: Props) {
-  const reminder = compact ? null : reminderLabel(task);
-  const hasChips =
-    task.timerEnd !== null ||
-    task.dueAt !== null ||
-    reminder !== null ||
-    (!compact && task.delegatedTo !== null);
-  if (!hasChips) return null;
+// Puces d'une tâche : minuteur, attente, prochaine relance, échéance, rappel, personne
+export default function TaskChips({
+  task,
+  category,
+  compact = false,
+  settings = DEFAULT_SETTINGS,
+  now = Date.now(),
+}: Props) {
+  const chipColors = { color: category.color, textColor: category.textColor };
+  const chips: React.ReactElement[] = [];
 
-  return (
-    <View style={styles.row}>
-      {task.timerEnd !== null && (
-        <TimerChip endTs={task.timerEnd} category={category} />
-      )}
-      {task.dueAt !== null && (
+  if (task.timerEnd !== null) {
+    chips.push(<TimerChip key="timer" endTs={task.timerEnd} category={category} />);
+  }
+
+  if (!compact) {
+    if (isWaiting(task, now)) {
+      chips.push(
         <Chip
-          icon="calendar-outline"
-          label={formatDue(task.dueAt)}
-          color={category.color}
-          textColor={category.textColor}
+          key="waiting"
+          icon="hourglass-outline"
+          label={`En attente depuis ${formatDuration(now - task.updatedAt)}`}
+          color={colors.warning}
+          textColor={colors.warning}
         />
-      )}
-      {reminder !== null && (
+      );
+    }
+    const next = task.category === "INU" ? null : nextFollowUp(task, settings, now);
+    if (next) {
+      chips.push(
         <Chip
+          key="next"
           icon="notifications-outline"
-          label={reminder}
-          color={category.color}
-          textColor={category.textColor}
+          label={`Relance dans ${formatDuration(next.date - now, "up")}`}
+          {...chipColors}
         />
-      )}
-      {!compact && task.delegatedTo !== null && (
-        <Chip
-          icon="person-outline"
-          label={task.delegatedTo}
-          color={category.color}
-          textColor={category.textColor}
-        />
-      )}
-    </View>
-  );
+      );
+      if (next.type === "nag" && next.nagTotal! > 1) {
+        chips.push(
+          <Chip
+            key="count"
+            icon="repeat"
+            label={`Relance ${next.nagIndex}/${next.nagTotal}`}
+            {...chipColors}
+          />
+        );
+      }
+    }
+  }
+
+  if (task.dueAt !== null) {
+    chips.push(
+      <Chip key="due" icon="calendar-outline" label={formatDue(task.dueAt)} {...chipColors} />
+    );
+  }
+
+  if (!compact) {
+    const reminder = task.category === "INU" ? reminderLabel(task) : null;
+    if (reminder) {
+      chips.push(
+        <Chip key="reminder" icon="notifications-outline" label={reminder} {...chipColors} />
+      );
+    }
+    if (task.delegatedTo !== null) {
+      chips.push(
+        <Chip key="person" icon="person-outline" label={task.delegatedTo} {...chipColors} />
+      );
+    }
+  }
+
+  if (chips.length === 0) return null;
+  return <View style={styles.row}>{chips}</View>;
 }
 
 const styles = StyleSheet.create({

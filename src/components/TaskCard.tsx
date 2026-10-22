@@ -11,7 +11,10 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { CategoryInfo } from "../constants/categories";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { isWaiting } from "../notifications/status";
+import { Settings } from "../settings";
 import { Task } from "../types";
+import TaskAlerts from "./TaskAlerts";
 import IconButton from "./IconButton";
 import TaskChips from "./TaskChips";
 
@@ -25,6 +28,10 @@ interface Props {
   onDelete: (id: string) => void; // glissement vers la gauche
   onPress: (id: string) => void; // ouvre la modification
   onOpenMenu: (id: string) => void;
+  onSnooze: (id: string) => void; // « Reporter 1 h » d'une tâche en attente
+  onMoveToDo: (id: string) => void; // « Passer en Faire » à échéance passée
+  settings: Settings;
+  now: number;
 }
 
 // Carte de tâche : glisser à droite pour terminer, à gauche pour supprimer
@@ -35,8 +42,13 @@ export default function TaskCard({
   onDelete,
   onPress,
   onOpenMenu,
+  onSnooze,
+  onMoveToDo,
+  settings,
+  now,
 }: Props) {
   const translateX = useSharedValue(0);
+  const waiting = isWaiting(task, now);
 
   const complete = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -101,7 +113,7 @@ export default function TaskCard({
               else onPress(task.id);
             }}
             onPress={() => onPress(task.id)}
-            style={styles.card}
+            style={[styles.card, waiting && styles.cardWaiting]}
           >
             <Pressable
               accessibilityRole="checkbox"
@@ -130,7 +142,18 @@ export default function TaskCard({
               >
                 {task.title}
               </Text>
-              {!task.isDone && <TaskChips task={task} category={category} />}
+              {!task.isDone && (
+                <>
+                  <TaskChips task={task} category={category} settings={settings} now={now} />
+                  <TaskAlerts
+                    task={task}
+                    now={now}
+                    onSnooze={onSnooze}
+                    onMove={onOpenMenu}
+                    onMoveToDo={onMoveToDo}
+                  />
+                </>
+              )}
             </View>
 
             <IconButton
@@ -185,6 +208,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 16,
+  },
+  cardWaiting: {
+    borderColor: colors.warning,
+    borderWidth: 1.5,
   },
   checkArea: {
     width: TOUCH_SIZE + 8,

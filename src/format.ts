@@ -16,6 +16,19 @@ export function formatDue(ts: number): string {
   return `${capitalize(weekday)} ${day} · ${time}`;
 }
 
+// Durée lisible : « 45 min », « 1 h 20 », « 3 h », « 2 j »
+// round : "up" pour un délai à venir, "down" pour un temps écoulé
+export function formatDuration(ms: number, round: "up" | "down" = "down"): string {
+  const minutes = Math.max(round === "up" ? Math.ceil(ms / 60000) : Math.floor(ms / 60000), 0);
+  if (minutes < 60) return `${minutes} min`;
+  if (minutes < 24 * 60) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m === 0 ? `${h} h` : `${h} h ${m.toString().padStart(2, "0")}`;
+  }
+  return `${Math.floor(minutes / (24 * 60))} j`;
+}
+
 // « 1 tâche », « 3 tâches »
 export function plural(n: number, word: string): string {
   return `${n} ${word}${n > 1 ? "s" : ""}`;

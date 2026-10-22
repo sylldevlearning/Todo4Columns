@@ -7,6 +7,7 @@ export const colors = {
   text: "#F3F4F6",
   textMuted: "#A1A7B3",
   success: "#2FA578",
+  warning: "#F2B33D", // tâche en attente
   danger: "#E5484D",
   white: "#FFFFFF",
 };
