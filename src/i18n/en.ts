@@ -1,0 +1,203 @@
+import { Translations } from "./fr";
+
+// English texts (same keys as fr.ts)
+const s = (n: number) => (n === 1 ? "" : "s");
+
+export const en: Translations = {
+  locale: "en-US",
+
+  common: {
+    cancel: "Cancel",
+    back: "Back",
+    delete: "Delete",
+    settings: "Settings",
+    openPhoneSettings: "Open phone settings",
+  },
+
+  categories: {
+    UI: {
+      name: "Do",
+      subtitle: "Now",
+      axisLabel: "Urgent and important",
+      description: "Urgent and important: do it yourself, now.",
+    },
+    INU: {
+      name: "Schedule",
+      subtitle: "Block time for it",
+      axisLabel: "Important, not urgent",
+      description: "Important but not urgent: block time to get it done.",
+    },
+    UDI: {
+      name: "Delegate",
+      subtitle: "Hand off and follow up",
+      axisLabel: "Urgent, not important",
+      description: "Urgent but not important: hand it off and follow up.",
+    },
+    NDNI: {
+      name: "Delete",
+      subtitle: "Let it go",
+      axisLabel: "Neither urgent nor important",
+      description: "Neither urgent nor important: let it go.",
+    },
+  },
+
+  matrix: {
+    title: "My matrix",
+    taskCount: (n) => `${n} task${s(n)}`,
+    newTask: "New task",
+    urgent: "Urgent",
+    notUrgent: "Not urgent",
+    important: "Important",
+    notImportant: "Not important",
+    cellLabel: (name, n) => `${name}, ${n} task${s(n)} to do`,
+    others: (n) => `+${n} more`,
+    empty: "No tasks",
+  },
+
+  quadrant: {
+    subtitle: (axis, n) => `${axis} · ${n} to do`,
+    empty: "Nothing to do here for now.",
+    done: (n) => `Done · ${n}`,
+    clearDone: "Clear done",
+    newTaskIn: (name) => `New task in ${name}`,
+  },
+
+  undo: {
+    action: "Undo",
+    reopened: "Task reopened",
+    completed: "Task completed",
+    deleted: (n) => (n > 1 ? `${n} tasks deleted` : "Task deleted"),
+    snoozed: "Reminder snoozed for 1 h",
+    movedToDo: "Moved to Do",
+    movedTo: (name) => `Moved to ${name}`,
+  },
+
+  card: {
+    markTodo: (title) => `Mark “${title}” as to do`,
+    markDone: (title) => `Mark “${title}” as done`,
+    reopen: "Reopen",
+    complete: "Complete",
+    edit: (title) => `Edit “${title}”`,
+    options: (title) => `Options for “${title}”`,
+    snooze: "Snooze 1 h",
+    move: "Move…",
+    moveToDo: "Move to Do",
+  },
+
+  chips: {
+    waitingSince: (duration) => `Waiting for ${duration}`,
+    nextIn: (duration) => `Reminder in ${duration}`,
+    nagCount: (index, total) => `Reminder ${index}/${total}`,
+  },
+
+  menu: {
+    close: "Close menu",
+    moveTo: "Move to…",
+    moveToLabel: (name) => `Move to ${name}`,
+    timer: "Timer",
+  },
+
+  timer: {
+    title: "Timer",
+    subtitle: "Duration in minutes",
+    placeholder: "E.g. 25",
+    inputLabel: "Timer duration in minutes",
+    invalidTitle: "Invalid duration",
+    invalidBody: "Please enter a valid number of minutes.",
+    start: "Start",
+    expiredTitle: "Time's up",
+    expiredOne: (title) => `Time is up for “${title}”!`,
+    expiredMany: (titles) => `Time is up for: ${titles.map((x) => `“${x}”`).join(", ")}`,
+  },
+
+  form: {
+    newTitle: "New task",
+    editTitle: "Edit task",
+    titlePlaceholder: "Task title",
+    titleLabel: "Title",
+    urgentQuestion: "Is it urgent?",
+    urgentHint: "Needs handling within 48 h",
+    importantQuestion: "Is it important?",
+    importantHint: "It matters for your goals",
+    doNag: "Remind me if not done after",
+    repeat: (max) => `Repeat until done (${max} max)`,
+    due: "Due date",
+    remindMe: "Remind me",
+    delegatedTo: "Assigned to",
+    personPlaceholder: "Person's name",
+    followUp: "Follow up with them",
+    ndniNote: "No reminder. The task will be archived automatically in 7 days.",
+    notificationsDenied: "Notifications are turned off: this reminder won't show up.",
+    save: "Save",
+    addTo: (name) => `Add to ${name}`,
+  },
+
+  dueDate: {
+    add: "Add a due date",
+    label: (date) => `Due: ${date}`,
+    remove: "Remove due date",
+  },
+
+  reminders: {
+    min: (n) => `${n} min`,
+    hours: (n) => `${n} h`,
+    hoursMinutes: (h, m) => `${h} h ${m}`,
+    days: (n) => `${n} d`,
+    oneDay: "1 day",
+    never: "Never",
+    onTheDay: "On the day",
+    oneHourBefore: "1 h before",
+    dayBefore: "The day before",
+    oneMinuteBefore: "1 min before",
+    tomorrow: "Tomorrow",
+    inThreeDays: "In 3 days",
+    oneWeek: "In 1 week",
+    nagLabel: (option, repeated) => `Reminder ${option}${repeated ? " · repeated" : ""}`,
+    followUpLabel: (option) => `Follow up ${option.toLowerCase()}`,
+  },
+
+  settings: {
+    title: "Settings",
+    defaults: "Default reminders",
+    doField: "Do · remind me if not done after",
+    repeatUntilDone: "Repeat until done",
+    maxNags: "Maximum number of reminders",
+    planField: "Schedule · remind me",
+    delegateField: "Delegate · follow up",
+    quietHours: "Quiet hours",
+    quietHoursHint: "Reminders due during quiet hours are moved to when they end.",
+    start: "Start",
+    end: "End",
+    notifications: "Notifications",
+    permission: {
+      granted: "Allowed",
+      denied: "Denied: no reminders will show up",
+      undetermined: "Not requested yet",
+    },
+    allowNotifications: "Allow notifications",
+    archives: (n) => `Archive · ${n}`,
+    archivesHint: "“Delete” tasks left undone for 7 days are archived here.",
+    archivedOn: (date) => `Archived ${date}`,
+    restore: "Restore",
+    deleteForever: "Delete permanently",
+    deleteForeverBody: (title) => `“${title}” will be deleted for good.`,
+    androidDelay: "On Android, a reminder may arrive a few minutes late.",
+  },
+
+  notifications: {
+    channel: "Reminders",
+    actionDone: "Done",
+    actionSnooze: "Snooze 1 h",
+    actionOpen: "Open",
+    nag: "Still not done?",
+    nagCount: (index, total) => `Still not done? Reminder ${index}/${total}`,
+    nagSnoozed: "Snoozed reminder: still not done?",
+    dueSoon: (date) => `Due: ${date}`,
+    dueReached: "Due date reached. Move it to Do?",
+    planSnoozed: "Snoozed reminder: is it time?",
+    delegate: (person) => (person ? `Any news from ${person}?` : "Any news?"),
+    delegateSnoozed: (person) =>
+      person ? `Snoozed reminder: any news from ${person}?` : "Snoozed reminder: any news?",
+    timerDone: "Timer finished",
+  },
+};

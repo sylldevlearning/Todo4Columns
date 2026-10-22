@@ -50,7 +50,8 @@
           "color": "#FF7A59",
           "defaultChannel": "reminders"
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "scheme": "todo4columns"
   }

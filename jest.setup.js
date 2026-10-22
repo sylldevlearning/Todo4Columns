@@ -9,3 +9,8 @@ jest.mock("expo-notifications", () => require("./jest/expo-notifications-mock"))
 beforeEach(() => {
   require("expo-notifications").__reset();
 });
+
+// Téléphone en français par défaut (les tests i18n changent la langue au cas par cas)
+jest.mock("expo-localization", () => ({
+  getLocales: jest.fn(() => [{ languageCode: "fr", languageTag: "fr-FR" }]),
+}));
