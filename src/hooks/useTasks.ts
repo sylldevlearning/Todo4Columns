@@ -55,7 +55,11 @@ export function useTasks() {
 
       const expiredIds = new Set(expired.map((t) => t.id));
       setTasks((prev) =>
-        prev.map((t) => (expiredIds.has(t.id) ? { ...t, timerEnd: null } : t))
+        prev.map((t) =>
+          expiredIds.has(t.id)
+            ? { ...t, timerEnd: null, updatedAt: Date.now() }
+            : t
+        )
       );
       Alert.alert(
         "Temps écoulé",
@@ -75,19 +79,29 @@ export function useTasks() {
   }, [tasks]);
 
   const addTask = (title: string, category: Category) => {
+    const now = Date.now();
     const newTask: Task = {
-      id: Date.now().toString(),
+      id: now.toString(),
       title,
       category,
       isDone: false,
       timerEnd: null,
+      createdAt: now,
+      updatedAt: now,
+      dueAt: null,
+      reminderOffset: null,
+      nagInterval: null,
+      nagRepeat: false,
+      notificationIds: [],
     };
     setTasks((prev) => [...prev, newTask]);
   };
 
   const toggleDone = (id: string) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, isDone: !t.isDone } : t))
+      prev.map((t) =>
+        t.id === id ? { ...t, isDone: !t.isDone, updatedAt: Date.now() } : t
+      )
     );
   };
 
@@ -98,7 +112,11 @@ export function useTasks() {
   const startTimer = (id: string, minutes: number) => {
     const endTimestamp = Date.now() + minutes * 60 * 1000;
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, timerEnd: endTimestamp } : t))
+      prev.map((t) =>
+        t.id === id
+          ? { ...t, timerEnd: endTimestamp, updatedAt: Date.now() }
+          : t
+      )
     );
   };
 

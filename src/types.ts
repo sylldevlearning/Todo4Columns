@@ -7,4 +7,12 @@ export interface Task {
   category: Category;
   isDone: boolean;
   timerEnd: number | null; // timestamp en ms où le timer se termine, ou null
+  createdAt: number; // timestamp en ms
+  updatedAt: number; // timestamp en ms de la dernière modification
+  // Champs préparés pour les rappels, pas encore utilisés dans l'UI
+  dueAt: number | null; // échéance (timestamp en ms)
+  reminderOffset: number | null; // rappel, en minutes avant dueAt
+  nagInterval: number | null; // délai entre deux relances, en minutes
+  nagRepeat: boolean; // relances répétées
+  notificationIds: string[]; // notifications programmées pour cette tâche
 }
