@@ -1,0 +1,286 @@
+import React, { ReactNode } from "react";
+import { Platform, Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { CATEGORY_BY_KEY } from "../constants/categories";
+import { formatDue } from "../format";
+import { PermissionState } from "../notifications/setup";
+import {
+  DELEGATE_FOLLOW_UP_OPTIONS,
+  DO_NAG_OPTIONS,
+  PLAN_REMINDER_OPTIONS,
+  ReminderOption,
+} from "../reminders";
+import { Settings } from "../settings";
+import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { Task } from "../types";
+import OptionPills from "./OptionPills";
+import TimeField from "./TimeField";
+
+// Dans les réglages, la relance par défaut de « Faire » ne peut pas être « Jamais »
+const DEFAULT_NAG_OPTIONS = DO_NAG_OPTIONS.filter((o) => o.value !== null);
+const MAX_NAGS_OPTIONS: ReminderOption[] = [2, 3, 5].map((n) => ({ label: String(n), value: n }));
+
+const PERMISSION_LABELS: Record<PermissionState, string> = {
+  granted: "Autorisées",
+  denied: "Refusées : aucun rappel ne s'affichera",
+  undetermined: "Pas encore demandées",
+};
+
+interface Props {
+  settings: Settings;
+  onChange: (settings: Settings) => void;
+  permission: PermissionState | null;
+  onRequestPermission: () => void;
+  onOpenSystemSettings: () => void;
+  archivedTasks: Task[];
+  onRestore: (id: string) => void;
+  onDeleteForever: (id: string) => void;
+}
+
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle} accessibilityRole="header">
+        {title}
+      </Text>
+      <View style={styles.card}>{children}</View>
+    </View>
+  );
+}
+
+function Field({ label, color, children }: { label: string; color?: string; children: ReactNode }) {
+  return (
+    <View style={styles.field}>
+      <Text style={[styles.fieldLabel, color ? { color } : null]}>{label}</Text>
+      {children}
+    </View>
+  );
+}
+
+function TextButton({ label, onPress, color = colors.text }: { label: string; onPress: () => void; color?: string }) {
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.textButton}>
+      <Text style={[styles.textButtonLabel, { color }]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+// Contenu de l'écran Réglages
+export default function SettingsForm({
+  settings,
+  onChange,
+  permission,
+  onRequestPermission,
+  onOpenSystemSettings,
+  archivedTasks,
+  onRestore,
+  onDeleteForever,
+}: Props) {
+  const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
+    onChange({ ...settings, [key]: value });
+  const doIt = CATEGORY_BY_KEY.UI;
+  const plan = CATEGORY_BY_KEY.INU;
+  const delegate = CATEGORY_BY_KEY.UDI;
+  const pills = (c: typeof doIt) => ({ color: c.color, onColor: c.onColor });
+
+  return (
+    <View style={styles.container}>
+      <Section title="Rappels par défaut">
+        <Field label="Faire · relancer si pas faite après" color={doIt.textColor}>
+          <OptionPills
+            options={DEFAULT_NAG_OPTIONS}
+            value={settings.doNagInterval}
+            onChange={(v) => v !== null && set("doNagInterval", v)}
+            {...pills(doIt)}
+          />
+        </Field>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>Répéter jusqu'à ce que ce soit fait</Text>
+          <Switch
+            accessibilityLabel="Répéter jusqu'à ce que ce soit fait"
+            value={settings.nagRepeat}
+            onValueChange={(v) => set("nagRepeat", v)}
+            trackColor={{ false: colors.border, true: doIt.color }}
+            thumbColor={colors.white}
+          />
+        </View>
+        <Field label="Nombre maximum de relances">
+          <OptionPills
+            options={MAX_NAGS_OPTIONS}
+            value={settings.maxNags}
+            onChange={(v) => v !== null && set("maxNags", v)}
+            {...pills(doIt)}
+          />
+        </Field>
+        <Field label="Planifier · me rappeler" color={plan.textColor}>
+          <OptionPills
+            options={PLAN_REMINDER_OPTIONS}
+            value={settings.planReminderOffset}
+            onChange={(v) => v !== null && set("planReminderOffset", v)}
+            {...pills(plan)}
+          />
+        </Field>
+        <Field label="Déléguer · relancer la personne" color={delegate.textColor}>
+          <OptionPills
+            options={DELEGATE_FOLLOW_UP_OPTIONS}
+            value={settings.delegateFollowUp}
+            onChange={(v) => v !== null && set("delegateFollowUp", v)}
+            {...pills(delegate)}
+          />
+        </Field>
+      </Section>
+
+      <Section title="Plage silencieuse">
+        <Text style={styles.hint}>
+          Les rappels prévus pendant cette plage sont décalés à sa fin.
+        </Text>
+        <TimeField
+          label="Début"
+          value={settings.quietHoursStart}
+          onChange={(v) => set("quietHoursStart", v)}
+        />
+        <View style={styles.separator} />
+        <TimeField
+          label="Fin"
+          value={settings.quietHoursEnd}
+          onChange={(v) => set("quietHoursEnd", v)}
+        />
+      </Section>
+
+      <Section title="Notifications">
+        <Text style={styles.status}>
+          {permission === null ? "…" : PERMISSION_LABELS[permission]}
+        </Text>
+        {permission === "undetermined" && (
+          <TextButton label="Autoriser les notifications" onPress={onRequestPermission} />
+        )}
+        <TextButton label="Ouvrir les réglages du téléphone" onPress={onOpenSystemSettings} />
+      </Section>
+
+      <Section title={`Archives · ${archivedTasks.length}`}>
+        {archivedTasks.length === 0 ? (
+          <Text style={styles.hint}>
+            Les tâches « Éliminer » restées 7 jours sans être faites sont archivées ici.
+          </Text>
+        ) : (
+          archivedTasks.map((task, i) => (
+            <View key={task.id} style={[styles.archived, i > 0 && styles.archivedBorder]}>
+              <Text style={styles.archivedTitle}>{task.title}</Text>
+              <Text style={styles.archivedDate}>Archivée {formatDue(task.archivedAt!)}</Text>
+              <View style={styles.archivedActions}>
+                <TextButton label="Restaurer" onPress={() => onRestore(task.id)} />
+                <TextButton
+                  label="Supprimer définitivement"
+                  color={colors.danger}
+                  onPress={() => onDeleteForever(task.id)}
+                />
+              </View>
+            </View>
+          ))
+        )}
+      </Section>
+
+      {Platform.OS === "android" && (
+        <Text style={styles.footnote}>
+          Sur Android, un rappel peut arriver avec quelques minutes de décalage.
+        </Text>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 24,
+  },
+  section: {
+    gap: 8,
+  },
+  sectionTitle: {
+    fontFamily: fonts.bold,
+    fontSize: 13,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: colors.textMuted,
+    paddingHorizontal: 4,
+  },
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 16,
+    gap: 12,
+  },
+  field: {
+    gap: 8,
+  },
+  fieldLabel: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    color: colors.text,
+  },
+  switchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    minHeight: TOUCH_SIZE,
+    gap: 12,
+  },
+  switchLabel: {
+    flex: 1,
+    fontFamily: fonts.semibold,
+    fontSize: 15,
+    color: colors.text,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  hint: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  status: {
+    fontFamily: fonts.semibold,
+    fontSize: 15,
+    color: colors.text,
+  },
+  textButton: {
+    minHeight: TOUCH_SIZE,
+    justifyContent: "center",
+  },
+  textButtonLabel: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    textDecorationLine: "underline",
+  },
+  archived: {
+    gap: 2,
+  },
+  archivedBorder: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 12,
+  },
+  archivedTitle: {
+    fontFamily: fonts.semibold,
+    fontSize: 15,
+    color: colors.text,
+  },
+  archivedDate: {
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    color: colors.textMuted,
+  },
+  archivedActions: {
+    flexDirection: "row",
+    gap: 20,
+  },
+  footnote: {
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    color: colors.textMuted,
+    textAlign: "center",
+  },
+});

@@ -14,12 +14,18 @@ describe("settings", () => {
     expect(DEFAULT_SETTINGS).toEqual({
       planReminderOffset: 1440,
       doNagInterval: 120,
+      delegateFollowUp: 1440,
       nagRepeat: false,
       maxNags: 3,
       quietHoursStart: "22:00",
       quietHoursEnd: "08:00",
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
+  });
+
+  it("accepte « Le jour J » (0 min) pour Planifier", () => {
+    const json = JSON.stringify({ schemaVersion: 1, settings: { planReminderOffset: 0 } });
+    expect(parseSettings(json).planReminderOffset).toBe(0);
   });
 
   it("remplace les valeurs invalides par les valeurs par défaut", () => {

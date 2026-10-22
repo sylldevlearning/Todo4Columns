@@ -1,12 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Réglages des rappels : préparés pour une prochaine version, pas encore utilisés dans l'UI
+// Réglages des rappels, modifiables dans l'écran Réglages
 export const SETTINGS_KEY = "SETTINGS";
 export const SETTINGS_SCHEMA_VERSION = 1;
 
 export interface Settings {
   planReminderOffset: number; // rappel des tâches « Planifier » (INU), en minutes avant l'échéance
   doNagInterval: number; // relance des tâches « Faire » (UI) non cochées, en minutes
+  delegateFollowUp: number; // relance de la personne pour « Déléguer » (UDI), en minutes
   nagRepeat: boolean; // répéter la relance
   maxNags: number; // nombre maximum de relances
   quietHoursStart: string; // début de la plage silencieuse, "HH:MM"
@@ -16,6 +17,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   planReminderOffset: 24 * 60, // 1 jour avant
   doNagInterval: 120,
+  delegateFollowUp: 24 * 60, // demain
   nagRepeat: false,
   maxNags: 3,
   quietHoursStart: "22:00",
@@ -23,6 +25,9 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+const isNonNegativeNumber = (v: unknown): v is number =>
+  typeof v === "number" && Number.isFinite(v) && v >= 0;
 
 const isPositiveNumber = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v) && v > 0;
@@ -45,12 +50,15 @@ export function parseSettings(json: string | null): Settings {
   const s = raw as Record<string, unknown>;
 
   return {
-    planReminderOffset: isPositiveNumber(s.planReminderOffset)
+    planReminderOffset: isNonNegativeNumber(s.planReminderOffset) // 0 = « Le jour J »
       ? s.planReminderOffset
       : DEFAULT_SETTINGS.planReminderOffset,
     doNagInterval: isPositiveNumber(s.doNagInterval)
       ? s.doNagInterval
       : DEFAULT_SETTINGS.doNagInterval,
+    delegateFollowUp: isPositiveNumber(s.delegateFollowUp)
+      ? s.delegateFollowUp
+      : DEFAULT_SETTINGS.delegateFollowUp,
     nagRepeat:
       typeof s.nagRepeat === "boolean" ? s.nagRepeat : DEFAULT_SETTINGS.nagRepeat,
     maxNags:

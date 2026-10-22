@@ -53,7 +53,7 @@ export function defaultReminderFields(
     case "INU":
       return { ...EMPTY_REMINDER_FIELDS, reminderOffset: settings.planReminderOffset };
     case "UDI":
-      return { ...EMPTY_REMINDER_FIELDS, nagInterval: DELEGATE_FOLLOW_UP_OPTIONS[0].value };
+      return { ...EMPTY_REMINDER_FIELDS, nagInterval: settings.delegateFollowUp };
     case "NDNI":
       return { ...EMPTY_REMINDER_FIELDS };
   }

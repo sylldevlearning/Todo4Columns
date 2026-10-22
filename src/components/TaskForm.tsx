@@ -101,7 +101,7 @@ export default function TaskForm({
   const [delegateFollowUp, setDelegateFollowUp] = useState<number | null>(
     task?.category === "UDI" && task.nagInterval !== null
       ? task.nagInterval
-      : DELEGATE_FOLLOW_UP_OPTIONS[0].value
+      : settings.delegateFollowUp
   );
 
   const category = CATEGORY_BY_KEY[categoryFromFlags(urgent, important)];
