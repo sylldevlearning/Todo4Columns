@@ -1,4 +1,5 @@
 import { formatDue } from "../format";
+import { t } from "../i18n";
 import { Settings } from "../settings";
 import { Task } from "../types";
 
@@ -60,7 +61,7 @@ function nagNotifications(task: Task, settings: Settings): ScheduledNotification
     type: "nag",
     content: {
       title: task.title,
-      body: total > 1 ? `Toujours pas faite ? Relance ${index}/${total}` : "Toujours pas faite ?",
+      body: total > 1 ? t.notifications.nagCount(index, total) : t.notifications.nag,
     },
     nagIndex: index,
     nagTotal: total,
@@ -76,7 +77,7 @@ function nagNotifications(task: Task, settings: Settings): ScheduledNotification
     {
       date: task.snoozedUntil,
       type: "snooze",
-      content: { title: task.title, body: "Rappel reporté : toujours pas faite ?" },
+      content: { title: task.title, body: t.notifications.nagSnoozed },
     },
   ];
   for (let index = sent + 1; index <= total; index++) {
@@ -112,16 +113,16 @@ export function computeSchedule(
           items.push({
             date: task.dueAt - task.reminderOffset * MINUTE,
             type: "reminder",
-            content: { title: task.title, body: `Échéance : ${formatDue(task.dueAt)}` },
+            content: { title: task.title, body: t.notifications.dueSoon(formatDue(task.dueAt)) },
           });
         }
         items.push({
           date: task.dueAt,
           type: "due",
-          content: { title: task.title, body: "Échéance atteinte, passer en Faire ?" },
+          content: { title: task.title, body: t.notifications.dueReached },
         });
       }
-      items.push(...snoozeNotification(task, "Rappel reporté : c'est le moment ?"));
+      items.push(...snoozeNotification(task, t.notifications.planSnoozed));
       break;
     case "UDI":
       if (task.nagInterval !== null) {
@@ -130,20 +131,11 @@ export function computeSchedule(
           type: "delegate",
           content: {
             title: task.title,
-            body: task.delegatedTo
-              ? `As-tu des nouvelles de ${task.delegatedTo} ?`
-              : "As-tu des nouvelles ?",
+            body: t.notifications.delegate(task.delegatedTo),
           },
         });
       }
-      items.push(
-        ...snoozeNotification(
-          task,
-          task.delegatedTo
-            ? `Rappel reporté : des nouvelles de ${task.delegatedTo} ?`
-            : "Rappel reporté : des nouvelles ?"
-        )
-      );
+      items.push(...snoozeNotification(task, t.notifications.delegateSnoozed(task.delegatedTo)));
       break;
   }
 
@@ -151,7 +143,7 @@ export function computeSchedule(
     items.push({
       date: task.timerEnd,
       type: "timer",
-      content: { title: task.title, body: "Minuteur terminé" },
+      content: { title: task.title, body: t.notifications.timerDone },
     });
   }
 

@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Linking, Platform } from "react-native";
+import { t } from "../i18n";
 import { NotificationData, CATEGORY_ID, CHANNEL_ID } from "./service";
 
 // Identifiants des boutons de notification
@@ -27,19 +28,19 @@ export async function configureNotifications(): Promise<void> {
 
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: "Rappels",
+      name: t.notifications.channel,
       importance: Notifications.AndroidImportance.HIGH,
     });
   }
 
   await Notifications.setNotificationCategoryAsync(CATEGORY_ID, [
-    { identifier: ACTION_DONE, buttonTitle: "Fait", options: { opensAppToForeground: false } },
+    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: false } },
     {
       identifier: ACTION_SNOOZE,
-      buttonTitle: "Reporter 1 h",
+      buttonTitle: t.notifications.actionSnooze,
       options: { opensAppToForeground: false },
     },
-    { identifier: ACTION_OPEN, buttonTitle: "Ouvrir", options: { opensAppToForeground: true } },
+    { identifier: ACTION_OPEN, buttonTitle: t.notifications.actionOpen, options: { opensAppToForeground: true } },
   ]);
 }
 
