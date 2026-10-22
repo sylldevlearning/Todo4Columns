@@ -181,7 +181,7 @@ function toTask(obj: Raw, hints: string[], now: number): Task {
     timerEnd: null,
     createdAt,
     updatedAt: now,
-    categoryChangedAt: now, // pas d'archivage immédiat des tâches « Éliminer »
+    categoryChangedAt: now, // pas d'archivage immédiat des tâches « Si j'ai le temps » (NDNI)
     archivedAt: null,
     snoozedUntil: null,
     notificationIds: [],
