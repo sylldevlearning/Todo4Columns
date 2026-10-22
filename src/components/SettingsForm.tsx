@@ -151,6 +151,22 @@ export default function SettingsForm({
         <TextButton label={t.common.openPhoneSettings} onPress={onOpenSystemSettings} />
       </Section>
 
+      <Section title={t.settings.animations}>
+        <View style={styles.switchRow}>
+          <View style={styles.switchText}>
+            <Text style={styles.switchLabel}>{t.settings.celebrations}</Text>
+            <Text style={styles.hint}>{t.settings.celebrationsHint}</Text>
+          </View>
+          <Switch
+            accessibilityLabel={t.settings.celebrations}
+            value={settings.celebrations}
+            onValueChange={(v) => set("celebrations", v)}
+            trackColor={{ false: colors.border, true: doIt.color }}
+            thumbColor={colors.white}
+          />
+        </View>
+      </Section>
+
       <Section title={t.settings.archives(archivedTasks.length)}>
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>{t.settings.autoArchive}</Text>
@@ -227,6 +243,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     minHeight: TOUCH_SIZE,
     gap: 12,
+  },
+  switchText: {
+    flex: 1,
+    gap: 2,
   },
   switchLabel: {
     flex: 1,

@@ -13,6 +13,7 @@ export interface Settings {
   quietHoursStart: string; // début de la plage silencieuse, "HH:MM"
   quietHoursEnd: string; // fin de la plage silencieuse, "HH:MM"
   autoArchive: boolean; // archiver les tâches « Si j'ai le temps » (NDNI) restées 7 jours
+  celebrations: boolean; // confettis et message quand une tâche est terminée
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   quietHoursStart: "22:00",
   quietHoursEnd: "08:00",
   autoArchive: false,
+  celebrations: true,
 };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -78,6 +80,9 @@ export function parseSettings(json: string | null): Settings {
     // Absent des réglages enregistrés avant la 1.1.1 : désactivé
     autoArchive:
       typeof s.autoArchive === "boolean" ? s.autoArchive : DEFAULT_SETTINGS.autoArchive,
+    // Absent des réglages enregistrés avant l'option : activé
+    celebrations:
+      typeof s.celebrations === "boolean" ? s.celebrations : DEFAULT_SETTINGS.celebrations,
   };
 }
 

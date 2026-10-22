@@ -20,8 +20,16 @@ describe("settings", () => {
       quietHoursStart: "22:00",
       quietHoursEnd: "08:00",
       autoArchive: false,
+      celebrations: true,
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
+  });
+
+  it("animations de célébration : activées pour les réglages enregistrés avant l'option", () => {
+    const before = JSON.stringify({ schemaVersion: 1, settings: { autoArchive: true } });
+    expect(parseSettings(before).celebrations).toBe(true);
+    const disabled = JSON.stringify({ schemaVersion: 1, settings: { celebrations: false } });
+    expect(parseSettings(disabled).celebrations).toBe(false);
   });
 
   it("archivage automatique : désactivé pour les réglages enregistrés avant l'option", () => {

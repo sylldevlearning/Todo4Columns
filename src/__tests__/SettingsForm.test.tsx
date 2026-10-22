@@ -58,6 +58,15 @@ describe("SettingsForm", () => {
     expect(props.onOpenSystemSettings).toHaveBeenCalled();
   });
 
+  it("désactive les animations de célébration, activées par défaut", async () => {
+    const props = await setup();
+    const toggle = screen.getByLabelText("Animations de célébration");
+
+    expect(toggle).toHaveProp("value", true);
+    await fireEvent(toggle, "valueChange", false);
+    expect(props.onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, celebrations: false });
+  });
+
   it("active l'archivage automatique, désactivé par défaut", async () => {
     const props = await setup();
     const label = "Archiver automatiquement les tâches « Si j'ai le temps » après 7 jours";
