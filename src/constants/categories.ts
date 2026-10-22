@@ -11,6 +11,6 @@ export interface CategoryInfo {
 export const CATEGORIES: CategoryInfo[] = [
   { key: "UI", shortLabel: "U-I", title: "Urgent + Important", color: "#CF6679" },
   { key: "INU", shortLabel: "NU-I", title: "Important + Non-urgent", color: "#BB86FC" },
-  { key: "UDI", shortLabel: "U-NI", title: "Urgent + Déléguer", color: "#F2B84B" },
+  { key: "UDI", shortLabel: "U-NI", title: "Urgent + Non important", color: "#F2B84B" },
   { key: "NDNI", shortLabel: "NU-NI", title: "Ni Urgent ni Important", color: "#03DAC6" },
 ];

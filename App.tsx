@@ -74,7 +74,7 @@ export default function App() {
           {/* --- HEADER : titre + auteur --- */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>MATRICE</Text>
-            <Text style={styles.headerSubtitle}>eiseinoeur</Text>
+            <Text style={styles.headerSubtitle}>Eisenhower</Text>
           </View>
 
           {/* --- Zone de création de tâche --- */}
@@ -109,6 +109,8 @@ export default function App() {
               placeholderTextColor="#888888"
               value={inputText}
               onChangeText={setInputText}
+              onSubmitEditing={handleAdd}
+              returnKeyType="done"
             />
 
             <TouchableOpacity style={styles.addButton} onPress={handleAdd}>

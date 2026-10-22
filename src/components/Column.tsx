@@ -28,6 +28,9 @@ export default function Column({
         {category.title}
       </Text>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {tasks.length === 0 && (
+          <Text style={styles.emptyText}>Aucune tâche</Text>
+        )}
         {tasks.map((task) => (
           <TaskItem
             key={task.id}
@@ -62,5 +65,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: SPACING / 2,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#777777",
+    fontStyle: "italic",
+    paddingVertical: SPACING,
   },
 });
