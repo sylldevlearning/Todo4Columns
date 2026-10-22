@@ -32,7 +32,14 @@
       ],
       "expo-router",
       "expo-font",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-notifications",
+        {
+          "color": "#FF7A59",
+          "defaultChannel": "reminders"
+        }
+      ]
     ],
     "scheme": "todo4columns"
   }
