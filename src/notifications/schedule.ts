@@ -92,7 +92,8 @@ function snoozeNotification(task: Task, body: string): ScheduledNotification[] {
 }
 
 // Notifications à programmer pour une tâche, triées par date.
-// Les dates en plage silencieuse sont décalées à sa fin, les dates passées sont ignorées.
+// Les dates en plage silencieuse sont décalées à sa fin (sauf les minuteurs),
+// les dates passées sont ignorées.
 export function computeSchedule(
   task: Task,
   settings: Settings,
@@ -157,7 +158,11 @@ export function computeSchedule(
   return items
     .map((item) => ({
       ...item,
-      date: shiftOutOfQuietHours(item.date, settings.quietHoursStart, settings.quietHoursEnd),
+      // Un minuteur sonne toujours à l'heure prévue
+      date:
+        item.type === "timer"
+          ? item.date
+          : shiftOutOfQuietHours(item.date, settings.quietHoursStart, settings.quietHoursEnd),
     }))
     .filter((item) => item.date > now)
     .sort((a, b) => a.date - b.date);

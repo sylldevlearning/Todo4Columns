@@ -165,6 +165,13 @@ describe("computeSchedule", () => {
       expect(items.map((i) => i.date)).toEqual([at(8, 0, 23), at(8, 0, 23), at(8, 0, 23)]);
     });
 
+    it("ne décale jamais un minuteur, même en plage silencieuse", () => {
+      const timer = makeTask({ category: "UI", timerEnd: at(23, 15) });
+      expect(computeSchedule(timer, DEFAULT_SETTINGS, NOW).map((i) => [i.type, i.date])).toEqual([
+        ["timer", at(23, 15)],
+      ]);
+    });
+
     it("ignore une date passée même après décalage", () => {
       const lateTimer = makeTask({ category: "UI", timerEnd: at(9, 30) });
       expect(computeSchedule(lateTimer, NO_QUIET, NOW)).toEqual([]);
