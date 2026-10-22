@@ -14,3 +14,7 @@ beforeEach(() => {
 jest.mock("expo-localization", () => ({
   getLocales: jest.fn(() => [{ languageCode: "fr", languageTag: "fr-FR" }]),
 }));
+
+// Reanimated et Worklets : mocks officiels (pas de thread UI dans Jest)
+jest.mock("react-native-worklets", () => require("react-native-worklets/src/mock"));
+jest.mock("react-native-reanimated", () => require("react-native-reanimated/mock"));
