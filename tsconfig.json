@@ -9,7 +9,8 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "noEmit": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "types": ["jest"] // TypeScript 6 ne charge plus les @types globaux par défaut
   },
 
   "include": ["App.tsx", "src/**/*.ts", "src/**/*.tsx"],
