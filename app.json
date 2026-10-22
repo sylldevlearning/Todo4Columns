@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Todo4Columns",
-    "slug": "Todo4Columns",
+    "name": "Prioritize",
+    "slug": "matrice-eisenhower",
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,14 +10,14 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.saloum.sylla.Todo4Columns"
+      "package": "com.saloum.sylla.matriceeisenhower"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "9c064a91-0d49-4533-91fb-8b1e63760b97"
+        "projectId": "2984d43a-475c-45c9-9ffd-882d4679408f"
       }
     },
     "plugins": [
