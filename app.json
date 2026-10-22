@@ -11,7 +11,12 @@
     },
     "android": {
       "package": "com.saloum.sylla.matriceeisenhower",
-      "versionCode": 7
+      "versionCode": 7,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/monochrome-icon.png",
+        "backgroundColor": "#0F1115"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,7 +33,11 @@
           "image": "./assets/splash-icon.png",
           "resizeMode": "contain",
           "backgroundColor": "#0F1115",
-          "imageWidth": 200
+          "imageWidth": 180,
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#0F1115"
+          }
         }
       ],
       "expo-router",
