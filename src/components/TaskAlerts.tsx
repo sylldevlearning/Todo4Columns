@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
+import { t } from "../i18n";
 import { isPastDue, isWaiting } from "../notifications/status";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Task } from "../types";
@@ -42,8 +43,8 @@ export default function TaskAlerts({ task, now, onSnooze, onMove, onMoveToDo }: 
   if (isWaiting(task, now)) {
     return (
       <View style={styles.row}>
-        <ActionButton label="Reporter 1 h" color={colors.warning} onPress={() => onSnooze(task.id)} />
-        <ActionButton label="Déplacer…" color={colors.text} onPress={() => onMove(task.id)} />
+        <ActionButton label={t.card.snooze} color={colors.warning} onPress={() => onSnooze(task.id)} />
+        <ActionButton label={t.card.move} color={colors.text} onPress={() => onMove(task.id)} />
       </View>
     );
   }
@@ -51,7 +52,7 @@ export default function TaskAlerts({ task, now, onSnooze, onMove, onMoveToDo }: 
     const doIt = CATEGORY_BY_KEY.UI;
     return (
       <View style={styles.row}>
-        <ActionButton label="Passer en Faire" color={doIt.textColor} onPress={() => onMoveToDo(task.id)} />
+        <ActionButton label={t.card.moveToDo} color={doIt.textColor} onPress={() => onMoveToDo(task.id)} />
       </View>
     );
   }

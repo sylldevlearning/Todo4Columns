@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { CategoryInfo } from "../constants/categories";
 import { formatDue, formatDuration } from "../format";
+import { t } from "../i18n";
 import { isWaiting, nextFollowUp } from "../notifications/status";
 import { reminderLabel } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
@@ -51,7 +52,7 @@ export default function TaskChips({
         <Chip
           key="waiting"
           icon="hourglass-outline"
-          label={`En attente depuis ${formatDuration(now - task.updatedAt)}`}
+          label={t.chips.waitingSince(formatDuration(now - task.updatedAt))}
           color={colors.warning}
           textColor={colors.warning}
         />
@@ -63,7 +64,7 @@ export default function TaskChips({
         <Chip
           key="next"
           icon="notifications-outline"
-          label={`Relance dans ${formatDuration(next.date - now, "up")}`}
+          label={t.chips.nextIn(formatDuration(next.date - now, "up"))}
           {...chipColors}
         />
       );
@@ -72,7 +73,7 @@ export default function TaskChips({
           <Chip
             key="count"
             icon="repeat"
-            label={`Relance ${next.nagIndex}/${next.nagTotal}`}
+            label={t.chips.nagCount(next.nagIndex!, next.nagTotal!)}
             {...chipColors}
           />
         );

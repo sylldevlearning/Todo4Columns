@@ -3,6 +3,7 @@ import React from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CATEGORIES } from "../constants/categories";
+import { t } from "../i18n";
 import { colors, fonts } from "../theme";
 import { Category, Task } from "../types";
 
@@ -23,7 +24,7 @@ export default function TaskMenu({ task, onClose, onMove, onTimer }: Props) {
         style={styles.backdrop}
         onPress={onClose}
         accessibilityRole="button"
-        accessibilityLabel="Fermer le menu"
+        accessibilityLabel={t.menu.close}
       />
       {task && (
         <View style={[styles.sheet, { paddingBottom: insets.bottom + 12 }]}>
@@ -31,12 +32,12 @@ export default function TaskMenu({ task, onClose, onMove, onTimer }: Props) {
             {task.title}
           </Text>
 
-          <Text style={styles.section}>Déplacer vers…</Text>
+          <Text style={styles.section}>{t.menu.moveTo}</Text>
           {CATEGORIES.filter((c) => c.key !== task.category).map((c) => (
             <Pressable
               key={c.key}
               accessibilityRole="button"
-              accessibilityLabel={`Déplacer vers ${c.name}`}
+              accessibilityLabel={t.menu.moveToLabel(c.name)}
               onPress={() => onMove(task.id, c.key)}
               style={({ pressed }) => [styles.row, pressed && styles.pressed]}
             >
@@ -55,7 +56,7 @@ export default function TaskMenu({ task, onClose, onMove, onTimer }: Props) {
             style={({ pressed }) => [styles.row, pressed && styles.pressed]}
           >
             <Ionicons name="timer-outline" size={20} color={colors.text} />
-            <Text style={styles.rowTitle}>Minuteur</Text>
+            <Text style={styles.rowTitle}>{t.menu.timer}</Text>
           </Pressable>
           <Pressable
             accessibilityRole="button"
@@ -63,7 +64,9 @@ export default function TaskMenu({ task, onClose, onMove, onTimer }: Props) {
             style={({ pressed }) => [styles.row, pressed && styles.pressed]}
           >
             <Ionicons name="close" size={20} color={colors.textMuted} />
-            <Text style={[styles.rowTitle, { color: colors.textMuted }]}>Annuler</Text>
+            <Text style={[styles.rowTitle, { color: colors.textMuted }]}>
+              {t.common.cancel}
+            </Text>
           </Pressable>
         </View>
       )}

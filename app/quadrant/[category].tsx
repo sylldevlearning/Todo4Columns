@@ -12,6 +12,7 @@ import UndoBanner from "../../src/components/UndoBanner";
 import { CATEGORY_BY_KEY, isCategory } from "../../src/constants/categories";
 import { useNow } from "../../src/hooks/useNow";
 import { RemovedTask } from "../../src/hooks/useTasks";
+import { t } from "../../src/i18n";
 import { pickReminderFields } from "../../src/reminders";
 import { useTaskStore } from "../../src/store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../../src/theme";
@@ -65,22 +66,19 @@ export default function QuadrantScreen() {
     if (!task) return;
     store.toggleDone(id);
     offerUndo(
-      task.isDone ? "Tâche rouverte" : "Tâche terminée",
+      task.isDone ? t.undo.reopened : t.undo.completed,
       () => store.toggleDone(id)
     );
   };
 
   const handleDelete = (id: string) => {
-    offerUndo("Tâche supprimée", restoreLater(store.removeTask(id)));
+    offerUndo(t.undo.deleted(1), restoreLater(store.removeTask(id)));
   };
 
   const handleClearDone = () => {
     const removed = store.clearDone(category.key);
     if (removed.length > 0) {
-      offerUndo(
-        removed.length > 1 ? `${removed.length} tâches supprimées` : "Tâche supprimée",
-        restoreLater(removed)
-      );
+      offerUndo(t.undo.deleted(removed.length), restoreLater(removed));
     }
   };
 
@@ -90,14 +88,14 @@ export default function QuadrantScreen() {
     const previous = store.tasks.find((t) => t.id === id)?.snoozedUntil ?? null;
     store.snoozeTask(id);
     store.requestNotificationPermission().catch(() => {});
-    offerUndo("Relance reportée d'1 h", () => store.setSnoozedUntil(id, previous));
+    offerUndo(t.undo.snoozed, () => store.setSnoozedUntil(id, previous));
   };
 
   const handleMoveToDo = (id: string) => {
     const before = store.tasks.find((t) => t.id === id);
     store.moveTask(id, "UI");
     if (before) {
-      offerUndo("Passée en Faire", () =>
+      offerUndo(t.undo.movedToDo, () =>
         store.updateTask(id, { category: before.category, ...pickReminderFields(before) })
       );
     }
@@ -118,7 +116,7 @@ export default function QuadrantScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.header}>
-        <IconButton icon="chevron-back" label="Retour" onPress={() => router.back()} />
+        <IconButton icon="chevron-back" label={t.common.back} onPress={() => router.back()} />
         <View style={styles.headerText}>
           <Text
             style={[styles.title, { color: category.textColor }]}
@@ -127,14 +125,14 @@ export default function QuadrantScreen() {
             {category.name}
           </Text>
           <Text style={styles.subtitle}>
-            {category.axisLabel} · {openTasks.length} à faire
+            {t.quadrant.subtitle(category.axisLabel, openTasks.length)}
           </Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.list}>
         {openTasks.length === 0 && (
-          <Text style={styles.empty}>Rien à faire ici pour l'instant.</Text>
+          <Text style={styles.empty}>{t.quadrant.empty}</Text>
         )}
         {openTasks.map((task) => (
           <TaskCard key={task.id} task={task} {...cardProps} />
@@ -149,7 +147,7 @@ export default function QuadrantScreen() {
                 onPress={() => setShowDone((v) => !v)}
                 style={styles.doneToggle}
               >
-                <Text style={styles.doneTitle}>Terminées · {doneTasks.length}</Text>
+                <Text style={styles.doneTitle}>{t.quadrant.done(doneTasks.length)}</Text>
                 <Ionicons
                   name={showDone ? "chevron-up" : "chevron-down"}
                   size={18}
@@ -161,7 +159,7 @@ export default function QuadrantScreen() {
                 onPress={handleClearDone}
                 style={styles.clearButton}
               >
-                <Text style={styles.clearText}>Vider les terminées</Text>
+                <Text style={styles.clearText}>{t.quadrant.clearDone}</Text>
               </Pressable>
             </View>
             {showDone &&
@@ -181,7 +179,7 @@ export default function QuadrantScreen() {
       )}
 
       <Fab
-        label={`Nouvelle tâche dans ${category.name}`}
+        label={t.quadrant.newTaskIn(category.name)}
         color={category.color}
         iconColor={category.onColor}
         onPress={() =>
@@ -198,7 +196,7 @@ export default function QuadrantScreen() {
           store.moveTask(id, target);
           if (before) {
             // L'annulation remet aussi les rappels tels qu'ils étaient
-            offerUndo(`Déplacée vers ${CATEGORY_BY_KEY[target].name}`, () =>
+            offerUndo(t.undo.movedTo(CATEGORY_BY_KEY[target].name), () =>
               store.updateTask(id, {
                 category: before.category,
                 ...pickReminderFields(before),

@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 
 interface Props {
@@ -37,10 +38,7 @@ export default function TimerModal({
   const validate = () => {
     const minutes = parseInt(input, 10);
     if (isNaN(minutes) || minutes <= 0) {
-      Alert.alert(
-        "Durée invalide",
-        "Veuillez entrer un nombre de minutes valide."
-      );
+      Alert.alert(t.timer.invalidTitle, t.timer.invalidBody);
       return;
     }
     onValidate(minutes);
@@ -55,17 +53,17 @@ export default function TimerModal({
     >
       <KeyboardAvoidingView style={styles.overlay} behavior="padding">
         <View style={styles.container}>
-          <Text style={styles.title}>Minuteur</Text>
-          <Text style={styles.subtitle}>Durée en minutes</Text>
+          <Text style={styles.title}>{t.timer.title}</Text>
+          <Text style={styles.subtitle}>{t.timer.subtitle}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Ex. : 25"
+            placeholder={t.timer.placeholder}
             placeholderTextColor={colors.textMuted}
             value={input}
             onChangeText={setInput}
             keyboardType="numeric"
             autoFocus
-            accessibilityLabel="Durée du minuteur en minutes"
+            accessibilityLabel={t.timer.inputLabel}
           />
           <View style={styles.buttons}>
             <Pressable
@@ -73,14 +71,14 @@ export default function TimerModal({
               style={[styles.button, styles.cancel]}
               onPress={onCancel}
             >
-              <Text style={styles.cancelText}>Annuler</Text>
+              <Text style={styles.cancelText}>{t.common.cancel}</Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
               style={[styles.button, { backgroundColor: color }]}
               onPress={validate}
             >
-              <Text style={[styles.validateText, { color: onColor }]}>Démarrer</Text>
+              <Text style={[styles.validateText, { color: onColor }]}>{t.timer.start}</Text>
             </Pressable>
           </View>
         </View>

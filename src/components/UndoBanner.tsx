@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { FAB_SIZE } from "./Fab";
 
@@ -22,11 +23,11 @@ export default function UndoBanner({ message, onUndo }: Props) {
       </Text>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Annuler"
+        accessibilityLabel={t.undo.action}
         onPress={onUndo}
         style={styles.action}
       >
-        <Text style={styles.actionText}>Annuler</Text>
+        <Text style={styles.actionText}>{t.undo.action}</Text>
       </Pressable>
     </View>
   );

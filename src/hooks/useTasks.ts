@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 import { archiveStaleTasks } from "../archive";
+import { t } from "../i18n";
 import { SNOOZE_MINUTES } from "../notifications/schedule";
 import { defaultNotifier, Notifier } from "../notifications/service";
 import {
@@ -192,12 +193,10 @@ export function useTasks(
         )
       );
       Alert.alert(
-        "Temps écoulé",
+        t.timer.expiredTitle,
         expired.length === 1
-          ? `Le délai pour la tâche "${expired[0].title}" est terminé !`
-          : `Le délai est terminé pour les tâches : ${expired
-              .map((t) => `"${t.title}"`)
-              .join(", ")}`
+          ? t.timer.expiredOne(expired[0].title)
+          : t.timer.expiredMany(expired.map((task) => task.title))
       );
     };
 

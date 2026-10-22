@@ -4,6 +4,7 @@ import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IconButton from "../src/components/IconButton";
 import SettingsForm from "../src/components/SettingsForm";
+import { t } from "../src/i18n";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
 import { useTaskStore } from "../src/store/TasksContext";
@@ -20,11 +21,11 @@ export default function SettingsScreen() {
   const deleteForever = (id: string) => {
     const task = store.tasks.find((t) => t.id === id);
     Alert.alert(
-      "Supprimer définitivement",
-      `« ${task?.title ?? ""} » sera supprimée sans retour possible.`,
+      t.settings.deleteForever,
+      t.settings.deleteForeverBody(task?.title ?? ""),
       [
-        { text: "Annuler", style: "cancel" },
-        { text: "Supprimer", style: "destructive", onPress: () => store.removeTask(id) },
+        { text: t.common.cancel, style: "cancel" },
+        { text: t.common.delete, style: "destructive", onPress: () => store.removeTask(id) },
       ]
     );
   };
@@ -32,9 +33,9 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.header}>
-        <IconButton icon="chevron-back" label="Retour" onPress={() => router.back()} />
+        <IconButton icon="chevron-back" label={t.common.back} onPress={() => router.back()} />
         <Text style={styles.title} accessibilityRole="header">
-          Réglages
+          {t.settings.title}
         </Text>
       </View>
       <ScrollView contentContainerStyle={styles.content}>

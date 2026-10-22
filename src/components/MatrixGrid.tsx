@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CategoryInfo, CATEGORIES } from "../constants/categories";
-import { plural } from "../format";
+import { t } from "../i18n";
 import { colors, fonts, withAlpha } from "../theme";
 import { Category, Task } from "../types";
 import TaskChips from "./TaskChips";
@@ -28,7 +28,7 @@ function QuadrantCell({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${category.name}, ${plural(tasks.length, "tâche")} à faire`}
+      accessibilityLabel={t.matrix.cellLabel(category.name, tasks.length)}
       onPress={onPress}
       style={({ pressed }) => [
         styles.cell,
@@ -65,10 +65,10 @@ function QuadrantCell({
         ))}
         {others > 0 && (
           <Text style={styles.others}>
-            +{others} {others > 1 ? "autres" : "autre"}
+            {t.matrix.others(others)}
           </Text>
         )}
-        {tasks.length === 0 && <Text style={styles.empty}>Aucune tâche</Text>}
+        {tasks.length === 0 && <Text style={styles.empty}>{t.matrix.empty}</Text>}
       </View>
     </Pressable>
   );
@@ -79,14 +79,14 @@ export default function MatrixGrid({ tasks, onOpenQuadrant }: Props) {
   const openTasks = (key: Category) =>
     tasks.filter((t) => t.category === key && !t.isDone && t.archivedAt === null);
   const rows = [CATEGORIES.slice(0, 2), CATEGORIES.slice(2, 4)];
-  const rowLabels = ["Important", "Pas important"];
+  const rowLabels = [t.matrix.important, t.matrix.notImportant];
 
   return (
     <View style={styles.container}>
       <View style={styles.topAxis}>
         <View style={styles.sideAxis} />
-        <Text style={styles.axisLabel}>Urgent</Text>
-        <Text style={styles.axisLabel}>Pas urgent</Text>
+        <Text style={styles.axisLabel}>{t.matrix.urgent}</Text>
+        <Text style={styles.axisLabel}>{t.matrix.notUrgent}</Text>
       </View>
 
       {rows.map((row, i) => (

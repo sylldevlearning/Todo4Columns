@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { CategoryInfo } from "../constants/categories";
+import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { isWaiting } from "../notifications/status";
 import { Settings } from "../settings";
@@ -82,18 +83,17 @@ export default function TaskCard({
     opacity: translateX.value < 0 ? 1 : 0,
   }));
 
-  const checkLabel = task.isDone
-    ? `Marquer « ${task.title} » comme à faire`
-    : `Marquer « ${task.title} » comme terminée`;
+  const checkLabel = task.isDone ? t.card.markTodo(task.title) : t.card.markDone(task.title);
+  const completeLabel = task.isDone ? t.card.reopen : t.card.complete;
 
   return (
     <View style={styles.wrapper}>
       <Animated.View style={[styles.action, styles.doneAction, doneBackground]}>
         <Ionicons name={task.isDone ? "arrow-undo" : "checkmark"} size={22} color={colors.white} />
-        <Text style={styles.actionText}>{task.isDone ? "Rouvrir" : "Terminer"}</Text>
+        <Text style={styles.actionText}>{completeLabel}</Text>
       </Animated.View>
       <Animated.View style={[styles.action, styles.deleteAction, deleteBackground]}>
-        <Text style={styles.actionText}>Supprimer</Text>
+        <Text style={styles.actionText}>{t.common.delete}</Text>
         <Ionicons name="trash-outline" size={22} color={colors.white} />
       </Animated.View>
 
@@ -101,11 +101,11 @@ export default function TaskCard({
         <Animated.View style={cardStyle}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Modifier « ${task.title} »`}
+            accessibilityLabel={t.card.edit(task.title)}
             accessibilityActions={[
               { name: "activate" },
-              { name: "complete", label: task.isDone ? "Rouvrir" : "Terminer" },
-              { name: "delete", label: "Supprimer" },
+              { name: "complete", label: completeLabel },
+              { name: "delete", label: t.common.delete },
             ]}
             onAccessibilityAction={(e) => {
               if (e.nativeEvent.actionName === "complete") onToggleDone(task.id);
@@ -158,7 +158,7 @@ export default function TaskCard({
 
             <IconButton
               icon="ellipsis-horizontal"
-              label={`Options de « ${task.title} »`}
+              label={t.card.options(task.title)}
               color={colors.textMuted}
               onPress={() => onOpenMenu(task.id)}
             />

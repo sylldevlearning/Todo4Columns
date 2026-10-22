@@ -1,8 +1,9 @@
+import { t } from "../i18n";
 import { Category } from "../types";
 
 export interface CategoryInfo {
   key: Category; // clé enregistrée dans AsyncStorage : NE PAS MODIFIER
-  name: string; // « Faire »
+  name: string; // « Faire » / « Do »
   subtitle: string; // « Maintenant »
   axisLabel: string; // « Urgent et important »
   description: string; // phrase affichée dans la fiche de création
@@ -17,10 +18,7 @@ export interface CategoryInfo {
 export const CATEGORIES: CategoryInfo[] = [
   {
     key: "UI",
-    name: "Faire",
-    subtitle: "Maintenant",
-    axisLabel: "Urgent et important",
-    description: "Urgent et important : à faire toi-même, maintenant.",
+    ...t.categories.UI,
     urgent: true,
     important: true,
     color: "#FF7A59",
@@ -29,10 +27,7 @@ export const CATEGORIES: CategoryInfo[] = [
   },
   {
     key: "INU",
-    name: "Planifier",
-    subtitle: "Bloquer un créneau",
-    axisLabel: "Important, pas urgent",
-    description: "Important mais pas urgent : bloque un créneau pour t'y mettre.",
+    ...t.categories.INU,
     urgent: false,
     important: true,
     color: "#5B9BFF",
@@ -41,10 +36,7 @@ export const CATEGORIES: CategoryInfo[] = [
   },
   {
     key: "UDI",
-    name: "Déléguer",
-    subtitle: "Confier et relancer",
-    axisLabel: "Urgent, pas important",
-    description: "Urgent mais pas important : confie-la et relance la personne.",
+    ...t.categories.UDI,
     urgent: true,
     important: false,
     color: "#F2B33D",
@@ -53,10 +45,7 @@ export const CATEGORIES: CategoryInfo[] = [
   },
   {
     key: "NDNI",
-    name: "Éliminer",
-    subtitle: "Laisser tomber",
-    axisLabel: "Ni urgent ni important",
-    description: "Ni urgent ni important : laisse tomber.",
+    ...t.categories.NDNI,
     urgent: false,
     important: false,
     color: "#8B92A0",

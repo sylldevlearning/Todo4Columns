@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { Settings } from "./settings";
 import { Category, ReminderFields, Task } from "./types";
 
@@ -10,32 +11,32 @@ const DAY = 24 * 60;
 
 // Mode développement uniquement : délai d'une minute pour tester relances et rappels.
 // __DEV__ vaut false dans un build de production : l'option n'y apparaît pas.
-const withDevOption = (options: ReminderOption[], label = "1 min"): ReminderOption[] =>
+const withDevOption = (options: ReminderOption[], label = t.reminders.min(1)): ReminderOption[] =>
   __DEV__ ? [{ label, value: 1 }, ...options] : options;
 
 // Faire : relancer si pas faite après…
 export const DO_NAG_OPTIONS: ReminderOption[] = withDevOption([
-  { label: "30 min", value: 30 },
-  { label: "2 h", value: 120 },
-  { label: "1 jour", value: DAY },
-  { label: "Jamais", value: null },
+  { label: t.reminders.min(30), value: 30 },
+  { label: t.reminders.hours(2), value: 120 },
+  { label: t.reminders.oneDay, value: DAY },
+  { label: t.reminders.never, value: null },
 ]);
 
 // Planifier : me rappeler… (minutes avant l'échéance)
 export const PLAN_REMINDER_OPTIONS: ReminderOption[] = withDevOption(
   [
-    { label: "Le jour J", value: 0 },
-    { label: "1 h avant", value: 60 },
-    { label: "La veille", value: DAY },
+    { label: t.reminders.onTheDay, value: 0 },
+    { label: t.reminders.oneHourBefore, value: 60 },
+    { label: t.reminders.dayBefore, value: DAY },
   ],
-  "1 min avant"
+  t.reminders.oneMinuteBefore
 );
 
 // Déléguer : relancer la personne…
 export const DELEGATE_FOLLOW_UP_OPTIONS: ReminderOption[] = withDevOption([
-  { label: "Demain", value: DAY },
-  { label: "Dans 3 jours", value: 3 * DAY },
-  { label: "1 semaine", value: 7 * DAY },
+  { label: t.reminders.tomorrow, value: DAY },
+  { label: t.reminders.inThreeDays, value: 3 * DAY },
+  { label: t.reminders.oneWeek, value: 7 * DAY },
 ]);
 
 export const EMPTY_REMINDER_FIELDS: ReminderFields = {
@@ -114,11 +115,11 @@ export function pickReminderFields(task: ReminderFields): ReminderFields {
   return { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo };
 }
 
-// « 30 min », « 2 h », « 3 j »
+// « 30 min », « 2 h », « 3 j » (« 3 d » en anglais)
 export function durationLabel(minutes: number): string {
-  if (minutes < 60) return `${minutes} min`;
-  if (minutes < DAY) return `${Math.round(minutes / 60)} h`;
-  return `${Math.round(minutes / DAY)} j`;
+  if (minutes < 60) return t.reminders.min(minutes);
+  if (minutes < DAY) return t.reminders.hours(Math.round(minutes / 60));
+  return t.reminders.days(Math.round(minutes / DAY));
 }
 
 const optionLabel = (options: ReminderOption[], value: number) =>
@@ -129,18 +130,15 @@ export function reminderLabel(task: Task): string | null {
   switch (task.category) {
     case "UI":
       if (task.nagInterval === null) return null;
-      return `Relance ${optionLabel(DO_NAG_OPTIONS, task.nagInterval)}${
-        task.nagRepeat ? " · répétée" : ""
-      }`;
+      return t.reminders.nagLabel(optionLabel(DO_NAG_OPTIONS, task.nagInterval), task.nagRepeat);
     case "INU":
       if (task.dueAt === null || task.reminderOffset === null) return null;
       return optionLabel(PLAN_REMINDER_OPTIONS, task.reminderOffset);
     case "UDI":
       if (task.nagInterval === null) return null;
-      return `Relance ${optionLabel(
-        DELEGATE_FOLLOW_UP_OPTIONS,
-        task.nagInterval
-      ).toLowerCase()}`;
+      return t.reminders.followUpLabel(
+        optionLabel(DELEGATE_FOLLOW_UP_OPTIONS, task.nagInterval)
+      );
     case "NDNI":
       return null;
   }

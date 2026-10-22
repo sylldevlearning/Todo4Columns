@@ -5,6 +5,7 @@ import DateTimePicker, {
 import React from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { formatDue } from "../format";
+import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import IconButton from "./IconButton";
 
@@ -53,7 +54,7 @@ export default function DueDateField({ value, onChange, color }: Props) {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={
-          value === null ? "Ajouter une échéance" : `Échéance : ${formatDue(value)}`
+          value === null ? t.dueDate.add : t.dueDate.label(formatDue(value))
         }
         onPress={onPress}
         style={styles.field}
@@ -66,19 +67,19 @@ export default function DueDateField({ value, onChange, color }: Props) {
             display="compact"
             themeVariant="dark"
             accentColor={color}
-            locale="fr-FR"
+            locale={t.locale}
             onChange={(_, date) => date && onChange(date.getTime())}
           />
         ) : (
           <Text style={[styles.text, value === null && styles.placeholder]}>
-            {value === null ? "Ajouter une échéance" : formatDue(value)}
+            {value === null ? t.dueDate.add : formatDue(value)}
           </Text>
         )}
       </Pressable>
       {value !== null && (
         <IconButton
           icon="close-circle"
-          label="Retirer l'échéance"
+          label={t.dueDate.remove}
           color={colors.textMuted}
           onPress={() => onChange(null)}
         />

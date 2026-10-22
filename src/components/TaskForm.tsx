@@ -1,6 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
+import { t } from "../i18n";
 import {
   DELEGATE_FOLLOW_UP_OPTIONS,
   DO_NAG_OPTIONS,
@@ -138,33 +139,33 @@ export default function TaskForm({
   return (
     <View style={styles.container}>
       <Text style={styles.heading} accessibilityRole="header">
-        {task ? "Modifier la tâche" : "Nouvelle tâche"}
+        {task ? t.form.editTitle : t.form.newTitle}
       </Text>
 
       <TextInput
         style={styles.titleInput}
-        placeholder="Titre de la tâche"
+        placeholder={t.form.titlePlaceholder}
         placeholderTextColor={colors.textMuted}
         value={title}
         onChangeText={setTitle}
         autoFocus={!task}
         returnKeyType="done"
         onSubmitEditing={submit}
-        accessibilityLabel="Titre"
+        accessibilityLabel={t.form.titleLabel}
       />
 
       <View style={styles.card}>
         <SwitchRow
-          label="C'est urgent ?"
-          hint="À traiter dans les 48 h"
+          label={t.form.urgentQuestion}
+          hint={t.form.urgentHint}
           value={urgent}
           onChange={setUrgent}
           color={category.color}
         />
         <View style={styles.separator} />
         <SwitchRow
-          label="C'est important ?"
-          hint="Ça compte pour tes objectifs"
+          label={t.form.importantQuestion}
+          hint={t.form.importantHint}
           value={important}
           onChange={setImportant}
           color={category.color}
@@ -189,13 +190,13 @@ export default function TaskForm({
 
       {category.key === "UI" && (
         <>
-          <Field label="Relancer si pas faite après">
+          <Field label={t.form.doNag}>
             <OptionPills options={DO_NAG_OPTIONS} value={doNag} onChange={setDoNag} {...pillColors} />
           </Field>
           {doNag !== null && (
             <View style={styles.card}>
               <SwitchRow
-                label={`Répéter jusqu'à ce que ce soit fait (${settings.maxNags} max)`}
+                label={t.form.repeat(settings.maxNags)}
                 value={doRepeat}
                 onChange={setDoRepeat}
                 color={category.color}
@@ -207,10 +208,10 @@ export default function TaskForm({
 
       {category.key === "INU" && (
         <>
-          <Field label="Échéance">
+          <Field label={t.form.due}>
             <DueDateField value={planDue} onChange={setPlanDue} color={category.textColor} />
           </Field>
-          <Field label="Me rappeler">
+          <Field label={t.form.remindMe}>
             <OptionPills
               options={PLAN_REMINDER_OPTIONS}
               value={planReminder}
@@ -223,17 +224,17 @@ export default function TaskForm({
 
       {category.key === "UDI" && (
         <>
-          <Field label="Confié à">
+          <Field label={t.form.delegatedTo}>
             <TextInput
               style={styles.input}
-              placeholder="Nom de la personne"
+              placeholder={t.form.personPlaceholder}
               placeholderTextColor={colors.textMuted}
               value={delegateTo}
               onChangeText={setDelegateTo}
-              accessibilityLabel="Confié à"
+              accessibilityLabel={t.form.delegatedTo}
             />
           </Field>
-          <Field label="Relancer la personne">
+          <Field label={t.form.followUp}>
             <OptionPills
               options={DELEGATE_FOLLOW_UP_OPTIONS}
               value={delegateFollowUp}
@@ -245,18 +246,14 @@ export default function TaskForm({
       )}
 
       {category.key === "NDNI" && (
-        <Text style={styles.note}>
-          Pas de rappel. La tâche sera archivée automatiquement dans 7 jours.
-        </Text>
+        <Text style={styles.note}>{t.form.ndniNote}</Text>
       )}
 
       {notificationsDenied && hasReminder(category.key, reminderFields()) && (
         <View style={styles.denied}>
-          <Text style={styles.deniedText}>
-            Les notifications sont désactivées : ce rappel ne s'affichera pas.
-          </Text>
+          <Text style={styles.deniedText}>{t.form.notificationsDenied}</Text>
           <Pressable accessibilityRole="link" onPress={onOpenSettings} style={styles.deniedLink}>
-            <Text style={styles.deniedLinkText}>Ouvrir les réglages du téléphone</Text>
+            <Text style={styles.deniedLinkText}>{t.common.openPhoneSettings}</Text>
           </Pressable>
         </View>
       )}
@@ -274,7 +271,7 @@ export default function TaskForm({
         ]}
       >
         <Text style={[styles.submitText, { color: category.onColor }]}>
-          {task ? "Enregistrer" : `Ajouter à ${category.name}`}
+          {task ? t.form.save : t.form.addTo(category.name)}
         </Text>
       </Pressable>
     </View>

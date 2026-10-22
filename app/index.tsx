@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Fab from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
-import { formatToday, plural } from "../src/format";
+import { formatToday } from "../src/format";
+import { t } from "../src/i18n";
 import { useTaskStore } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
 
@@ -20,13 +21,13 @@ export default function MatrixScreen() {
         <View style={styles.headerText}>
           <Text style={styles.date}>{formatToday()}</Text>
           <Text style={styles.title} accessibilityRole="header">
-            Ma matrice
+            {t.matrix.title}
           </Text>
-          <Text style={styles.summary}>{plural(openCount, "tâche")}</Text>
+          <Text style={styles.summary}>{t.matrix.taskCount(openCount)}</Text>
         </View>
         <IconButton
           icon="settings-outline"
-          label="Réglages"
+          label={t.common.settings}
           onPress={() => router.push("/settings")}
         />
       </View>
@@ -38,7 +39,7 @@ export default function MatrixScreen() {
         />
       </View>
 
-      <Fab label="Nouvelle tâche" onPress={() => router.push("/task")} />
+      <Fab label={t.matrix.newTask} onPress={() => router.push("/task")} />
     </SafeAreaView>
   );
 }

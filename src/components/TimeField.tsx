@@ -3,6 +3,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import React from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 
 interface Props {
@@ -42,7 +43,7 @@ export default function TimeField({ label, value, onChange }: Props) {
           mode="time"
           display="compact"
           themeVariant="dark"
-          locale="fr-FR"
+          locale={t.locale}
           accessibilityLabel={label}
           onChange={(_, date) => date && onChange(toHHMM(date))}
         />

@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { Platform, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { formatDue } from "../format";
+import { t } from "../i18n";
 import { PermissionState } from "../notifications/setup";
 import {
   DELEGATE_FOLLOW_UP_OPTIONS,
@@ -19,11 +20,7 @@ import TimeField from "./TimeField";
 const DEFAULT_NAG_OPTIONS = DO_NAG_OPTIONS.filter((o) => o.value !== null);
 const MAX_NAGS_OPTIONS: ReminderOption[] = [2, 3, 5].map((n) => ({ label: String(n), value: n }));
 
-const PERMISSION_LABELS: Record<PermissionState, string> = {
-  granted: "Autorisées",
-  denied: "Refusées : aucun rappel ne s'affichera",
-  undetermined: "Pas encore demandées",
-};
+const PERMISSION_LABELS: Record<PermissionState, string> = t.settings.permission;
 
 interface Props {
   settings: Settings;
@@ -84,8 +81,8 @@ export default function SettingsForm({
 
   return (
     <View style={styles.container}>
-      <Section title="Rappels par défaut">
-        <Field label="Faire · relancer si pas faite après" color={doIt.textColor}>
+      <Section title={t.settings.defaults}>
+        <Field label={t.settings.doField} color={doIt.textColor}>
           <OptionPills
             options={DEFAULT_NAG_OPTIONS}
             value={settings.doNagInterval}
@@ -94,16 +91,16 @@ export default function SettingsForm({
           />
         </Field>
         <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Répéter jusqu'à ce que ce soit fait</Text>
+          <Text style={styles.switchLabel}>{t.settings.repeatUntilDone}</Text>
           <Switch
-            accessibilityLabel="Répéter jusqu'à ce que ce soit fait"
+            accessibilityLabel={t.settings.repeatUntilDone}
             value={settings.nagRepeat}
             onValueChange={(v) => set("nagRepeat", v)}
             trackColor={{ false: colors.border, true: doIt.color }}
             thumbColor={colors.white}
           />
         </View>
-        <Field label="Nombre maximum de relances">
+        <Field label={t.settings.maxNags}>
           <OptionPills
             options={MAX_NAGS_OPTIONS}
             value={settings.maxNags}
@@ -111,7 +108,7 @@ export default function SettingsForm({
             {...pills(doIt)}
           />
         </Field>
-        <Field label="Planifier · me rappeler" color={plan.textColor}>
+        <Field label={t.settings.planField} color={plan.textColor}>
           <OptionPills
             options={PLAN_REMINDER_OPTIONS}
             value={settings.planReminderOffset}
@@ -119,7 +116,7 @@ export default function SettingsForm({
             {...pills(plan)}
           />
         </Field>
-        <Field label="Déléguer · relancer la personne" color={delegate.textColor}>
+        <Field label={t.settings.delegateField} color={delegate.textColor}>
           <OptionPills
             options={DELEGATE_FOLLOW_UP_OPTIONS}
             value={settings.delegateFollowUp}
@@ -129,47 +126,43 @@ export default function SettingsForm({
         </Field>
       </Section>
 
-      <Section title="Plage silencieuse">
-        <Text style={styles.hint}>
-          Les rappels prévus pendant cette plage sont décalés à sa fin.
-        </Text>
+      <Section title={t.settings.quietHours}>
+        <Text style={styles.hint}>{t.settings.quietHoursHint}</Text>
         <TimeField
-          label="Début"
+          label={t.settings.start}
           value={settings.quietHoursStart}
           onChange={(v) => set("quietHoursStart", v)}
         />
         <View style={styles.separator} />
         <TimeField
-          label="Fin"
+          label={t.settings.end}
           value={settings.quietHoursEnd}
           onChange={(v) => set("quietHoursEnd", v)}
         />
       </Section>
 
-      <Section title="Notifications">
+      <Section title={t.settings.notifications}>
         <Text style={styles.status}>
           {permission === null ? "…" : PERMISSION_LABELS[permission]}
         </Text>
         {permission === "undetermined" && (
-          <TextButton label="Autoriser les notifications" onPress={onRequestPermission} />
+          <TextButton label={t.settings.allowNotifications} onPress={onRequestPermission} />
         )}
-        <TextButton label="Ouvrir les réglages du téléphone" onPress={onOpenSystemSettings} />
+        <TextButton label={t.common.openPhoneSettings} onPress={onOpenSystemSettings} />
       </Section>
 
-      <Section title={`Archives · ${archivedTasks.length}`}>
+      <Section title={t.settings.archives(archivedTasks.length)}>
         {archivedTasks.length === 0 ? (
-          <Text style={styles.hint}>
-            Les tâches « Éliminer » restées 7 jours sans être faites sont archivées ici.
-          </Text>
+          <Text style={styles.hint}>{t.settings.archivesHint}</Text>
         ) : (
           archivedTasks.map((task, i) => (
             <View key={task.id} style={[styles.archived, i > 0 && styles.archivedBorder]}>
               <Text style={styles.archivedTitle}>{task.title}</Text>
-              <Text style={styles.archivedDate}>Archivée {formatDue(task.archivedAt!)}</Text>
+              <Text style={styles.archivedDate}>{t.settings.archivedOn(formatDue(task.archivedAt!))}</Text>
               <View style={styles.archivedActions}>
-                <TextButton label="Restaurer" onPress={() => onRestore(task.id)} />
+                <TextButton label={t.settings.restore} onPress={() => onRestore(task.id)} />
                 <TextButton
-                  label="Supprimer définitivement"
+                  label={t.settings.deleteForever}
                   color={colors.danger}
                   onPress={() => onDeleteForever(task.id)}
                 />
@@ -180,9 +173,7 @@ export default function SettingsForm({
       </Section>
 
       {Platform.OS === "android" && (
-        <Text style={styles.footnote}>
-          Sur Android, un rappel peut arriver avec quelques minutes de décalage.
-        </Text>
+        <Text style={styles.footnote}>{t.settings.androidDelay}</Text>
       )}
     </View>
   );
