@@ -195,7 +195,10 @@ export default function QuadrantScreen() {
         onColor={category.onColor}
         onCancel={() => setTimerTaskId(null)}
         onValidate={(minutes) => {
-          if (timerTaskId) store.startTimer(timerTaskId, minutes);
+          if (timerTaskId) {
+            store.startTimer(timerTaskId, minutes);
+            store.requestNotificationPermission().catch(() => {});
+          }
           setTimerTaskId(null);
         }}
       />

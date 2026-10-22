@@ -1,8 +1,14 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
-import { DEFAULT_SETTINGS, loadSettings, Settings } from "../settings";
+import { ensurePermission, PermissionState } from "../notifications/setup";
+import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
 
-type TaskStore = ReturnType<typeof useTasks> & { settings: Settings };
+type TaskStore = ReturnType<typeof useTasks> & {
+  settings: Settings;
+  updateSettings: (settings: Settings) => void;
+  // À appeler au premier rappel créé : demande l'autorisation si besoin, puis programme tout
+  requestNotificationPermission: () => Promise<PermissionState>;
+};
 
 const TasksContext = createContext<TaskStore | null>(null);
 
@@ -17,8 +23,22 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const store = useTasks(settings);
+
+  const updateSettings = (next: Settings) => {
+    setSettings(next);
+    saveSettings(next).catch((e) => console.warn("Erreur sauvegarde réglages :", e));
+  };
+
+  const requestNotificationPermission = async () => {
+    const state = await ensurePermission();
+    if (state === "granted") store.resyncNotifications();
+    return state;
+  };
+
   return (
-    <TasksContext.Provider value={{ ...store, settings }}>
+    <TasksContext.Provider
+      value={{ ...store, settings, updateSettings, requestNotificationPermission }}
+    >
       {children}
     </TasksContext.Provider>
   );

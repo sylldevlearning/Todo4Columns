@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 import { archiveStaleTasks } from "../archive";
+import { SNOOZE_MINUTES } from "../notifications/schedule";
 import { defaultNotifier, Notifier } from "../notifications/service";
 import {
   defaultReminderFields,
@@ -282,6 +283,22 @@ export function useTasks(
     updateOne(id, (t) => ({ ...t, isDone: !t.isDone }));
   };
 
+  // « Fait » depuis une notification : ne décoche jamais une tâche déjà terminée
+  const completeTask = (id: string) => {
+    if (tasksRef.current.some((t) => t.id === id && !t.isDone)) {
+      updateOne(id, (t) => ({ ...t, isDone: true }));
+    }
+  };
+
+  // « Reporter 1 h » : repousse la prochaine relance sans toucher à updatedAt
+  // (le point de départ des relances et leur nombre maximum restent les mêmes)
+  const snoozeTask = (id: string, minutes: number = SNOOZE_MINUTES) => {
+    const until = Date.now() + minutes * 60 * 1000;
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id && !t.isDone ? { ...t, snoozedUntil: until } : t))
+    );
+  };
+
   // Retire des tâches et renvoie de quoi les restaurer avec restoreTasks
   const removeTasks = (ids: string[]): RemovedTask[] => {
     const idSet = new Set(ids);
@@ -337,6 +354,8 @@ export function useTasks(
     updateTask,
     moveTask,
     toggleDone,
+    completeTask,
+    snoozeTask,
     removeTask,
     removeTasks,
     restoreTasks,

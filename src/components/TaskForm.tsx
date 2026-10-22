@@ -5,6 +5,7 @@ import {
   DELEGATE_FOLLOW_UP_OPTIONS,
   DO_NAG_OPTIONS,
   EMPTY_REMINDER_FIELDS,
+  hasReminder,
   PLAN_REMINDER_OPTIONS,
 } from "../reminders";
 import { Settings } from "../settings";
@@ -22,6 +23,8 @@ interface Props {
   task?: Task; // modification
   initialCategory?: Category; // création depuis un quadrant
   settings: Settings;
+  notificationsDenied?: boolean; // autorisation refusée : les rappels ne s'afficheront pas
+  onOpenSettings?: () => void;
   onSubmit: (values: TaskFormValues) => void;
 }
 
@@ -68,7 +71,14 @@ function SwitchRow({
 }
 
 // Formulaire de la fiche « Nouvelle tâche » / modification
-export default function TaskForm({ task, initialCategory, settings, onSubmit }: Props) {
+export default function TaskForm({
+  task,
+  initialCategory,
+  settings,
+  notificationsDenied = false,
+  onOpenSettings,
+  onSubmit,
+}: Props) {
   const start = CATEGORY_BY_KEY[task?.category ?? initialCategory ?? DEFAULT_CATEGORY];
 
   const [title, setTitle] = useState(task?.title ?? "");
@@ -240,6 +250,17 @@ export default function TaskForm({ task, initialCategory, settings, onSubmit }: 
         </Text>
       )}
 
+      {notificationsDenied && hasReminder(category.key, reminderFields()) && (
+        <View style={styles.denied}>
+          <Text style={styles.deniedText}>
+            Les notifications sont désactivées : ce rappel ne s'affichera pas.
+          </Text>
+          <Pressable accessibilityRole="link" onPress={onOpenSettings} style={styles.deniedLink}>
+            <Text style={styles.deniedLinkText}>Ouvrir les réglages du téléphone</Text>
+          </Pressable>
+        </View>
+      )}
+
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}
@@ -352,6 +373,28 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
     fontSize: 14,
     color: colors.textMuted,
+  },
+  denied: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 14,
+    paddingTop: 10,
+  },
+  deniedText: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  deniedLink: {
+    minHeight: TOUCH_SIZE,
+    justifyContent: "center",
+  },
+  deniedLinkText: {
+    fontFamily: fonts.bold,
+    fontSize: 13,
+    color: colors.text,
+    textDecorationLine: "underline",
   },
   submit: {
     minHeight: 54,

@@ -88,6 +88,19 @@ export function keepRelevantFields(
   }
 }
 
+// Vrai si ces réglages donneront lieu à un rappel (hors minuteur)
+export function hasReminder(category: Category, fields: ReminderFields): boolean {
+  switch (category) {
+    case "UI":
+    case "UDI":
+      return fields.nagInterval !== null;
+    case "INU":
+      return fields.dueAt !== null;
+    case "NDNI":
+      return false;
+  }
+}
+
 export function pickReminderFields(task: ReminderFields): ReminderFields {
   const { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo } = task;
   return { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo };

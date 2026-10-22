@@ -6,17 +6,35 @@ import {
   Manrope_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/manrope";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { TasksProvider } from "../src/store/TasksContext";
+import { configureNotifications } from "../src/notifications/setup";
+import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
+import { TasksProvider, useTaskStore } from "../src/store/TasksContext";
 import { colors } from "../src/theme";
 
 // L'écran de démarrage reste affiché jusqu'au chargement de la police
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+// Canal « Rappels » et boutons d'action (aucune demande d'autorisation au lancement)
+configureNotifications().catch((e) => console.warn("Erreur configuration notifications :", e));
+
+// Applique les actions choisies dans les notifications
+function NotificationResponses() {
+  const { isLoaded, tasks, completeTask, snoozeTask } = useTaskStore();
+  useNotificationResponses({
+    isLoaded,
+    tasks,
+    completeTask,
+    snoozeTask,
+    openQuadrant: (category) => router.push(`/quadrant/${category}`),
+  });
+  return null;
+}
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -37,6 +55,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <TasksProvider>
+          <NotificationResponses />
           <Stack
             screenOptions={{
               headerShown: false,

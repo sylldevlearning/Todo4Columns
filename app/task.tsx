@@ -4,6 +4,9 @@ import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TaskForm, { TaskFormValues } from "../src/components/TaskForm";
 import { isCategory } from "../src/constants/categories";
+import { openSystemSettings } from "../src/notifications/setup";
+import { usePermissionState } from "../src/notifications/usePermissionState";
+import { hasReminder } from "../src/reminders";
 import { useTaskStore } from "../src/store/TasksContext";
 import { colors } from "../src/theme";
 
@@ -11,7 +14,8 @@ import { colors } from "../src/theme";
 // Paramètres : id (modification) ou category (création depuis un quadrant)
 export default function TaskSheet() {
   const { id, category } = useLocalSearchParams<{ id?: string; category?: string }>();
-  const { tasks, settings, addTask, updateTask } = useTaskStore();
+  const { tasks, settings, addTask, updateTask, requestNotificationPermission } = useTaskStore();
+  const [permission] = usePermissionState();
   const insets = useSafeAreaInsets();
   const task = id ? tasks.find((t) => t.id === id) : undefined;
   const missing = id !== undefined && task === undefined;
@@ -25,6 +29,10 @@ export default function TaskSheet() {
   const submit = (values: TaskFormValues) => {
     if (task) updateTask(task.id, values);
     else addTask(values);
+    // Premier rappel : c'est le moment de demander l'autorisation
+    if (hasReminder(values.category, values)) {
+      requestNotificationPermission().catch(() => {});
+    }
     router.back();
   };
 
@@ -39,6 +47,8 @@ export default function TaskSheet() {
         task={task}
         initialCategory={isCategory(category) ? category : undefined}
         settings={settings}
+        notificationsDenied={permission === "denied"}
+        onOpenSettings={openSystemSettings}
         onSubmit={submit}
       />
     </ScrollView>
