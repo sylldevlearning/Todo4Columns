@@ -8,27 +8,35 @@ export interface ReminderOption {
 
 const DAY = 24 * 60;
 
+// Mode développement uniquement : délai d'une minute pour tester relances et rappels.
+// __DEV__ vaut false dans un build de production : l'option n'y apparaît pas.
+const withDevOption = (options: ReminderOption[], label = "1 min"): ReminderOption[] =>
+  __DEV__ ? [{ label, value: 1 }, ...options] : options;
+
 // Faire : relancer si pas faite après…
-export const DO_NAG_OPTIONS: ReminderOption[] = [
+export const DO_NAG_OPTIONS: ReminderOption[] = withDevOption([
   { label: "30 min", value: 30 },
   { label: "2 h", value: 120 },
   { label: "1 jour", value: DAY },
   { label: "Jamais", value: null },
-];
+]);
 
 // Planifier : me rappeler… (minutes avant l'échéance)
-export const PLAN_REMINDER_OPTIONS: ReminderOption[] = [
-  { label: "Le jour J", value: 0 },
-  { label: "1 h avant", value: 60 },
-  { label: "La veille", value: DAY },
-];
+export const PLAN_REMINDER_OPTIONS: ReminderOption[] = withDevOption(
+  [
+    { label: "Le jour J", value: 0 },
+    { label: "1 h avant", value: 60 },
+    { label: "La veille", value: DAY },
+  ],
+  "1 min avant"
+);
 
 // Déléguer : relancer la personne…
-export const DELEGATE_FOLLOW_UP_OPTIONS: ReminderOption[] = [
+export const DELEGATE_FOLLOW_UP_OPTIONS: ReminderOption[] = withDevOption([
   { label: "Demain", value: DAY },
   { label: "Dans 3 jours", value: 3 * DAY },
   { label: "1 semaine", value: 7 * DAY },
-];
+]);
 
 export const EMPTY_REMINDER_FIELDS: ReminderFields = {
   dueAt: null,
