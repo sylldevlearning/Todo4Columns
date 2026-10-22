@@ -246,7 +246,9 @@ export default function TaskForm({
       )}
 
       {category.key === "NDNI" && (
-        <Text style={styles.note}>{t.form.ndniNote}</Text>
+        <Text style={styles.note}>
+          {settings.autoArchive ? t.form.ndniNoteArchive : t.form.ndniNote}
+        </Text>
       )}
 
       {notificationsDenied && hasReminder(category.key, reminderFields()) && (

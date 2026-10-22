@@ -58,6 +58,16 @@ describe("SettingsForm", () => {
     expect(props.onOpenSystemSettings).toHaveBeenCalled();
   });
 
+  it("active l'archivage automatique, désactivé par défaut", async () => {
+    const props = await setup();
+    const label = "Archiver automatiquement les tâches « Si j'ai le temps » après 7 jours";
+
+    expect(screen.getByLabelText(label)).toHaveProp("value", false);
+    expect(screen.getByText("Les tâches archivées apparaissent ici.")).toBeOnTheScreen();
+    await fireEvent(screen.getByLabelText(label), "valueChange", true);
+    expect(props.onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, autoArchive: true });
+  });
+
   it("liste les archives avec Restaurer et Supprimer définitivement", async () => {
     const props = await setup({
       archivedTasks: [makeTask({ id: "x", title: "Trier les mails", category: "NDNI", archivedAt: 5 })],

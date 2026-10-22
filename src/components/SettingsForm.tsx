@@ -152,6 +152,17 @@ export default function SettingsForm({
       </Section>
 
       <Section title={t.settings.archives(archivedTasks.length)}>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t.settings.autoArchive}</Text>
+          <Switch
+            accessibilityLabel={t.settings.autoArchive}
+            value={settings.autoArchive}
+            onValueChange={(v) => set("autoArchive", v)}
+            trackColor={{ false: colors.border, true: CATEGORY_BY_KEY.NDNI.color }}
+            thumbColor={colors.white}
+          />
+        </View>
+        <View style={styles.separator} />
         {archivedTasks.length === 0 ? (
           <Text style={styles.hint}>{t.settings.archivesHint}</Text>
         ) : (

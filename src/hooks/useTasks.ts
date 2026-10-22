@@ -97,8 +97,7 @@ export function useTasks(
   useEffect(() => {
     (async () => {
       try {
-        // Archive au passage les tâches « Si j'ai le temps » restées 7 jours
-        setTasks(archiveStaleTasks(await loadTasks(), Date.now()));
+        setTasks(await loadTasks());
         setIsLoaded(true);
       } catch (e) {
         console.warn("Erreur récupération tâches :", e);
@@ -149,6 +148,15 @@ export function useTasks(
       applyIds(result);
     });
   }, [tasks, isLoaded]);
+
+  // Option activée : archive les tâches « Si j'ai le temps » restées 7 jours,
+  // au chargement puis dès que l'option est cochée. Désactivée, rien n'est archivé
+  // et les tâches déjà archivées le restent.
+  useEffect(() => {
+    if (isLoaded && settings.autoArchive) {
+      setTasks((prev) => archiveStaleTasks(prev, Date.now()));
+    }
+  }, [isLoaded, settings.autoArchive]);
 
   // Réglages modifiés : tout est reprogrammé
   useEffect(() => {

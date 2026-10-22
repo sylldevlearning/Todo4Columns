@@ -19,8 +19,18 @@ describe("settings", () => {
       maxNags: 3,
       quietHoursStart: "22:00",
       quietHoursEnd: "08:00",
+      autoArchive: false,
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
+  });
+
+  it("archivage automatique : désactivé pour les réglages enregistrés avant l'option", () => {
+    const before = JSON.stringify({ schemaVersion: 1, settings: { doNagInterval: 30 } });
+    expect(parseSettings(before).autoArchive).toBe(false);
+    const enabled = JSON.stringify({ schemaVersion: 1, settings: { autoArchive: true } });
+    expect(parseSettings(enabled).autoArchive).toBe(true);
+    const invalid = JSON.stringify({ schemaVersion: 1, settings: { autoArchive: "oui" } });
+    expect(parseSettings(invalid).autoArchive).toBe(false);
   });
 
   it("accepte « Le jour J » (0 min) pour Planifier", () => {

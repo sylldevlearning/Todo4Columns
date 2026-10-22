@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { ARCHIVE_AFTER_MS, archiveStaleTasks, shouldArchive } from "../archive";
 import { useTasks } from "../hooks/useTasks";
+import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { serializeTasks } from "../migrations";
 import { STORAGE_KEY } from "../storage";
 import { makeTask } from "../testing/makeTask";
@@ -37,22 +38,56 @@ describe("archivage des tâches « Si j'ai le temps »", () => {
   describe("dans useTasks", () => {
     beforeEach(() => AsyncStorage.clear());
 
-    it("archive au démarrage puis permet de restaurer", async () => {
+    const ARCHIVE_ON: Settings = { ...DEFAULT_SETTINGS, autoArchive: true };
+
+    // a : 8 jours dans le quadrant, b : 1 jour, c : déjà archivée
+    const storeTasks = async () => {
       const now = Date.now();
       await AsyncStorage.setItem(
         STORAGE_KEY,
         serializeTasks([
           makeTask({ id: "a", category: "NDNI", categoryChangedAt: now - 8 * DAY }),
           makeTask({ id: "b", category: "NDNI", categoryChangedAt: now - DAY }),
+          makeTask({ id: "c", category: "NDNI", categoryChangedAt: now - 20 * DAY, archivedAt: 5 }),
         ])
       );
+    };
+    const archivedAt = (tasks: { id: string; archivedAt: number | null }[]) =>
+      Object.fromEntries(tasks.map((t) => [t.id, t.archivedAt]));
 
+    it("n'archive rien par défaut et laisse archivées les tâches qui l'étaient", async () => {
+      await storeTasks();
       const { result } = await renderHook(() => useTasks());
-      await waitFor(() => expect(result.current.tasks).toHaveLength(2));
+      await waitFor(() => expect(result.current.isLoaded).toBe(true));
 
-      const [a, b] = result.current.tasks;
-      expect(a.archivedAt).not.toBeNull();
-      expect(b.archivedAt).toBeNull();
+      expect(archivedAt(result.current.tasks)).toEqual({ a: null, b: null, c: 5 });
+      await waitFor(async () =>
+        expect(JSON.parse((await AsyncStorage.getItem(STORAGE_KEY))!).tasks[2].archivedAt).toBe(5)
+      );
+    });
+
+    it("archive dès que l'option est activée", async () => {
+      await storeTasks();
+      const { result, rerender } = await renderHook(
+        (settings: Settings) => useTasks(settings),
+        { initialProps: DEFAULT_SETTINGS }
+      );
+      await waitFor(() => expect(result.current.isLoaded).toBe(true));
+      expect(result.current.tasks[0].archivedAt).toBeNull();
+
+      await rerender(ARCHIVE_ON);
+      await waitFor(() => expect(result.current.tasks[0].archivedAt).not.toBeNull());
+      expect(result.current.tasks[1].archivedAt).toBeNull();
+      expect(result.current.tasks[2].archivedAt).toBe(5);
+    });
+
+    it("option activée : archive au démarrage puis permet de restaurer", async () => {
+      await storeTasks();
+
+      const { result } = await renderHook(() => useTasks(ARCHIVE_ON));
+      await waitFor(() => expect(result.current.tasks[0].archivedAt).not.toBeNull());
+
+      expect(result.current.tasks[1].archivedAt).toBeNull();
 
       await act(() => result.current.unarchiveTask("a"));
       const restored = result.current.tasks[0];

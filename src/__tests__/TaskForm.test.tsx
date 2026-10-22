@@ -33,6 +33,18 @@ describe("TaskForm", () => {
 
     await fireEvent(screen.getByLabelText("C'est urgent ?"), "valueChange", false);
     expect(screen.getByText("→ Si j'ai le temps")).toBeOnTheScreen();
+    // Archivage automatique désactivé par défaut
+    expect(screen.getByText("Pas de rappel.")).toBeOnTheScreen();
+  });
+
+  it("annonce l'archivage dans 7 jours quand l'option est activée", async () => {
+    await render(
+      <TaskForm
+        initialCategory="NDNI"
+        settings={{ ...DEFAULT_SETTINGS, autoArchive: true }}
+        onSubmit={() => {}}
+      />
+    );
     expect(
       screen.getByText("Pas de rappel. La tâche sera archivée automatiquement dans 7 jours.")
     ).toBeOnTheScreen();

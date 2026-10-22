@@ -12,6 +12,7 @@ export interface Settings {
   maxNags: number; // nombre maximum de relances
   quietHoursStart: string; // début de la plage silencieuse, "HH:MM"
   quietHoursEnd: string; // fin de la plage silencieuse, "HH:MM"
+  autoArchive: boolean; // archiver les tâches « Si j'ai le temps » (NDNI) restées 7 jours
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   maxNags: 3,
   quietHoursStart: "22:00",
   quietHoursEnd: "08:00",
+  autoArchive: false,
 };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -73,6 +75,9 @@ export function parseSettings(json: string | null): Settings {
       typeof s.quietHoursEnd === "string" && TIME_PATTERN.test(s.quietHoursEnd)
         ? s.quietHoursEnd
         : DEFAULT_SETTINGS.quietHoursEnd,
+    // Absent des réglages enregistrés avant la 1.1.1 : désactivé
+    autoArchive:
+      typeof s.autoArchive === "boolean" ? s.autoArchive : DEFAULT_SETTINGS.autoArchive,
   };
 }
 
