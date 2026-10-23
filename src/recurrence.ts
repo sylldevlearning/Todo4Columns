@@ -12,19 +12,26 @@ export const isRoutine = (rule: Recurrence | null | undefined) =>
 
 const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
 
-// Complète la règle avec ce qui vient de l'échéance : jours de la semaine, jour du mois, mois.
-// Gardés ensuite d'une occurrence à l'autre : un 31 ramené au 30 avril redevient le 31 en mai.
+// Complète la règle avec ce qui vient de l'échéance : heure, jours de la semaine, jour du mois,
+// mois. Gardés ensuite d'une occurrence à l'autre : un 31 ramené au 30 avril redevient le 31 en
+// mai, et une heure décalée par le changement d'heure revient à l'heure voulue.
 export function withAnchors(rule: Recurrence, dueAt: number): Recurrence {
   const due = new Date(dueAt);
+  const time = { hour: rule.hour ?? due.getHours(), minute: rule.minute ?? due.getMinutes() };
   switch (rule.freq) {
     case "weekly":
-      return { freq: "weekly", days: rule.days?.length ? [...rule.days].sort() : [due.getDay()] };
+      return { freq: "weekly", days: rule.days?.length ? [...rule.days].sort() : [due.getDay()], ...time };
     case "monthly":
-      return { freq: "monthly", monthDay: rule.monthDay ?? due.getDate() };
+      return { freq: "monthly", monthDay: rule.monthDay ?? due.getDate(), ...time };
     case "yearly":
-      return { freq: "yearly", month: rule.month ?? due.getMonth(), monthDay: rule.monthDay ?? due.getDate() };
+      return {
+        freq: "yearly",
+        month: rule.month ?? due.getMonth(),
+        monthDay: rule.monthDay ?? due.getDate(),
+        ...time,
+      };
     default:
-      return { freq: rule.freq };
+      return { freq: rule.freq, ...time };
   }
 }
 
@@ -35,12 +42,13 @@ const matchesDay = (rule: Recurrence, day: number, dueDay: number) => {
 };
 
 // Échéance suivante : la première occurrence après maintenant ET après l'échéance actuelle.
-// Les occurrences manquées ne sont pas rattrapées. L'heure est celle de l'échéance actuelle.
+// Les occurrences manquées ne sont pas rattrapées. L'heure est celle de la règle (à défaut,
+// celle de l'échéance actuelle).
 export function nextOccurrence(rule: Recurrence, dueAt: number, now: number): number {
   const due = new Date(dueAt);
   const after = Math.max(dueAt, now);
-  const hours = due.getHours();
-  const minutes = due.getMinutes();
+  const hours = rule.hour ?? due.getHours();
+  const minutes = rule.minute ?? due.getMinutes();
   const start = new Date(after);
 
   if (rule.freq === "monthly" || rule.freq === "yearly") {
@@ -102,5 +110,9 @@ export function parseRecurrence(raw: unknown): Recurrence | null {
   if (monthDay !== undefined) rule.monthDay = monthDay;
   const month = int(r.month, 0, 11);
   if (month !== undefined) rule.month = month;
+  const hour = int(r.hour, 0, 23);
+  if (hour !== undefined) rule.hour = hour;
+  const minute = int(r.minute, 0, 59);
+  if (minute !== undefined) rule.minute = minute;
   return rule;
 }

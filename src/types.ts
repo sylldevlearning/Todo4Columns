@@ -9,6 +9,10 @@ export interface Recurrence {
   days?: number[]; // weekly : jours de la semaine (0 = dimanche)
   monthDay?: number; // monthly, yearly : jour du mois voulu (1-31, ramené au dernier jour si besoin)
   month?: number; // yearly : mois (0 = janvier)
+  // Heure voulue : gardée telle quelle, même si une occurrence a été décalée par le changement
+  // d'heure (2 h 30 n'existe pas le jour du passage à l'heure d'été)
+  hour?: number;
+  minute?: number;
 }
 
 // Réglages de rappel d'une tâche (enregistrés, notifications programmées à l'étape 3)

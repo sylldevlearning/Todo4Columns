@@ -62,7 +62,7 @@ describe("échéance suivante", () => {
 
   it("29 février : le 28 les autres années, le 29 les années bissextiles", () => {
     const rule = withAnchors({ freq: "yearly" }, at(2028, 2, 29));
-    expect(rule).toEqual({ freq: "yearly", month: 1, monthDay: 29 });
+    expect(rule).toEqual({ freq: "yearly", month: 1, monthDay: 29, hour: 9, minute: 0 });
     const y2029 = nextOccurrence(rule, at(2028, 2, 29), at(2028, 2, 29, 10));
     expect(y2029).toBe(at(2029, 2, 28));
     expect(nextOccurrence(rule, at(2031, 2, 28), at(2031, 2, 28, 10))).toBe(at(2032, 2, 29));
@@ -76,6 +76,17 @@ describe("échéance suivante", () => {
     const spring = next({ freq: "weekly" }, at(2027, 3, 22, 8, 30), at(2027, 3, 22, 10));
     expect(new Date(spring).getHours()).toBe(8);
     expect(new Date(spring).getMinutes()).toBe(30);
+  });
+
+  it("heure qui n'existe pas au passage à l'heure d'été : pas de dérive des occurrences suivantes", () => {
+    // 2 h 30 chaque jour ; le 28 mars 2027, 2 h 30 n'existe pas (Europe/Paris) : 3 h 30 ce jour-là
+    const rule = withAnchors({ freq: "daily" }, at(2027, 3, 27, 2, 30));
+    expect(rule).toMatchObject({ hour: 2, minute: 30 });
+    const gapDay = nextOccurrence(rule, at(2027, 3, 27, 2, 30), at(2027, 3, 27, 10));
+    expect(new Date(gapDay).getDate()).toBe(28);
+    // Le lendemain, retour à 2 h 30 (et non 3 h 30 pour toujours)
+    const after = nextOccurrence(rule, gapDay, at(2027, 3, 28, 10));
+    expect([new Date(after).getDate(), new Date(after).getHours(), new Date(after).getMinutes()]).toEqual([29, 2, 30]);
   });
 
   it("pas de rattrapage : après un mois d'absence, la prochaine occurrence est à venir", () => {
@@ -254,7 +265,8 @@ describe("fiche : « Répéter »", () => {
     const task = makeTask({ category: "INU", title: "Loyer", dueAt, recurrence: { freq: "monthly", monthDay: 31 } });
     await render(<TaskForm task={task} settings={DEFAULT_SETTINGS} onSubmit={onSubmit} />);
     await fireEvent.press(screen.getByRole("button", { name: "Enregistrer" }));
-    expect(onSubmit.mock.calls[0][0].recurrence).toEqual({ freq: "monthly", monthDay: 31 });
+    // Règle enregistrée sans heure (avant le correctif) : complétée par l'heure de l'échéance
+    expect(onSubmit.mock.calls[0][0].recurrence).toEqual({ freq: "monthly", monthDay: 31, hour: 9, minute: 0 });
   });
 });
 
