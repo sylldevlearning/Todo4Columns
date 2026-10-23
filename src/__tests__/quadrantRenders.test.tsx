@@ -71,6 +71,20 @@ describe("rendus de l'écran du quadrant", () => {
     expect(chipRenders).not.toContain("b");
     expect(chipRenders).not.toContain("c");
   });
+
+  it("longue liste : seules les premières cartes sont rendues", async () => {
+    const many = Array.from({ length: 60 }, (_, i) =>
+      makeTask({ id: `t${i + 1}`, title: `Tâche ${i + 1}`, category: "UI" })
+    );
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks(many));
+    await renderRouter(
+      { _layout: Layout, "quadrant/[category]": QuadrantScreen },
+      { initialUrl: "/quadrant/UI" }
+    );
+
+    await screen.findByText("Tâche 1");
+    expect(screen.queryByText("Tâche 60")).toBeNull();
+  });
 });
 
 describe("useStableCallback", () => {

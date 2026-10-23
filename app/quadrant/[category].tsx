@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useCelebration } from "../../src/celebration/CelebrationProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Fab from "../../src/components/Fab";
@@ -18,6 +18,7 @@ import { t } from "../../src/i18n";
 import { pickReminderFields } from "../../src/reminders";
 import { useTaskStore } from "../../src/store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../../src/theme";
+import { Task } from "../../src/types";
 
 const UNDO_DELAY_MS = 5000;
 
@@ -25,6 +26,16 @@ interface Undo {
   message: string;
   run: () => void;
 }
+
+// Lignes de la liste : tâches à faire (ou message vide), puis section « Terminées »
+type Row =
+  | { kind: "task"; task: Task }
+  | { kind: "empty" }
+  | { kind: "doneHeader" };
+
+const rowKey = (row: Row) => (row.kind === "task" ? row.task.id : row.kind);
+
+const Separator = () => <View style={styles.separator} />;
 
 // Liste des tâches d'un quadrant
 export default function QuadrantScreen() {
@@ -121,6 +132,39 @@ export default function QuadrantScreen() {
     now,
   };
 
+  const rows: Row[] = [
+    ...(openTasks.length === 0
+      ? [{ kind: "empty" } as const]
+      : openTasks.map((task) => ({ kind: "task", task }) as const)),
+    ...(doneTasks.length > 0 ? [{ kind: "doneHeader" } as const] : []),
+    ...(showDone ? doneTasks.map((task) => ({ kind: "task", task }) as const) : []),
+  ];
+
+  const renderRow = ({ item }: { item: Row }) => {
+    if (item.kind === "task") return <TaskCard task={item.task} {...cardProps} />;
+    if (item.kind === "empty") return <Text style={styles.empty}>{t.quadrant.empty}</Text>;
+    return (
+      <View style={styles.doneHeader}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded: showDone }}
+          onPress={() => setShowDone((v) => !v)}
+          style={styles.doneToggle}
+        >
+          <Text style={styles.doneTitle}>{t.quadrant.done(doneTasks.length)}</Text>
+          <Ionicons
+            name={showDone ? "chevron-up" : "chevron-down"}
+            size={18}
+            color={colors.textMuted}
+          />
+        </Pressable>
+        <Pressable accessibilityRole="button" onPress={handleClearDone} style={styles.clearButton}>
+          <Text style={styles.clearText}>{t.quadrant.clearDone}</Text>
+        </Pressable>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.header}>
@@ -138,43 +182,16 @@ export default function QuadrantScreen() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.list}>
-        {openTasks.length === 0 && (
-          <Text style={styles.empty}>{t.quadrant.empty}</Text>
-        )}
-        {openTasks.map((task) => (
-          <TaskCard key={task.id} task={task} {...cardProps} />
-        ))}
-
-        {doneTasks.length > 0 && (
-          <View style={styles.doneSection}>
-            <View style={styles.doneHeader}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityState={{ expanded: showDone }}
-                onPress={() => setShowDone((v) => !v)}
-                style={styles.doneToggle}
-              >
-                <Text style={styles.doneTitle}>{t.quadrant.done(doneTasks.length)}</Text>
-                <Ionicons
-                  name={showDone ? "chevron-up" : "chevron-down"}
-                  size={18}
-                  color={colors.textMuted}
-                />
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                onPress={handleClearDone}
-                style={styles.clearButton}
-              >
-                <Text style={styles.clearText}>{t.quadrant.clearDone}</Text>
-              </Pressable>
-            </View>
-            {showDone &&
-              doneTasks.map((task) => <TaskCard key={task.id} task={task} {...cardProps} />)}
-          </View>
-        )}
-      </ScrollView>
+      {/* Liste virtualisée : seules les cartes proches de l'écran sont rendues */}
+      <FlatList
+        data={rows}
+        keyExtractor={rowKey}
+        renderItem={renderRow}
+        ItemSeparatorComponent={Separator}
+        contentContainerStyle={styles.list}
+        // Le découpage natif des vues hors écran peut faire disparaître des cartes animées
+        removeClippedSubviews={false}
+      />
 
       {undo && (
         <UndoBanner
@@ -263,7 +280,9 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: 16,
     paddingBottom: 180, // place pour le bandeau et le bouton flottant
-    gap: 10,
+  },
+  separator: {
+    height: 10,
   },
   empty: {
     fontFamily: fonts.regular,
@@ -272,11 +291,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingVertical: 32,
   },
-  doneSection: {
-    marginTop: 16,
-    gap: 10,
-  },
   doneHeader: {
+    marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
