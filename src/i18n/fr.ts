@@ -155,6 +155,7 @@ export const fr = {
     due: "Échéance",
     remindMe: "Me rappeler",
     delegatedTo: "Confié à",
+    dueOptional: "Échéance (facultative)",
     personPlaceholder: "Nom de la personne",
     followUp: "Relancer la personne",
     ndniNote: "Pas de rappel.",
@@ -320,6 +321,11 @@ export const fr = {
         body: "Quand tu termines une tâche qui se répète, la suivante est créée toute seule, avec la prochaine échéance. Les occurrences manquées ne sont pas rattrapées : la suivante tombe toujours après aujourd'hui.",
         example: "« Payer le loyer » chaque mois le 31 : en avril, l'échéance passe au 30, le dernier jour du mois.",
       },
+      delegateSend: {
+        title: "Envoyer la tâche",
+        body: "Ouvre le partage de ton téléphone avec un message prêt à envoyer. Tu choisis l'appli (SMS, WhatsApp, mail…) et la personne : l'app n'a pas accès à tes contacts.",
+        example: "« Salut Marie, peux-tu t'occuper de : Compte rendu ? Merci ! »",
+      },
       backup: {
         title: "Sauvegarde",
         body: "« Exporter » crée un fichier avec toutes tes données, à garder où tu veux (Drive, mail, fichiers). « Importer » remplace les données de ce téléphone par celles d'un fichier, après une copie de secours. Sur Android, la sauvegarde automatique de Google garde aussi tes données, si elle est activée sur le téléphone.",
@@ -426,6 +432,15 @@ export const fr = {
       streak: (n: number) => `${n} semaine${s(n)} de revue d'affilée`,
       back: "Terminer",
     },
+  },
+
+  // Délégation par message (partage natif, sans accès aux contacts)
+  delegation: {
+    send: (name: string | null) => (name ? `Envoyer à ${name}` : "Envoyer"),
+    message: (name: string | null, title: string, due: string | null) =>
+      `Salut${name ? ` ${name}` : ""}, peux-tu t'occuper de : ${title} ?${due ? ` (avant le ${due})` : ""} Merci !`,
+    nudge: (name: string | null) => (name ? `Relancer ${name}` : "Relancer"),
+    nudgeMessage: (title: string) => `Petit rappel : où en es-tu pour ${title} ?`,
   },
 
   // Sauvegarde : export et import des données
@@ -583,6 +598,7 @@ export const fr = {
     actionDone: "Fait",
     actionSnooze: "Reporter 1 h",
     actionOpen: "Ouvrir",
+    actionNudge: "Relancer",
     nag: "Toujours pas faite ?",
     nagCount: (index: number, total: number) => `Toujours pas faite ? Relance ${index}/${total}`,
     nagSnoozed: "Rappel reporté : toujours pas faite ?",

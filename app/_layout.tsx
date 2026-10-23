@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import EscalationNotice from "../src/components/EscalationNotice";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
+import { nudgeMessage, shareWhenActive } from "../src/delegation";
 import { useAppFonts } from "../src/fonts";
 import { configureNotifications } from "../src/notifications/setup";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
@@ -40,6 +41,11 @@ function NotificationResponses() {
     snoozeTask,
     openQuadrant: (category) => router.push(`/quadrant/${category}`),
     openReview: () => router.push("/review"),
+    // « Relancer » : l'app s'ouvre sur la tâche, puis le partage avec un message prêt
+    nudge: (task) => {
+      router.push(`/quadrant/${task.category}`);
+      shareWhenActive(nudgeMessage(task));
+    },
     // « Fait » touché pendant que l'app est à l'écran
     onCompletedInApp: (task) => celebrate(task.category),
   });

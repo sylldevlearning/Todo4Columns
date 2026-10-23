@@ -100,6 +100,8 @@ export function keepRelevantFields(
         ...EMPTY_REMINDER_FIELDS,
         nagInterval: fields.nagInterval,
         delegatedTo: fields.delegatedTo?.trim() || null,
+        // Facultative : reprise dans le message envoyé à la personne (« avant le … »)
+        dueAt: fields.dueAt,
       };
     case "NDNI":
       return { ...EMPTY_REMINDER_FIELDS };

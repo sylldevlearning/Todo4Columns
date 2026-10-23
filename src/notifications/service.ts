@@ -12,6 +12,12 @@ import {
 
 export const CHANNEL_ID = "reminders";
 export const CATEGORY_ID = "task-reminder";
+// Relance d'une tâche confiée : « Fait », « Relancer » (message à la personne), « Reporter 1 h »
+export const DELEGATE_CATEGORY_ID = "task-delegate";
+
+// Boutons de la notification selon la tâche
+export const categoryFor = (task: Task) =>
+  task.category === "UDI" ? DELEGATE_CATEGORY_ID : CATEGORY_ID;
 // iOS ne garde que 64 notifications programmées
 export const MAX_SCHEDULED = 64;
 
@@ -20,6 +26,7 @@ export interface NotificationData {
   taskId: string;
   type: NotificationType;
   date: number;
+  category?: string; // boutons de la notification (absent avant l'action « Relancer »)
 }
 
 // Données de la notification hebdomadaire de revue (elle ne concerne aucune tâche)
@@ -38,13 +45,14 @@ async function canSchedule(): Promise<boolean> {
 
 // Déclencheur de type date : pas besoin de la permission SCHEDULE_EXACT_ALARM
 function scheduleItem(task: Task, item: ScheduledNotification): Promise<string> {
-  const data: NotificationData = { taskId: task.id, type: item.type, date: item.date };
+  const category = categoryFor(task);
+  const data: NotificationData = { taskId: task.id, type: item.type, date: item.date, category };
   return Notifications.scheduleNotificationAsync({
     content: {
       title: item.content.title,
       body: item.content.body,
       data: { ...data },
-      categoryIdentifier: CATEGORY_ID,
+      categoryIdentifier: category,
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
@@ -102,9 +110,15 @@ export async function syncTaskNotifications(
   return ids;
 }
 
-// Identifie une notification par son contenu : tâche, type, date et texte
-const keyOf = (taskId: string, type: string, date: number, title: string, body: string) =>
-  JSON.stringify([taskId, type, date, title, body]);
+// Identifie une notification par son contenu : tâche, type, date, texte et boutons
+const keyOf = (
+  taskId: string,
+  type: string,
+  date: number,
+  title: string,
+  body: string,
+  category: string
+) => JSON.stringify([taskId, type, date, title, body, category]);
 
 const reviewKeyOf = (trigger: WeeklyTrigger, title: string, body: string) =>
   JSON.stringify([REVIEW_TYPE, trigger.weekday, trigger.hour, trigger.minute, title, body]);
@@ -129,7 +143,7 @@ export async function reconcileNotifications(
   const reviewKey = review ? reviewKeyOf(review, reviewTitle, reviewBody) : null;
   const desiredKeys = new Set(
     desired.map(({ task, item }) =>
-      keyOf(task.id, item.type, item.date, item.content.title, item.content.body)
+      keyOf(task.id, item.type, item.date, item.content.title, item.content.body, categoryFor(task))
     )
   );
   if (reviewKey) desiredKeys.add(reviewKey);
@@ -141,7 +155,15 @@ export async function reconcileNotifications(
     const key = isReview(n.content.data)
       ? reviewKeyOf(n.content.data, n.content.title ?? "", n.content.body ?? "")
       : data.taskId && data.type && typeof data.date === "number"
-      ? keyOf(data.taskId, data.type, data.date, n.content.title ?? "", n.content.body ?? "")
+      ? keyOf(
+          data.taskId,
+          data.type,
+          data.date,
+          n.content.title ?? "",
+          n.content.body ?? "",
+          // Programmées avant l'action « Relancer » : boutons d'origine, remplacées si besoin
+          data.category ?? CATEGORY_ID
+        )
       : null;
     if (key !== null && desiredKeys.has(key) && !kept.has(key)) kept.set(key, n.identifier);
     else await Notifications.cancelScheduledNotificationAsync(n.identifier).catch(() => {});
@@ -151,7 +173,14 @@ export async function reconcileNotifications(
 
   const result: Record<string, string[]> = Object.fromEntries(tasks.map((t) => [t.id, []]));
   for (const { task, item } of desired) {
-    const key = keyOf(task.id, item.type, item.date, item.content.title, item.content.body);
+    const key = keyOf(
+      task.id,
+      item.type,
+      item.date,
+      item.content.title,
+      item.content.body,
+      categoryFor(task)
+    );
     result[task.id].push(kept.get(key) ?? (await scheduleItem(task, item)));
   }
   return result;

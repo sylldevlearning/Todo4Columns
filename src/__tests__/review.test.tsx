@@ -252,6 +252,26 @@ describe("parcours de la revue", () => {
     expect(screen.getByText("Aucune tâche confiée en attente.")).toBeOnTheScreen();
   });
 
+  it("étape 3 : « Relancer » ouvre le partage avec un message prêt", async () => {
+    const share = jest.spyOn(require("react-native").Share, "share").mockResolvedValue({ action: "sharedAction" });
+    await launch(
+      [
+        makeTask({ id: "d1", title: "Compte rendu", category: "UDI", delegatedTo: "Marie" }),
+        makeTask({ id: "d2", title: "Devis", category: "UDI" }),
+      ],
+      "/review"
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Suivant" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Suivant" }));
+
+    await fireEvent.press(screen.getByRole("button", { name: "Relancer Marie : Compte rendu" }));
+    expect(share).toHaveBeenLastCalledWith({ message: "Petit rappel : où en es-tu pour Compte rendu ?" });
+    await fireEvent.press(screen.getByRole("button", { name: "Relancer : Devis" }));
+    expect(share).toHaveBeenLastCalledWith({ message: "Petit rappel : où en es-tu pour Devis ?" });
+    // La revue continue normalement
+    expect(screen.getByText("Étape 3 sur 3")).toBeOnTheScreen();
+  });
+
   it("s'ouvre aussi depuis les Réglages", async () => {
     await launch([], "/settings");
     expect(screen.getByLabelText("En savoir plus : Revue de la semaine")).toBeOnTheScreen();

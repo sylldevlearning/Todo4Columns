@@ -150,6 +150,7 @@ export const en: Translations = {
     due: "Due date",
     remindMe: "Remind me",
     delegatedTo: "Assigned to",
+    dueOptional: "Due date (optional)",
     personPlaceholder: "Person's name",
     followUp: "Follow up with them",
     ndniNote: "No reminder.",
@@ -312,6 +313,11 @@ export const en: Translations = {
         body: "When you complete a repeating task, the next one is created on its own, with the next due date. Missed occurrences aren't made up: the next one is always after today.",
         example: "“Pay the rent” every month on the 31st: in April, it's due on the 30th, the last day of the month.",
       },
+      delegateSend: {
+        title: "Send the task",
+        body: "Opens your phone's share sheet with a ready-to-send message. You pick the app (text, WhatsApp, email…) and the person: the app has no access to your contacts.",
+        example: "“Hi Maria, could you take care of: Meeting notes? Thanks!”",
+      },
       backup: {
         title: "Backup",
         body: "“Export” creates a file with all your data, to keep wherever you like (Drive, email, files). “Import” replaces the data on this phone with a file's, after a safety copy. On Android, Google's automatic backup also keeps your data, if it's turned on on the phone.",
@@ -413,6 +419,14 @@ export const en: Translations = {
       streak: (n) => `${n} week${s(n)} of reviews in a row`,
       back: "Finish",
     },
+  },
+
+  delegation: {
+    send: (name) => (name ? `Send to ${name}` : "Send"),
+    message: (name, title, due) =>
+      `Hi${name ? ` ${name}` : ""}, could you take care of: ${title}?${due ? ` (before ${due})` : ""} Thanks!`,
+    nudge: (name) => (name ? `Follow up with ${name}` : "Follow up"),
+    nudgeMessage: (title) => `Quick reminder: how's it going with ${title}?`,
   },
 
   backup: {
@@ -566,6 +580,7 @@ export const en: Translations = {
     actionDone: "Done",
     actionSnooze: "Snooze 1 h",
     actionOpen: "Open",
+    actionNudge: "Follow up",
     nag: "Still not done?",
     nagCount: (index, total) => `Still not done? Reminder ${index}/${total}`,
     nagSnoozed: "Snoozed reminder: still not done?",

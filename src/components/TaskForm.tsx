@@ -1,3 +1,4 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
@@ -10,6 +11,7 @@ import {
   PLAN_REMINDER_OPTIONS,
 } from "../reminders";
 import { Settings } from "../settings";
+import { delegationMessage, shareMessage } from "../delegation";
 import { isDueSoon } from "../notifications/status";
 import {
   isRoutine,
@@ -206,6 +208,7 @@ export default function TaskForm({
           ...EMPTY_REMINDER_FIELDS,
           delegatedTo: delegateTo.trim() || null,
           nagInterval: delegateFollowUp,
+          dueAt: planDue,
         };
       case "NDNI":
         return { ...EMPTY_REMINDER_FIELDS };
@@ -380,6 +383,38 @@ export default function TaskForm({
               {...pillColors}
             />
           </Field>
+          <Field label={t.form.dueOptional}>
+            <DueDateField value={planDue} onChange={changeDue} color={category.textColor} />
+          </Field>
+          {/* Message prêt, envoyé avec l'appli et à la personne choisies dans le partage */}
+          {title.trim() !== "" && (
+            <View style={styles.sendRow}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t.delegation.send(delegateTo.trim() || null)}
+                onPress={() =>
+                  shareMessage(
+                    delegationMessage({
+                      title: title.trim(),
+                      delegatedTo: delegateTo.trim() || null,
+                      dueAt: planDue,
+                    })
+                  )
+                }
+                style={({ pressed }) => [
+                  styles.send,
+                  { borderColor: withAlpha(category.color, 0.5), backgroundColor: withAlpha(category.color, 0.12) },
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Ionicons name="paper-plane-outline" size={18} color={category.textColor} />
+                <Text style={[styles.sendText, { color: category.textColor }]}>
+                  {t.delegation.send(delegateTo.trim() || null)}
+                </Text>
+              </Pressable>
+              <InfoButton info="delegateSend" />
+            </View>
+          )}
         </>
       )}
 
@@ -510,6 +545,25 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     fontSize: 15,
     color: colors.text,
+  },
+  sendRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  send: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    minHeight: TOUCH_SIZE + 4,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  sendText: {
+    fontFamily: fonts.bold,
+    fontSize: 15,
   },
   days: {
     flexDirection: "row",

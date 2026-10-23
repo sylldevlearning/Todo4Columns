@@ -15,6 +15,7 @@ interface Options {
   snoozeTask: (id: string) => void;
   openQuadrant: (category: Category) => void;
   openReview?: () => void; // notification de la revue de la semaine
+  nudge?: (task: Task) => void; // « Relancer » : message à la personne
   // « Fait » reçu pendant que l'app est au premier plan (pour la célébration)
   onCompletedInApp?: (task: Task) => void;
 }
@@ -44,6 +45,10 @@ export function useNotificationResponses(options: Options): void {
       },
       snooze: (id) => latest.current.snoozeTask(id),
       openReview: () => latest.current.openReview?.(),
+      nudge: (id) => {
+        const task = latest.current.tasks.find((t) => t.id === id);
+        if (task) latest.current.nudge?.(task);
+      },
       open: (id) => {
         const task = latest.current.tasks.find((t) => t.id === id);
         if (task) latest.current.openQuadrant(task.category);

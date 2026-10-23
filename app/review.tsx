@@ -13,6 +13,7 @@ import { t } from "../src/i18n";
 import { isPriority, MAX_PRIORITIES, priorityTargetWeek, recordReview } from "../src/review";
 import { sameItems } from "../src/store/selectableStore";
 import { TasksState, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
+import { nudgeMessage, shareMessage } from "../src/delegation";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../src/theme";
 import { Category, Task } from "../src/types";
 
@@ -214,6 +215,17 @@ export default function ReviewScreen() {
                 onChange={(choice) => setDelegatedChoices((prev) => ({ ...prev, [task.id]: choice }))}
                 color={delegate.color}
               />
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${t.delegation.nudge(task.delegatedTo)} : ${task.title}`}
+                onPress={() => shareMessage(nudgeMessage(task))}
+                style={styles.nudge}
+              >
+                <Ionicons name="paper-plane-outline" size={16} color={delegate.textColor} />
+                <Text style={[styles.nudgeText, { color: delegate.textColor }]}>
+                  {t.delegation.nudge(task.delegatedTo)}
+                </Text>
+              </Pressable>
             </TaskRow>
           ))}
         </StepContent>
@@ -430,6 +442,18 @@ const styles = StyleSheet.create({
   },
   choiceTextSelected: {
     color: colors.bg,
+  },
+  nudge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    minHeight: TOUCH_SIZE,
+    alignSelf: "flex-start",
+  },
+  nudgeText: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    textDecorationLine: "underline",
   },
   end: {
     alignItems: "center",

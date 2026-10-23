@@ -49,14 +49,15 @@ describe("useTasks", () => {
         category: "UDI",
         delegatedTo: "  Marie ",
         nagInterval: 4320,
-        dueAt: 123, // pas d'échéance pour Déléguer
+        dueAt: 123, // échéance facultative, gardée pour le message envoyé à la personne
+        reminderOffset: 60, // pas de rappel « Planifier » pour Déléguer
       })
     );
 
     expect(result.current.tasks[0]).toMatchObject({
       delegatedTo: "Marie",
       nagInterval: 4320,
-      dueAt: null,
+      dueAt: 123,
       reminderOffset: null,
     });
   });

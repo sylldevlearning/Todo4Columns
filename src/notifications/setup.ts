@@ -1,12 +1,19 @@
 import * as Notifications from "expo-notifications";
 import { Linking, Platform } from "react-native";
 import { t } from "../i18n";
-import { NotificationData, CATEGORY_ID, CHANNEL_ID, REVIEW_TYPE } from "./service";
+import {
+  CATEGORY_ID,
+  CHANNEL_ID,
+  DELEGATE_CATEGORY_ID,
+  NotificationData,
+  REVIEW_TYPE,
+} from "./service";
 
 // Identifiants des boutons de notification
 export const ACTION_DONE = "done";
 export const ACTION_SNOOZE = "snooze";
 export const ACTION_OPEN = "open";
+export const ACTION_NUDGE = "nudge";
 
 export type PermissionState = "granted" | "denied" | "undetermined";
 
@@ -42,6 +49,17 @@ export async function configureNotifications(): Promise<void> {
     },
     { identifier: ACTION_OPEN, buttonTitle: t.notifications.actionOpen, options: { opensAppToForeground: true } },
   ]);
+
+  // Tâche confiée : « Relancer » ouvre l'app sur le partage avec un message prêt
+  await Notifications.setNotificationCategoryAsync(DELEGATE_CATEGORY_ID, [
+    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: false } },
+    { identifier: ACTION_NUDGE, buttonTitle: t.notifications.actionNudge, options: { opensAppToForeground: true } },
+    {
+      identifier: ACTION_SNOOZE,
+      buttonTitle: t.notifications.actionSnooze,
+      options: { opensAppToForeground: false },
+    },
+  ]);
 }
 
 export async function getPermissionState(): Promise<PermissionState> {
@@ -66,6 +84,7 @@ export interface ResponseHandlers {
   snooze: (taskId: string) => void; // « Reporter 1 h »
   open: (taskId: string) => void; // « Ouvrir » ou tap sur la notification
   openReview?: () => void; // tap sur la notification de revue de la semaine
+  nudge?: (taskId: string) => void; // « Relancer » d'une tâche confiée
 }
 
 // Applique l'action choisie dans une notification ; renvoie false si elle ne concerne aucune tâche
@@ -85,6 +104,10 @@ export function handleNotificationResponse(
       break;
     case ACTION_SNOOZE:
       handlers.snooze(data.taskId);
+      break;
+    case ACTION_NUDGE:
+      if (handlers.nudge) handlers.nudge(data.taskId);
+      else handlers.open(data.taskId);
       break;
     default:
       handlers.open(data.taskId);
