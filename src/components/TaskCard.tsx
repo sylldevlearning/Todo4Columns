@@ -13,6 +13,7 @@ import { CategoryInfo } from "../constants/categories";
 import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { isWaiting } from "../notifications/status";
+import { isPriority } from "../review";
 import { Settings } from "../settings";
 import { useTaskActions } from "../store/TasksContext";
 import { Task } from "../types";
@@ -92,6 +93,7 @@ export default React.memo(function TaskCard({
     opacity: translateX.value < 0 ? 1 : 0,
   }));
 
+  const priority = isPriority(task, now);
   const checkLabel = task.isDone ? t.card.markTodo(task.title) : t.card.markDone(task.title);
   const completeLabel = task.isDone ? t.card.reopen : t.card.complete;
 
@@ -110,7 +112,9 @@ export default React.memo(function TaskCard({
         <Animated.View style={cardStyle}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t.card.edit(task.title)}
+            accessibilityLabel={
+              priority ? `${t.card.edit(task.title)}, ${t.review.priority}` : t.card.edit(task.title)
+            }
             accessibilityActions={[
               { name: "activate" },
               { name: "complete", label: completeLabel },
@@ -145,12 +149,15 @@ export default React.memo(function TaskCard({
             </Pressable>
 
             <View style={styles.body}>
-              <Text
-                style={[styles.title, task.isDone && styles.titleDone]}
-                numberOfLines={3}
-              >
-                {task.title}
-              </Text>
+              <View style={styles.titleRow}>
+                {priority && <Ionicons name="star" size={14} color={colors.warning} />}
+                <Text
+                  style={[styles.title, task.isDone && styles.titleDone]}
+                  numberOfLines={3}
+                >
+                  {task.title}
+                </Text>
+              </View>
               {!task.isDone && (
                 <>
                   <TaskChips task={task} category={category} settings={settings} now={now} />
@@ -240,7 +247,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 4,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   title: {
+    flexShrink: 1,
     fontFamily: fonts.semibold,
     fontSize: 15,
     color: colors.text,

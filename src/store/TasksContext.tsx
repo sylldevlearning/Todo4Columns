@@ -47,6 +47,8 @@ const ACTION_NAMES = [
   "restoreTasks",
   "clearDone",
   "unarchiveTask",
+  "archiveTask",
+  "setWeekPriorities",
   "startTimer",
   "resyncNotifications",
   "updateSettings",

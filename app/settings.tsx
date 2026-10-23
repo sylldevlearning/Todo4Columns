@@ -63,6 +63,7 @@ export default function SettingsScreen() {
           onDeleteForever={deleteForever}
           onShowOnboarding={() => setShowOnboarding(true)}
           onOpenHowTo={() => router.push("/help")}
+          onOpenReview={() => router.push("/review")}
         />
       </ScrollView>
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}

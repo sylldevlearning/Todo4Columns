@@ -77,6 +77,7 @@ export default function RootLayout() {
               <Stack.Screen name="settings" />
               <Stack.Screen name="help" />
               <Stack.Screen name="balance" />
+              <Stack.Screen name="review" />
               <Stack.Screen
                 name="task"
                 options={{

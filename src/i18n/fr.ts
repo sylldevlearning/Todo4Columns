@@ -193,6 +193,7 @@ export const fr = {
     deleteForeverBody: (title: string) => `« ${title} » sera supprimée sans retour possible.`,
     androidDelay: "Sur Android, un rappel peut arriver avec quelques minutes de décalage.",
     help: "Aide",
+    review: "Revue de la semaine",
   },
 
   // Aide : cartes des boutons « i »
@@ -271,6 +272,11 @@ export const fr = {
         body: "La barre montre dans quelles cases étaient les tâches que tu as terminées. Anticiper, c'est faire les tâches « Planifier » avant qu'elles deviennent urgentes : plus cette part grandit, moins tu as d'urgences.",
         example: "« 6 tâches sur 10 anticipées » : 6 des 10 tâches terminées venaient de « Planifier ».",
       },
+      review: {
+        title: "Revue de la semaine",
+        body: "Une fois par semaine, 5 minutes pour faire le tri : « Si j'ai le temps », tes priorités et les tâches confiées. C'est le meilleur moyen de garder ta matrice à jour et d'anticiper.",
+        example: "le dimanche soir, archive deux vieilles idées, choisis 3 priorités et note que ton collègue a rendu son travail.",
+      },
       celebrations: {
         title: "Animations de célébration",
         body: "Quand tu termines une tâche, des confettis et un petit mot s'affichent. Désactive-les si tu préfères une app plus sobre.",
@@ -321,6 +327,47 @@ export const fr = {
     part: (name: string, n: number) => `${name} ${n}`,
     insight:
       "Plus tu planifies, moins tu as d'urgences : une tâche « Planifier » faite à temps ne devient jamais urgente.",
+  },
+
+  // Revue de la semaine
+  review: {
+    title: "Revue de la semaine",
+    open: "Faire la revue de la semaine",
+    openNow: "Faire la revue maintenant",
+    close: "Fermer la revue",
+    progress: (step: number, total: number) => `Étape ${step} sur ${total}`,
+    skip: "Passer",
+    next: "Suivant",
+    finish: "Terminer la revue",
+    priority: "priorité de la semaine",
+    someday: {
+      title: "Si j'ai le temps",
+      body: "Pour chaque tâche, décide si tu la gardes, la planifies ou l'archives.",
+      empty: "Rien dans « Si j'ai le temps ». Passe à la suite.",
+      keep: "Garder",
+      plan: "Planifier",
+      archive: "Archiver",
+    },
+    priorities: {
+      title: "Tes priorités",
+      body: "Choisis jusqu'à 3 tâches « Planifier » pour la semaine. Elles auront une étoile jusqu'à la fin de la semaine.",
+      empty: "Aucune tâche à planifier pour l'instant.",
+      count: (n: number, max: number) => `${n} sur ${max} choisie${s(n)}`,
+    },
+    delegated: {
+      title: "Tâches confiées",
+      body: "As-tu des nouvelles ? Marque ce qui est fait. « Toujours en attente » relance le suivi à zéro.",
+      empty: "Aucune tâche confiée en attente.",
+      done: "Fait",
+      waiting: "Toujours en attente",
+      to: (person: string) => `Confiée à ${person}`,
+    },
+    end: {
+      title: "Revue terminée !",
+      balance: "Ton équilibre cette semaine",
+      streak: (n: number) => `${n} semaine${s(n)} de revue d'affilée`,
+      back: "Terminer",
+    },
   },
 
   // Page « Comment ça marche »

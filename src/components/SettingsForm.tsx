@@ -34,6 +34,7 @@ interface Props {
   onDeleteForever: (id: string) => void;
   onShowOnboarding?: () => void; // « Revoir la présentation »
   onOpenHowTo?: () => void; // page « Comment ça marche »
+  onOpenReview?: () => void; // revue de la semaine
 }
 
 function Section({ title, info, children }: { title: string; info?: InfoKey; children: ReactNode }) {
@@ -92,6 +93,7 @@ export default function SettingsForm({
   onDeleteForever,
   onShowOnboarding,
   onOpenHowTo,
+  onOpenReview,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -162,6 +164,12 @@ export default function SettingsForm({
           onChange={(v) => set("quietHoursEnd", v)}
         />
       </Section>
+
+      {onOpenReview && (
+        <Section title={t.settings.review} info="review">
+          <TextButton label={t.review.openNow} onPress={onOpenReview} />
+        </Section>
+      )}
 
       <Section title={t.settings.notifications}>
         <Text style={styles.status}>

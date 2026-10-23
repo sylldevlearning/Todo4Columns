@@ -32,6 +32,11 @@ export default function MatrixScreen() {
           <Text style={styles.summary}>{t.matrix.taskCount(openCount)}</Text>
         </View>
         <IconButton
+          icon="calendar-outline"
+          label={t.review.open}
+          onPress={() => router.push("/review")}
+        />
+        <IconButton
           icon="settings-outline"
           label={t.common.settings}
           onPress={() => router.push("/settings")}

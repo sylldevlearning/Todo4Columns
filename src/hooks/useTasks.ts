@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 import { archiveStaleTasks } from "../archive";
+import { startOfWeek } from "../balance";
 import { t } from "../i18n";
 import { SNOOZE_MINUTES } from "../notifications/schedule";
 import { defaultNotifier, Notifier } from "../notifications/service";
@@ -400,6 +401,28 @@ export function useTasks(
     );
   };
 
+  // Revue de la semaine : archive une tâche « Si j'ai le temps » sans attendre les 7 jours
+  const archiveTask = (id: string) => {
+    const now = Date.now();
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id && t.archivedAt === null ? { ...t, archivedAt: now, updatedAt: now } : t))
+    );
+  };
+
+  // Priorités de la semaine week : remplacent les priorités encore en cours.
+  // updatedAt reste inchangé : il sert de point de départ aux relances.
+  const setWeekPriorities = (ids: string[], week: number) => {
+    const chosen = new Set(ids);
+    const currentWeek = startOfWeek(Date.now());
+    setTasks((prev) =>
+      prev.map((t) => {
+        if (chosen.has(t.id)) return t.priorityWeek === week ? t : { ...t, priorityWeek: week };
+        const active = typeof t.priorityWeek === "number" && t.priorityWeek >= currentWeek;
+        return active ? { ...t, priorityWeek: null } : t;
+      })
+    );
+  };
+
   const startTimer = (id: string, minutes: number) => {
     const endTimestamp = Date.now() + minutes * 60 * 1000;
     updateOne(id, (t) => ({ ...t, timerEnd: endTimestamp }));
@@ -420,6 +443,8 @@ export function useTasks(
     restoreTasks,
     clearDone,
     unarchiveTask,
+    archiveTask,
+    setWeekPriorities,
     startTimer,
     resyncNotifications: reconcileAll,
   };

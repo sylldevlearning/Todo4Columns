@@ -1,7 +1,9 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CategoryInfo, CATEGORIES } from "../constants/categories";
 import { t } from "../i18n";
+import { isPriority } from "../review";
 import { colors, fonts, withAlpha } from "../theme";
 import { Category, Task } from "../types";
 import TaskChips from "./TaskChips";
@@ -22,7 +24,12 @@ function QuadrantCell({
   tasks: Task[]; // tâches non terminées du quadrant
   onPress: () => void;
 }) {
-  const preview = tasks.slice(0, PREVIEW_COUNT);
+  // Priorités de la semaine en tête de l'aperçu
+  const now = Date.now();
+  const preview = [
+    ...tasks.filter((t) => isPriority(t, now)),
+    ...tasks.filter((t) => !isPriority(t, now)),
+  ].slice(0, PREVIEW_COUNT);
   const others = tasks.length - preview.length;
 
   return (
@@ -57,9 +64,19 @@ function QuadrantCell({
       <View style={styles.preview}>
         {preview.map((task) => (
           <View key={task.id} style={styles.previewTask}>
-            <Text style={styles.previewTitle} numberOfLines={1}>
-              {task.title}
-            </Text>
+            <View style={styles.previewTitleRow}>
+              {isPriority(task, now) && (
+                <Ionicons
+                  name="star"
+                  size={11}
+                  color={colors.warning}
+                  accessibilityLabel={t.review.priority}
+                />
+              )}
+              <Text style={styles.previewTitle} numberOfLines={1}>
+                {task.title}
+              </Text>
+            </View>
             <TaskChips task={task} category={category} compact />
           </View>
         ))}
@@ -195,7 +212,13 @@ const styles = StyleSheet.create({
   previewTask: {
     gap: 0,
   },
+  previewTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
   previewTitle: {
+    flexShrink: 1,
     fontFamily: fonts.semibold,
     fontSize: 13,
     color: colors.text,

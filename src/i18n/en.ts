@@ -188,6 +188,7 @@ export const en: Translations = {
     deleteForeverBody: (title) => `“${title}” will be deleted for good.`,
     androidDelay: "On Android, a reminder may arrive a few minutes late.",
     help: "Help",
+    review: "Weekly review",
   },
 
   help: {
@@ -265,6 +266,11 @@ export const en: Translations = {
         body: "The bar shows which boxes the tasks you completed came from. Staying ahead means doing “Schedule” tasks before they become urgent: the bigger that share, the fewer emergencies you have.",
         example: "“6 of 10 tasks done ahead of time”: 6 of the 10 tasks you completed came from “Schedule”.",
       },
+      review: {
+        title: "Weekly review",
+        body: "Once a week, 5 minutes to sort things out: “Someday”, your priorities and handed-off tasks. It's the best way to keep your matrix up to date and stay ahead.",
+        example: "on Sunday evening, archive two old ideas, pick 3 priorities and note that your colleague handed in their work.",
+      },
       celebrations: {
         title: "Celebration animations",
         body: "When you complete a task, confetti and a short message appear. Turn them off if you prefer a calmer app.",
@@ -311,6 +317,46 @@ export const en: Translations = {
     part: (name, n) => `${name} ${n}`,
     insight:
       "The more you schedule, the fewer emergencies you have: a “Schedule” task done in time never becomes urgent.",
+  },
+
+  review: {
+    title: "Weekly review",
+    open: "Do the weekly review",
+    openNow: "Do the review now",
+    close: "Close the review",
+    progress: (step, total) => `Step ${step} of ${total}`,
+    skip: "Skip",
+    next: "Next",
+    finish: "Finish the review",
+    priority: "priority of the week",
+    someday: {
+      title: "Someday",
+      body: "For each task, decide whether to keep it, schedule it or archive it.",
+      empty: "Nothing in “Someday”. On to the next step.",
+      keep: "Keep",
+      plan: "Schedule",
+      archive: "Archive",
+    },
+    priorities: {
+      title: "Your priorities",
+      body: "Pick up to 3 “Schedule” tasks for the week. They get a star until the end of the week.",
+      empty: "No tasks to schedule right now.",
+      count: (n, max) => `${n} of ${max} picked`,
+    },
+    delegated: {
+      title: "Handed-off tasks",
+      body: "Any news? Mark what's done. “Still waiting” restarts the follow-up.",
+      empty: "No handed-off tasks waiting.",
+      done: "Done",
+      waiting: "Still waiting",
+      to: (person) => `Assigned to ${person}`,
+    },
+    end: {
+      title: "Review done!",
+      balance: "Your balance this week",
+      streak: (n) => `${n} week${s(n)} of reviews in a row`,
+      back: "Finish",
+    },
   },
 
   howTo: {
