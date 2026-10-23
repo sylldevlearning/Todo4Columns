@@ -188,7 +188,8 @@ export default function TaskForm({
           ...EMPTY_REMINDER_FIELDS,
           nagInterval: doNag,
           nagRepeat: doNag !== null && doRepeat,
-          // Tâche récurrente passée en Faire : échéance et répétition gardées
+          dueAt: planDue,
+          // Tâche récurrente passée en Faire : répétition et rappel gardés
           ...(savedRecurrence()
             ? { dueAt: planDue, recurrence: savedRecurrence(), reminderOffset: planReminder }
             : {}),

@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { CategoryInfo } from "../constants/categories";
 import { formatDue, formatDuration } from "../format";
 import { t } from "../i18n";
-import { isSoonUrgent, isWaiting, nextFollowUp } from "../notifications/status";
+import { isLate, isSoonUrgent, isWaiting, nextFollowUp } from "../notifications/status";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { recurrenceLabel } from "../recurrence";
 import { reminderLabel } from "../reminders";
@@ -49,6 +49,11 @@ export default function TaskChips({
   }
 
   if (!compact) {
+    if (isLate(task, now)) {
+      chips.push(
+        <Chip key="late" icon="alert-circle-outline" label={t.chips.late} color={colors.danger} textColor={colors.danger} />
+      );
+    }
     if (isSoonUrgent(task, now)) {
       chips.push(
         <Chip

@@ -148,7 +148,11 @@ export function computeSchedule(
         items.push({
           date: task.dueAt,
           type: "due",
-          content: { title: task.title, body: t.notifications.dueReached },
+          // Bascule automatique activée : la tâche passe en Faire d'elle-même, on l'annonce
+          content: {
+            title: task.title,
+            body: settings.autoEscalate ? t.notifications.dueEscalated : t.notifications.dueReached,
+          },
         });
       }
       items.push(...snoozeNotification(task, t.notifications.planSnoozed));

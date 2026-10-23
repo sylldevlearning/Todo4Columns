@@ -5,6 +5,7 @@ import { startOfWeek } from "../balance";
 import { Completion, loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
 import { t } from "../i18n";
 import { SNOOZE_MINUTES } from "../notifications/schedule";
+import { shouldEscalate } from "../notifications/status";
 import { defaultNotifier, Notifier } from "../notifications/service";
 import {
   defaultReminderFields,
@@ -27,6 +28,12 @@ const isForeground = (state: string | null | undefined) =>
 export interface TaskInput extends Partial<ReminderFields> {
   title: string;
   category: Category;
+}
+
+// Dernière bascule automatique en Faire, avec les tâches telles qu'elles étaient (« Annuler »)
+export interface Escalation {
+  at: number;
+  before: Task[];
 }
 
 // Tâche retirée de la liste, avec sa position pour pouvoir l'annuler
@@ -360,20 +367,107 @@ export function useTasks(
   };
 
   // Déplace vers un autre quadrant : les rappels reprennent les valeurs par défaut du quadrant
+  const movedFields = (t: Task, category: Category): ReminderFields =>
+    keepRelevantFields(category, {
+      ...defaultReminderFields(category, settingsRef.current),
+      dueAt: t.dueAt,
+      delegatedTo: t.delegatedTo,
+      recurrence: t.recurrence,
+      // Une tâche récurrente garde son rappel pour l'occurrence suivante
+      ...(t.recurrence && t.reminderOffset !== null ? { reminderOffset: t.reminderOffset } : {}),
+    });
+
   const moveTask = (id: string, category: Category) => {
-    updateOne(id, (t) => ({
-      ...t,
-      category,
-      ...keepRelevantFields(category, {
-        ...defaultReminderFields(category, settings),
-        dueAt: t.dueAt,
-        delegatedTo: t.delegatedTo,
-        recurrence: t.recurrence,
-        // Une tâche récurrente garde son rappel pour l'occurrence suivante
-        ...(t.recurrence && t.reminderOffset !== null ? { reminderOffset: t.reminderOffset } : {}),
-      }),
+    updateOne(id, (t) => ({ ...t, category, ...movedFields(t, category) }));
+  };
+
+  // ---- Bascule automatique des tâches « Planifier » en retard ----
+  const [escalation, setEscalation] = useState<Escalation | null>(null);
+  // Fait avancer la vérification suivante (délai plafonné à MAX_TIMEOUT_MS)
+  const [escalationTick, setEscalationTick] = useState(0);
+
+  // Passe en Faire les tâches « Planifier » dont l'échéance est dépassée. Les relances partent
+  // de maintenant ; les notifications sont reprogrammées selon la nouvelle catégorie.
+  const escalateOverdue = () => {
+    if (!settingsRef.current.autoEscalate) return;
+    const now = Date.now();
+    const overdue = tasksRef.current.filter((t) => shouldEscalate(t, now));
+    if (overdue.length === 0) return;
+    const ids = new Set(overdue.map((t) => t.id));
+    setTasks((prev) =>
+      prev.map((t) =>
+        ids.has(t.id) && shouldEscalate(t, now)
+          ? {
+              ...t,
+              category: "UI",
+              ...movedFields(t, "UI"),
+              updatedAt: now,
+              categoryChangedAt: now,
+              snoozedUntil: null,
+            }
+          : t
+      )
+    );
+    setEscalation((current) => ({
+      at: now,
+      // Plusieurs bascules avant « Annuler » : toutes sont annulables
+      before: [...(current?.before.filter((t) => !ids.has(t.id)) ?? []), ...overdue],
     }));
   };
+
+  // « Annuler » : les tâches reviennent dans « Planifier » telles qu'elles étaient, et ne
+  // rebasculent plus pour cette échéance
+  const undoEscalation = () => {
+    const before = new Map((escalation?.before ?? []).map((t) => [t.id, t]));
+    const now = Date.now();
+    setTasks((prev) =>
+      prev.map((t) => {
+        const old = before.get(t.id);
+        if (!old || t.category !== "UI" || t.isDone) return t;
+        return {
+          ...t,
+          category: old.category,
+          ...pickReminderFields(old),
+          categoryChangedAt: old.categoryChangedAt,
+          escalationSkippedFor: old.dueAt,
+          updatedAt: now,
+          snoozedUntil: null,
+        };
+      })
+    );
+    setEscalation(null);
+  };
+
+  const dismissEscalation = () => setEscalation(null);
+
+  // Au démarrage (réglages lus), à l'heure de l'échéance si l'app est ouverte, et quand le
+  // réglage est activé
+  useEffect(() => {
+    if (!isLoaded || !settingsReady || !settings.autoEscalate) return;
+    const now = Date.now();
+    if (tasks.some((t) => shouldEscalate(t, now))) {
+      escalateOverdue();
+      return;
+    }
+    const upcoming = tasks
+      .filter((t) => t.category === "INU" && !t.isDone && t.archivedAt === null && t.dueAt !== null)
+      .map((t) => t.dueAt!)
+      .filter((due) => due > now);
+    if (upcoming.length === 0) return;
+    const timeout = setTimeout(
+      () => setEscalationTick((n) => n + 1),
+      Math.min(Math.min(...upcoming) - now + 50, MAX_TIMEOUT_MS)
+    );
+    return () => clearTimeout(timeout);
+  }, [tasks, isLoaded, settingsReady, settings.autoEscalate, escalationTick]);
+
+  // Au retour dans l'app
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") setEscalationTick((n) => n + 1);
+    });
+    return () => subscription.remove();
+  }, []);
 
   // Occurrence suivante d'une tâche récurrente : mêmes champs, nouvel identifiant, échéance
   // suivante après maintenant (sans rattrapage), de retour dans « Planifier »
@@ -396,6 +490,7 @@ export function useTasks(
     snoozedUntil: null,
     priorityWeek: null,
     nextOccurrenceId: null,
+    escalationSkippedFor: null,
     notificationIds: [],
   });
 
@@ -537,6 +632,9 @@ export function useTasks(
     tasks,
     isLoaded,
     completions,
+    escalation,
+    undoEscalation,
+    dismissEscalation,
     addTask,
     updateTask,
     moveTask,

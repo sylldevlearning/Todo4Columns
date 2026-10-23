@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
+import EscalationNotice from "../src/components/EscalationNotice";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { useAppFonts } from "../src/fonts";
 import { configureNotifications } from "../src/notifications/setup";
@@ -90,6 +91,7 @@ export default function RootLayout() {
                 }}
               />
             </Stack>
+            <EscalationNotice />
           </Celebrations>
         </TasksProvider>
       </SafeAreaProvider>

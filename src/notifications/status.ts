@@ -51,6 +51,21 @@ export function isSoonUrgent(task: Task, now: number): boolean {
   );
 }
 
+// En retard : pas terminée et échéance dépassée (puce « En retard »)
+export function isLate(task: Task, now: number): boolean {
+  return !task.isDone && task.archivedAt === null && task.dueAt !== null && task.dueAt <= now;
+}
+
+// Bascule automatique : tâche « Planifier » en retard, sauf si la bascule a été annulée pour
+// cette échéance (une nouvelle échéance la réactive)
+export function shouldEscalate(task: Task, now: number): boolean {
+  return (
+    task.category === "INU" &&
+    isLate(task, now) &&
+    task.escalationSkippedFor !== task.dueAt
+  );
+}
+
 // Planifier : échéance dépassée
 export function isPastDue(task: Task, now: number): boolean {
   return task.category === "INU" && !task.isDone && task.dueAt !== null && task.dueAt <= now;

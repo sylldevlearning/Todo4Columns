@@ -91,6 +91,7 @@ export const fr = {
     nextIn: (duration: string) => `Relance dans ${duration}`,
     nagCount: (index: number, total: number) => `Relance ${index}/${total}`,
     soonUrgent: "Bientôt urgente",
+    late: "En retard",
   },
 
   // Tâches récurrentes
@@ -115,6 +116,8 @@ export const fr = {
     listBody: "Leur échéance arrive dans moins de 48 h. Passe-les en « Faire » pour t'en occuper maintenant.",
     suggestion: "Échéance dans moins de 48 h : c'est sans doute urgent.",
     suggestionAction: "Marquer comme urgent",
+    escalated: (n: number) =>
+      n > 1 ? `${n} tâches planifiées sont passées en Faire` : "1 tâche planifiée est passée en Faire",
   },
 
   menu: {
@@ -219,6 +222,7 @@ export const fr = {
     androidDelay: "Sur Android, un rappel peut arriver avec quelques minutes de décalage.",
     help: "Aide",
     review: "Revue de la semaine",
+    autoEscalate: "Basculer les tâches en retard dans Faire",
     weeklyReminder: "Me rappeler chaque semaine",
     reviewDay: "Jour",
     reviewTime: "Heure",
@@ -315,6 +319,11 @@ export const fr = {
         title: "Répéter",
         body: "Quand tu termines une tâche qui se répète, la suivante est créée toute seule, avec la prochaine échéance. Les occurrences manquées ne sont pas rattrapées : la suivante tombe toujours après aujourd'hui.",
         example: "« Payer le loyer » chaque mois le 31 : en avril, l'échéance passe au 30, le dernier jour du mois.",
+      },
+      autoEscalate: {
+        title: "Tâches en retard",
+        body: "Quand l'échéance d'une tâche « Planifier » est dépassée, elle passe toute seule dans « Faire », avec ses relances. Un message te prévient, et « Annuler » la remet dans « Planifier ».",
+        example: "« Préparer la réunion », prévue pour 14 h et pas faite, passe en « Faire » à 14 h avec la puce « En retard ».",
       },
       soonUrgent: {
         title: "Bientôt urgente",
@@ -547,6 +556,7 @@ export const fr = {
     nagSnoozed: "Rappel reporté : toujours pas faite ?",
     dueSoon: (date: string) => `Échéance : ${date}`,
     dueReached: "Échéance atteinte, passer en Faire ?",
+    dueEscalated: "Échéance atteinte : la tâche passe en Faire.",
     planSnoozed: "Rappel reporté : c'est le moment ?",
     delegate: (person: string | null) =>
       person ? `As-tu des nouvelles de ${person} ?` : "As-tu des nouvelles ?",

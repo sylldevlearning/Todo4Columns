@@ -49,6 +49,7 @@ describe("parseStoredTasks", () => {
       priorityWeek: null,
       recurrence: null,
       nextOccurrenceId: null,
+      escalationSkippedFor: null,
     });
   });
 

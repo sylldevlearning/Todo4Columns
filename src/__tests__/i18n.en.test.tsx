@@ -74,7 +74,7 @@ describe("téléphone dans une autre langue que le français", () => {
     ]);
     expect(
       bodies({ category: "INU", dueAt: now + 3 * 3600 * 1000, reminderOffset: 60 }).at(-1)
-    ).toBe("Due date reached. Move it to Do?");
+    ).toBe("Due date reached: moving it to Do."); // bascule automatique activée par défaut
     expect(bodies({ category: "INU", timerEnd: now + 60000 })).toEqual(["Timer finished"]);
   });
 

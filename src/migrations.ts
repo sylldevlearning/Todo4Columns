@@ -7,7 +7,7 @@ import { Category, Task } from "./types";
 // v3 : même enveloppe, ajout de delegatedTo sur chaque tâche
 // v4 : ajout de categoryChangedAt, archivedAt et snoozedUntil
 // v5 : ajout de completedAt et priorityWeek
-// v6 : ajout de recurrence et nextOccurrenceId
+// v6 : ajout de recurrence, nextOccurrenceId et escalationSkippedFor
 export const TASKS_SCHEMA_VERSION = 6;
 
 export interface StoredTasks {
@@ -86,6 +86,7 @@ export function normalizeTask(
     // Absents avant la v6 : pas de répétition
     recurrence: parseRecurrence(raw.recurrence),
     nextOccurrenceId: typeof raw.nextOccurrenceId === "string" ? raw.nextOccurrenceId : null,
+    escalationSkippedFor: numberOrNull(raw.escalationSkippedFor),
   };
 }
 

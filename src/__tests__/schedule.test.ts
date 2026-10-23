@@ -105,7 +105,7 @@ describe("computeSchedule", () => {
         ["reminder", at(18, 0, 23)],
         ["due", at(18, 0, 24)],
       ]);
-      expect(items[1].content.body).toBe("Échéance atteinte, passer en Faire ?");
+      expect(items[1].content.body).toBe("Échéance atteinte : la tâche passe en Faire."); // bascule par défaut
       expect(items[0].content.body).toMatch(/^Échéance : Sam\. 24 oct\. · 18:00$/);
     });
 

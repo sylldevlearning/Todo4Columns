@@ -145,6 +145,17 @@ export default function SettingsForm({
             {...pills(plan)}
           />
         </Field>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t.settings.autoEscalate}</Text>
+          <InfoButton info="autoEscalate" />
+          <Switch
+            accessibilityLabel={t.settings.autoEscalate}
+            value={settings.autoEscalate}
+            onValueChange={(v) => set("autoEscalate", v)}
+            trackColor={{ false: colors.border, true: doIt.color }}
+            thumbColor={colors.white}
+          />
+        </View>
         <Field label={t.settings.delegateField} color={delegate.textColor} info="followUp">
           <OptionPills
             options={DELEGATE_FOLLOW_UP_OPTIONS}

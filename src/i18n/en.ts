@@ -89,6 +89,7 @@ export const en: Translations = {
     nextIn: (duration) => `Reminder in ${duration}`,
     nagCount: (index, total) => `Reminder ${index}/${total}`,
     soonUrgent: "Soon urgent",
+    late: "Overdue",
   },
 
   recurrence: {
@@ -111,6 +112,8 @@ export const en: Translations = {
     listBody: "They're due in less than 48 h. Move them to “Do” to handle them now.",
     suggestion: "Due in less than 48 h: it's probably urgent.",
     suggestionAction: "Mark as urgent",
+    escalated: (n) =>
+      n > 1 ? `${n} scheduled tasks moved to Do` : "1 scheduled task moved to Do",
   },
 
   menu: {
@@ -212,6 +215,7 @@ export const en: Translations = {
     androidDelay: "On Android, a reminder may arrive a few minutes late.",
     help: "Help",
     review: "Weekly review",
+    autoEscalate: "Move overdue tasks to Do",
     weeklyReminder: "Remind me every week",
     reviewDay: "Day",
     reviewTime: "Time",
@@ -307,6 +311,11 @@ export const en: Translations = {
         title: "Repeat",
         body: "When you complete a repeating task, the next one is created on its own, with the next due date. Missed occurrences aren't made up: the next one is always after today.",
         example: "“Pay the rent” every month on the 31st: in April, it's due on the 30th, the last day of the month.",
+      },
+      autoEscalate: {
+        title: "Overdue tasks",
+        body: "When a “Schedule” task is past its due date, it moves to “Do” on its own, with its reminders. A message lets you know, and “Undo” puts it back in “Schedule”.",
+        example: "“Prepare the meeting”, due at 2 pm and not done, moves to “Do” at 2 pm with the “Overdue” chip.",
       },
       soonUrgent: {
         title: "Soon urgent",
@@ -532,6 +541,7 @@ export const en: Translations = {
     nagSnoozed: "Snoozed reminder: still not done?",
     dueSoon: (date) => `Due: ${date}`,
     dueReached: "Due date reached. Move it to Do?",
+    dueEscalated: "Due date reached: moving it to Do.",
     planSnoozed: "Snoozed reminder: is it time?",
     delegate: (person) => (person ? `Any news from ${person}?` : "Any news?"),
     delegateSnoozed: (person) =>

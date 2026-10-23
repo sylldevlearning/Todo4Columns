@@ -25,6 +25,7 @@ describe("settings", () => {
       weeklyReview: true,
       weeklyReviewDay: 0,
       weeklyReviewTime: "18:00",
+      autoEscalate: true,
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
   });

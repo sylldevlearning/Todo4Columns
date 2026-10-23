@@ -80,10 +80,11 @@ export function keepRelevantFields(
         ...EMPTY_REMINDER_FIELDS,
         nagInterval: fields.nagInterval,
         nagRepeat: fields.nagInterval !== null && fields.nagRepeat,
-        // Tâche récurrente passée en Faire : elle garde son échéance, sa répétition et son
-        // rappel, pour les reprendre à l'occurrence suivante (de retour dans « Planifier »)
+        // Passée en Faire, une tâche garde son échéance (puce « En retard »). Récurrente, elle
+        // garde aussi sa répétition et son rappel pour l'occurrence suivante (dans « Planifier »)
+        dueAt: fields.dueAt,
         ...(fields.recurrence && fields.dueAt !== null
-          ? { dueAt: fields.dueAt, recurrence: fields.recurrence, reminderOffset: fields.reminderOffset }
+          ? { recurrence: fields.recurrence, reminderOffset: fields.reminderOffset }
           : {}),
       };
     case "INU":

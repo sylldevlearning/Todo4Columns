@@ -18,6 +18,7 @@ export interface Settings {
   weeklyReview: boolean; // notification de la revue de la semaine
   weeklyReviewDay: number; // jour de la revue : 0 = dimanche … 6 = samedi
   weeklyReviewTime: string; // heure de la revue, "HH:MM"
+  autoEscalate: boolean; // tâches « Planifier » en retard basculées dans « Faire »
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -34,6 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   weeklyReview: true,
   weeklyReviewDay: 0, // dimanche
   weeklyReviewTime: "18:00",
+  autoEscalate: true,
 };
 
 // Réglages qui changent les notifications programmées (pas les animations ni l'archivage)
@@ -49,6 +51,7 @@ export const notificationSettingsKey = (s: Settings) =>
     s.weeklyReview,
     s.weeklyReviewDay,
     s.weeklyReviewTime,
+    s.autoEscalate, // texte de la notification d'échéance
   ]);
 
 export const sameReminderSettings = (a: Settings, b: Settings) =>
@@ -123,6 +126,9 @@ export function parseSettings(json: string | null): Settings {
       typeof s.weeklyReviewTime === "string" && TIME_PATTERN.test(s.weeklyReviewTime)
         ? s.weeklyReviewTime
         : DEFAULT_SETTINGS.weeklyReviewTime,
+    // Absent avant la 1.2 : activé
+    autoEscalate:
+      typeof s.autoEscalate === "boolean" ? s.autoEscalate : DEFAULT_SETTINGS.autoEscalate,
   };
 }
 

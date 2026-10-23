@@ -37,4 +37,5 @@ export interface Task extends ReminderFields {
   completedAt?: number | null; // date où la tâche a été terminée (timestamp en ms)
   priorityWeek?: number | null; // priorité de la semaine qui commence à cette date (lundi 0 h)
   nextOccurrenceId?: string | null; // tâche récurrente terminée : occurrence créée à sa place
+  escalationSkippedFor?: number | null; // bascule en Faire annulée pour cette échéance
 }

@@ -23,6 +23,7 @@ export function makeTask(overrides: Partial<Task> = {}): Task {
     priorityWeek: null,
     recurrence: null,
     nextOccurrenceId: null,
+    escalationSkippedFor: null,
     ...overrides,
   };
 }

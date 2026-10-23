@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useTasks } from "../hooks/useTasks";
+import { Escalation, useTasks } from "../hooks/useTasks";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
 import { Completion } from "../completionLog";
@@ -24,9 +24,13 @@ export interface TasksState {
   tasks: Task[];
   isLoaded: boolean;
   completions: Completion[]; // journal des fins de tâches (bilan)
+  escalation: Escalation | null; // dernière bascule automatique en Faire (« Annuler »)
 }
 
-type StoreActions = Omit<ReturnType<typeof useTasks>, "tasks" | "isLoaded" | "completions">;
+type StoreActions = Omit<
+  ReturnType<typeof useTasks>,
+  "tasks" | "isLoaded" | "completions" | "escalation"
+>;
 
 export type TaskActions = StoreActions & {
   updateSettings: (settings: Settings) => void;
@@ -51,6 +55,8 @@ const ACTION_NAMES = [
   "unarchiveTask",
   "archiveTask",
   "setWeekPriorities",
+  "undoEscalation",
+  "dismissEscalation",
   "startTimer",
   "resyncNotifications",
   "updateSettings",
@@ -84,14 +90,20 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       tasks: store.tasks,
       isLoaded: store.isLoaded,
       completions: store.completions,
+      escalation: store.escalation,
     })
   );
   const [settingsStore] = useState(() => createSelectableStore(settings));
 
   // Publié avant l'affichage : les écrans abonnés se mettent à jour dans le même passage
   useLayoutEffect(() => {
-    tasksStore.set({ tasks: store.tasks, isLoaded: store.isLoaded, completions: store.completions });
-  }, [tasksStore, store.tasks, store.isLoaded, store.completions]);
+    tasksStore.set({
+      tasks: store.tasks,
+      isLoaded: store.isLoaded,
+      completions: store.completions,
+      escalation: store.escalation,
+    });
+  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation]);
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
 
   // Dernières versions des fonctions, appelées par les actions à identité fixe
