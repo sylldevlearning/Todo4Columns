@@ -13,6 +13,7 @@ import {
 import { Settings } from "../settings";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { Task } from "../types";
+import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
 import TimeField from "./TimeField";
 
@@ -33,21 +34,37 @@ interface Props {
   onDeleteForever: (id: string) => void;
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ title, info, children }: { title: string; info?: InfoKey; children: ReactNode }) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle} accessibilityRole="header">
-        {title}
-      </Text>
+      <View style={styles.labelRow}>
+        <Text style={styles.sectionTitle} accessibilityRole="header">
+          {title}
+        </Text>
+        {info && <InfoButton info={info} />}
+      </View>
       <View style={styles.card}>{children}</View>
     </View>
   );
 }
 
-function Field({ label, color, children }: { label: string; color?: string; children: ReactNode }) {
+function Field({
+  label,
+  color,
+  info,
+  children,
+}: {
+  label: string;
+  color?: string;
+  info?: InfoKey;
+  children: ReactNode;
+}) {
   return (
     <View style={styles.field}>
-      <Text style={[styles.fieldLabel, color ? { color } : null]}>{label}</Text>
+      <View style={styles.labelRow}>
+        <Text style={[styles.fieldLabel, color ? { color } : null]}>{label}</Text>
+        {info && <InfoButton info={info} />}
+      </View>
       {children}
     </View>
   );
@@ -82,7 +99,7 @@ export default function SettingsForm({
   return (
     <View style={styles.container}>
       <Section title={t.settings.defaults}>
-        <Field label={t.settings.doField} color={doIt.textColor}>
+        <Field label={t.settings.doField} color={doIt.textColor} info="nag">
           <OptionPills
             options={DEFAULT_NAG_OPTIONS}
             value={settings.doNagInterval}
@@ -92,6 +109,7 @@ export default function SettingsForm({
         </Field>
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>{t.settings.repeatUntilDone}</Text>
+          <InfoButton info="repeat" />
           <Switch
             accessibilityLabel={t.settings.repeatUntilDone}
             value={settings.nagRepeat}
@@ -108,7 +126,7 @@ export default function SettingsForm({
             {...pills(doIt)}
           />
         </Field>
-        <Field label={t.settings.planField} color={plan.textColor}>
+        <Field label={t.settings.planField} color={plan.textColor} info="reminder">
           <OptionPills
             options={PLAN_REMINDER_OPTIONS}
             value={settings.planReminderOffset}
@@ -116,7 +134,7 @@ export default function SettingsForm({
             {...pills(plan)}
           />
         </Field>
-        <Field label={t.settings.delegateField} color={delegate.textColor}>
+        <Field label={t.settings.delegateField} color={delegate.textColor} info="followUp">
           <OptionPills
             options={DELEGATE_FOLLOW_UP_OPTIONS}
             value={settings.delegateFollowUp}
@@ -126,7 +144,7 @@ export default function SettingsForm({
         </Field>
       </Section>
 
-      <Section title={t.settings.quietHours}>
+      <Section title={t.settings.quietHours} info="quietHours">
         <Text style={styles.hint}>{t.settings.quietHoursHint}</Text>
         <TimeField
           label={t.settings.start}
@@ -157,6 +175,7 @@ export default function SettingsForm({
             <Text style={styles.switchLabel}>{t.settings.celebrations}</Text>
             <Text style={styles.hint}>{t.settings.celebrationsHint}</Text>
           </View>
+          <InfoButton info="celebrations" />
           <Switch
             accessibilityLabel={t.settings.celebrations}
             value={settings.celebrations}
@@ -170,6 +189,7 @@ export default function SettingsForm({
       <Section title={t.settings.archives(archivedTasks.length)}>
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>{t.settings.autoArchive}</Text>
+          <InfoButton info="autoArchive" />
           <Switch
             accessibilityLabel={t.settings.autoArchive}
             value={settings.autoArchive}
@@ -220,6 +240,11 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: colors.textMuted,
     paddingHorizontal: 4,
+  },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
   },
   card: {
     backgroundColor: colors.surface,

@@ -6,6 +6,7 @@ import { useCelebration } from "../../src/celebration/CelebrationProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Fab from "../../src/components/Fab";
 import IconButton from "../../src/components/IconButton";
+import InfoButton from "../../src/components/InfoButton";
 import TaskCard from "../../src/components/TaskCard";
 import TaskMenu from "../../src/components/TaskMenu";
 import TimerModal from "../../src/components/TimerModal";
@@ -183,12 +184,15 @@ export default function QuadrantScreen() {
       <View style={styles.header}>
         <IconButton icon="chevron-back" label={t.common.back} onPress={() => router.back()} />
         <View style={styles.headerText}>
-          <Text
-            style={[styles.title, { color: category.textColor }]}
-            accessibilityRole="header"
-          >
-            {category.name}
-          </Text>
+          <View style={styles.titleRow}>
+            <Text
+              style={[styles.title, { color: category.textColor }]}
+              accessibilityRole="header"
+            >
+              {category.name}
+            </Text>
+            <InfoButton info={category.key} />
+          </View>
           <Text style={styles.subtitle}>
             {t.quadrant.subtitle(category.axisLabel, openTasks.length)}
           </Text>
@@ -280,6 +284,11 @@ const styles = StyleSheet.create({
   },
   headerText: {
     flex: 1,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
   },
   title: {
     fontFamily: fonts.extrabold,

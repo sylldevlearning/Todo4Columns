@@ -194,6 +194,85 @@ export const fr = {
     androidDelay: "Sur Android, un rappel peut arriver avec quelques minutes de décalage.",
   },
 
+  // Aide : cartes des boutons « i »
+  help: {
+    infoLabel: (title: string) => `En savoir plus : ${title}`,
+    close: "Fermer",
+    example: (text: string) => `Exemple : ${text}`,
+    info: {
+      UI: {
+        title: "Faire",
+        body: "Urgent et important : si ça attend, il y aura une vraie conséquence. Fais-le toi-même, aujourd'hui.",
+        example: "envoyer le dossier qui doit partir ce soir.",
+      },
+      INU: {
+        title: "Planifier",
+        body: "Important mais pas urgent : c'est ce qui te fait avancer. Choisis un moment pour t'y mettre avant que ça devienne urgent.",
+        example: "réviser un examen qui a lieu dans trois semaines.",
+      },
+      UDI: {
+        title: "Déléguer",
+        body: "Urgent mais pas important pour toi : quelqu'un d'autre peut s'en charger. Confie-le, puis relance la personne si tu n'as pas de nouvelles.",
+        example: "demander à un collègue d'envoyer le compte rendu de la réunion.",
+      },
+      NDNI: {
+        title: "Si j'ai le temps",
+        body: "Ni urgent ni important : à faire seulement s'il te reste du temps. Tu peux aussi l'oublier sans regret.",
+        example: "trier les vieilles photos de ton téléphone.",
+      },
+      urgent: {
+        title: "C'est urgent ?",
+        body: "Est-ce que ça doit être fait aujourd'hui ou demain ? Si oui, c'est urgent. Sinon, ça peut attendre un moment choisi, même si c'est important.",
+        example: "une facture à payer avant demain est urgente ; renouveler un passeport qui expire dans six mois ne l'est pas encore.",
+      },
+      important: {
+        title: "C'est important ?",
+        body: "Est-ce que ça compte pour tes objectifs, ta santé, ton travail ou tes proches ? Si ne jamais le faire aurait de vraies conséquences, c'est important.",
+        example: "préparer un entretien d'embauche est important ; regarder la dernière vidéo à la mode ne l'est pas.",
+      },
+      nag: {
+        title: "Relance",
+        body: "Si la tâche n'est pas cochée après ce délai, tu reçois une notification. Tu peux répondre « Fait » ou « Reporter 1 h » directement depuis la notification.",
+        example: "avec « 2 h », une tâche créée à 9 h te relance à 11 h si elle n'est pas faite.",
+      },
+      repeat: {
+        title: "Répéter la relance",
+        body: "La relance revient au même intervalle tant que la tâche n'est pas cochée, jusqu'au nombre maximum de relances. Ensuite, elle s'arrête.",
+        example: "relance toutes les 2 h, 3 au maximum : à 11 h, 13 h et 15 h.",
+      },
+      reminder: {
+        title: "Me rappeler",
+        body: "Pour une tâche avec une échéance : tu reçois un rappel avant, puis une notification à l'heure de l'échéance. « Le jour J » ne garde que la notification de l'échéance.",
+        example: "échéance vendredi à 14 h avec « La veille » : rappel jeudi à 14 h, puis vendredi à 14 h.",
+      },
+      delegatedTo: {
+        title: "Confié à",
+        body: "Le nom de la personne à qui tu as confié la tâche. Il apparaît dans la relance pour que tu saches qui contacter. Ce champ est facultatif.",
+        example: "avec « Marie », la relance demande « As-tu des nouvelles de Marie ? ».",
+      },
+      followUp: {
+        title: "Relancer la personne",
+        body: "Après ce délai, tu reçois une notification pour prendre des nouvelles. Si c'est réglé, réponds « Fait ».",
+        example: "avec « Dans 3 jours », une tâche confiée lundi te relance jeudi.",
+      },
+      quietHours: {
+        title: "Plage silencieuse",
+        body: "Aucun rappel pendant cette plage : ceux qui tomberaient dedans arrivent à sa fin. Les minuteurs sonnent quand même à l'heure.",
+        example: "de 22:00 à 08:00, une relance prévue à 23 h arrive à 8 h le lendemain.",
+      },
+      autoArchive: {
+        title: "Archivage automatique",
+        body: "Une tâche restée 7 jours dans « Si j'ai le temps » sans être faite part dans les archives. Ta matrice reste légère, et tu peux la restaurer ici à tout moment.",
+        example: "une idée ajoutée lundi et pas faite est archivée le lundi suivant.",
+      },
+      celebrations: {
+        title: "Animations de célébration",
+        body: "Quand tu termines une tâche, des confettis et un petit mot s'affichent. Désactive-les si tu préfères une app plus sobre.",
+        example: "glisse une tâche vers la droite pour la terminer et voir l'animation.",
+      },
+    },
+  },
+
   // Messages de célébration, tirés au hasard quand une tâche est terminée
   celebrations: {
     UI: [

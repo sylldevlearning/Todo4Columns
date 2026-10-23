@@ -13,6 +13,7 @@ import { Settings } from "../settings";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Category, ReminderFields, Task } from "../types";
 import DueDateField from "./DueDateField";
+import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
 
 export interface TaskFormValues extends ReminderFields {
@@ -32,10 +33,13 @@ interface Props {
 // Création sans quadrant précisé : « Planifier » (important, pas urgent)
 const DEFAULT_CATEGORY: Category = "INU";
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
+function Field({ label, info, children }: { label: string; info?: InfoKey; children: ReactNode }) {
   return (
     <View style={styles.field}>
-      <Text style={styles.fieldLabel}>{label}</Text>
+      <View style={styles.labelRow}>
+        <Text style={styles.fieldLabel}>{label}</Text>
+        {info && <InfoButton info={info} />}
+      </View>
       {children}
     </View>
   );
@@ -44,12 +48,14 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 function SwitchRow({
   label,
   hint,
+  info,
   value,
   onChange,
   color,
 }: {
   label: string;
   hint?: string;
+  info?: InfoKey;
   value: boolean;
   onChange: (value: boolean) => void;
   color: string;
@@ -60,6 +66,7 @@ function SwitchRow({
         <Text style={styles.switchLabel}>{label}</Text>
         {hint && <Text style={styles.switchHint}>{hint}</Text>}
       </View>
+      {info && <InfoButton info={info} />}
       <Switch
         accessibilityLabel={label}
         value={value}
@@ -158,6 +165,7 @@ export default function TaskForm({
         <SwitchRow
           label={t.form.urgentQuestion}
           hint={t.form.urgentHint}
+          info="urgent"
           value={urgent}
           onChange={setUrgent}
           color={category.color}
@@ -166,6 +174,7 @@ export default function TaskForm({
         <SwitchRow
           label={t.form.importantQuestion}
           hint={t.form.importantHint}
+          info="important"
           value={important}
           onChange={setImportant}
           color={category.color}
@@ -190,13 +199,14 @@ export default function TaskForm({
 
       {category.key === "UI" && (
         <>
-          <Field label={t.form.doNag}>
+          <Field label={t.form.doNag} info="nag">
             <OptionPills options={DO_NAG_OPTIONS} value={doNag} onChange={setDoNag} {...pillColors} />
           </Field>
           {doNag !== null && (
             <View style={styles.card}>
               <SwitchRow
                 label={t.form.repeat(settings.maxNags)}
+                info="repeat"
                 value={doRepeat}
                 onChange={setDoRepeat}
                 color={category.color}
@@ -211,7 +221,7 @@ export default function TaskForm({
           <Field label={t.form.due}>
             <DueDateField value={planDue} onChange={setPlanDue} color={category.textColor} />
           </Field>
-          <Field label={t.form.remindMe}>
+          <Field label={t.form.remindMe} info="reminder">
             <OptionPills
               options={PLAN_REMINDER_OPTIONS}
               value={planReminder}
@@ -224,7 +234,7 @@ export default function TaskForm({
 
       {category.key === "UDI" && (
         <>
-          <Field label={t.form.delegatedTo}>
+          <Field label={t.form.delegatedTo} info="delegatedTo">
             <TextInput
               style={styles.input}
               placeholder={t.form.personPlaceholder}
@@ -234,7 +244,7 @@ export default function TaskForm({
               accessibilityLabel={t.form.delegatedTo}
             />
           </Field>
-          <Field label={t.form.followUp}>
+          <Field label={t.form.followUp} info="followUp">
             <OptionPills
               options={DELEGATE_FOLLOW_UP_OPTIONS}
               value={delegateFollowUp}
@@ -349,6 +359,11 @@ const styles = StyleSheet.create({
   },
   field: {
     gap: 8,
+  },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
   },
   fieldLabel: {
     fontFamily: fonts.bold,

@@ -189,6 +189,84 @@ export const en: Translations = {
     androidDelay: "On Android, a reminder may arrive a few minutes late.",
   },
 
+  help: {
+    infoLabel: (title) => `Learn more: ${title}`,
+    close: "Close",
+    example: (text) => `Example: ${text}`,
+    info: {
+      UI: {
+        title: "Do",
+        body: "Urgent and important: if it waits, there will be real consequences. Do it yourself, today.",
+        example: "sending the file that has to go out tonight.",
+      },
+      INU: {
+        title: "Schedule",
+        body: "Important but not urgent: this is what moves you forward. Pick a time to work on it before it becomes urgent.",
+        example: "studying for an exam that's three weeks away.",
+      },
+      UDI: {
+        title: "Delegate",
+        body: "Urgent but not important for you: someone else can handle it. Hand it off, then follow up if you don't hear back.",
+        example: "asking a colleague to send the meeting notes.",
+      },
+      NDNI: {
+        title: "Someday",
+        body: "Neither urgent nor important: only if you have time to spare. You can also drop it with no regrets.",
+        example: "sorting the old photos on your phone.",
+      },
+      urgent: {
+        title: "Is it urgent?",
+        body: "Does it need to be done today or tomorrow? If so, it's urgent. If not, it can wait for a time you choose, even if it's important.",
+        example: "a bill due tomorrow is urgent; renewing a passport that expires in six months isn't yet.",
+      },
+      important: {
+        title: "Is it important?",
+        body: "Does it matter for your goals, your health, your work or the people close to you? If never doing it would have real consequences, it's important.",
+        example: "preparing for a job interview is important; watching the latest viral video isn't.",
+      },
+      nag: {
+        title: "Reminder",
+        body: "If the task isn't checked off after this delay, you get a notification. You can tap “Done” or “Snooze 1 h” right from the notification.",
+        example: "with “2 h”, a task created at 9 am reminds you at 11 am if it isn't done.",
+      },
+      repeat: {
+        title: "Repeat the reminder",
+        body: "The reminder comes back at the same interval until the task is checked off, up to the maximum number of reminders. Then it stops.",
+        example: "every 2 h, 3 at most: at 11 am, 1 pm and 3 pm.",
+      },
+      reminder: {
+        title: "Remind me",
+        body: "For a task with a due date: you get a reminder beforehand, then a notification when it's due. “On the day” keeps only the due date notification.",
+        example: "due Friday at 2 pm with “The day before”: a reminder Thursday at 2 pm, then Friday at 2 pm.",
+      },
+      delegatedTo: {
+        title: "Assigned to",
+        body: "The name of the person you handed the task to. It shows up in the follow-up so you know who to contact. This field is optional.",
+        example: "with “Maria”, the follow-up asks “Any news from Maria?”.",
+      },
+      followUp: {
+        title: "Follow up with them",
+        body: "After this delay, you get a notification to check in. If it's sorted, tap “Done”.",
+        example: "with “In 3 days”, a task handed off on Monday reminds you on Thursday.",
+      },
+      quietHours: {
+        title: "Quiet hours",
+        body: "No reminders during quiet hours: any that would fall inside arrive when they end. Timers still ring on time.",
+        example: "from 22:00 to 08:00, a reminder planned for 11 pm arrives at 8 am the next day.",
+      },
+      autoArchive: {
+        title: "Automatic archiving",
+        body: "A task left undone in “Someday” for 7 days moves to the archive. Your matrix stays light, and you can restore it here at any time.",
+        example: "an idea added on Monday and not done is archived the following Monday.",
+      },
+      celebrations: {
+        title: "Celebration animations",
+        body: "When you complete a task, confetti and a short message appear. Turn them off if you prefer a calmer app.",
+        example: "swipe a task to the right to complete it and see the animation.",
+      },
+    },
+  },
+
   celebrations: {
     UI: [
       "One less fire to put out!",
