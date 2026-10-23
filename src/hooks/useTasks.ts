@@ -22,7 +22,7 @@ const MAX_TIMEOUT_MS = 60 * 60 * 1000;
 // Les modifications rapprochées (coche puis identifiants de notification…) sont écrites ensemble
 export const SAVE_DELAY_MS = 400;
 
-const isForeground = (state: string | null | undefined) =>
+export const isForeground = (state: string | null | undefined) =>
   state !== "background" && state !== "inactive";
 
 export interface TaskInput extends Partial<ReminderFields> {
@@ -156,10 +156,25 @@ export function useTasks(
     setCompletions((log) => pruneLog(updateLog(log, previous, tasks), Date.now()));
   }, [tasks, isLoaded]);
 
+  // Écritures du journal regroupées comme celles des tâches (au plus une toutes les
+  // SAVE_DELAY_MS) ; immédiates hors de l'écran
+  const pendingLogRef = useRef<Completion[] | null>(null);
+  const logTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushLog = () => {
+    if (logTimerRef.current !== null) clearTimeout(logTimerRef.current);
+    logTimerRef.current = null;
+    const pending = pendingLogRef.current;
+    if (pending === null) return;
+    pendingLogRef.current = null;
+    saveLog(pending).catch((e) => console.warn("Erreur sauvegarde journal :", e));
+  };
+
   useEffect(() => {
-    if (logReadyRef.current) {
-      saveLog(completions).catch((e) => console.warn("Erreur sauvegarde journal :", e));
-    }
+    if (!logReadyRef.current) return;
+    pendingLogRef.current = completions;
+    if (!isForeground(AppState.currentState)) flushLog();
+    else if (logTimerRef.current === null) logTimerRef.current = setTimeout(flushLog, SAVE_DELAY_MS);
   }, [completions]);
 
   // ---- Sauvegarde ----
@@ -191,11 +206,15 @@ export function useTasks(
   // Rien ne reste en attente quand l'app quitte l'écran ou que le fournisseur est démonté
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
-      if (!isForeground(state)) flushSave();
+      if (!isForeground(state)) {
+        flushSave();
+        flushLog();
+      }
     });
     return () => {
       subscription.remove();
       flushSave();
+      flushLog();
     };
   }, []);
 
@@ -385,6 +404,8 @@ export function useTasks(
   const [escalation, setEscalation] = useState<Escalation | null>(null);
   // Fait avancer la vérification suivante (délai plafonné à MAX_TIMEOUT_MS)
   const [escalationTick, setEscalationTick] = useState(0);
+  // App à l'écran : la minuterie de l'échéance suivante ne tourne pas en arrière-plan
+  const [foreground, setForeground] = useState(isForeground(AppState.currentState));
 
   // Passe en Faire les tâches « Planifier » dont l'échéance est dépassée. Les relances partent
   // de maintenant ; les notifications sont reprogrammées selon la nouvelle catégorie.
@@ -451,10 +472,10 @@ export function useTasks(
     setCompletions(pruneLog(log, Date.now()));
   };
 
-  // Au démarrage (réglages lus), à l'heure de l'échéance si l'app est ouverte, et quand le
-  // réglage est activé
+  // Au démarrage (réglages lus), au retour dans l'app, à l'heure de l'échéance si l'app est
+  // ouverte, et quand le réglage est activé. Rien en arrière-plan.
   useEffect(() => {
-    if (!isLoaded || !settingsReady || !settings.autoEscalate) return;
+    if (!isLoaded || !settingsReady || !settings.autoEscalate || !foreground) return;
     const now = Date.now();
     if (tasks.some((t) => shouldEscalate(t, now))) {
       escalateOverdue();
@@ -470,11 +491,12 @@ export function useTasks(
       Math.min(Math.min(...upcoming) - now + 50, MAX_TIMEOUT_MS)
     );
     return () => clearTimeout(timeout);
-  }, [tasks, isLoaded, settingsReady, settings.autoEscalate, escalationTick]);
+  }, [tasks, isLoaded, settingsReady, settings.autoEscalate, escalationTick, foreground]);
 
-  // Au retour dans l'app
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
+      setForeground(isForeground(state));
+      // Retour dans l'app : vérification même si l'état n'a pas changé entre-temps
       if (state === "active") setEscalationTick((n) => n + 1);
     });
     return () => subscription.remove();

@@ -8,7 +8,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Escalation, useTasks } from "../hooks/useTasks";
+import { AppState } from "react-native";
+import { Escalation, isForeground, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
 import { Completion } from "../completionLog";
@@ -89,6 +90,28 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const store = useTasks(settings, undefined, settingsReady);
 
+  // Réglages modifiés à la suite (pastilles, heure, interrupteurs) : une seule écriture par
+  // SAVE_DELAY_MS ; immédiate hors de l'écran, et rien ne reste en attente au démontage
+  const pendingSettingsRef = useRef<Settings | null>(null);
+  const settingsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flushSettings = () => {
+    if (settingsTimerRef.current !== null) clearTimeout(settingsTimerRef.current);
+    settingsTimerRef.current = null;
+    const pending = pendingSettingsRef.current;
+    if (pending === null) return;
+    pendingSettingsRef.current = null;
+    saveSettings(pending).catch((e) => console.warn("Erreur sauvegarde réglages :", e));
+  };
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (!isForeground(state)) flushSettings();
+    });
+    return () => {
+      subscription.remove();
+      flushSettings();
+    };
+  }, []);
+
   const [tasksStore] = useState(() =>
     createSelectableStore<TasksState>({
       tasks: store.tasks,
@@ -116,7 +139,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     ...store,
     updateSettings: (next: Settings) => {
       setSettings(next);
-      saveSettings(next).catch((e) => console.warn("Erreur sauvegarde réglages :", e));
+      pendingSettingsRef.current = next;
+      if (!isForeground(AppState.currentState)) flushSettings();
+      else if (settingsTimerRef.current === null) {
+        settingsTimerRef.current = setTimeout(flushSettings, SAVE_DELAY_MS);
+      }
     },
     getSettings: () => settingsStore.get(),
     getTasksState: () => tasksStore.get(),

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { Dimensions } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -43,8 +43,8 @@ describe("présentation au premier lancement", () => {
 
     await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
     expect(screen.queryByText(firstTitle)).toBeNull();
-    await act(async () => {});
-    expect((await loadSettings()).onboardingDone).toBe(true);
+    // Écriture des réglages regroupée : on l'attend
+    await waitFor(async () => expect((await loadSettings()).onboardingDone).toBe(true));
 
     await app.unmount();
     await launch();
@@ -58,13 +58,14 @@ describe("présentation au premier lancement", () => {
     expect(screen.getByText(firstTitle)).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
-    await act(async () => {});
-    expect(await loadSettings()).toEqual({
+    await waitFor(async () =>
+      expect(await loadSettings()).toEqual({
       ...DEFAULT_SETTINGS,
       doNagInterval: 30,
       autoArchive: true,
       onboardingDone: true,
-    });
+    })
+    );
 
     await app.unmount();
     await launch();
@@ -103,16 +104,16 @@ describe("présentation au premier lancement", () => {
 
     await fireEvent.press(screen.getByRole("button", { name: "C'est parti" }));
     expect(screen.queryByText(firstTitle)).toBeNull();
-    await act(async () => {});
-    expect((await loadSettings()).onboardingDone).toBe(true);
+    // Écriture des réglages regroupée : on l'attend
+    await waitFor(async () => expect((await loadSettings()).onboardingDone).toBe(true));
   });
 
   it("le bouton retour d'Android ferme la présentation comme « Passer »", async () => {
     await launch();
     await fireEvent(screen.getByTestId("onboarding"), "requestClose");
     expect(screen.queryByText(firstTitle)).toBeNull();
-    await act(async () => {});
-    expect((await loadSettings()).onboardingDone).toBe(true);
+    // Écriture des réglages regroupée : on l'attend
+    await waitFor(async () => expect((await loadSettings()).onboardingDone).toBe(true));
   });
 
   it("un défilement au doigt met à jour l'écran affiché", async () => {

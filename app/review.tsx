@@ -79,7 +79,6 @@ export default function ReviewScreen() {
   const someday = useTasksSelector(selectSomeday, sameItems);
   const planned = useTasksSelector(selectPlanned, sameItems);
   const delegated = useTasksSelector(selectDelegated, sameItems);
-  const completed = useTasksSelector(selectCompletions);
   const isLoaded = useTasksSelector(({ isLoaded }) => isLoaded);
 
   const [step, setStep] = useState(0); // 0 à 2, puis STEPS pour le résumé
@@ -232,31 +231,7 @@ export default function ReviewScreen() {
       );
     }
 
-    // Résumé
-    const week = weeklyHistory(completed, Date.now(), 0)[0].counts;
-    const total = totalOf(week);
-    return (
-      <View style={styles.end}>
-        <Ionicons name="checkmark-circle" size={56} color={CATEGORY_BY_KEY.INU.color} />
-        <Text style={styles.endTitle} accessibilityRole="header">
-          {t.review.end.title}
-        </Text>
-        {streak !== null && (
-          <Text style={styles.streak} accessibilityLiveRegion="polite">
-            {t.review.end.streak(streak)}
-          </Text>
-        )}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>{t.review.end.balance}</Text>
-          <BalanceBar counts={week} height={14} />
-          <Text style={styles.summary}>
-            {total >= MIN_FOR_BALANCE
-              ? t.balance.anticipated(anticipated(week), total)
-              : t.balance.notEnough}
-          </Text>
-        </View>
-      </View>
-    );
+    return <EndSummary streak={streak} />;
   };
 
   const isEnd = step === STEPS;
@@ -296,6 +271,35 @@ export default function ReviewScreen() {
         </Pressable>
       </View>
     </SafeAreaView>
+  );
+}
+
+// Résumé de fin : seul à lire le journal, une tâche terminée ne re-rend pas les étapes
+function EndSummary({ streak }: { streak: number | null }) {
+  const completed = useTasksSelector(selectCompletions);
+  const week = weeklyHistory(completed, Date.now(), 0)[0].counts;
+  const total = totalOf(week);
+  return (
+    <View style={styles.end}>
+      <Ionicons name="checkmark-circle" size={56} color={CATEGORY_BY_KEY.INU.color} />
+      <Text style={styles.endTitle} accessibilityRole="header">
+        {t.review.end.title}
+      </Text>
+      {streak !== null && (
+        <Text style={styles.streak} accessibilityLiveRegion="polite">
+          {t.review.end.streak(streak)}
+        </Text>
+      )}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>{t.review.end.balance}</Text>
+        <BalanceBar counts={week} height={14} />
+        <Text style={styles.summary}>
+          {total >= MIN_FOR_BALANCE
+            ? t.balance.anticipated(anticipated(week), total)
+            : t.balance.notEnough}
+        </Text>
+      </View>
+    </View>
   );
 }
 
