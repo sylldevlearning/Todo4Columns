@@ -320,7 +320,7 @@ export const en: Translations = {
       },
       backup: {
         title: "Backup",
-        body: "“Export” creates a file with all your data, to keep wherever you like (Drive, email, files). “Import” replaces the data on this phone with a file's, after a safety copy. On Android, Google's automatic backup also keeps your data, if it's turned on on the phone.",
+        body: "“Export” creates an unencrypted file with all your data: keep it somewhere safe (Drive, email, files). “Import” replaces the data on this phone with a file's, after a safety copy. On Android, Google's automatic backup also keeps your data, if it's turned on on the phone.",
         example: "before switching phones, export your data to Drive, then import the file on the new one.",
       },
       autoEscalate: {

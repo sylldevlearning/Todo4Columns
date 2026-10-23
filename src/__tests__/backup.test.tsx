@@ -12,6 +12,7 @@ import {
   buildBackup,
   parseBackup,
   PRE_IMPORT_BACKUP_KEY,
+  removeExportedFiles,
 } from "../backup";
 import { COMPLETION_LOG_KEY, saveLog } from "../completionLog";
 import { useBackup } from "../hooks/useBackup";
@@ -39,8 +40,23 @@ jest.mock("expo-file-system", () => {
       if (!files.has(this.uri)) throw new Error("Fichier absent");
       return files.get(this.uri)!;
     }
+    get name() {
+      return this.uri.split("/").pop()!;
+    }
+    delete() {
+      files.delete(this.uri);
+    }
   }
-  return { File, Paths: { cache: { uri: "file:///cache" } }, __files: files };
+  class Directory {
+    uri: string;
+    constructor(dir: { uri: string }) {
+      this.uri = dir.uri;
+    }
+    list() {
+      return [...files.keys()].filter((k) => k.startsWith(this.uri + "/")).map((k) => new File(k));
+    }
+  }
+  return { File, Directory, Paths: { cache: { uri: "file:///cache" } }, __files: files };
 });
 jest.mock("expo-sharing", () => ({ shareAsync: jest.fn(async () => {}) }));
 
@@ -154,6 +170,21 @@ describe("export", () => {
     expect(file.reviewWeeks).toEqual(["2026-10-19"]);
     // Le fichier exporté se réimporte tel quel
     expect(parseBackup(files.get(uri)!).ok).toBe(true);
+  });
+
+  it("le fichier exporté n'est pas supprimé pendant le partage, mais au lancement suivant ou au prochain export", async () => {
+    await launch();
+    files.set("file:///cache/autre.txt", "à garder");
+    files.set("file:///cache/dofirst-sauvegarde-2026-01-01.json", "ancien export");
+
+    await act(() => backup.exportData());
+    const exported = [...files.keys()].filter((k) => k.includes("dofirst-"));
+    // L'ancien export est retiré, le nouveau reste le temps que l'appli choisie le lise
+    expect(exported).toEqual([`file:///cache/${backupFileName(Date.now(), "dofirst-sauvegarde")}`]);
+
+    // Lancement suivant : plus aucun fichier exporté dans le cache, les autres fichiers restent
+    removeExportedFiles();
+    expect([...files.keys()]).toEqual(["file:///cache/autre.txt"]);
   });
 
   it("nom du fichier daté du jour", () => {
@@ -375,6 +406,7 @@ describe("section « Sauvegarde » des Réglages", () => {
     expect(screen.getByRole("button", { name: "Importer une sauvegarde" })).toBeOnTheScreen();
     await fireEvent.press(screen.getByLabelText("En savoir plus : Sauvegarde"));
     expect(screen.getByText(/sauvegarde automatique de Google/)).toBeOnTheScreen();
+    expect(screen.getByText(/fichier non chiffré/)).toBeOnTheScreen();
   });
 
   it("sauvegarde automatique Android activée dans app.json", () => {

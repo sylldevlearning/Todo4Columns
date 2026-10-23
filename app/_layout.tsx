@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import EscalationNotice from "../src/components/EscalationNotice";
 import LoadErrorGate from "../src/components/LoadErrorGate";
+import { removeExportedFiles } from "../src/backup";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { nudgeMessage, shareWhenActive } from "../src/delegation";
 import { useAppFonts } from "../src/fonts";
@@ -65,6 +66,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsReady) SplashScreen.hideAsync().catch(() => {});
   }, [fontsReady]);
+
+  // Fichiers de sauvegarde exportés lors d'une session précédente : retirés du cache
+  useEffect(removeExportedFiles, []);
 
   if (!fontsReady) return null;
 

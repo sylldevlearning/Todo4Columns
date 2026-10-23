@@ -328,7 +328,7 @@ export const fr = {
       },
       backup: {
         title: "Sauvegarde",
-        body: "« Exporter » crée un fichier avec toutes tes données, à garder où tu veux (Drive, mail, fichiers). « Importer » remplace les données de ce téléphone par celles d'un fichier, après une copie de secours. Sur Android, la sauvegarde automatique de Google garde aussi tes données, si elle est activée sur le téléphone.",
+        body: "« Exporter » crée un fichier non chiffré avec toutes tes données : garde-le en lieu sûr (Drive, mail, fichiers). « Importer » remplace les données de ce téléphone par celles d'un fichier, après une copie de secours. Sur Android, la sauvegarde automatique de Google garde aussi tes données, si elle est activée sur le téléphone.",
         example: "avant de changer de téléphone, exporte tes données dans Drive, puis importe le fichier sur le nouveau.",
       },
       autoEscalate: {

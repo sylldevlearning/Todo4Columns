@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { File, Paths } from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import {
   Completion,
@@ -181,8 +181,25 @@ export async function writeImported(backup: BackupContent): Promise<void> {
   ]);
 }
 
+// Fichiers exportés : « dofirst-… .json » dans le cache
+const isExportedFile = (name: string) => name.startsWith("dofirst-") && name.endsWith(".json");
+
+// Supprime les fichiers exportés restés dans le cache (ils contiennent toutes les données).
+// Pas juste après le partage : l'appli choisie (Gmail, Drive…) peut encore lire le fichier une
+// fois la feuille de partage refermée. Appelée au lancement de l'app et avant chaque export.
+export function removeExportedFiles(): void {
+  try {
+    for (const entry of new Directory(Paths.cache).list()) {
+      if (entry instanceof File && isExportedFile(entry.name)) entry.delete();
+    }
+  } catch (e) {
+    console.warn("Nettoyage des sauvegardes exportées impossible :", e);
+  }
+}
+
 // Écrit le fichier dans le cache et ouvre le partage natif (Drive, mail, fichiers…)
 export async function shareBackupFile(file: BackupFile, name: string, dialogTitle: string): Promise<void> {
+  removeExportedFiles();
   const target = new File(Paths.cache, name);
   target.create({ overwrite: true });
   target.write(JSON.stringify(file, null, 2));
