@@ -64,7 +64,17 @@
           "defaultChannel": "reminders"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "# Librairies sans règles ProGuard propres (les règles de React Native et d'expo-modules-core les couvrent déjà ; gardées par sécurité)\n-keep class com.swmansion.gesturehandler.** { *; }\n-keep class com.reactnativecommunity.asyncstorage.** { *; }\n-keep class expo.modules.localization.** { *; }"
+          }
+        }
+      ]
     ],
     "scheme": "todo4columns"
   }
