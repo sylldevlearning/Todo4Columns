@@ -145,6 +145,27 @@ describe("parseStoredTasks", () => {
     expect(tasks[0]).toMatchObject({ completedAt: 50, priorityWeek: 7, recurrence: null, nextOccurrenceId: null });
   });
 
+  it("migration vers la v6 : une tâche « Planifier » déjà en retard ne bascule pas à la mise à jour", () => {
+    const v5 = {
+      schemaVersion: 5,
+      tasks: [
+        { ...v1Tasks[1], id: "late", isDone: false, dueAt: NOW - 1000 },
+        { ...v1Tasks[1], id: "future", isDone: false, dueAt: NOW + 1000 },
+        { ...v1Tasks[1], id: "done", isDone: true, dueAt: NOW - 1000 },
+        { ...v1Tasks[0], id: "faire", dueAt: NOW - 1000 },
+      ],
+    };
+    const byId = Object.fromEntries(parseStoredTasks(JSON.stringify(v5), NOW).tasks.map((t) => [t.id, t]));
+    expect(byId.late.escalationSkippedFor).toBe(NOW - 1000);
+    expect(byId.future.escalationSkippedFor).toBeNull();
+    expect(byId.done.escalationSkippedFor).toBeNull();
+    expect(byId.faire.escalationSkippedFor).toBeNull();
+
+    // Données déjà en v6 : rien n'est ajouté, la bascule s'applique
+    const v6 = { schemaVersion: 6, tasks: [{ ...v1Tasks[1], isDone: false, dueAt: NOW - 1000 }] };
+    expect(parseStoredTasks(JSON.stringify(v6), NOW).tasks[0].escalationSkippedFor).toBeNull();
+  });
+
   it("v6 : une règle de répétition invalide est ignorée, une règle valide est nettoyée", () => {
     const v6 = {
       schemaVersion: 6,

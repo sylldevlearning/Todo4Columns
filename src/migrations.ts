@@ -52,22 +52,29 @@ export function normalizeTask(
     (Number.isFinite(idAsDate) && idAsDate > 0 ? idAsDate : now);
   const updatedAt = numberOrNull(raw.updatedAt) ?? createdAt;
   const isDone = raw.isDone === true;
+  const category: Category = CATEGORY_KEYS.includes(raw.category as Category)
+    ? (raw.category as Category)
+    : "UI";
+  const dueAt = numberOrNull(raw.dueAt);
+  const archivedAt = numberOrNull(raw.archivedAt);
+  // Avant la v6, pas de bascule automatique : une tâche « Planifier » déjà en retard à la mise
+  // à jour reste où elle est (sinon toutes basculeraient d'un coup, avec leurs relances)
+  const overdueAtUpdate =
+    fromVersion < 6 && category === "INU" && !isDone && archivedAt === null && dueAt !== null && dueAt <= now;
 
   return {
     id,
     title: typeof raw.title === "string" ? raw.title : String(raw.title ?? ""),
-    category: CATEGORY_KEYS.includes(raw.category as Category)
-      ? (raw.category as Category)
-      : "UI",
+    category,
     isDone,
     timerEnd: numberOrNull(raw.timerEnd),
     createdAt,
     updatedAt,
     // Inconnu avant la v4 : on part de la migration, pour ne rien archiver dès la mise à jour
     categoryChangedAt: numberOrNull(raw.categoryChangedAt) ?? now,
-    archivedAt: numberOrNull(raw.archivedAt),
+    archivedAt,
     snoozedUntil: numberOrNull(raw.snoozedUntil),
-    dueAt: numberOrNull(raw.dueAt),
+    dueAt,
     reminderOffset: numberOrNull(raw.reminderOffset),
     nagInterval: numberOrNull(raw.nagInterval),
     nagRepeat: raw.nagRepeat === true,
@@ -86,7 +93,7 @@ export function normalizeTask(
     // Absents avant la v6 : pas de répétition
     recurrence: parseRecurrence(raw.recurrence),
     nextOccurrenceId: typeof raw.nextOccurrenceId === "string" ? raw.nextOccurrenceId : null,
-    escalationSkippedFor: numberOrNull(raw.escalationSkippedFor),
+    escalationSkippedFor: overdueAtUpdate ? dueAt : numberOrNull(raw.escalationSkippedFor),
   };
 }
 
