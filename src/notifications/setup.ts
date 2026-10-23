@@ -1,7 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { Linking, Platform } from "react-native";
 import { t } from "../i18n";
-import { NotificationData, CATEGORY_ID, CHANNEL_ID } from "./service";
+import { NotificationData, CATEGORY_ID, CHANNEL_ID, REVIEW_TYPE } from "./service";
 
 // Identifiants des boutons de notification
 export const ACTION_DONE = "done";
@@ -65,6 +65,7 @@ export interface ResponseHandlers {
   complete: (taskId: string) => void; // « Fait »
   snooze: (taskId: string) => void; // « Reporter 1 h »
   open: (taskId: string) => void; // « Ouvrir » ou tap sur la notification
+  openReview?: () => void; // tap sur la notification de revue de la semaine
 }
 
 // Applique l'action choisie dans une notification ; renvoie false si elle ne concerne aucune tâche
@@ -73,6 +74,10 @@ export function handleNotificationResponse(
   handlers: ResponseHandlers
 ): boolean {
   const data = response.notification.request.content.data as Partial<NotificationData>;
+  if ((data as { type?: string } | null)?.type === REVIEW_TYPE) {
+    handlers.openReview?.();
+    return true;
+  }
   if (!data?.taskId) return false;
   switch (response.actionIdentifier) {
     case ACTION_DONE:

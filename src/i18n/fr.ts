@@ -194,6 +194,10 @@ export const fr = {
     androidDelay: "Sur Android, un rappel peut arriver avec quelques minutes de décalage.",
     help: "Aide",
     review: "Revue de la semaine",
+    weeklyReminder: "Me rappeler chaque semaine",
+    reviewDay: "Jour",
+    reviewTime: "Heure",
+    weekdays: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
   },
 
   // Aide : cartes des boutons « i »
@@ -276,6 +280,11 @@ export const fr = {
         title: "Revue de la semaine",
         body: "Une fois par semaine, 5 minutes pour faire le tri : « Si j'ai le temps », tes priorités et les tâches confiées. C'est le meilleur moyen de garder ta matrice à jour et d'anticiper.",
         example: "le dimanche soir, archive deux vieilles idées, choisis 3 priorités et note que ton collègue a rendu son travail.",
+      },
+      reviewReminder: {
+        title: "Rappel de la revue",
+        body: "Une notification t'invite à faire ta revue chaque semaine, au jour et à l'heure choisis. Si l'heure tombe dans la plage silencieuse, le rappel arrive à sa fin.",
+        example: "le dimanche à 18 h, pour préparer tranquillement la semaine qui vient.",
       },
       celebrations: {
         title: "Animations de célébration",
@@ -501,6 +510,7 @@ export const fr = {
     delegateSnoozed: (person: string | null) =>
       person ? `Rappel reporté : des nouvelles de ${person} ?` : "Rappel reporté : des nouvelles ?",
     timerDone: "Minuteur terminé",
+    weeklyReview: "5 minutes pour faire le point et choisir tes priorités.",
   },
 };
 

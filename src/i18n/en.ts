@@ -189,6 +189,10 @@ export const en: Translations = {
     androidDelay: "On Android, a reminder may arrive a few minutes late.",
     help: "Help",
     review: "Weekly review",
+    weeklyReminder: "Remind me every week",
+    reviewDay: "Day",
+    reviewTime: "Time",
+    weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
   },
 
   help: {
@@ -270,6 +274,11 @@ export const en: Translations = {
         title: "Weekly review",
         body: "Once a week, 5 minutes to sort things out: “Someday”, your priorities and handed-off tasks. It's the best way to keep your matrix up to date and stay ahead.",
         example: "on Sunday evening, archive two old ideas, pick 3 priorities and note that your colleague handed in their work.",
+      },
+      reviewReminder: {
+        title: "Review reminder",
+        body: "A notification invites you to do your review every week, on the day and at the time you choose. If that time falls in quiet hours, the reminder arrives when they end.",
+        example: "Sunday at 6 pm, to calmly get ready for the week ahead.",
       },
       celebrations: {
         title: "Celebration animations",
@@ -487,5 +496,6 @@ export const en: Translations = {
     delegateSnoozed: (person) =>
       person ? `Snoozed reminder: any news from ${person}?` : "Snoozed reminder: any news?",
     timerDone: "Timer finished",
+    weeklyReview: "5 minutes to take stock and pick your priorities.",
   },
 };

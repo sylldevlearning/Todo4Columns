@@ -25,7 +25,13 @@ const scheduled = () => mock.__state.scheduled;
 
 const MIN = 60 * 1000;
 const NOW = new Date(2026, 9, 22, 10).getTime();
-const NO_QUIET: Settings = { ...DEFAULT_SETTINGS, quietHoursStart: "00:00", quietHoursEnd: "00:00" };
+// Notifications des tâches seules (la revue de la semaine a ses propres tests)
+const NO_QUIET: Settings = {
+  ...DEFAULT_SETTINGS,
+  quietHoursStart: "00:00",
+  quietHoursEnd: "00:00",
+  weeklyReview: false,
+};
 
 describe("syncTaskNotifications", () => {
   const task = makeTask({

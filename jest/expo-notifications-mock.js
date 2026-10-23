@@ -20,7 +20,7 @@ const permissionResponse = () => ({
 
 module.exports = {
   DEFAULT_ACTION_IDENTIFIER: "expo.modules.notifications.actions.DEFAULT",
-  SchedulableTriggerInputTypes: { DATE: "date", TIME_INTERVAL: "timeInterval" },
+  SchedulableTriggerInputTypes: { DATE: "date", TIME_INTERVAL: "timeInterval", WEEKLY: "weekly" },
   AndroidImportance: { DEFAULT: 3, HIGH: 4, MAX: 5 },
   PermissionStatus: { GRANTED: "granted", DENIED: "denied", UNDETERMINED: "undetermined" },
 

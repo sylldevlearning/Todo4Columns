@@ -38,6 +38,7 @@ function NotificationResponses() {
     completeTask,
     snoozeTask,
     openQuadrant: (category) => router.push(`/quadrant/${category}`),
+    openReview: () => router.push("/review"),
     // « Fait » touché pendant que l'app est à l'écran
     onCompletedInApp: (task) => celebrate(task.category),
   });

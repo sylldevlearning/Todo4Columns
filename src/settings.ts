@@ -15,6 +15,9 @@ export interface Settings {
   autoArchive: boolean; // archiver les tâches « Si j'ai le temps » (NDNI) restées 7 jours
   celebrations: boolean; // confettis et message quand une tâche est terminée
   onboardingDone: boolean; // présentation du premier lancement déjà vue
+  weeklyReview: boolean; // notification de la revue de la semaine
+  weeklyReviewDay: number; // jour de la revue : 0 = dimanche … 6 = samedi
+  weeklyReviewTime: string; // heure de la revue, "HH:MM"
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -28,6 +31,9 @@ export const DEFAULT_SETTINGS: Settings = {
   autoArchive: false,
   celebrations: true,
   onboardingDone: false,
+  weeklyReview: true,
+  weeklyReviewDay: 0, // dimanche
+  weeklyReviewTime: "18:00",
 };
 
 // Réglages qui changent les notifications programmées (pas les animations ni l'archivage)
@@ -40,6 +46,9 @@ export const notificationSettingsKey = (s: Settings) =>
     s.maxNags,
     s.quietHoursStart,
     s.quietHoursEnd,
+    s.weeklyReview,
+    s.weeklyReviewDay,
+    s.weeklyReviewTime,
   ]);
 
 export const sameReminderSettings = (a: Settings, b: Settings) =>
@@ -103,6 +112,17 @@ export function parseSettings(json: string | null): Settings {
     // Absent des réglages enregistrés avant la 1.2 : présentation pas encore vue
     onboardingDone:
       typeof s.onboardingDone === "boolean" ? s.onboardingDone : DEFAULT_SETTINGS.onboardingDone,
+    // Absents avant la 1.2 : revue activée le dimanche à 18 h
+    weeklyReview:
+      typeof s.weeklyReview === "boolean" ? s.weeklyReview : DEFAULT_SETTINGS.weeklyReview,
+    weeklyReviewDay:
+      Number.isInteger(s.weeklyReviewDay) && (s.weeklyReviewDay as number) >= 0 && (s.weeklyReviewDay as number) <= 6
+        ? (s.weeklyReviewDay as number)
+        : DEFAULT_SETTINGS.weeklyReviewDay,
+    weeklyReviewTime:
+      typeof s.weeklyReviewTime === "string" && TIME_PATTERN.test(s.weeklyReviewTime)
+        ? s.weeklyReviewTime
+        : DEFAULT_SETTINGS.weeklyReviewTime,
   };
 }
 

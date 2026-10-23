@@ -92,6 +92,35 @@ function snoozeNotification(task: Task, body: string): ScheduledNotification[] {
     : [{ date: task.snoozedUntil, type: "snooze", content: { title: task.title, body } }];
 }
 
+// Revue de la semaine : notification hebdomadaire au format attendu par expo-notifications
+export interface WeeklyTrigger {
+  weekday: number; // 1 = dimanche … 7 = samedi
+  hour: number;
+  minute: number;
+}
+
+// Jour et heure de la notification de revue, ou null si elle est désactivée.
+// Une heure dans la plage silencieuse est décalée à sa fin (éventuellement le lendemain).
+export function weeklyReviewTrigger(
+  settings: Settings,
+  reference: number = Date.now()
+): WeeklyTrigger | null {
+  if (!settings.weeklyReview) return null;
+  const date = new Date(reference);
+  date.setDate(date.getDate() + settings.weeklyReviewDay - date.getDay());
+  const [h, m] = settings.weeklyReviewTime.split(":").map(Number);
+  date.setHours(h, m, 0, 0);
+  const shifted = new Date(
+    shiftOutOfQuietHours(date.getTime(), settings.quietHoursStart, settings.quietHoursEnd)
+  );
+  return { weekday: shifted.getDay() + 1, hour: shifted.getHours(), minute: shifted.getMinutes() };
+}
+
+export const weeklyReviewContent = () => ({
+  title: t.review.title,
+  body: t.notifications.weeklyReview,
+});
+
 // Notifications à programmer pour une tâche, triées par date.
 // Les dates en plage silencieuse sont décalées à sa fin (sauf les minuteurs),
 // les dates passées sont ignorées.

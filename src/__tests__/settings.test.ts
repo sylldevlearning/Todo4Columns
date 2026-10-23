@@ -22,6 +22,9 @@ describe("settings", () => {
       autoArchive: false,
       celebrations: true,
       onboardingDone: false,
+      weeklyReview: true,
+      weeklyReviewDay: 0,
+      weeklyReviewTime: "18:00",
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
   });

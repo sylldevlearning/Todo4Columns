@@ -20,6 +20,11 @@ import TimeField from "./TimeField";
 // Dans les réglages, la relance par défaut de « Faire » ne peut pas être « Jamais »
 const DEFAULT_NAG_OPTIONS = DO_NAG_OPTIONS.filter((o) => o.value !== null);
 const MAX_NAGS_OPTIONS: ReminderOption[] = [2, 3, 5].map((n) => ({ label: String(n), value: n }));
+// Jours de la revue, du lundi au dimanche (0 = dimanche)
+const REVIEW_DAY_OPTIONS: ReminderOption[] = [1, 2, 3, 4, 5, 6, 0].map((day) => ({
+  label: t.settings.weekdays[day],
+  value: day,
+}));
 
 const PERMISSION_LABELS: Record<PermissionState, string> = t.settings.permission;
 
@@ -167,6 +172,35 @@ export default function SettingsForm({
 
       {onOpenReview && (
         <Section title={t.settings.review} info="review">
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>{t.settings.weeklyReminder}</Text>
+            <InfoButton info="reviewReminder" />
+            <Switch
+              accessibilityLabel={t.settings.weeklyReminder}
+              value={settings.weeklyReview}
+              onValueChange={(v) => set("weeklyReview", v)}
+              trackColor={{ false: colors.border, true: plan.color }}
+              thumbColor={colors.white}
+            />
+          </View>
+          {settings.weeklyReview && (
+            <>
+              <Field label={t.settings.reviewDay}>
+                <OptionPills
+                  options={REVIEW_DAY_OPTIONS}
+                  value={settings.weeklyReviewDay}
+                  onChange={(v) => v !== null && set("weeklyReviewDay", v)}
+                  {...pills(plan)}
+                />
+              </Field>
+              <TimeField
+                label={t.settings.reviewTime}
+                value={settings.weeklyReviewTime}
+                onChange={(v) => set("weeklyReviewTime", v)}
+              />
+            </>
+          )}
+          <View style={styles.separator} />
           <TextButton label={t.review.openNow} onPress={onOpenReview} />
         </Section>
       )}

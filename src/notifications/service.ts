@@ -1,7 +1,14 @@
 import * as Notifications from "expo-notifications";
 import { Settings } from "../settings";
 import { Task } from "../types";
-import { computeSchedule, NotificationType, ScheduledNotification } from "./schedule";
+import {
+  computeSchedule,
+  NotificationType,
+  ScheduledNotification,
+  WeeklyTrigger,
+  weeklyReviewContent,
+  weeklyReviewTrigger,
+} from "./schedule";
 
 export const CHANNEL_ID = "reminders";
 export const CATEGORY_ID = "task-reminder";
@@ -13,6 +20,12 @@ export interface NotificationData {
   taskId: string;
   type: NotificationType;
   date: number;
+}
+
+// Données de la notification hebdomadaire de revue (elle ne concerne aucune tâche)
+export const REVIEW_TYPE = "review";
+export interface ReviewNotificationData extends WeeklyTrigger {
+  type: typeof REVIEW_TYPE;
 }
 
 async function canSchedule(): Promise<boolean> {
@@ -41,6 +54,23 @@ function scheduleItem(task: Task, item: ScheduledNotification): Promise<string> 
   });
 }
 
+// Répétée chaque semaine par le système : une seule place prise dans la limite iOS
+function scheduleReview(trigger: WeeklyTrigger): Promise<string> {
+  const data: ReviewNotificationData = { type: REVIEW_TYPE, ...trigger };
+  const { title, body } = weeklyReviewContent();
+  return Notifications.scheduleNotificationAsync({
+    content: { title, body, data: { ...data } },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+      ...trigger,
+      channelId: CHANNEL_ID,
+    },
+  });
+}
+
+const isReview = (data: unknown): data is ReviewNotificationData =>
+  (data as Partial<ReviewNotificationData> | null)?.type === REVIEW_TYPE;
+
 export async function cancelNotifications(ids: string[]): Promise<void> {
   await Promise.all(
     ids.map((id) => Notifications.cancelScheduledNotificationAsync(id).catch(() => {}))
@@ -60,8 +90,13 @@ export async function syncTaskNotifications(
   const items = computeSchedule(task, settings, now);
   if (items.length === 0) return [];
 
-  const alreadyScheduled = (await Notifications.getAllScheduledNotificationsAsync()).length;
-  const budget = Math.max(0, MAX_SCHEDULED - alreadyScheduled);
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  // Place réservée à la revue de la semaine si elle n'est pas encore programmée
+  const reserved =
+    weeklyReviewTrigger(settings) !== null && !scheduled.some((n) => isReview(n.content.data))
+      ? 1
+      : 0;
+  const budget = Math.max(0, MAX_SCHEDULED - scheduled.length - reserved);
   const ids: string[] = [];
   for (const item of items.slice(0, budget)) ids.push(await scheduleItem(task, item));
   return ids;
@@ -71,37 +106,48 @@ export async function syncTaskNotifications(
 const keyOf = (taskId: string, type: string, date: number, title: string, body: string) =>
   JSON.stringify([taskId, type, date, title, body]);
 
+const reviewKeyOf = (trigger: WeeklyTrigger, title: string, body: string) =>
+  JSON.stringify([REVIEW_TYPE, trigger.weekday, trigger.hour, trigger.minute, title, body]);
+
 // Réconcilie toutes les notifications : annule les orphelines ou périmées, programme celles
-// qui manquent (les 64 plus proches au maximum). Renvoie les identifiants de chaque tâche.
+// qui manquent (les 64 plus proches au maximum, dont la revue de la semaine si elle est
+// activée). Renvoie les identifiants de chaque tâche.
 export async function reconcileNotifications(
   tasks: Task[],
   settings: Settings,
   now: number = Date.now()
 ): Promise<Record<string, string[]>> {
   const granted = await canSchedule();
+  const review = granted ? weeklyReviewTrigger(settings, now) : null;
   const desired = granted
     ? tasks
         .flatMap((task) => computeSchedule(task, settings, now).map((item) => ({ task, item })))
         .sort((a, b) => a.item.date - b.item.date)
-        .slice(0, MAX_SCHEDULED)
+        .slice(0, MAX_SCHEDULED - (review ? 1 : 0))
     : [];
+  const { title: reviewTitle, body: reviewBody } = weeklyReviewContent();
+  const reviewKey = review ? reviewKeyOf(review, reviewTitle, reviewBody) : null;
   const desiredKeys = new Set(
     desired.map(({ task, item }) =>
       keyOf(task.id, item.type, item.date, item.content.title, item.content.body)
     )
   );
+  if (reviewKey) desiredKeys.add(reviewKey);
 
   // Garde ce qui est déjà programmé et toujours voulu, annule le reste
   const kept = new Map<string, string>();
   for (const n of await Notifications.getAllScheduledNotificationsAsync()) {
     const data = (n.content.data ?? {}) as Partial<NotificationData>;
-    const key =
-      data.taskId && data.type && typeof data.date === "number"
-        ? keyOf(data.taskId, data.type, data.date, n.content.title ?? "", n.content.body ?? "")
-        : null;
+    const key = isReview(n.content.data)
+      ? reviewKeyOf(n.content.data, n.content.title ?? "", n.content.body ?? "")
+      : data.taskId && data.type && typeof data.date === "number"
+      ? keyOf(data.taskId, data.type, data.date, n.content.title ?? "", n.content.body ?? "")
+      : null;
     if (key !== null && desiredKeys.has(key) && !kept.has(key)) kept.set(key, n.identifier);
     else await Notifications.cancelScheduledNotificationAsync(n.identifier).catch(() => {});
   }
+
+  if (review && reviewKey && !kept.has(reviewKey)) await scheduleReview(review);
 
   const result: Record<string, string[]> = Object.fromEntries(tasks.map((t) => [t.id, []]));
   for (const { task, item } of desired) {
