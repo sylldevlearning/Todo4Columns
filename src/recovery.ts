@@ -278,9 +278,12 @@ export async function recoverLegacyTasks(
   await AsyncStorage.setItem(RECOVERY_LOG_KEY, JSON.stringify(log));
   await AsyncStorage.setItem(RECOVERY_DONE_KEY, String(now));
 
-  console.log(
-    `Récupération des anciennes tâches : ${tasks.length} importée(s)`,
-    JSON.stringify(log)
-  );
+  // Détail visible en développement ; le journal reste dans RECOVERY_LOG_KEY
+  if (__DEV__) {
+    console.log(
+      `Récupération des anciennes tâches : ${tasks.length} importée(s)`,
+      JSON.stringify(log)
+    );
+  }
   return tasks;
 }
