@@ -2,9 +2,10 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
-import { isPastDue, isWaiting } from "../notifications/status";
+import { isPastDue, isSoonUrgent, isWaiting } from "../notifications/status";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Task } from "../types";
+import InfoButton from "./InfoButton";
 
 interface Props {
   task: Task;
@@ -38,7 +39,8 @@ function ActionButton({
   );
 }
 
-// Boutons d'une tâche qui demande une décision : Faire en attente, Planifier à échéance passée
+// Boutons d'une tâche qui demande une décision : Faire en attente,
+// Planifier à échéance passée ou dans moins de 48 h
 export default function TaskAlerts({ task, now, onSnooze, onMove, onMoveToDo }: Props) {
   if (isWaiting(task, now)) {
     return (
@@ -48,11 +50,13 @@ export default function TaskAlerts({ task, now, onSnooze, onMove, onMoveToDo }: 
       </View>
     );
   }
-  if (isPastDue(task, now)) {
+  const soon = isSoonUrgent(task, now);
+  if (soon || isPastDue(task, now)) {
     const doIt = CATEGORY_BY_KEY.UI;
     return (
-      <View style={styles.row}>
+      <View style={[styles.row, styles.center]}>
         <ActionButton label={t.card.moveToDo} color={doIt.textColor} onPress={() => onMoveToDo(task.id)} />
+        {soon && <InfoButton info="soonUrgent" />}
       </View>
     );
   }
@@ -65,6 +69,9 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     marginTop: 10,
+  },
+  center: {
+    alignItems: "center",
   },
   button: {
     minHeight: TOUCH_SIZE,

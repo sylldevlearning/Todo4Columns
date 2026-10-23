@@ -29,6 +29,25 @@ export function isWaiting(task: Task, now: number): boolean {
   );
 }
 
+// Échéance proche : en dessous, une tâche « Planifier » devient bientôt urgente
+export const SOON_URGENT_MS = 48 * 60 * 60 * 1000;
+
+// Échéance à venir dans moins de 48 h
+export const isDueSoon = (dueAt: number, now: number) =>
+  dueAt > now && dueAt - now < SOON_URGENT_MS;
+
+// Planifier : échéance dans moins de 48 h (« Bientôt urgente », « Passer en Faire »).
+// La notification d'échéance existante reste la seule notification.
+export function isSoonUrgent(task: Task, now: number): boolean {
+  return (
+    task.category === "INU" &&
+    !task.isDone &&
+    task.archivedAt === null &&
+    task.dueAt !== null &&
+    isDueSoon(task.dueAt, now)
+  );
+}
+
 // Planifier : échéance dépassée
 export function isPastDue(task: Task, now: number): boolean {
   return task.category === "INU" && !task.isDone && task.dueAt !== null && task.dueAt <= now;

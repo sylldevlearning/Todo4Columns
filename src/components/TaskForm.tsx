@@ -10,6 +10,7 @@ import {
   PLAN_REMINDER_OPTIONS,
 } from "../reminders";
 import { Settings } from "../settings";
+import { isDueSoon } from "../notifications/status";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Category, ReminderFields, Task } from "../types";
 import DueDateField from "./DueDateField";
@@ -221,6 +222,21 @@ export default function TaskForm({
           <Field label={t.form.due}>
             <DueDateField value={planDue} onChange={setPlanDue} color={category.textColor} />
           </Field>
+          {/* Échéance proche et « C'est urgent ? » sur Non : simple suggestion, rien n'est bloqué */}
+          {planDue !== null && isDueSoon(planDue, Date.now()) && (
+            <View style={styles.suggestion} accessibilityLiveRegion="polite">
+              <Text style={styles.suggestionText}>{t.escalation.suggestion}</Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setUrgent(true)}
+                style={styles.suggestionAction}
+              >
+                <Text style={[styles.suggestionActionText, { color: CATEGORY_BY_KEY.UI.textColor }]}>
+                  {t.escalation.suggestionAction}
+                </Text>
+              </Pressable>
+            </View>
+          )}
           <Field label={t.form.remindMe} info="reminder">
             <OptionPills
               options={PLAN_REMINDER_OPTIONS}
@@ -382,6 +398,27 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     fontSize: 15,
     color: colors.text,
+  },
+  suggestion: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    columnGap: 8,
+    marginTop: -8,
+  },
+  suggestionText: {
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  suggestionAction: {
+    minHeight: TOUCH_SIZE,
+    justifyContent: "center",
+  },
+  suggestionActionText: {
+    fontFamily: fonts.bold,
+    fontSize: 13,
+    textDecorationLine: "underline",
   },
   note: {
     fontFamily: fonts.medium,

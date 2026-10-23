@@ -6,6 +6,7 @@ import BalanceCard from "../src/components/BalanceCard";
 import Fab from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
+import SoonUrgentBanner from "../src/components/SoonUrgentBanner";
 import { formatToday } from "../src/format";
 import { t } from "../src/i18n";
 import { sameItems } from "../src/store/selectableStore";
@@ -44,6 +45,7 @@ export default function MatrixScreen() {
       </View>
 
       <View style={styles.balance}>
+        <SoonUrgentBanner />
         <BalanceCard />
       </View>
 
@@ -94,6 +96,7 @@ const styles = StyleSheet.create({
   balance: {
     paddingHorizontal: 12,
     paddingBottom: 12,
+    gap: 8,
   },
   grid: {
     flex: 1,

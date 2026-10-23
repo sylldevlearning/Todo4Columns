@@ -90,6 +90,16 @@ export const fr = {
     waitingSince: (duration: string) => `En attente depuis ${duration}`,
     nextIn: (duration: string) => `Relance dans ${duration}`,
     nagCount: (index: number, total: number) => `Relance ${index}/${total}`,
+    soonUrgent: "Bientôt urgente",
+  },
+
+  // Escalade : tâches « Planifier » dont l'échéance arrive dans moins de 48 h
+  escalation: {
+    banner: (n: number) => (n > 1 ? `${n} tâches deviennent urgentes` : "1 tâche devient urgente"),
+    listTitle: "Bientôt urgentes",
+    listBody: "Leur échéance arrive dans moins de 48 h. Passe-les en « Faire » pour t'en occuper maintenant.",
+    suggestion: "Échéance dans moins de 48 h : c'est sans doute urgent.",
+    suggestionAction: "Marquer comme urgent",
   },
 
   menu: {
@@ -285,6 +295,11 @@ export const fr = {
         title: "Rappel de la revue",
         body: "Une notification t'invite à faire ta revue chaque semaine, au jour et à l'heure choisis. Si l'heure tombe dans la plage silencieuse, le rappel arrive à sa fin.",
         example: "le dimanche à 18 h, pour préparer tranquillement la semaine qui vient.",
+      },
+      soonUrgent: {
+        title: "Bientôt urgente",
+        body: "L'échéance de cette tâche « Planifier » arrive dans moins de 48 h : elle est en train de devenir urgente. « Passer en Faire » la range avec ce qui se traite maintenant.",
+        example: "un dossier prévu de longue date, à rendre demain à 17 h, passe en « Faire » ce matin.",
       },
       celebrations: {
         title: "Animations de célébration",

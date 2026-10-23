@@ -88,6 +88,15 @@ export const en: Translations = {
     waitingSince: (duration) => `Waiting for ${duration}`,
     nextIn: (duration) => `Reminder in ${duration}`,
     nagCount: (index, total) => `Reminder ${index}/${total}`,
+    soonUrgent: "Soon urgent",
+  },
+
+  escalation: {
+    banner: (n) => (n > 1 ? `${n} tasks are becoming urgent` : "1 task is becoming urgent"),
+    listTitle: "Soon urgent",
+    listBody: "They're due in less than 48 h. Move them to “Do” to handle them now.",
+    suggestion: "Due in less than 48 h: it's probably urgent.",
+    suggestionAction: "Mark as urgent",
   },
 
   menu: {
@@ -279,6 +288,11 @@ export const en: Translations = {
         title: "Review reminder",
         body: "A notification invites you to do your review every week, on the day and at the time you choose. If that time falls in quiet hours, the reminder arrives when they end.",
         example: "Sunday at 6 pm, to calmly get ready for the week ahead.",
+      },
+      soonUrgent: {
+        title: "Soon urgent",
+        body: "This “Schedule” task is due in less than 48 h: it's becoming urgent. “Move to Do” puts it with the things to handle now.",
+        example: "a report planned long ago, due tomorrow at 5 pm, moves to “Do” this morning.",
       },
       celebrations: {
         title: "Celebration animations",

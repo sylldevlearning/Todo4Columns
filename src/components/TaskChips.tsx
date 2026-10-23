@@ -3,7 +3,8 @@ import { StyleSheet, View } from "react-native";
 import { CategoryInfo } from "../constants/categories";
 import { formatDue, formatDuration } from "../format";
 import { t } from "../i18n";
-import { isWaiting, nextFollowUp } from "../notifications/status";
+import { isSoonUrgent, isWaiting, nextFollowUp } from "../notifications/status";
+import { CATEGORY_BY_KEY } from "../constants/categories";
 import { reminderLabel } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { colors } from "../theme";
@@ -47,6 +48,17 @@ export default function TaskChips({
   }
 
   if (!compact) {
+    if (isSoonUrgent(task, now)) {
+      chips.push(
+        <Chip
+          key="soon"
+          icon="flame-outline"
+          label={t.chips.soonUrgent}
+          color={CATEGORY_BY_KEY.UI.color}
+          textColor={CATEGORY_BY_KEY.UI.textColor}
+        />
+      );
+    }
     if (isWaiting(task, now)) {
       chips.push(
         <Chip
