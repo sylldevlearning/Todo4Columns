@@ -22,4 +22,7 @@ export interface Task extends ReminderFields {
   archivedAt: number | null; // archivage automatique des tâches « Si j'ai le temps » (NDNI)
   snoozedUntil: number | null; // « Reporter 1 h » : prochaine relance repoussée à cette date
   notificationIds: string[]; // notifications programmées pour cette tâche
+  // Absents des tâches importées par la récupération : équivalent à null
+  completedAt?: number | null; // date où la tâche a été terminée (timestamp en ms)
+  priorityWeek?: number | null; // priorité de la semaine qui commence à cette date (lundi 0 h)
 }

@@ -43,9 +43,9 @@ function defined<T extends object>(obj: T): Partial<T> {
   ) as Partial<T>;
 }
 
-// Tout ce qui influence les notifications d'une tâche (sauf leurs identifiants)
+// Tout ce qui influence les notifications d'une tâche (sauf leurs identifiants et la priorité)
 const scheduleSignature = (task: Task) =>
-  JSON.stringify({ ...task, notificationIds: undefined });
+  JSON.stringify({ ...task, notificationIds: undefined, priorityWeek: undefined });
 
 const sameIds = (a: string[], b: string[]) =>
   a.length === b.length && a.every((id, i) => id === b[i]);
@@ -296,6 +296,8 @@ export function useTasks(
       archivedAt: null,
       snoozedUntil: null,
       notificationIds: [],
+      completedAt: null,
+      priorityWeek: null,
       ...fields,
     };
     setTasks((prev) => [...prev, newTask]);
@@ -330,14 +332,15 @@ export function useTasks(
     }));
   };
 
+  // La date de fin sert au bilan de la semaine ; rouvrir une tâche l'efface
   const toggleDone = (id: string) => {
-    updateOne(id, (t) => ({ ...t, isDone: !t.isDone }));
+    updateOne(id, (t) => ({ ...t, isDone: !t.isDone, completedAt: t.isDone ? null : Date.now() }));
   };
 
   // « Fait » depuis une notification : ne décoche jamais une tâche déjà terminée
   const completeTask = (id: string) => {
     if (tasksRef.current.some((t) => t.id === id && !t.isDone)) {
-      updateOne(id, (t) => ({ ...t, isDone: true }));
+      updateOne(id, (t) => ({ ...t, isDone: true, completedAt: Date.now() }));
     }
   };
 

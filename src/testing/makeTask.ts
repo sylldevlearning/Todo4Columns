@@ -19,6 +19,8 @@ export function makeTask(overrides: Partial<Task> = {}): Task {
     nagRepeat: false,
     delegatedTo: null,
     notificationIds: [],
+    completedAt: null,
+    priorityWeek: null,
     ...overrides,
   };
 }

@@ -66,11 +66,24 @@ describe("useTasks", () => {
     await act(() => result.current.addTask({ title: "Tâche", category: "UI" }));
     const id = result.current.tasks[0].id;
 
+    const before = Date.now();
     await act(() => result.current.toggleDone(id));
     expect(result.current.tasks[0].isDone).toBe(true);
+    // Date de fin, pour le bilan de la semaine
+    expect(result.current.tasks[0].completedAt).toBeGreaterThanOrEqual(before);
 
     await act(() => result.current.toggleDone(id));
     expect(result.current.tasks[0].isDone).toBe(false);
+    expect(result.current.tasks[0].completedAt).toBeNull();
+  });
+
+  it("« Fait » depuis une notification enregistre la date de fin", async () => {
+    const { result } = await setup();
+    await act(() => result.current.addTask({ title: "Tâche", category: "UDI" }));
+    const id = result.current.tasks[0].id;
+
+    await act(() => result.current.completeTask(id));
+    expect(result.current.tasks[0]).toMatchObject({ isDone: true, completedAt: expect.any(Number) });
   });
 
   it("modifie le titre, le quadrant et les rappels d'une tâche", async () => {
@@ -163,13 +176,13 @@ describe("useTasks", () => {
     ]);
   });
 
-  it("enregistre les tâches au format v4 et les retrouve au redémarrage", async () => {
+  it("enregistre les tâches au format v5 et les retrouve au redémarrage", async () => {
     const first = await setup();
     await act(() => first.result.current.addTask({ title: "Persistante", category: "UDI" }));
 
     await waitFor(async () => {
       const data = await stored();
-      expect(data.schemaVersion).toBe(4);
+      expect(data.schemaVersion).toBe(5);
       expect(data.tasks).toHaveLength(1);
     });
     await first.unmount();
@@ -198,7 +211,7 @@ describe("useTasks", () => {
       createdAt: 1717000000000,
       delegatedTo: null,
     });
-    await waitFor(async () => expect((await stored()).schemaVersion).toBe(4));
+    await waitFor(async () => expect((await stored()).schemaVersion).toBe(5));
   });
 
   it("ne sauvegarde rien si la lecture échoue", async () => {

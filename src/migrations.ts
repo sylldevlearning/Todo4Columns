@@ -5,7 +5,8 @@ import { Category, Task } from "./types";
 // v2 : { schemaVersion: 2, tasks: [...] }
 // v3 : même enveloppe, ajout de delegatedTo sur chaque tâche
 // v4 : ajout de categoryChangedAt, archivedAt et snoozedUntil
-export const TASKS_SCHEMA_VERSION = 4;
+// v5 : ajout de completedAt et priorityWeek
+export const TASKS_SCHEMA_VERSION = 5;
 
 export interface StoredTasks {
   schemaVersion: typeof TASKS_SCHEMA_VERSION;
@@ -27,10 +28,12 @@ const numberOrNull = (v: unknown): number | null =>
 
 // Complète et corrige une tâche lue en stockage : on répare plutôt que de supprimer.
 // Seules les entrées qui ne sont pas des objets sont écartées (elles restent dans la sauvegarde brute).
+// fromVersion : format lu (avant la v5, la date de fin d'une tâche terminée est reprise de updatedAt)
 export function normalizeTask(
   raw: unknown,
   index: number,
-  now: number
+  now: number,
+  fromVersion: number = TASKS_SCHEMA_VERSION
 ): Task | null {
   if (!isRecord(raw)) return null;
 
@@ -45,6 +48,8 @@ export function normalizeTask(
   const createdAt =
     numberOrNull(raw.createdAt) ??
     (Number.isFinite(idAsDate) && idAsDate > 0 ? idAsDate : now);
+  const updatedAt = numberOrNull(raw.updatedAt) ?? createdAt;
+  const isDone = raw.isDone === true;
 
   return {
     id,
@@ -52,10 +57,10 @@ export function normalizeTask(
     category: CATEGORY_KEYS.includes(raw.category as Category)
       ? (raw.category as Category)
       : "UI",
-    isDone: raw.isDone === true,
+    isDone,
     timerEnd: numberOrNull(raw.timerEnd),
     createdAt,
-    updatedAt: numberOrNull(raw.updatedAt) ?? createdAt,
+    updatedAt,
     // Inconnu avant la v4 : on part de la migration, pour ne rien archiver dès la mise à jour
     categoryChangedAt: numberOrNull(raw.categoryChangedAt) ?? now,
     archivedAt: numberOrNull(raw.archivedAt),
@@ -71,6 +76,11 @@ export function normalizeTask(
     notificationIds: Array.isArray(raw.notificationIds)
       ? raw.notificationIds.filter((n): n is string => typeof n === "string")
       : [],
+    // Inconnue avant la v5 : la dernière modification d'une tâche terminée est sa meilleure estimation
+    completedAt: isDone
+      ? numberOrNull(raw.completedAt) ?? (fromVersion < 5 ? updatedAt : null)
+      : null,
+    priorityWeek: numberOrNull(raw.priorityWeek),
   };
 }
 
@@ -98,7 +108,7 @@ export function parseStoredTasks(
   }
 
   const tasks = rawTasks
-    .map((raw, i) => normalizeTask(raw, i, now))
+    .map((raw, i) => normalizeTask(raw, i, now, fromVersion))
     .filter((t): t is Task => t !== null);
 
   // Les versions 1.0.x utilisaient Date.now() comme id : deux tâches peuvent partager le même.

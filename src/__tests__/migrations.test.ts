@@ -45,6 +45,8 @@ describe("parseStoredTasks", () => {
       nagRepeat: false,
       delegatedTo: null,
       notificationIds: [],
+      completedAt: null,
+      priorityWeek: null,
     });
   });
 
@@ -113,13 +115,35 @@ describe("parseStoredTasks", () => {
     expect(tasks[0].id).toBe("1717000000000");
   });
 
-  it("relit à l'identique le format courant (v4)", () => {
+  it("migre le format v4 : date de fin reprise de updatedAt pour les tâches terminées", () => {
+    const v4 = {
+      schemaVersion: 4,
+      tasks: [
+        { ...v1Tasks[1], createdAt: 5, updatedAt: 60, isDone: true },
+        { ...v1Tasks[0], createdAt: 5, updatedAt: 70, isDone: false },
+      ],
+    };
+    const { tasks, fromVersion } = parseStoredTasks(JSON.stringify(v4), NOW);
+
+    expect(fromVersion).toBe(4);
+    expect(tasks[0]).toMatchObject({ isDone: true, updatedAt: 60, completedAt: 60, priorityWeek: null });
+    expect(tasks[1]).toMatchObject({ isDone: false, completedAt: null, priorityWeek: null });
+  });
+
+  it("v5 : sans date de fin enregistrée, aucune n'est inventée (tâches importées)", () => {
+    const v5 = { schemaVersion: 5, tasks: [{ ...v1Tasks[1], updatedAt: 60, isDone: true }] };
+    expect(parseStoredTasks(JSON.stringify(v5), NOW).tasks[0].completedAt).toBeNull();
+  });
+
+  it("relit à l'identique le format courant (v5)", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
     tasks[0].delegatedTo = "Marie";
+    tasks[1].completedAt = 1234;
+    tasks[0].priorityWeek = 5678;
     const json = serializeTasks(tasks);
 
-    expect(JSON.parse(json).schemaVersion).toBe(4);
-    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 4 });
+    expect(JSON.parse(json).schemaVersion).toBe(5);
+    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 5 });
   });
 
   it("lève une erreur sur un contenu illisible", () => {
@@ -147,6 +171,27 @@ describe("loadTasks", () => {
 
     expect(await loadTasks()).toHaveLength(4);
     expect(await AsyncStorage.getItem(backupKeyFor(2))).toBe(original);
+  });
+
+  it("garde une copie du format v4 (TASKS_4COLS_BACKUP_V4) avant de passer en v5", async () => {
+    const original = JSON.stringify({
+      schemaVersion: 4,
+      tasks: v1Tasks.map((t) => ({ ...t, updatedAt: 42 })),
+    });
+    await AsyncStorage.setItem(STORAGE_KEY, original);
+
+    const tasks = await loadTasks();
+    expect(tasks).toHaveLength(4);
+    expect(tasks[1]).toMatchObject({ isDone: true, completedAt: 42 });
+    expect(await AsyncStorage.getItem("TASKS_4COLS_BACKUP_V4")).toBe(original);
+  });
+
+  it("ne remplace jamais une copie V4 déjà faite", async () => {
+    await AsyncStorage.setItem("TASKS_4COLS_BACKUP_V4", "première copie");
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 4, tasks: v1Tasks }));
+
+    await loadTasks();
+    expect(await AsyncStorage.getItem("TASKS_4COLS_BACKUP_V4")).toBe("première copie");
   });
 
   it("garde une copie du format v3 avant de passer en v4", async () => {
