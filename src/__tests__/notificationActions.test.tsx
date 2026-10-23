@@ -5,7 +5,7 @@ import React from "react";
 import { AppState } from "react-native";
 import TaskForm from "../components/TaskForm";
 import { useTasks } from "../hooks/useTasks";
-import { CATEGORY_ID } from "../notifications/service";
+import { CATEGORY_ID, DELEGATE_CATEGORY_ID } from "../notifications/service";
 import {
   ACTION_DONE,
   ACTION_OPEN,
@@ -45,6 +45,21 @@ describe("configuration", () => {
       "Ouvrir",
     ]);
     expect(Notifications.requestPermissionsAsync).not.toHaveBeenCalled();
+  });
+
+  // Une app arrêtée ne reçoit pas la réponse d'un bouton qui ne l'ouvre pas
+  // (opensAppToForeground: false) : « Fait » ou « Reporter » seraient perdus
+  it("chaque bouton ouvre l'app, sinon une app arrêtée ne recevrait pas l'action", async () => {
+    await configureNotifications();
+    for (const category of [CATEGORY_ID, DELEGATE_CATEGORY_ID]) {
+      for (const action of mock.__state.categories[category]) {
+        expect({ category, action: action.identifier, opens: action.options.opensAppToForeground }).toEqual({
+          category,
+          action: action.identifier,
+          opens: true,
+        });
+      }
+    }
   });
 
   it("ne demande l'autorisation qu'une fois, si elle n'a jamais été demandée", async () => {
@@ -102,7 +117,11 @@ describe("useNotificationResponses", () => {
     expect(opts.openQuadrant).toHaveBeenCalledWith("INU");
   });
 
-  it("applique au démarrage l'action choisie quand l'app était fermée, une seule fois", async () => {
+  // App arrêtée : le bouton (qui ouvre l'app) la relance, et la réponse est lue au démarrage
+  it("app arrêtée : le bouton relance l'app, l'action est appliquée au démarrage, une seule fois", async () => {
+    await configureNotifications();
+    const snooze = mock.__state.categories[CATEGORY_ID].find((a: any) => a.identifier === ACTION_SNOOZE);
+    expect(snooze.options.opensAppToForeground).toBe(true);
     mock.__state.lastResponse = response(ACTION_SNOOZE);
     const first = options();
     const hook = await renderHook(() => useNotificationResponses(first));

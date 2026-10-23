@@ -268,7 +268,7 @@ export const fr = {
       },
       nag: {
         title: "Relance",
-        body: "Si la tâche n'est pas cochée après ce délai, tu reçois une notification. Tu peux répondre « Fait » ou « Reporter 1 h » directement depuis la notification.",
+        body: "Si la tâche n'est pas cochée après ce délai, tu reçois une notification. Touche « Fait » ou « Reporter 1 h » dans la notification : l'app s'ouvre et applique ton choix.",
         example: "avec « 2 h », une tâche créée à 9 h te relance à 11 h si elle n'est pas faite.",
       },
       repeat: {
@@ -366,7 +366,7 @@ export const fr = {
     },
     gestures: {
       title: "Rappels et gestes",
-      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Les rappels arrivent en notification : réponds « Fait » ou « Reporter 1 h » sans ouvrir l'app.",
+      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Les rappels arrivent en notification : touche « Fait » ou « Reporter 1 h », l'app s'ouvre et s'en occupe.",
     },
     // Textes des illustrations
     sampleTask: "Rendre le dossier",
@@ -542,7 +542,7 @@ export const fr = {
       pastDue: "Bascule désactivée : une tâche « Planifier » dont l'échéance est passée propose « Passer en Faire ».",
       recurrence: "Dans « Planifier », « Répéter » crée la tâche suivante dès que tu termines celle-ci. « Annuler » la retire, « Arrêter de répéter » est dans la fiche.",
       done: "Les tâches terminées sont rangées sous « Terminées », en bas de chaque case. « Vider les terminées » les supprime.",
-      notification: "Dans une notification, « Fait » termine la tâche, « Reporter 1 h » repousse le rappel d'une heure et « Ouvrir » affiche sa case.",
+      notification: "Dans une notification, « Fait » termine la tâche, « Reporter 1 h » repousse le rappel d'une heure et « Ouvrir » affiche sa case. Chaque bouton ouvre l'app.",
       balance: "Touche la carte « Ta semaine » pour ouvrir le bilan des 5 dernières semaines.",
       review: "Touche l'icône calendrier de la matrice pour faire la revue de la semaine à tout moment.",
       star: "Une étoile marque les priorités de la semaine, sur leur carte et dans la grille. Elle disparaît d'elle-même la semaine suivante.",

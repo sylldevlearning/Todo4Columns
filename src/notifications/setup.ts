@@ -40,24 +40,26 @@ export async function configureNotifications(): Promise<void> {
     });
   }
 
+  // Chaque bouton ouvre l'app : si elle a été arrêtée, un bouton qui ne l'ouvre pas ne lui
+  // parvient jamais (comportement d'expo-notifications), et la tâche ne serait pas mise à jour
   await Notifications.setNotificationCategoryAsync(CATEGORY_ID, [
-    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: false } },
+    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: true } },
     {
       identifier: ACTION_SNOOZE,
       buttonTitle: t.notifications.actionSnooze,
-      options: { opensAppToForeground: false },
+      options: { opensAppToForeground: true },
     },
     { identifier: ACTION_OPEN, buttonTitle: t.notifications.actionOpen, options: { opensAppToForeground: true } },
   ]);
 
   // Tâche confiée : « Relancer » ouvre l'app sur le partage avec un message prêt
   await Notifications.setNotificationCategoryAsync(DELEGATE_CATEGORY_ID, [
-    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: false } },
+    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: true } },
     { identifier: ACTION_NUDGE, buttonTitle: t.notifications.actionNudge, options: { opensAppToForeground: true } },
     {
       identifier: ACTION_SNOOZE,
       buttonTitle: t.notifications.actionSnooze,
-      options: { opensAppToForeground: false },
+      options: { opensAppToForeground: true },
     },
   ]);
 }

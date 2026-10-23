@@ -260,7 +260,7 @@ export const en: Translations = {
       },
       nag: {
         title: "Reminder",
-        body: "If the task isn't checked off after this delay, you get a notification. You can tap “Done” or “Snooze 1 h” right from the notification.",
+        body: "If the task isn't checked off after this delay, you get a notification. Tap “Done” or “Snooze 1 h” in the notification: the app opens and applies your choice.",
         example: "with “2 h”, a task created at 9 am reminds you at 11 am if it isn't done.",
       },
       repeat: {
@@ -357,7 +357,7 @@ export const en: Translations = {
     },
     gestures: {
       title: "Reminders and gestures",
-      body: "Swipe a task right to complete it, left to delete it. Reminders arrive as notifications: tap “Done” or “Snooze 1 h” without opening the app.",
+      body: "Swipe a task right to complete it, left to delete it. Reminders arrive as notifications: tap “Done” or “Snooze 1 h” and the app opens to take care of it.",
     },
     sampleTask: "Send the report",
     swipeRight: "Complete",
@@ -525,7 +525,7 @@ export const en: Translations = {
       pastDue: "With that turned off, a “Schedule” task past its due date offers “Move to Do”.",
       recurrence: "In “Schedule”, “Repeat” creates the next task as soon as you complete this one. “Undo” removes it; “Stop repeating” is in the task sheet.",
       done: "Completed tasks go under “Done”, at the bottom of each box. “Clear done” deletes them.",
-      notification: "In a notification, “Done” completes the task, “Snooze 1 h” pushes the reminder back an hour and “Open” shows its box.",
+      notification: "In a notification, “Done” completes the task, “Snooze 1 h” pushes the reminder back an hour and “Open” shows its box. Each button opens the app.",
       balance: "Tap the “Your week” card to open the balance of the last 5 weeks.",
       review: "Tap the calendar icon on the matrix to do the weekly review at any time.",
       star: "A star marks the priorities of the week, on their card and in the grid. It goes away on its own the following week.",

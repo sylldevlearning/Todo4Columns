@@ -41,7 +41,7 @@ YOUR BALANCE AND WEEKLY REVIEW
 The "Your week" card shows how much you got done ahead of time, and the balance screen compares your last 5 weeks. Every Sunday (or the day you choose), the weekly review guides you in 5 minutes: sort "Someday", pick up to 3 starred priorities and check in on handed-off tasks.
 
 ACT FROM THE NOTIFICATION
-Mark a task as done or snooze it for an hour without opening the app. Quiet hours (10 pm – 8 am by default) hold reminders back so they don't wake you up.
+Tap “Done” or “Snooze 1 h” in the notification: the app opens and takes care of it. Quiet hours (10 pm – 8 am by default) hold reminders back so they don't wake you up.
 
 FAST, EVERY DAY
 • Swipe a task right to complete it, left to delete it.
