@@ -1,7 +1,7 @@
 # DoFirst (Todo4Columns) — État de la version 1.2.0
 
 > Mis à jour le 23/10/2026, branche `version-1.2.0` (créée depuis `version-1.1.0`, elle-même partie de `master`).
-> Vérifié : 390 tests Jest (38 suites), `tsc --noEmit`, `expo-doctor` (21/21), export du bundle Android et prebuild Android dans une copie du projet.
+> Vérifié : 413 tests Jest (41 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21), export du bundle Android et prebuild Android dans une copie du projet.
 > **Pas encore vérifié sur un téléphone réel** et **aucun build EAS lancé** pour la 1.2.0 : voir la liste de tests à la fin.
 
 ---
@@ -105,7 +105,8 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 - Planifier : échéance et rappel.
 - Déléguer : relance de la personne, échéance facultative.
 - Plage silencieuse ; limite iOS de 64 notifications respectée (avec une place réservée à la revue).
-- Actions des notifications : « Fait », « Reporter 1 h », « Ouvrir », et « Relancer » pour les tâches confiées.
+- Actions des notifications : « Fait », « Reporter 1 h », « Ouvrir », et « Relancer » pour les tâches confiées. Chaque bouton ouvre l'app (une app arrêtée ne recevrait pas l'action sinon).
+- Plage silencieuse : une seule relance à sa fin, les suivantes réespacées d'un intervalle.
 
 **Escalade**
 - « Bientôt urgente » quand une échéance de « Planifier » arrive dans moins de 48 h, avec un bandeau sur la matrice et une suggestion dans la fiche.
@@ -147,7 +148,7 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 | Élément | Valeur |
 |---|---|
 | Version | **1.2.0** (`app.json`, `package.json`) |
-| versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`) |
+| versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
@@ -155,18 +156,24 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 | Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` |
 
 **Permissions du manifeste final**
-- **Attendues :** `INTERNET`, `VIBRATE`, `RECEIVE_BOOT_COMPLETED` et `POST_NOTIFICATIONS` (expo-notifications), plus `SYSTEM_ALERT_WINDOW` (modèle Expo).
-- **Retirées :** `READ_EXTERNAL_STORAGE` et `WRITE_EXTERNAL_STORAGE`, via `android.blockedPermissions`.
+- **Attendues :** `INTERNET`, `VIBRATE`, `RECEIVE_BOOT_COMPLETED` et `POST_NOTIFICATIONS` (expo-notifications).
+- **Retirées :** `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` et `SYSTEM_ALERT_WINDOW`, via `android.blockedPermissions`.
 
 Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n'a lieu qu'au build.
 
 ## 8. Points ouverts
 
 - **Tests sur téléphone :** ils restent à faire (liste ci-dessous), en particulier ce que seul un vrai build vérifie : R8, `shrinkResources`, polices intégrées et notifications.
-- **`SYSTEM_ALERT_WINDOW` :** cette permission vient du modèle Expo et l'app ne s'en sert pas en production. On pourrait aussi la bloquer ; c'est à décider.
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
+
+### Dette technique (pour la 1.2.1)
+
+- **`useTasks` trop gros** (environ 700 lignes) : il mélange synchronisation des notifications, journal, bascule, récurrence, minuteurs et sauvegarde. À découper en hooks dédiés.
+- **Gros fichiers** : `TaskForm.tsx` (près de 700 lignes) et `app/review.tsx` (plus de 500) gagneraient à être découpés.
+- **Code dupliqué** : `isRecord` (×3), `CATEGORY_KEYS` (×4), `selectCompletions` (×3), `isForeground` (×2) et la constante `METRICS` dans une quinzaine de tests.
+- **Code mort** : le champ `Escalation.at` n'est jamais lu.
 
 ## 9. Reste à vérifier sur téléphone (dans l'ordre)
 
@@ -185,10 +192,10 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
 3. **Polices** : les 5 graisses de Manrope partout, sans police système ; l'écran de démarrage disparaît vite.
 4. **Notifications**
    - Autorisation demandée au premier rappel.
-   - « Faire » : relance avec « Fait », « Reporter 1 h » et « Ouvrir », app ouverte, en arrière-plan et fermée.
+   - « Faire » : relance avec « Fait », « Reporter 1 h » et « Ouvrir », app ouverte, en arrière-plan et **arrêtée** (balayée des apps récentes) : chaque bouton ouvre l'app et l'action est appliquée.
    - « Planifier » : rappel puis échéance.
    - « Déléguer » : relance avec « Fait », « Relancer » et « Reporter 1 h ».
-   - Plage silencieuse respectée.
+   - Plage silencieuse respectée : relances répétées pendant la nuit, une seule à 8 h puis les suivantes espacées.
    - Pas de rappel en double après la mise à jour.
    - Rappels encore programmés après un redémarrage du téléphone.
 5. **Célébrations**
@@ -197,7 +204,8 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
    - « Réduire les animations » du téléphone respecté.
 6. **Présentation et aide**
    - « Passer », « Suivant », « Revoir la présentation ».
-   - Cartes « i » fermées par appui à côté, glissement vers le bas et bouton retour.
+   - Cartes « i » fermées par appui à côté et bouton retour.
+   - **Glissement vers le bas** d'une carte « i » : elle se ferme au-delà d'un court glissement, revient en place sinon (les tests automatiques ne vérifient que le seuil, pas le geste).
    - « Comment ça marche ».
    - Labels lus par TalkBack.
 7. **Équilibre et revue**
@@ -213,9 +221,13 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
    - « Bientôt urgente » : puce, bandeau, suggestion dans la fiche.
    - Échéance passée app ouverte : bascule, message, « Annuler ».
    - Échéance passée app fermée : bascule à la réouverture.
+   - À la mise à jour depuis la 1.1 : les tâches « Planifier » déjà en retard **ne** basculent **pas** ; le message de bascule n'apparaît jamais par-dessus la présentation.
+   - Tâche remise à la main dans « Planifier » avec une échéance passée : elle y reste.
    - Réglage désactivé : pas de bascule.
 10. **Sauvegarde**
-    - Export vers Drive ou un mail, puis import de ce fichier depuis Drive.
+    - Export vers Drive ou un mail.
+    - **Import d'un fichier choisi dans Drive** (lecture réelle du fichier via le sélecteur du système : non couverte par les tests automatiques).
+    - Le fichier exporté a disparu du cache au lancement suivant.
     - Fichier invalide refusé.
     - « Annuler le dernier import ».
     - Aucune demande de permission de stockage.
