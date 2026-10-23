@@ -9,7 +9,7 @@ import {
   keepRelevantFields,
   pickReminderFields,
 } from "../reminders";
-import { DEFAULT_SETTINGS, Settings } from "../settings";
+import { DEFAULT_SETTINGS, notificationSettingsKey, Settings } from "../settings";
 import { loadTasks, saveTasks } from "../storage";
 import { Category, ReminderFields, Task } from "../types";
 
@@ -158,10 +158,12 @@ export function useTasks(
     }
   }, [isLoaded, settings.autoArchive]);
 
-  // Réglages modifiés : tout est reprogrammé
+  // Réglages des rappels modifiés : tout est reprogrammé. Les autres réglages (animations,
+  // archivage) et la relecture de réglages identiques au démarrage ne déclenchent rien.
+  const notificationKey = notificationSettingsKey(settings);
   useEffect(() => {
     if (syncedRef.current !== null) reconcileAll();
-  }, [settings]);
+  }, [notificationKey]);
 
   // À chaque retour dans l'app : reprogramme les notifications suivantes (limite iOS de 64)
   useEffect(() => {

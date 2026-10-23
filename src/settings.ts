@@ -28,6 +28,18 @@ export const DEFAULT_SETTINGS: Settings = {
   celebrations: true,
 };
 
+// Réglages qui changent les notifications programmées (pas les animations ni l'archivage)
+export const notificationSettingsKey = (s: Settings) =>
+  JSON.stringify([
+    s.planReminderOffset,
+    s.doNagInterval,
+    s.delegateFollowUp,
+    s.nagRepeat,
+    s.maxNags,
+    s.quietHoursStart,
+    s.quietHoursEnd,
+  ]);
+
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 const isNonNegativeNumber = (v: unknown): v is number =>
