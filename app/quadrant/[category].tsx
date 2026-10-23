@@ -16,7 +16,13 @@ import { useStableCallback } from "../../src/hooks/useStableCallback";
 import { RemovedTask } from "../../src/hooks/useTasks";
 import { t } from "../../src/i18n";
 import { pickReminderFields } from "../../src/reminders";
-import { useTaskStore } from "../../src/store/TasksContext";
+import { sameReminderSettings, Settings } from "../../src/settings";
+import { sameItems } from "../../src/store/selectableStore";
+import {
+  useSettingsSelector,
+  useTaskActions,
+  useTasksSelector,
+} from "../../src/store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../../src/theme";
 import { Task } from "../../src/types";
 
@@ -37,10 +43,20 @@ const rowKey = (row: Row) => (row.kind === "task" ? row.task.id : row.kind);
 
 const Separator = () => <View style={styles.separator} />;
 
+const allSettings = (settings: Settings) => settings;
+
 // Liste des tâches d'un quadrant
 export default function QuadrantScreen() {
   const { category: param } = useLocalSearchParams<{ category: string }>();
-  const store = useTaskStore();
+  const key = isCategory(param) ? param : null;
+  const store = useTaskActions();
+  // Tâches de ce quadrant seulement : une modification ailleurs ne re-rend pas cet écran
+  const tasks = useTasksSelector(
+    ({ tasks }) => tasks.filter((t) => t.category === key && t.archivedAt === null),
+    sameItems
+  );
+  // Les cartes n'utilisent que les réglages des rappels : les autres ne les re-rendent pas
+  const settings = useSettingsSelector(allSettings, sameReminderSettings);
   const celebration = useCelebration();
   const [menuTaskId, setMenuTaskId] = useState<string | null>(null);
   const [timerTaskId, setTimerTaskId] = useState<string | null>(null);
@@ -67,7 +83,7 @@ export default function QuadrantScreen() {
 
   // Actions des cartes : identité fixe pour que seules les cartes modifiées se re-rendent
   const handleToggle = useStableCallback((id: string, anchor?: View | null) => {
-    const task = store.tasks.find((t) => t.id === id);
+    const task = tasks.find((t) => t.id === id);
     if (!task) return;
     store.toggleDone(id);
     // Célébration seulement quand la tâche passe à « terminée » ; « Annuler » la fait disparaître
@@ -87,14 +103,14 @@ export default function QuadrantScreen() {
   );
 
   const handleSnooze = useStableCallback((id: string) => {
-    const previous = store.tasks.find((t) => t.id === id)?.snoozedUntil ?? null;
+    const previous = tasks.find((t) => t.id === id)?.snoozedUntil ?? null;
     store.snoozeTask(id);
     store.requestNotificationPermission().catch(() => {});
     offerUndo(t.undo.snoozed, () => store.setSnoozedUntil(id, previous));
   });
 
   const handleMoveToDo = useStableCallback((id: string) => {
-    const before = store.tasks.find((t) => t.id === id);
+    const before = tasks.find((t) => t.id === id);
     store.moveTask(id, "UI");
     if (before) {
       offerUndo(t.undo.movedToDo, () =>
@@ -106,12 +122,9 @@ export default function QuadrantScreen() {
   if (!isCategory(param)) return <Redirect href="/" />;
   const category = CATEGORY_BY_KEY[param];
 
-  const tasks = store.tasks.filter(
-    (t) => t.category === category.key && t.archivedAt === null
-  );
   const openTasks = tasks.filter((t) => !t.isDone);
   const doneTasks = tasks.filter((t) => t.isDone);
-  const menuTask = store.tasks.find((t) => t.id === menuTaskId) ?? null;
+  const menuTask = tasks.find((t) => t.id === menuTaskId) ?? null;
 
   const handleClearDone = () => {
     const removed = store.clearDone(category.key);
@@ -128,7 +141,7 @@ export default function QuadrantScreen() {
     onOpenMenu: setMenuTaskId,
     onSnooze: handleSnooze,
     onMoveToDo: handleMoveToDo,
-    settings: store.settings,
+    settings,
     now,
   };
 
@@ -216,7 +229,7 @@ export default function QuadrantScreen() {
         task={menuTask}
         onClose={() => setMenuTaskId(null)}
         onMove={(id, target) => {
-          const before = store.tasks.find((t) => t.id === id);
+          const before = tasks.find((t) => t.id === id);
           setMenuTaskId(null);
           store.moveTask(id, target);
           if (before) {

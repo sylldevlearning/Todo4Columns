@@ -40,6 +40,9 @@ export const notificationSettingsKey = (s: Settings) =>
     s.quietHoursEnd,
   ]);
 
+export const sameReminderSettings = (a: Settings, b: Settings) =>
+  notificationSettingsKey(a) === notificationSettingsKey(b);
+
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 const isNonNegativeNumber = (v: unknown): v is number =>

@@ -7,17 +7,19 @@ import { isCategory } from "../src/constants/categories";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
 import { hasReminder } from "../src/reminders";
-import { useTaskStore } from "../src/store/TasksContext";
+import { useSettings, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
 import { colors } from "../src/theme";
 
 // Fiche (formSheet) de création ou de modification d'une tâche
 // Paramètres : id (modification) ou category (création depuis un quadrant)
 export default function TaskSheet() {
   const { id, category } = useLocalSearchParams<{ id?: string; category?: string }>();
-  const { tasks, settings, addTask, updateTask, requestNotificationPermission } = useTaskStore();
+  const { addTask, updateTask, requestNotificationPermission } = useTaskActions();
+  const settings = useSettings();
+  // Seulement la tâche modifiée : les autres changements ne re-rendent pas la fiche
+  const task = useTasksSelector(({ tasks }) => (id ? tasks.find((t) => t.id === id) : undefined));
   const [permission] = usePermissionState();
   const insets = useSafeAreaInsets();
-  const task = id ? tasks.find((t) => t.id === id) : undefined;
   const missing = id !== undefined && task === undefined;
 
   // Tâche supprimée entre-temps : on ferme la fiche

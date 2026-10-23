@@ -9,7 +9,7 @@ import { fr } from "../i18n/fr";
 import { serializeTasks } from "../migrations";
 import { saveSettings, DEFAULT_SETTINGS } from "../settings";
 import { STORAGE_KEY } from "../storage";
-import { TasksProvider, useTaskStore } from "../store/TasksContext";
+import { TasksProvider, useSettingsSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
 
 jest.mock("expo-haptics", () => ({
@@ -26,8 +26,8 @@ const METRICS = {
 
 // Même organisation que app/_layout.tsx
 function Celebrations({ children }: { children: React.ReactNode }) {
-  const { settings } = useTaskStore();
-  return <CelebrationProvider enabled={settings.celebrations}>{children}</CelebrationProvider>;
+  const enabled = useSettingsSelector((s) => s.celebrations);
+  return <CelebrationProvider enabled={enabled}>{children}</CelebrationProvider>;
 }
 
 function Layout() {

@@ -14,6 +14,7 @@ import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { isWaiting } from "../notifications/status";
 import { Settings } from "../settings";
+import { useTaskActions } from "../store/TasksContext";
 import { Task } from "../types";
 import TaskAlerts from "./TaskAlerts";
 import IconButton from "./IconButton";
@@ -32,7 +33,7 @@ interface Props {
   onOpenMenu: (id: string) => void;
   onSnooze: (id: string) => void; // « Reporter 1 h » d'une tâche en attente
   onMoveToDo: (id: string) => void; // « Passer en Faire » à échéance passée
-  settings: Settings;
+  settings: Settings; // réglages des rappels (puces)
   now: number;
 }
 
@@ -53,11 +54,12 @@ export default React.memo(function TaskCard({
   const translateX = useSharedValue(0);
   const waiting = isWaiting(task, now);
   const wrapperRef = useRef<View>(null);
+  const { getSettings } = useTaskActions();
 
   const toggle = () => onToggleDone(task.id, wrapperRef.current);
   const complete = () => {
     // Une tâche terminée avec célébration a déjà son retour haptique
-    if (task.isDone || !settings.celebrations) {
+    if (task.isDone || !getSettings().celebrations) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     }
     toggle();

@@ -7,13 +7,18 @@ import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
 import { formatToday } from "../src/format";
 import { t } from "../src/i18n";
-import { useTaskStore } from "../src/store/TasksContext";
+import { sameItems } from "../src/store/selectableStore";
+import { TasksState, useTasksSelector } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
+
+// La matrice n'affiche que les tâches à faire et non archivées
+const selectOpenTasks = ({ tasks }: TasksState) =>
+  tasks.filter((t) => !t.isDone && t.archivedAt === null);
 
 // Écran d'accueil : la matrice d'Eisenhower
 export default function MatrixScreen() {
-  const { tasks } = useTaskStore();
-  const openCount = tasks.filter((t) => !t.isDone && t.archivedAt === null).length;
+  const tasks = useTasksSelector(selectOpenTasks, sameItems);
+  const openCount = tasks.length;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>

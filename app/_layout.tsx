@@ -15,7 +15,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import { configureNotifications } from "../src/notifications/setup";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
-import { TasksProvider, useTaskStore } from "../src/store/TasksContext";
+import {
+  TasksProvider,
+  TasksState,
+  useSettingsSelector,
+  useTaskActions,
+  useTasksSelector,
+} from "../src/store/TasksContext";
 import { colors } from "../src/theme";
 
 // L'écran de démarrage reste affiché jusqu'au chargement de la police
@@ -24,9 +30,12 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 // Canal « Rappels » et boutons d'action (aucune demande d'autorisation au lancement)
 configureNotifications().catch((e) => console.warn("Erreur configuration notifications :", e));
 
+const allTasks = (state: TasksState) => state;
+
 // Applique les actions choisies dans les notifications
 function NotificationResponses() {
-  const { isLoaded, tasks, completeTask, snoozeTask } = useTaskStore();
+  const { isLoaded, tasks } = useTasksSelector(allTasks);
+  const { completeTask, snoozeTask } = useTaskActions();
   const { celebrate } = useCelebration();
   useNotificationResponses({
     isLoaded,
@@ -42,8 +51,8 @@ function NotificationResponses() {
 
 // Célébrations selon le réglage « Animations de célébration »
 function Celebrations({ children }: { children: React.ReactNode }) {
-  const { settings } = useTaskStore();
-  return <CelebrationProvider enabled={settings.celebrations}>{children}</CelebrationProvider>;
+  const enabled = useSettingsSelector((s) => s.celebrations);
+  return <CelebrationProvider enabled={enabled}>{children}</CelebrationProvider>;
 }
 
 export default function RootLayout() {

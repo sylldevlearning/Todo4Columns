@@ -7,19 +7,28 @@ import SettingsForm from "../src/components/SettingsForm";
 import { t } from "../src/i18n";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
-import { useTaskStore } from "../src/store/TasksContext";
+import { sameItems } from "../src/store/selectableStore";
+import {
+  TasksState,
+  useSettings,
+  useTaskActions,
+  useTasksSelector,
+} from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
+
+// Seules les archives sont affichées : cocher une tâche ne re-rend pas cet écran
+const selectArchived = ({ tasks }: TasksState) =>
+  tasks.filter((t) => t.archivedAt !== null).sort((a, b) => b.archivedAt! - a.archivedAt!);
 
 // Écran des réglages : rappels par défaut, plage silencieuse, notifications, archives
 export default function SettingsScreen() {
-  const store = useTaskStore();
+  const store = useTaskActions();
+  const settings = useSettings();
   const [permission, refreshPermission] = usePermissionState();
-  const archived = store.tasks
-    .filter((t) => t.archivedAt !== null)
-    .sort((a, b) => b.archivedAt! - a.archivedAt!);
+  const archived = useTasksSelector(selectArchived, sameItems);
 
   const deleteForever = (id: string) => {
-    const task = store.tasks.find((t) => t.id === id);
+    const task = archived.find((t) => t.id === id);
     Alert.alert(
       t.settings.deleteForever,
       t.settings.deleteForeverBody(task?.title ?? ""),
@@ -40,7 +49,7 @@ export default function SettingsScreen() {
       </View>
       <ScrollView contentContainerStyle={styles.content}>
         <SettingsForm
-          settings={store.settings}
+          settings={settings}
           onChange={store.updateSettings}
           permission={permission}
           onRequestPermission={() =>
