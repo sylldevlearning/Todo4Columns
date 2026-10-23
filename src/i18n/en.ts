@@ -429,6 +429,12 @@ export const en: Translations = {
     nudgeMessage: (title) => `Quick reminder: how's it going with ${title}?`,
   },
 
+  loadError: {
+    title: "Couldn't read your tasks",
+    body: "Your tasks haven't been changed. Try again; if the problem persists, fully close the app and reopen it.",
+    retry: "Try again",
+  },
+
   backup: {
     section: "Backup",
     export: "Export my data",

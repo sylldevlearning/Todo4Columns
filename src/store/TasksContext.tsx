@@ -26,11 +26,12 @@ export interface TasksState {
   isLoaded: boolean;
   completions: Completion[]; // journal des fins de tâches (bilan)
   escalation: Escalation | null; // dernière bascule automatique en Faire (« Annuler »)
+  loadError: boolean; // lecture des tâches impossible
 }
 
 type StoreActions = Omit<
   ReturnType<typeof useTasks>,
-  "tasks" | "isLoaded" | "completions" | "escalation"
+  "tasks" | "isLoaded" | "completions" | "escalation" | "loadError"
 >;
 
 export type TaskActions = StoreActions & {
@@ -61,6 +62,7 @@ const ACTION_NAMES = [
   "undoEscalation",
   "dismissEscalation",
   "replaceAll",
+  "retryLoad",
   "getTasksState",
   "startTimer",
   "resyncNotifications",
@@ -118,6 +120,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       isLoaded: store.isLoaded,
       completions: store.completions,
       escalation: store.escalation,
+      loadError: store.loadError,
     })
   );
   const [settingsStore] = useState(() => createSelectableStore(settings));
@@ -129,8 +132,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       isLoaded: store.isLoaded,
       completions: store.completions,
       escalation: store.escalation,
+      loadError: store.loadError,
     });
-  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation]);
+  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation, store.loadError]);
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
 
   // Dernières versions des fonctions, appelées par les actions à identité fixe

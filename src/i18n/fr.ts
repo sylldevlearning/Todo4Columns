@@ -443,6 +443,13 @@ export const fr = {
     nudgeMessage: (title: string) => `Petit rappel : où en es-tu pour ${title} ?`,
   },
 
+  // Lecture des tâches impossible au démarrage
+  loadError: {
+    title: "Impossible de lire tes tâches",
+    body: "Tes tâches n'ont pas été modifiées. Réessaie ; si le problème continue, ferme complètement l'app puis rouvre-la.",
+    retry: "Réessayer",
+  },
+
   // Sauvegarde : export et import des données
   backup: {
     section: "Sauvegarde",

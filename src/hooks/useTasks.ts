@@ -70,6 +70,8 @@ export function useTasks(
   // Empêche la sauvegarde tant que les tâches n'ont pas été chargées.
   // Si la lecture échoue, il reste à false : on ne risque pas d'écraser les données existantes.
   const [isLoaded, setIsLoaded] = useState(false);
+  // Lecture impossible : l'app affiche un message et bloque la saisie (rien ne serait enregistré)
+  const [loadError, setLoadError] = useState(false);
   // Dernière liste rendue, pour connaître la position des tâches supprimées
   const tasksRef = useRef(tasks);
   tasksRef.current = tasks;
@@ -121,16 +123,19 @@ export function useTasks(
   // Tâches lors du dernier passage, pour repérer celles qui viennent d'être terminées ou rouvertes
   const loggedTasksRef = useRef<Task[] | null>(null);
 
-  // Charger les tâches sauvegardées au démarrage, puis le journal des fins de tâches
-  useEffect(() => {
+  // Charger les tâches sauvegardées (au démarrage, ou « Réessayer » après une erreur), puis le
+  // journal des fins de tâches
+  const load = () => {
     (async () => {
       let loaded: Task[];
       try {
         loaded = await loadTasks();
         setTasks(loaded);
         setIsLoaded(true);
+        setLoadError(false);
       } catch (e) {
         console.warn("Erreur récupération tâches :", e);
+        setLoadError(true);
         return;
       }
       try {
@@ -145,7 +150,13 @@ export function useTasks(
         console.warn("Erreur journal des tâches terminées :", e);
       }
     })();
-  }, []);
+  };
+
+  useEffect(load, []);
+
+  const retryLoad = () => {
+    if (!isLoaded) load();
+  };
 
   // Tâche terminée : ajoutée au journal ; rouverte (« Annuler ») : retirée
   useEffect(() => {
@@ -671,6 +682,8 @@ export function useTasks(
   return {
     tasks,
     isLoaded,
+    loadError,
+    retryLoad,
     completions,
     escalation,
     undoEscalation,

@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import EscalationNotice from "../src/components/EscalationNotice";
+import LoadErrorGate from "../src/components/LoadErrorGate";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { nudgeMessage, shareWhenActive } from "../src/delegation";
 import { useAppFonts } from "../src/fonts";
@@ -74,6 +75,7 @@ export default function RootLayout() {
           <Celebrations>
             <NotificationResponses />
             <FirstLaunchOnboarding />
+            <LoadErrorGate>
             <Stack
               screenOptions={{
                 headerShown: false,
@@ -97,6 +99,7 @@ export default function RootLayout() {
                 }}
               />
             </Stack>
+            </LoadErrorGate>
             <EscalationNotice />
           </Celebrations>
         </TasksProvider>
