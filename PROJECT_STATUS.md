@@ -1,217 +1,228 @@
-# Todo4Columns — État des lieux
+# DoFirst (Todo4Columns) — État de la version 1.2.0
 
-> Analyse réalisée le 22/10/2026 sur le commit `5cac822` (branche `master`, dépôt https://github.com/sylldevlearning/Todo4Columns).
-> Source : lecture complète du code et de la configuration. **L'app n'a pas été testée sur un appareil réel lors de cette analyse** (aucun téléphone ni émulateur disponible) : seuls la compilation du bundle Android, `expo-doctor` (21/21) et `tsc --noEmit` ont été vérifiés.
+> Mis à jour le 23/10/2026, branche `version-1.2.0` (créée depuis `version-1.1.0`, elle-même partie de `master`).
+> Vérifié : 390 tests Jest (38 suites), `tsc --noEmit`, `expo-doctor` (21/21), export du bundle Android et prebuild Android dans une copie du projet.
+> **Pas encore vérifié sur un téléphone réel** et **aucun build EAS lancé** pour la 1.2.0 : voir la liste de tests à la fin.
 
 ---
 
 ## 1. Résumé
 
-Todo4Columns est une application mobile de gestion de tâches basée sur la **matrice d'Eisenhower** (« MATRICE » dans l'en-tête). L'utilisateur range chaque tâche dans l'une des quatre catégories urgent/important, affichées sous forme de quatre colonnes défilant horizontalement. Il peut cocher une tâche comme terminée, la supprimer, et lui associer un compte à rebours en minutes qui déclenche une alerte à son expiration. Les données sont stockées localement sur le téléphone, sans compte ni synchronisation.
+DoFirst est une app de tâches fondée sur la **matrice d'Eisenhower**. Chaque tâche est rangée dans l'une des quatre cases à partir de deux questions (« C'est urgent ? », « C'est important ? ») :
 
----
+| Clé enregistrée | Français | Anglais |
+|---|---|---|
+| `UI` | Faire | Do |
+| `INU` | Planifier | Schedule |
+| `UDI` | Déléguer | Delegate |
+| `NDNI` | Si j'ai le temps | Someday |
 
-## 2. Stack technique
+Les données restent sur le téléphone, sans compte. L'app est en français et en anglais (langue du téléphone), avec un thème sombre. Publiée sur Android sous le package `com.saloum.sylla.matriceeisenhower`.
+
+## 2. Historique
+
+- **1.0.x** : un seul écran de quatre colonnes, en JavaScript, sans tests.
+- **1.1** : réécriture en TypeScript avec expo-router (matrice 2×2, quadrants, fiche de tâche, réglages). Rappels par quadrant avec notifications et actions « Fait », « Reporter 1 h » et « Ouvrir ». Plage silencieuse, archivage, célébrations, migration des anciennes données et récupération des tâches de l'ancienne app, nouveau nom DoFirst. S'y ajoute un audit de performance : R8, `shrinkResources`, polices intégrées, contexte découpé.
+- **1.2** (cette branche) :
+  - aide intégrée ;
+  - équilibre et bilan ;
+  - revue hebdomadaire et priorités ;
+  - journal des fins de tâches ;
+  - escalade et bascule des tâches en retard ;
+  - tâches récurrentes ;
+  - délégation par message ;
+  - sauvegarde (export, import, annulation du dernier import).
+
+## 3. Stack technique
 
 | Élément | Valeur |
 |---|---|
-| Expo SDK | **57** (`expo` 57.0.31) |
-| React Native | **0.86.3** (nouvelle architecture, désormais obligatoire) |
-| React | **19.2.3** |
-| TypeScript | **Oui** (`typescript` 6.0.3, `strict: true`), un seul fichier `App.tsx` |
-| Navigation | **Aucune** (un seul écran, pas de React Navigation ni d'Expo Router) |
-| Gestion d'état | `useState` / `useRef` locaux dans le composant `App`, sans contexte, Redux ou Zustand |
-| Stockage | **AsyncStorage** (clé unique `TASKS_4COLS`, JSON) |
-| Tests / lint | Aucun (ni Jest, ni ESLint, ni Prettier) |
+| Expo SDK | 57 (`expo` ~57.0.31), nouvelle architecture |
+| React Native / React | 0.86.3 / 19.2.3, Hermes |
+| Langage | TypeScript strict |
+| Navigation | expo-router (pile : matrice, quadrant, fiche en formSheet, réglages, aide, bilan, revue) |
+| État | `useTasks` + `TasksContext` découpé en trois (tâches et journal par sélecteur, actions à identité fixe, réglages par sélecteur) |
+| Stockage | AsyncStorage |
+| Animations / gestes | Reanimated 4, Worklets, Gesture Handler |
+| Tests | Jest (jest-expo), React Native Testing Library |
 
-### Dépendances (`package.json`, versions installées)
+Modules Expo : `expo-notifications`, `expo-localization`, `expo-haptics`, `expo-font`, `expo-splash-screen`, `expo-router`, `expo-linking`, `expo-constants`, `expo-dev-client`, `expo-build-properties`, `expo-file-system`, `expo-sharing`. Plus `@react-native-community/datetimepicker`, `@expo/vector-icons` (Ionicons) et `@expo-google-fonts/manrope`.
 
-| Paquet | Version | Utilisé dans le code ? |
-|---|---|---|
-| `expo` | 57.0.31 | Oui (`index.js` → `registerRootComponent`) |
-| `react` | 19.2.3 | Oui |
-| `react-native` | 0.86.3 | Oui |
-| `@react-native-async-storage/async-storage` | 2.2.0 | Oui (persistance) |
-| `expo-constants` | 57.0.22 | Oui (`Constants.statusBarHeight`) |
-| `expo-splash-screen` | 57.0.10 | Oui, via le plugin de config dans `app.json` |
-| `expo-notifications` | 57.0.23 | **Non**, jamais importé |
-| `expo-screen-orientation` | 57.0.3 | **Non**, jamais importé |
-| `expo-status-bar` | 57.0.1 | **Non**, jamais importé |
-
-Dev : `typescript` 6.0.3, `@types/react` 19.2.18, `@babel/core` 7.29.7.
-
----
-
-## 3. Arborescence
+## 4. Organisation du code
 
 ```
-Todo4Columns/
-├── App.tsx              # Toute l'application : types, logique, UI et styles (575 lignes)
-├── index.js             # Point d'entrée : enregistre App via registerRootComponent
-├── app.json             # Configuration Expo (nom, version, icône, package Android, splash)
-├── eas.json             # Profils de build/soumission EAS
-├── package.json         # Dépendances et scripts (start / android / ios / web)
-├── package-lock.json    # Verrouillage npm
-├── tsconfig.json        # Config TypeScript (étend expo/tsconfig.base)
-├── .gitignore           # Ignore node_modules, .expo, builds, clés de signature…
-└── assets/
-    ├── icon.png             # Icône de l'app (matrice 4 cases, fond sombre), 1,2 Mo
-    ├── adaptive-icon.png    # Image Expo par défaut, non référencée dans app.json
-    ├── splash-icon.png      # Image Expo par défaut (identique à adaptive-icon.png)
-    └── favicon.png          # Favicon web
+app/                    Écrans (expo-router)
+  _layout.tsx           Fournisseurs, réponses aux notifications, présentation, message de bascule
+  index.tsx             Matrice, carte « Ta semaine », bandeau « Bientôt urgentes »
+  quadrant/[category]   Liste d'un quadrant (FlatList)
+  task.tsx              Fiche de création / modification
+  settings.tsx          Réglages
+  help.tsx              « Comment ça marche »
+  balance.tsx           Bilan
+  review.tsx            Revue de la semaine
+src/
+  hooks/useTasks.ts     État des tâches, sauvegardes regroupées, notifications, journal, bascule
+  store/                Contexte découpé et magasin à sélecteurs
+  notifications/        Calcul, programmation, réconciliation, réponses
+  migrations.ts         Schémas v1 → v6 ;  storage.ts  chargement et sauvegarde
+  recovery.ts           Récupération des tâches de l'ancienne app (à ne pas modifier)
+  balance.ts, completionLog.ts, review.ts, recurrence.ts, backup.ts, delegation.ts
+  components/           Cartes, formulaires, InfoButton, présentation…
+  i18n/fr.ts, en.ts     Tous les textes (mêmes clés, vérifié par test)
+store/                  Fiches Play Store et notes de version
 ```
 
-Aucun dossier `src/`, `components/` ou `screens/` : tout le code applicatif est dans `App.tsx`.
+## 5. Données enregistrées (AsyncStorage)
 
----
-
-## 4. Fonctionnalités existantes
-
-L'app comporte **un seul écran**, de haut en bas :
-
-**En-tête**
-- Titre « MATRICE » et sous-titre « eiseinoeur ».
-
-**Zone de création**
-- Choix de la catégorie via 4 boutons : `U-I`, `NU-I`, `U-NI`, `NU-NI` (U-I sélectionné par défaut).
-- Saisie du titre dans un champ texte « Nouvelle tâche… ».
-- Bouton **AJOUTER** : crée la tâche dans la catégorie choisie. Un titre vide (ou fait uniquement d'espaces) est ignoré sans message.
-
-**Quatre colonnes (défilement horizontal, chacune défilable verticalement)**
-- « Urgent + Important » (UI)
-- « Important + Non-urgent » (INU)
-- « Urgent + Déléguer » (UDI)
-- « Ni Urgent ni Important » (NDNI)
-
-Pour chaque tâche, l'utilisateur peut :
-- **Cocher / décocher** (⬜️ / ✅) : le texte d'une tâche terminée est barré, grisé et en italique.
-- **Lancer un minuteur** (⏱️) : une fenêtre superposée demande une durée en minutes (entier > 0, sinon alerte « Durée invalide »). Le temps restant s'affiche sous la tâche au format `MM:SS`. À l'expiration, une alerte « Temps écoulé » s'affiche et le minuteur est retiré. Relancer le minuteur remplace l'ancien.
-- **Supprimer** (✕) : une confirmation est demandée (« Annuler » / « SUPPRIMER »).
-
-**Persistance**
-- Les tâches sont rechargées au démarrage et sauvegardées à chaque changement. Un minuteur en cours survit à la fermeture de l'app (date de fin stockée). L'alerte s'affiche cependant **seulement quand l'app est ouverte** : il n'y a pas de notification système.
-
-**Non disponible** : modifier le titre d'une tâche, la déplacer d'une colonne à l'autre, la réordonner, supprimer toutes les tâches terminées, rechercher, mettre en pause un minuteur.
-
----
-
-## 5. Modèle de données
-
-```ts
-type Category = "UI" | "INU" | "UDI" | "NDNI";
-
-interface Task {
-  id: string;              // Date.now().toString() à la création
-  title: string;
-  category: Category;
-  isDone: boolean;
-  timerEnd: number | null; // timestamp (ms) de fin du minuteur, ou null
-}
-```
-
-- Toutes les tâches sont dans un seul tableau `allTasks`, filtré par catégorie à l'affichage.
-- La sauvegarde utilise `AsyncStorage.setItem("TASKS_4COLS", JSON.stringify(allTasks))`, déclenchée par un `useEffect` sur `allTasks`.
-- Le chargement utilise `AsyncStorage.getItem("TASKS_4COLS")` puis `JSON.parse`, sans validation du format ni versionnage du schéma.
-- Les erreurs sont seulement journalisées (`console.warn`), sans retour visible pour l'utilisateur.
-
----
-
-## 6. Configuration de publication
-
-### `app.json`
-
-| Champ | Valeur |
+| Clé | Contenu |
 |---|---|
-| `name` | Todo4Columns |
-| `slug` | Todo4Columns |
-| `version` | **1.0.5** (alors que `package.json` indique **1.0.4**) |
-| `orientation` | portrait |
-| `userInterfaceStyle` | light (alors que l'interface est entièrement sombre) |
-| `android.package` | `com.saloum.sylla.Todo4Columns` |
-| `ios.bundleIdentifier` | **Absent** |
-| `ios.supportsTablet` | true |
-| `android.versionCode` / `ios.buildNumber` | **Absents** du fichier : gérés à distance par EAS (`appVersionSource: "remote"`) |
-| `android.adaptiveIcon` | **Absent** |
-| Splash | Plugin `expo-splash-screen` : `splash-icon.png`, fond `#ffffff`, largeur 200 |
-| EAS `projectId` | `9c064a91-0d49-4533-91fb-8b1e63760b97` |
+| `TASKS_4COLS` | Tâches, schéma **v6** (`{ schemaVersion, tasks }`) |
+| `TASKS_4COLS_BACKUP_V1` … `V5` | Copie du format d'origine, écrite une seule fois avant chaque migration |
+| `TASKS_4COLS_CORRUPT_<date>` | Contenu illisible mis de côté |
+| `TASKS_4COLS_RECOVERY_DONE`, `TASKS_4COLS_RECOVERY_LOG` | Récupération des anciennes tâches |
+| `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut) |
+| `COMPLETION_LOG` | Journal `{ date, catégorie }` des tâches terminées, 26 semaines |
+| `WEEKLY_REVIEW_LOG` | Semaines où une revue a été faite |
+| `BACKUP_BEFORE_IMPORT` | Copie des données avant le dernier import |
+| `LAST_HANDLED_NOTIFICATION_RESPONSE` | Dernière réponse de notification appliquée |
 
-### `eas.json` (présent)
+Champs ajoutés aux tâches en 1.2 :
+- **v5 :** `completedAt`, `priorityWeek`.
+- **v6 :** `recurrence`, `nextOccurrenceId`, `escalationSkippedFor`.
 
-- `cli.version` ≥ 15.0.10, `appVersionSource: "remote"`.
-- Profils de build :
-  - `development` : `developmentClient: true`, distribution interne. **`expo-dev-client` n'est pas installé**, donc ce profil ne fonctionnera pas en l'état.
-  - `preview` : distribution interne.
-  - `production` : `autoIncrement: true`.
-- `submit.production` : vide.
+Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) ne sont pas renseignés par la récupération, qui n'a pas été modifiée.
 
-**Non vérifié** : la valeur actuelle du `versionCode` côté serveurs EAS, l'existence de builds passés, une éventuelle publication sur le Play Store ou l'App Store, et l'état des identifiants de signature.
+## 6. Fonctionnalités
 
----
+**Matrice et quadrants**
+- Grille 2×2 avec aperçu de chaque case.
+- Cartes : glisser à droite pour terminer, à gauche pour supprimer, « Annuler » pendant 5 s.
+- Menu « … » : déplacer, minuteur.
+- Section « Terminées ».
 
-## 7. Points faibles
+**Rappels**
+- Faire : relance répétable.
+- Planifier : échéance et rappel.
+- Déléguer : relance de la personne, échéance facultative.
+- Plage silencieuse ; limite iOS de 64 notifications respectée (avec une place réservée à la revue).
+- Actions des notifications : « Fait », « Reporter 1 h », « Ouvrir », et « Relancer » pour les tâches confiées.
 
-### Bugs et comportements problématiques
-1. **Sauvegarde et re-rendu toutes les secondes, en permanence.** Le `setInterval` d'une seconde fait `prev.map(...)`, ce qui crée un nouveau tableau à chaque tick même sans minuteur actif. Résultat : un re-rendu complet de l'écran **et une écriture AsyncStorage chaque seconde** tant que l'app est ouverte, ce qui coûte de la batterie et des écritures disque. L'affichage du compte à rebours dépend d'ailleurs de cet effet de bord.
-2. **Effet de bord dans un updater d'état.** `Alert.alert` est appelé à l'intérieur de `setAllTasks(prev => ...)`. React peut exécuter un updater deux fois (StrictMode, rendu concurrent), et l'alerte risque alors d'apparaître en double. Si plusieurs minuteurs expirent en même temps, plusieurs alertes s'empilent.
-3. **Risque d'écrasement des données au démarrage.** L'effet de sauvegarde s'exécute au premier rendu avec `allTasks = []`, en parallèle du chargement. Si l'écriture passait avant la lecture, les tâches seraient effacées. Je n'ai pas reproduit ce cas, mais rien dans le code ne l'empêche (pas de drapeau « chargé »).
-4. **Aucune notification réelle.** Le minuteur ne prévient pas l'utilisateur si l'app est en arrière-plan ou fermée, alors que `expo-notifications` est installé.
-5. **Fenêtre du minuteur « maison ».** C'est une `View` en position absolue, pas un `Modal` : le bouton retour Android ne la ferme pas, et sur Android elle peut passer sous le clavier (`KeyboardAvoidingView` sans `behavior`).
-6. **Libellés incohérents.** La catégorie `UDI` s'appelle « Urgent + Déléguer » dans la colonne mais `U-NI` sur le bouton. Les clés (`INU`, `UDI`, `NDNI`) ne suivent pas la même logique que les libellés (`NU-I`, `U-NI`, `NU-NI`). Le sous-titre « eiseinoeur » semble être une coquille pour « Eisenhower ».
-7. **Format du minuteur.** `MM:SS` sans heures : 150 minutes s'affichent « 150:00 ». Une durée décimale (« 1.5 ») est tronquée à 1 sans avertissement (`parseInt`).
+**Escalade**
+- « Bientôt urgente » quand une échéance de « Planifier » arrive dans moins de 48 h, avec un bandeau sur la matrice et une suggestion dans la fiche.
+- Bascule automatique en « Faire » à l'échéance, puce « En retard », message avec « Annuler » ; désactivable.
 
-### Code mort / dépendances inutiles
-- `expo-notifications`, `expo-screen-orientation` et `expo-status-bar` sont installés mais jamais importés.
-- `assets/adaptive-icon.png` n'est référencé nulle part.
-- `intervalRef` n'est utilisé que pour le nettoyage de l'effet ; une variable locale suffirait.
-- La liste des catégories et leurs libellés sont dupliqués à plusieurs endroits de `App.tsx`.
+**Récurrence** (dans « Planifier »)
+- Chaque jour, jours de semaine, chaque semaine (jours au choix), chaque mois, chaque année.
+- L'occurrence suivante est créée quand on termine la précédente, sans rattrapage.
+- Cas limites gérés : 31 du mois, 29 février, changement d'heure.
 
-### Dépendances / API obsolètes
-- `SafeAreaView` importé depuis `react-native` est déprécié ; l'alternative est `react-native-safe-area-context`. Il est en plus combiné à un `paddingTop: Constants.statusBarHeight`, ce qui risque un double espacement en haut sur iOS (non vérifié sur appareil).
-- `npm install` signale 39 vulnérabilités (1 critique, 29 hautes). Je n'ai pas analysé en détail lesquelles concernent l'app livrée plutôt que les outils de développement.
+**Équilibre**
+- Carte « Ta semaine » (7 derniers jours).
+- Bilan : semaine en cours et 4 semaines précédentes, lus dans le journal.
 
-### UX / design
-- **L'écran de démarrage affiche l'image Expo par défaut** (grille et cercles gris) sur fond blanc, ce qui détonne avec le thème sombre de l'app.
-- L'icône Android n'a pas d'`adaptiveIcon` : le carré arrondi de `icon.png` risque d'être affiché réduit ou recadré par le launcher (non vérifié visuellement).
-- `icon.png` pèse 1,2 Mo, ce qui est lourd pour une icône.
-- `SPACING` vaut `Constants.statusBarHeight` : toutes les marges dépendent donc de la hauteur de la barre d'état, qui varie selon l'appareil. La mise en page n'est pas cohérente d'un téléphone à l'autre.
-- La largeur des colonnes est calculée une seule fois via `Dimensions.get` et ne réagit pas aux changements de taille (tablette, écran pliable, multi-fenêtre).
-- Accessibilité : les boutons sont des emojis sans `accessibilityLabel`, et les zones tactiles sont petites (✕, ⏱️).
-- La touche « Entrée » du clavier n'ajoute pas la tâche (pas de `onSubmitEditing`).
-- Aucun état vide (« Aucune tâche ») dans les colonnes.
+**Revue de la semaine**
+- Notification hebdomadaire (dimanche 18 h par défaut, réglable).
+- Trois étapes : « Si j'ai le temps », jusqu'à 3 priorités étoilées, tâches confiées. Puis célébration et série de semaines.
 
-### Qualité / maintenabilité
-- Tout est dans un seul fichier de 575 lignes : logique, UI et styles mélangés.
-- **Aucun test**, aucun lint, aucune CI.
-- Versions divergentes entre `package.json` (1.0.4) et `app.json` (1.0.5).
-- Pas de README.
+**Délégation**
+- « Envoyer à Marie » et « Relancer » ouvrent le partage natif avec un message prêt, sans accès aux contacts.
 
----
+**Sauvegarde**
+- Export JSON via le partage.
+- Import avec vérification, aperçu, confirmation et copie de secours.
+- « Annuler le dernier import ».
+- Sauvegarde automatique Android (`allowBackup`).
 
-## 8. Pistes d'amélioration pour une nouvelle version
+**Aide**
+- Présentation en 3 écrans au premier lancement.
+- Icônes « i » avec cartes d'explication.
+- Page « Comment ça marche ».
 
-**Corrections prioritaires**
-1. Ne mettre à jour l'état que si un minuteur expire réellement, et isoler l'affichage du compte à rebours dans un petit composant avec son propre intervalle. Cela supprime les écritures et re-rendus inutiles chaque seconde.
-2. Sortir `Alert.alert` de l'updater d'état.
-3. Ajouter un drapeau `isLoaded` pour ne sauvegarder qu'après le chargement initial.
-4. Utiliser `expo-notifications` pour programmer une notification locale à `timerEnd`, afin que le minuteur fonctionne app fermée. Sinon, retirer la dépendance.
-5. Remplacer la fenêtre maison par `Modal`, et passer à `react-native-safe-area-context`.
+**Réglages**
+- Rappels par défaut, plage silencieuse, notifications, revue, bascule en retard.
+- Célébrations, archivage, sauvegarde, aide.
 
-**Fonctionnalités**
-- Modifier une tâche et la déplacer entre colonnes, par glisser-déposer ou via un menu.
-- Réordonner les tâches, et supprimer d'un coup les tâches terminées.
-- Afficher la matrice en grille 2×2 (plus fidèle à Eisenhower) en option, à la place du défilement horizontal.
-- Ajouter des dates d'échéance, et éventuellement des rappels récurrents.
-- Proposer un export / import ou une sauvegarde cloud.
+## 7. Publication
 
-**Publication**
-- Remplacer `splash-icon.png` et configurer `android.adaptiveIcon` avec de vrais visuels, et alléger `icon.png`.
-- Passer `userInterfaceStyle` à `dark` (ou `automatic` avec un thème clair).
-- Ajouter `ios.bundleIdentifier` si une version iOS est prévue.
-- Installer `expo-dev-client` ou retirer le profil `development`.
-- Aligner les versions entre `package.json` et `app.json`.
+| Élément | Valeur |
+|---|---|
+| Version | **1.2.0** (`app.json`, `package.json`) |
+| versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`) |
+| Package Android | `com.saloum.sylla.matriceeisenhower` |
+| R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
+| Polices | Manrope (5 graisses) intégrées au build Android |
+| Fiche Play Store | `store/listing-fr.md`, `store/listing-en.md` |
+| Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` |
 
-**Code**
-- Découper en `types.ts`, `storage.ts`, `components/` (Column, TaskItem, TimerModal) et un hook `useTasks`.
-- Centraliser les catégories dans une seule constante (clé, libellé court, titre, couleur).
-- Supprimer les dépendances inutilisées.
-- Ajouter ESLint, des tests Jest et React Native Testing Library sur la logique (ajout, suppression, minuteur, persistance), et une CI GitHub Actions.
+**Permissions du manifeste final**
+- **Attendues :** `INTERNET`, `VIBRATE`, `RECEIVE_BOOT_COMPLETED` et `POST_NOTIFICATIONS` (expo-notifications), plus `SYSTEM_ALERT_WINDOW` (modèle Expo).
+- **Retirées :** `READ_EXTERNAL_STORAGE` et `WRITE_EXTERNAL_STORAGE`, via `android.blockedPermissions`.
+
+Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n'a lieu qu'au build.
+
+## 8. Points ouverts
+
+- **Tests sur téléphone :** ils restent à faire (liste ci-dessous), en particulier ce que seul un vrai build vérifie : R8, `shrinkResources`, polices intégrées et notifications.
+- **`SYSTEM_ALERT_WINDOW` :** cette permission vient du modèle Expo et l'app ne s'en sert pas en production. On pourrait aussi la bloquer ; c'est à décider.
+- **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
+- **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
+- **Copie de secours d'import :** une seule, celle du dernier import.
+
+## 9. Reste à vérifier sur téléphone (dans l'ordre)
+
+Avec le build de production (R8 actif), installé **par-dessus** la version publiée.
+
+1. **Récupération et mise à jour**
+   - Par-dessus une ancienne version 1.0.x (si disponible) : les anciennes tâches sont récupérées.
+   - Par-dessus la 1.1 du Play Store : tâches et réglages conservés, aucune tâche en double.
+   - La présentation s'affiche une seule fois.
+   - « Ta semaine » reprend les tâches déjà terminées.
+2. **Build R8 / shrinkResources**
+   - Lancement sans plantage, sur tous les écrans : matrice, quadrant, fiche, réglages, aide, bilan, revue.
+   - Glissements, défilement, fiche en formSheet.
+   - Sélecteurs de date et d'heure, retours haptiques.
+   - Icône de l'app, icône adaptative et monochrome, écran de démarrage, icône des notifications.
+3. **Polices** : les 5 graisses de Manrope partout, sans police système ; l'écran de démarrage disparaît vite.
+4. **Notifications**
+   - Autorisation demandée au premier rappel.
+   - « Faire » : relance avec « Fait », « Reporter 1 h » et « Ouvrir », app ouverte, en arrière-plan et fermée.
+   - « Planifier » : rappel puis échéance.
+   - « Déléguer » : relance avec « Fait », « Relancer » et « Reporter 1 h ».
+   - Plage silencieuse respectée.
+   - Pas de rappel en double après la mise à jour.
+   - Rappels encore programmés après un redémarrage du téléphone.
+5. **Célébrations**
+   - Confettis et message en terminant une tâche.
+   - Réglage désactivé : simple vibration.
+   - « Réduire les animations » du téléphone respecté.
+6. **Présentation et aide**
+   - « Passer », « Suivant », « Revoir la présentation ».
+   - Cartes « i » fermées par appui à côté, glissement vers le bas et bouton retour.
+   - « Comment ça marche ».
+   - Labels lus par TalkBack.
+7. **Équilibre et revue**
+   - Carte « Ta semaine » et bilan.
+   - Notification de revue à l'heure choisie : la régler quelques minutes plus tard pour tester. Un appui ouvre la revue.
+   - Les 3 étapes, puis célébration et série.
+   - Les étoiles apparaissent et disparaissent la semaine suivante.
+8. **Récurrence**
+   - Terminer une tâche hebdomadaire : occurrence suivante créée et ses rappels programmés.
+   - « Annuler » et « Arrêter de répéter ».
+   - Tâche mensuelle le 31.
+9. **Escalade et bascule**
+   - « Bientôt urgente » : puce, bandeau, suggestion dans la fiche.
+   - Échéance passée app ouverte : bascule, message, « Annuler ».
+   - Échéance passée app fermée : bascule à la réouverture.
+   - Réglage désactivé : pas de bascule.
+10. **Sauvegarde**
+    - Export vers Drive ou un mail, puis import de ce fichier depuis Drive.
+    - Fichier invalide refusé.
+    - « Annuler le dernier import ».
+    - Aucune demande de permission de stockage.
+11. **Délégation**
+    - « Envoyer à Marie » par SMS ou WhatsApp.
+    - « Relancer » depuis la notification (app fermée et en arrière-plan) et depuis la revue.
+12. **Anglais** : téléphone en anglais. Tous les écrans, les boutons de notification et le nom de fichier de la sauvegarde.
+13. **Poids et batterie**
+    - Taille de l'AAB comparée à la 1.1.
+    - App en arrière-plan : pas de réveils inutiles.
