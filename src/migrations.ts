@@ -127,9 +127,18 @@ export function parseStoredTasks(
 
   // Les versions 1.0.x utilisaient Date.now() comme id : deux tâches peuvent partager le même.
   // On les rend uniques pour qu'une suppression ne touche qu'une seule tâche.
+  // Le nouvel identifiant ne doit reprendre ni un identifiant déjà vu ni un identifiant d'origine
+  // plus loin dans la liste.
+  const taken = new Set(tasks.map((t) => t.id));
   const seen = new Set<string>();
   tasks.forEach((t, i) => {
-    if (seen.has(t.id)) t.id = `${t.id}-${i}`;
+    if (seen.has(t.id)) {
+      let n = i;
+      let candidate = `${t.id}-${n}`;
+      while (taken.has(candidate)) candidate = `${t.id}-${++n}`;
+      t.id = candidate;
+      taken.add(candidate);
+    }
     seen.add(t.id);
   });
   return { tasks, fromVersion };

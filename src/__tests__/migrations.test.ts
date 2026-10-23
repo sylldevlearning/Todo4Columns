@@ -118,6 +118,21 @@ describe("parseStoredTasks", () => {
     expect(tasks[0].id).toBe("1717000000000");
   });
 
+  it("identifiant de doublon : jamais celui d'une autre tâche", () => {
+    // Le doublon en position 2 deviendrait « 5-2 », déjà pris par la tâche suivante
+    const { tasks } = parseStoredTasks(
+      JSON.stringify([
+        { ...v1Tasks[0], id: "5", title: "Un" },
+        { ...v1Tasks[0], id: "5-2", title: "Deux" },
+        { ...v1Tasks[0], id: "5", title: "Trois" },
+        { ...v1Tasks[0], id: "5-3", title: "Quatre" },
+      ]),
+      NOW
+    );
+    expect(new Set(tasks.map((t) => t.id)).size).toBe(4);
+    expect(tasks.map((t) => t.id)).toEqual(["5", "5-2", "5-4", "5-3"]);
+  });
+
   it("migre le format v4 : date de fin reprise de updatedAt pour les tâches terminées", () => {
     const v4 = {
       schemaVersion: 4,
