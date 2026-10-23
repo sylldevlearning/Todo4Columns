@@ -1,11 +1,3 @@
-// Une importation par graisse : seules les 5 graisses utilisées sont embarquées dans l'app
-// (l'index du paquet référence aussi ExtraLight et Light)
-import { Manrope_400Regular } from "@expo-google-fonts/manrope/400Regular";
-import { Manrope_500Medium } from "@expo-google-fonts/manrope/500Medium";
-import { Manrope_600SemiBold } from "@expo-google-fonts/manrope/600SemiBold";
-import { Manrope_700Bold } from "@expo-google-fonts/manrope/700Bold";
-import { Manrope_800ExtraBold } from "@expo-google-fonts/manrope/800ExtraBold";
-import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
@@ -13,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
+import { useAppFonts } from "../src/fonts";
 import { configureNotifications } from "../src/notifications/setup";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
 import {
@@ -24,7 +17,8 @@ import {
 } from "../src/store/TasksContext";
 import { colors } from "../src/theme";
 
-// L'écran de démarrage reste affiché jusqu'au chargement de la police
+// L'écran de démarrage reste affiché jusqu'au premier affichage (Android) ou au chargement
+// des polices (iOS, web)
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 // Canal « Rappels » et boutons d'action (aucune demande d'autorisation au lancement)
@@ -56,19 +50,13 @@ function Celebrations({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({
-    Manrope_400Regular,
-    Manrope_500Medium,
-    Manrope_600SemiBold,
-    Manrope_700Bold,
-    Manrope_800ExtraBold,
-  });
+  const fontsReady = useAppFonts();
 
   useEffect(() => {
-    if (fontsLoaded || fontError) SplashScreen.hideAsync().catch(() => {});
-  }, [fontsLoaded, fontError]);
+    if (fontsReady) SplashScreen.hideAsync().catch(() => {});
+  }, [fontsReady]);
 
-  if (!fontsLoaded && !fontError) return null;
+  if (!fontsReady) return null;
 
   return (
     <GestureHandlerRootView style={styles.root}>
