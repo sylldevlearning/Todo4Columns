@@ -255,15 +255,20 @@ export function useTasks(
         idsRef.current.delete(id);
       }
       const result: Record<string, string[]> = {};
+      let truncated = false;
       for (const task of changed) {
         const known = idsRef.current.get(task.id) ?? task.notificationIds;
         result[task.id] = await notifier.syncTask(
           { ...task, notificationIds: known },
-          settingsRef.current
+          settingsRef.current,
+          undefined,
+          () => (truncated = true)
         );
         idsRef.current.set(task.id, result[task.id]);
       }
       applyIds(result);
+      // Plafond de 64 atteint : réconciliation complète, pour garder les plus proches
+      if (truncated) reconcileAll();
     });
   }, [tasks, isLoaded, settingsReady]);
 

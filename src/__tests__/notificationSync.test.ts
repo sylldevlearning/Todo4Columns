@@ -210,3 +210,29 @@ describe("synchronisation dans useTasks", () => {
     );
   });
 });
+
+describe("plafond de 64 atteint par une nouvelle tâche", () => {
+  beforeEach(() => AsyncStorage.clear());
+
+  it("réconciliation complète : la relance la plus proche prend la place d'une lointaine", async () => {
+    const later = Date.now();
+    // 64 tâches dont la relance est dans 1 jour : le plafond est atteint
+    await AsyncStorage.setItem(
+      STORAGE_KEY,
+      serializeTasks(
+        Array.from({ length: MAX_SCHEDULED }, (_, i) =>
+          makeTask({ id: `loin${i}`, category: "UI", updatedAt: later, nagInterval: 1440 })
+        )
+      )
+    );
+    const { result } = await renderHook(() => useTasks(NO_QUIET));
+    await waitFor(() => expect(scheduled()).toHaveLength(MAX_SCHEDULED));
+
+    // Nouvelle tâche relancée dans 30 min : plus proche que toutes les autres
+    await act(() => result.current.addTask({ title: "Urgent", category: "UI", nagInterval: 30 }));
+    const id = result.current.tasks.at(-1)!.id;
+    await waitFor(() => expect(scheduled().map((n) => n.content.data?.taskId)).toContain(id));
+    expect(scheduled()).toHaveLength(MAX_SCHEDULED);
+    expect(result.current.tasks.at(-1)!.notificationIds).toHaveLength(1);
+  });
+});

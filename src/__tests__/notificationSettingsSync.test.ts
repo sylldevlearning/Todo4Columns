@@ -93,7 +93,9 @@ describe("synchronisation des notifications", () => {
     await waitFor(() => expect(notifier.syncTask).toHaveBeenCalledTimes(1));
     expect(notifier.syncTask).toHaveBeenCalledWith(
       expect.objectContaining({ id: "a", isDone: true }),
-      DEFAULT_SETTINGS
+      DEFAULT_SETTINGS,
+      undefined,
+      expect.any(Function) // signale le plafond de 64 atteint
     );
     expect(notifier.reconcile).toHaveBeenCalledTimes(1);
   });

@@ -86,11 +86,14 @@ export async function cancelNotifications(ids: string[]): Promise<void> {
 }
 
 // Annule les notifications de la tâche, programme celles de computeSchedule et renvoie leurs identifiants.
-// Sans autorisation, rien n'est programmé. Au-delà de la limite iOS, seules les plus proches le sont.
+// Sans autorisation, rien n'est programmé. Au-delà de la limite iOS, seules les plus proches le sont,
+// et onTruncated est appelé : une réconciliation complète doit alors choisir les 64 plus proches
+// de toutes les tâches (une notification lointaine déjà programmée peut céder sa place).
 export async function syncTaskNotifications(
   task: Task,
   settings: Settings,
-  now: number = Date.now()
+  now: number = Date.now(),
+  onTruncated?: () => void
 ): Promise<string[]> {
   await cancelNotifications(task.notificationIds);
   if (!(await canSchedule())) return [];
@@ -105,6 +108,7 @@ export async function syncTaskNotifications(
       ? 1
       : 0;
   const budget = Math.max(0, MAX_SCHEDULED - scheduled.length - reserved);
+  if (budget < items.length) onTruncated?.();
   const ids: string[] = [];
   for (const item of items.slice(0, budget)) ids.push(await scheduleItem(task, item));
   return ids;
