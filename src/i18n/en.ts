@@ -291,6 +291,68 @@ export const en: Translations = {
     swipeLeft: "Delete",
   },
 
+  howTo: {
+    title: "How it works",
+    methodTitle: "The Eisenhower method",
+    method: [
+      "Before acting, ask yourself two questions: is it urgent? is it important? The answers put each task in one of the 4 boxes of the matrix, and each box tells you what to do.",
+      "Urgent means it needs to be done today or tomorrow. Important means it matters for your goals, your health, your work or the people close to you.",
+      "The goal: spend more time on what's important before it becomes urgent. That's the “Schedule” box.",
+    ],
+    quadrantsTitle: "The 4 boxes",
+    examples: "Examples",
+    quadrants: {
+      UI: {
+        action: "Do it yourself, now. These tasks can't wait.",
+        examples: [
+          "Send the file that has to go out tonight",
+          "Pay a bill that's due tomorrow",
+          "Call the plumber about a leak",
+        ],
+      },
+      INU: {
+        action: "Pick a time to work on it. This is where you really move forward.",
+        examples: [
+          "Study for an exam three weeks away",
+          "Exercise",
+          "Work on a project you care about",
+        ],
+      },
+      UDI: {
+        action: "Hand it off to someone, then follow up if you don't hear back.",
+        examples: [
+          "Ask a colleague for the meeting notes",
+          "Have a friend book the restaurant",
+          "Let the garage handle the car inspection",
+        ],
+      },
+      NDNI: {
+        action: "Only if you have time to spare. You can also drop it with no regrets.",
+        examples: [
+          "Sort the old photos on your phone",
+          "Rearrange the icons on your home screen",
+          "Watch one more episode",
+        ],
+      },
+    },
+    gesturesTitle: "Gestures in the app",
+    gestures: {
+      openQuadrant: "Tap a box in the matrix to see its tasks.",
+      add: "Tap the + button to create a task. From a box, the switches are already set for it.",
+      check: "Tap a task's circle to check it off or reopen it.",
+      swipeRight: "Swipe a task right to complete it.",
+      swipeLeft: "Swipe a task left to delete it.",
+      undo: "After an action, “Undo” stays visible for 5 seconds so you can go back.",
+      edit: "Tap a task to edit it.",
+      menu: "Tap “…” on a task to move it to another box or start a timer.",
+      waiting: "A “Do” task still waiting after its reminder offers “Snooze 1 h” and “Move…”.",
+      pastDue: "A “Schedule” task past its due date offers “Move to Do”.",
+      done: "Completed tasks go under “Done”, at the bottom of each box. “Clear done” deletes them.",
+      notification: "In a notification, “Done” completes the task, “Snooze 1 h” pushes the reminder back an hour and “Open” shows its box.",
+      info: "Tap an “i” icon for a quick explanation.",
+    },
+  },
+
   celebrations: {
     UI: [
       "One less fire to put out!",

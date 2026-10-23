@@ -62,6 +62,7 @@ export default function SettingsScreen() {
           onRestore={store.unarchiveTask}
           onDeleteForever={deleteForever}
           onShowOnboarding={() => setShowOnboarding(true)}
+          onOpenHowTo={() => router.push("/help")}
         />
       </ScrollView>
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}

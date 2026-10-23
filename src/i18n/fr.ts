@@ -299,6 +299,69 @@ export const fr = {
     swipeLeft: "Supprimer",
   },
 
+  // Page « Comment ça marche »
+  howTo: {
+    title: "Comment ça marche",
+    methodTitle: "La méthode d'Eisenhower",
+    method: [
+      "Avant d'agir, pose-toi deux questions : est-ce urgent ? est-ce important ? Les réponses rangent chaque tâche dans l'une des 4 cases de la matrice, et chaque case te dit quoi faire.",
+      "Urgent veut dire que ça doit être fait aujourd'hui ou demain. Important veut dire que ça compte pour tes objectifs, ta santé, ton travail ou tes proches.",
+      "Le but : passer plus de temps sur ce qui est important avant que ça devienne urgent. C'est la case « Planifier ».",
+    ],
+    quadrantsTitle: "Les 4 cases",
+    examples: "Exemples",
+    quadrants: {
+      UI: {
+        action: "Fais-le toi-même, maintenant. Ces tâches ne peuvent pas attendre.",
+        examples: [
+          "Envoyer le dossier qui doit partir ce soir",
+          "Payer une facture qui expire demain",
+          "Appeler le plombier pour une fuite",
+        ],
+      },
+      INU: {
+        action: "Choisis un moment pour t'y mettre. C'est ici que tu avances vraiment.",
+        examples: [
+          "Réviser un examen dans trois semaines",
+          "Faire du sport",
+          "Préparer un projet qui te tient à cœur",
+        ],
+      },
+      UDI: {
+        action: "Confie-le à quelqu'un, puis relance la personne si tu n'as pas de nouvelles.",
+        examples: [
+          "Demander à un collègue le compte rendu de la réunion",
+          "Faire réserver le restaurant par un ami",
+          "Laisser le garage s'occuper du contrôle technique",
+        ],
+      },
+      NDNI: {
+        action: "Seulement s'il te reste du temps. Tu peux aussi l'oublier sans regret.",
+        examples: [
+          "Trier les vieilles photos du téléphone",
+          "Réorganiser les icônes de ton écran d'accueil",
+          "Regarder un épisode de plus",
+        ],
+      },
+    } as Record<Category, { action: string; examples: string[] }>,
+    gesturesTitle: "Les gestes de l'app",
+    gestures: {
+      openQuadrant: "Touche une case de la matrice pour voir ses tâches.",
+      add: "Touche le bouton + pour créer une tâche. Depuis une case, les interrupteurs sont déjà réglés pour elle.",
+      check: "Touche le rond d'une tâche pour la cocher ou la rouvrir.",
+      swipeRight: "Glisse une tâche vers la droite pour la terminer.",
+      swipeLeft: "Glisse une tâche vers la gauche pour la supprimer.",
+      undo: "Après une action, « Annuler » reste affiché 5 secondes pour revenir en arrière.",
+      edit: "Touche une tâche pour la modifier.",
+      menu: "Touche « … » sur une tâche pour la déplacer vers une autre case ou lancer un minuteur.",
+      waiting: "Une tâche « Faire » restée sans réponse après sa relance propose « Reporter 1 h » et « Déplacer… ».",
+      pastDue: "Une tâche « Planifier » dont l'échéance est passée propose « Passer en Faire ».",
+      done: "Les tâches terminées sont rangées sous « Terminées », en bas de chaque case. « Vider les terminées » les supprime.",
+      notification: "Dans une notification, « Fait » termine la tâche, « Reporter 1 h » repousse le rappel d'une heure et « Ouvrir » affiche sa case.",
+      info: "Touche une icône « i » pour une explication rapide.",
+    },
+  },
+
   // Messages de célébration, tirés au hasard quand une tâche est terminée
   celebrations: {
     UI: [
