@@ -1,9 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import { Completion, COMPLETION_LOG_KEY, COMPLETION_LOG_VERSION, seedLog } from "./completionLog";
+import {
+  Completion,
+  COMPLETION_LOG_KEY,
+  COMPLETION_LOG_VERSION,
+  parseLogJson,
+  seedLog,
+} from "./completionLog";
 import { parseStoredTasks, serializeTasks, TASKS_SCHEMA_VERSION } from "./migrations";
-import { REVIEW_LOG_KEY } from "./review";
+import { parseReviewWeeksJson, REVIEW_LOG_KEY } from "./review";
 import { parseSettings, SETTINGS_KEY, SETTINGS_SCHEMA_VERSION, Settings } from "./settings";
 import { STORAGE_KEY } from "./storage";
 import { Category, Task } from "./types";
@@ -128,6 +134,41 @@ export async function savePreImportCopy(now: number): Promise<void> {
     JSON.stringify({ createdAt: now, data: Object.fromEntries(values) })
   );
 }
+
+// Date de la copie de secours (donc du dernier import), ou null s'il n'y en a pas
+export async function preImportCopyDate(): Promise<number | null> {
+  const json = await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY);
+  if (json === null) return null;
+  try {
+    const createdAt = (JSON.parse(json) as { createdAt?: unknown }).createdAt;
+    return typeof createdAt === "number" ? createdAt : 0;
+  } catch {
+    return 0;
+  }
+}
+
+// Relit la copie de secours : les données telles qu'elles étaient avant le dernier import.
+// Lève une erreur si elle est illisible (rien n'est alors modifié).
+export async function readPreImportCopy(now: number = Date.now()): Promise<BackupContent> {
+  const json = await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY);
+  if (json === null) throw new Error("Aucune copie de secours");
+  const { createdAt, data } = JSON.parse(json) as {
+    createdAt: number;
+    data: Record<string, string | null>;
+  };
+  const tasks = parseStoredTasks(data[STORAGE_KEY] ?? null, now).tasks;
+  const log = data[COMPLETION_LOG_KEY] ?? null;
+  return {
+    createdAt,
+    tasks,
+    settings: parseSettings(data[SETTINGS_KEY] ?? null),
+    // Sans journal enregistré à l'époque : repris des tâches, comme au premier lancement
+    completions: log === null ? seedLog(tasks, now) : parseLogJson(log),
+    reviewWeeks: parseReviewWeeksJson(data[REVIEW_LOG_KEY] ?? null),
+  };
+}
+
+export const removePreImportCopy = () => AsyncStorage.removeItem(PRE_IMPORT_BACKUP_KEY);
 
 // Écrit les données importées (les tâches et le journal sont aussi remplacés en mémoire)
 export async function writeImported(backup: BackupContent): Promise<void> {

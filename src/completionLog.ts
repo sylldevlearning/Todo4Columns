@@ -43,16 +43,20 @@ export const seedLog = (tasks: Task[], now: number): Completion[] =>
     now
   );
 
-// Journal enregistré, ou null s'il n'a encore jamais été écrit (premier lancement)
-export async function loadLog(): Promise<Completion[] | null> {
-  const json = await AsyncStorage.getItem(COMPLETION_LOG_KEY);
-  if (json === null) return null;
+// Contenu enregistré de COMPLETION_LOG ; un contenu illisible donne un journal vide
+export function parseLogJson(json: string): Completion[] {
   try {
     const entries = (JSON.parse(json) as { entries?: unknown } | null)?.entries;
     return Array.isArray(entries) ? entries.filter(isCompletion) : [];
   } catch {
     return [];
   }
+}
+
+// Journal enregistré, ou null s'il n'a encore jamais été écrit (premier lancement)
+export async function loadLog(): Promise<Completion[] | null> {
+  const json = await AsyncStorage.getItem(COMPLETION_LOG_KEY);
+  return json === null ? null : parseLogJson(json);
 }
 
 export async function saveLog(log: Completion[]): Promise<void> {

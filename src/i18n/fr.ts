@@ -465,6 +465,15 @@ export const fr = {
     doneBody: (n: number) => `${n} tâche${s(n)} restaurée${s(n)}.`,
     importErrorTitle: "Import impossible",
     importErrorBody: "Les données n'ont pas pu être remplacées. Rien n'a été modifié.",
+    undoImport: "Annuler le dernier import",
+    undoConfirmTitle: "Annuler le dernier import ?",
+    undoConfirmBody: (date: string) =>
+      `Tes données reviennent à leur état d'avant l'import du ${date}. Les changements faits depuis seront perdus.`,
+    undoAction: "Restaurer",
+    undoneTitle: "Import annulé",
+    undoneBody: "Tes données d'avant l'import sont revenues.",
+    undoErrorTitle: "Restauration impossible",
+    undoErrorBody: "La copie de secours n'a pas pu être relue. Rien n'a été modifié.",
   },
 
   // Page « Comment ça marche »

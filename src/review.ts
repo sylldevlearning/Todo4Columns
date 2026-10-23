@@ -42,14 +42,19 @@ export function reviewStreak(weeks: number[], now: number): number {
   return streak;
 }
 
-export async function loadReviewWeeks(): Promise<number[]> {
+// Contenu enregistré de WEEKLY_REVIEW_LOG ; absent ou illisible : aucune revue
+export function parseReviewWeeksJson(json: string | null): number[] {
   try {
-    const data: unknown = JSON.parse((await AsyncStorage.getItem(REVIEW_LOG_KEY)) ?? "null");
+    const data: unknown = JSON.parse(json ?? "null");
     const weeks = (data as { weeks?: unknown } | null)?.weeks;
     return Array.isArray(weeks) ? weeks.filter((w): w is number => typeof w === "number") : [];
   } catch {
     return [];
   }
+}
+
+export async function loadReviewWeeks(): Promise<number[]> {
+  return parseReviewWeeksJson(await AsyncStorage.getItem(REVIEW_LOG_KEY));
 }
 
 // Enregistre la revue de cette semaine et renvoie la série obtenue

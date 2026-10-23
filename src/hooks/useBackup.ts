@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import {
   BackupContent,
@@ -5,6 +6,9 @@ import {
   buildBackup,
   parseBackup,
   pickBackupText,
+  preImportCopyDate,
+  readPreImportCopy,
+  removePreImportCopy,
   savePreImportCopy,
   shareBackupFile,
   writeImported,
@@ -17,6 +21,20 @@ import { useTaskActions } from "../store/TasksContext";
 // Export et import de la sauvegarde, depuis les Réglages
 export function useBackup() {
   const actions = useTaskActions();
+  // Date du dernier import annulable (copie de secours présente), ou null
+  const [lastImport, setLastImport] = useState<number | null>(null);
+
+  useEffect(() => {
+    preImportCopyDate()
+      .then(setLastImport)
+      .catch(() => setLastImport(null));
+  }, []);
+
+  // Remplace les données en mémoire ; toutes les notifications sont réconciliées
+  const replaceInMemory = (content: BackupContent) => {
+    actions.replaceAll(content);
+    actions.updateSettings(content.settings);
+  };
 
   const exportData = async () => {
     try {
@@ -43,9 +61,33 @@ export function useBackup() {
       Alert.alert(t.backup.importErrorTitle, t.backup.importErrorBody);
       return;
     }
-    actions.replaceAll(backup);
-    actions.updateSettings(backup.settings);
+    replaceInMemory(backup);
+    setLastImport(Date.now());
     Alert.alert(t.backup.doneTitle, t.backup.doneBody(backup.tasks.length));
+  };
+
+  // « Annuler le dernier import » : les données d'avant reviennent, la copie est supprimée
+  const restore = async () => {
+    try {
+      const previous = await readPreImportCopy();
+      await writeImported(previous);
+      await removePreImportCopy();
+      replaceInMemory(previous);
+    } catch (e) {
+      console.warn("Erreur restauration :", e);
+      Alert.alert(t.backup.undoErrorTitle, t.backup.undoErrorBody);
+      return;
+    }
+    setLastImport(null);
+    Alert.alert(t.backup.undoneTitle, t.backup.undoneBody);
+  };
+
+  const undoImport = () => {
+    if (lastImport === null) return;
+    Alert.alert(t.backup.undoConfirmTitle, t.backup.undoConfirmBody(formatShortDate(lastImport)), [
+      { text: t.common.cancel, style: "cancel" },
+      { text: t.backup.undoAction, style: "destructive", onPress: restore },
+    ]);
   };
 
   // Choix du fichier, vérification, aperçu et confirmation ; rien n'est touché avant
@@ -77,5 +119,5 @@ export function useBackup() {
     );
   };
 
-  return { exportData, importData };
+  return { exportData, importData, canUndoImport: lastImport !== null, undoImport };
 }

@@ -68,6 +68,7 @@ export default function SettingsScreen() {
           onOpenReview={() => router.push("/review")}
           onExport={backup.exportData}
           onImport={backup.importData}
+          onUndoImport={backup.canUndoImport ? backup.undoImport : undefined}
         />
       </ScrollView>
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}

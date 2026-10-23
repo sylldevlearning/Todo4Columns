@@ -285,6 +285,83 @@ describe("import", () => {
   });
 });
 
+describe("« Annuler le dernier import »", () => {
+  const importValid = async () => {
+    pickFile(validFile(Date.now()));
+    await act(() => backup.importData());
+    await pressAlertButton("Remplacer");
+  };
+
+  it("sans import : rien à annuler", async () => {
+    await launch();
+    expect(backup.canUndoImport).toBe(false);
+  });
+
+  it("confirmation, données d'avant restaurées, copie supprimée, notifications reprogrammées", async () => {
+    await launch();
+    const before = await AsyncStorage.getItem(STORAGE_KEY);
+    await importValid();
+    expect(backup.canUndoImport).toBe(true);
+    await waitFor(() => expect(scheduled().map((n) => n.content.data.taskId)).toEqual(expect.arrayContaining(["a", "b"])));
+
+    await act(() => backup.undoImport());
+    expect(alerts.at(-1)!.title).toBe("Annuler le dernier import ?");
+    expect(alerts.at(-1)!.message).toMatch(/^Tes données reviennent à leur état d'avant l'import du /);
+
+    await pressAlertButton("Restaurer");
+    expect(alerts.at(-1)).toMatchObject({ title: "Import annulé" });
+    expect(state.tasks.map((t) => t.id)).toEqual(["old"]);
+    expect(actions.getSettings().doNagInterval).toBe(30);
+    expect(actions.getSettings().quietHoursStart).toBe(DEFAULT_SETTINGS.quietHoursStart);
+    expect(JSON.parse((await AsyncStorage.getItem(STORAGE_KEY))!).tasks.map((t: { id: string }) => t.id)).toEqual(
+      JSON.parse(before!).tasks.map((t: { id: string }) => t.id)
+    );
+    expect(await loadReviewWeeks()).toEqual([]);
+    expect(await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY)).toBeNull();
+    expect(backup.canUndoImport).toBe(false);
+    await waitFor(() => expect(scheduled().map((n) => n.content.data.taskId)).toEqual(["old"]));
+  });
+
+  it("« Annuler » dans la confirmation : rien ne change", async () => {
+    await launch();
+    await importValid();
+    await act(() => backup.undoImport());
+    await pressAlertButton("Annuler");
+    expect(state.tasks.map((t) => t.id)).toEqual(["a", "b"]);
+    expect(await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY)).not.toBeNull();
+  });
+
+  it("copie illisible : message clair, rien n'est modifié", async () => {
+    await AsyncStorage.setItem(PRE_IMPORT_BACKUP_KEY, "{abîmée");
+    await launch();
+    await waitFor(() => expect(backup.canUndoImport).toBe(true));
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    await act(() => backup.undoImport());
+    await pressAlertButton("Restaurer");
+    expect(alerts.at(-1)).toMatchObject({ title: "Restauration impossible" });
+    expect(state.tasks.map((t) => t.id)).toEqual(["old"]);
+  });
+
+  it("le bouton n'apparaît dans les Réglages que si une copie existe", async () => {
+    const screenWith = () =>
+      render(
+        <SafeAreaProvider initialMetrics={METRICS}>
+          <TasksProvider>
+            <SettingsScreen />
+          </TasksProvider>
+        </SafeAreaProvider>
+      );
+    const first = await screenWith();
+    await act(async () => {});
+    expect(screen.queryByRole("button", { name: "Annuler le dernier import" })).toBeNull();
+    await first.unmount();
+
+    await AsyncStorage.setItem(PRE_IMPORT_BACKUP_KEY, JSON.stringify({ createdAt: Date.now(), data: {} }));
+    await screenWith();
+    expect(await screen.findByRole("button", { name: "Annuler le dernier import" })).toBeOnTheScreen();
+  });
+});
+
 describe("section « Sauvegarde » des Réglages", () => {
   it("boutons et « i » qui mentionne la sauvegarde automatique Android", async () => {
     await render(

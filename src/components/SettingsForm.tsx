@@ -42,6 +42,7 @@ interface Props {
   onOpenReview?: () => void; // revue de la semaine
   onExport?: () => void; // « Exporter mes données »
   onImport?: () => void; // « Importer une sauvegarde »
+  onUndoImport?: () => void; // « Annuler le dernier import » (seulement après un import)
 }
 
 function Section({ title, info, children }: { title: string; info?: InfoKey; children: ReactNode }) {
@@ -103,6 +104,7 @@ export default function SettingsForm({
   onOpenReview,
   onExport,
   onImport,
+  onUndoImport,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -284,6 +286,7 @@ export default function SettingsForm({
         <Section title={t.backup.section} info="backup">
           <TextButton label={t.backup.export} onPress={onExport} />
           <TextButton label={t.backup.import} onPress={onImport} />
+          {onUndoImport && <TextButton label={t.backup.undoImport} onPress={onUndoImport} />}
         </Section>
       )}
 

@@ -449,6 +449,15 @@ export const en: Translations = {
     doneBody: (n) => `${n} task${s(n)} restored.`,
     importErrorTitle: "Import failed",
     importErrorBody: "Your data couldn't be replaced. Nothing was changed.",
+    undoImport: "Undo the last import",
+    undoConfirmTitle: "Undo the last import?",
+    undoConfirmBody: (date) =>
+      `Your data goes back to how it was before the import on ${date}. Changes made since will be lost.`,
+    undoAction: "Restore",
+    undoneTitle: "Import undone",
+    undoneBody: "Your data from before the import is back.",
+    undoErrorTitle: "Restore failed",
+    undoErrorBody: "The safety copy couldn't be read. Nothing was changed.",
   },
 
   howTo: {
