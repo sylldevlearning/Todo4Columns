@@ -161,8 +161,8 @@ describe("computeSchedule", () => {
 
     it("décale les relances tombant en plage silencieuse à sa fin", () => {
       const items = computeSchedule(task, DEFAULT_SETTINGS, NOW);
-      // 23 h, 2 h, 5 h -> toutes décalées au lendemain 8 h
-      expect(items.map((i) => i.date)).toEqual([at(8, 0, 23), at(8, 0, 23), at(8, 0, 23)]);
+      // 23 h, 2 h, 5 h -> une seule à 8 h le lendemain, les suivantes réespacées de 3 h
+      expect(items.map((i) => i.date)).toEqual([at(8, 0, 23), at(11, 0, 23), at(14, 0, 23)]);
     });
 
     it("ne décale jamais un minuteur, même en plage silencieuse", () => {
@@ -181,5 +181,38 @@ describe("computeSchedule", () => {
       expect(computeSchedule({ ...task, isDone: true }, NO_QUIET, NOW)).toEqual([]);
       expect(computeSchedule({ ...task, archivedAt: NOW }, NO_QUIET, NOW)).toEqual([]);
     });
+  });
+});
+
+describe("relances répétées et plage silencieuse (22:00 → 08:00)", () => {
+  const QUIET: Settings = { ...DEFAULT_SETTINGS, quietHoursStart: "22:00", quietHoursEnd: "08:00", maxNags: 5 };
+  const nags = (overrides: { updatedAt?: number; snoozedUntil?: number } = {}) =>
+    computeSchedule(
+      makeTask({ category: "UI", updatedAt: at(21, 50), nagInterval: 30, nagRepeat: true, ...overrides }),
+      QUIET,
+      overrides.updatedAt ?? at(21, 50)
+    );
+
+  it("une seule relance à la fin de la plage, les suivantes réespacées d'un intervalle", () => {
+    expect(nags().map((n) => [n.date, n.nagIndex])).toEqual([
+      [at(8, 0, 23), 1],
+      [at(8, 30, 23), 2],
+      [at(9, 0, 23), 3],
+      [at(9, 30, 23), 4],
+      [at(10, 0, 23), 5],
+    ]);
+  });
+
+  it("une relance avant la plage reste à son heure", () => {
+    const dates = nags({ updatedAt: at(21, 0) }).map((n) => n.date);
+    // 21:30, puis 22:00 (dans la plage) → 08:00, puis 08:30…
+    expect(dates).toEqual([at(21, 30), at(8, 0, 23), at(8, 30, 23), at(9, 0, 23), at(9, 30, 23)]);
+  });
+
+  it("après un « Reporter 1 h » qui tombe dans la plage, même réespacement", () => {
+    const result = nags({ snoozedUntil: at(22, 30), updatedAt: at(21, 0) });
+    const dates = result.map((n) => n.date);
+    expect(new Set(dates).size).toBe(dates.length); // aucune notification à la même heure
+    expect(result[0]).toMatchObject({ type: "snooze", date: at(8, 0, 23) });
   });
 });

@@ -53,6 +53,28 @@ export function shiftOutOfQuietHours(ts: number, start: string, end: string): nu
 // Relances « Faire » : updatedAt + k × intervalle, jusqu'au maximum si la répétition est active.
 // Un report (snoozedUntil) déplace la prochaine relance sans compter dans le maximum.
 function nagNotifications(task: Task, settings: Settings): ScheduledNotification[] {
+  return spaceOutOfQuietHours(rawNagNotifications(task, settings), task.nagInterval! * MINUTE, settings);
+}
+
+// Plage silencieuse : une seule relance à sa fin, les suivantes réespacées d'un intervalle à
+// partir de là (sinon toutes les relances de la nuit arriveraient ensemble à la fin de la plage)
+function spaceOutOfQuietHours(
+  items: ScheduledNotification[],
+  interval: number,
+  settings: Settings
+): ScheduledNotification[] {
+  let last = -Infinity;
+  return items.map((item) => {
+    let date = shiftOutOfQuietHours(item.date, settings.quietHoursStart, settings.quietHoursEnd);
+    if (date <= last) {
+      date = shiftOutOfQuietHours(last + interval, settings.quietHoursStart, settings.quietHoursEnd);
+    }
+    last = date;
+    return { ...item, date };
+  });
+}
+
+function rawNagNotifications(task: Task, settings: Settings): ScheduledNotification[] {
   if (task.nagInterval === null) return [];
   const interval = task.nagInterval * MINUTE;
   const total = task.nagRepeat ? settings.maxNags : 1;
