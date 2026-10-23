@@ -9,3 +9,15 @@ describe("configuration Android (app.json)", () => {
     expect(android.versionCode).toBeUndefined();
   });
 });
+
+describe("permissions Android bloquées", () => {
+  it("stockage et affichage par-dessus les autres apps : l'app n'en a pas besoin", () => {
+    expect(android.blockedPermissions).toEqual(
+      expect.arrayContaining([
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+      ])
+    );
+  });
+});
