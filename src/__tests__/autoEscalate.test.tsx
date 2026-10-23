@@ -251,3 +251,37 @@ describe("réglage « Basculer les tâches en retard dans Faire »", () => {
     expect(onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, autoEscalate: false });
   });
 });
+
+describe("tâche remise à la main dans « Planifier » avec une échéance passée", () => {
+  beforeEach(() => AsyncStorage.clear());
+
+  // Tâche déjà basculée dans « Faire », échéance passée
+  const escalated = () =>
+    planned({ category: "UI", nagInterval: 120, reminderOffset: null, dueAt: Date.now() - HOUR });
+  const settle = () => act(() => new Promise<void>((r) => setTimeout(r, 100)));
+
+  it("menu « Déplacer » : elle reste dans « Planifier »", async () => {
+    const { result } = await launch([escalated()]);
+    await act(() => result.current.moveTask("p", "INU"));
+    await settle();
+    expect(result.current.tasks[0]).toMatchObject({
+      category: "INU",
+      escalationSkippedFor: result.current.tasks[0].dueAt,
+    });
+    expect(result.current.escalation).toBeNull();
+  });
+
+  it("fiche ou « Annuler » d'un déplacement : elle reste dans « Planifier »", async () => {
+    const { result } = await launch([escalated()]);
+    await act(() => result.current.updateTask("p", { category: "INU" }));
+    await settle();
+    expect(result.current.tasks[0].category).toBe("INU");
+  });
+
+  it("une nouvelle échéance passée plus tard la fera basculer à nouveau", async () => {
+    const { result } = await launch([escalated()]);
+    await act(() => result.current.moveTask("p", "INU"));
+    await act(() => result.current.updateTask("p", { dueAt: Date.now() + 300 }));
+    await waitFor(() => expect(result.current.tasks[0].category).toBe("UI"), { timeout: 3000 });
+  });
+});

@@ -369,11 +369,18 @@ export function useTasks(
     setTasks((prev) => [...prev, newTask]);
   };
 
-  // Modifie le titre, le quadrant et/ou les réglages de rappel
+  // Remise à la main dans « Planifier » avec une échéance passée : l'utilisateur l'a voulu,
+  // la tâche ne rebascule pas dans « Faire » pour cette échéance
+  const keepPlannedIfOverdue = (t: Task): Task =>
+    t.category === "INU" && t.dueAt !== null && t.dueAt <= Date.now()
+      ? { ...t, escalationSkippedFor: t.dueAt }
+      : t;
+
+  // Modifie le titre, le quadrant et/ou les réglages de rappel (fiche, « Annuler » d'un déplacement)
   const updateTask = (id: string, patch: Partial<TaskInput>) => {
     updateOne(id, (t) => {
       const category = patch.category ?? t.category;
-      return {
+      return keepPlannedIfOverdue({
         ...t,
         title: patch.title ?? t.title,
         category,
@@ -381,7 +388,7 @@ export function useTasks(
           ...pickReminderFields(t),
           ...defined(patch),
         }),
-      };
+      });
     });
   };
 
@@ -397,7 +404,7 @@ export function useTasks(
     });
 
   const moveTask = (id: string, category: Category) => {
-    updateOne(id, (t) => ({ ...t, category, ...movedFields(t, category) }));
+    updateOne(id, (t) => keepPlannedIfOverdue({ ...t, category, ...movedFields(t, category) }));
   };
 
   // ---- Bascule automatique des tâches « Planifier » en retard ----
