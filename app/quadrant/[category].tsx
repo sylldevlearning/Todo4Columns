@@ -12,6 +12,7 @@ import TimerModal from "../../src/components/TimerModal";
 import UndoBanner from "../../src/components/UndoBanner";
 import { CATEGORY_BY_KEY, isCategory } from "../../src/constants/categories";
 import { useNow } from "../../src/hooks/useNow";
+import { useStableCallback } from "../../src/hooks/useStableCallback";
 import { RemovedTask } from "../../src/hooks/useTasks";
 import { t } from "../../src/i18n";
 import { pickReminderFields } from "../../src/reminders";
@@ -44,6 +45,53 @@ export default function QuadrantScreen() {
     []
   );
 
+  // Bandeau « Annuler » visible 5 s ; une nouvelle action remplace la précédente
+  const offerUndo = (message: string, run: () => void) => {
+    if (undoTimeout.current) clearTimeout(undoTimeout.current);
+    setUndo({ message, run });
+    undoTimeout.current = setTimeout(() => setUndo(null), UNDO_DELAY_MS);
+  };
+
+  const restoreLater = (removed: RemovedTask[]) => () => store.restoreTasks(removed);
+
+  // Actions des cartes : identité fixe pour que seules les cartes modifiées se re-rendent
+  const handleToggle = useStableCallback((id: string, anchor?: View | null) => {
+    const task = store.tasks.find((t) => t.id === id);
+    if (!task) return;
+    store.toggleDone(id);
+    // Célébration seulement quand la tâche passe à « terminée » ; « Annuler » la fait disparaître
+    const celebrationId = task.isDone ? null : celebration.celebrate(task.category, anchor);
+    offerUndo(task.isDone ? t.undo.reopened : t.undo.completed, () => {
+      if (celebrationId !== null) celebration.dismiss(celebrationId);
+      store.toggleDone(id);
+    });
+  });
+
+  const handleDelete = useStableCallback((id: string) => {
+    offerUndo(t.undo.deleted(1), restoreLater(store.removeTask(id)));
+  });
+
+  const openEdit = useStableCallback((id: string) =>
+    router.push({ pathname: "/task", params: { id } })
+  );
+
+  const handleSnooze = useStableCallback((id: string) => {
+    const previous = store.tasks.find((t) => t.id === id)?.snoozedUntil ?? null;
+    store.snoozeTask(id);
+    store.requestNotificationPermission().catch(() => {});
+    offerUndo(t.undo.snoozed, () => store.setSnoozedUntil(id, previous));
+  });
+
+  const handleMoveToDo = useStableCallback((id: string) => {
+    const before = store.tasks.find((t) => t.id === id);
+    store.moveTask(id, "UI");
+    if (before) {
+      offerUndo(t.undo.movedToDo, () =>
+        store.updateTask(id, { category: before.category, ...pickReminderFields(before) })
+      );
+    }
+  });
+
   if (!isCategory(param)) return <Redirect href="/" />;
   const category = CATEGORY_BY_KEY[param];
 
@@ -54,54 +102,10 @@ export default function QuadrantScreen() {
   const doneTasks = tasks.filter((t) => t.isDone);
   const menuTask = store.tasks.find((t) => t.id === menuTaskId) ?? null;
 
-  // Bandeau « Annuler » visible 5 s ; une nouvelle action remplace la précédente
-  const offerUndo = (message: string, run: () => void) => {
-    if (undoTimeout.current) clearTimeout(undoTimeout.current);
-    setUndo({ message, run });
-    undoTimeout.current = setTimeout(() => setUndo(null), UNDO_DELAY_MS);
-  };
-
-  const restoreLater = (removed: RemovedTask[]) => () => store.restoreTasks(removed);
-
-  const handleToggle = (id: string, anchor?: View | null) => {
-    const task = store.tasks.find((t) => t.id === id);
-    if (!task) return;
-    store.toggleDone(id);
-    // Célébration seulement quand la tâche passe à « terminée » ; « Annuler » la fait disparaître
-    const celebrationId = task.isDone ? null : celebration.celebrate(task.category, anchor);
-    offerUndo(task.isDone ? t.undo.reopened : t.undo.completed, () => {
-      if (celebrationId !== null) celebration.dismiss(celebrationId);
-      store.toggleDone(id);
-    });
-  };
-
-  const handleDelete = (id: string) => {
-    offerUndo(t.undo.deleted(1), restoreLater(store.removeTask(id)));
-  };
-
   const handleClearDone = () => {
     const removed = store.clearDone(category.key);
     if (removed.length > 0) {
       offerUndo(t.undo.deleted(removed.length), restoreLater(removed));
-    }
-  };
-
-  const openEdit = (id: string) => router.push({ pathname: "/task", params: { id } });
-
-  const handleSnooze = (id: string) => {
-    const previous = store.tasks.find((t) => t.id === id)?.snoozedUntil ?? null;
-    store.snoozeTask(id);
-    store.requestNotificationPermission().catch(() => {});
-    offerUndo(t.undo.snoozed, () => store.setSnoozedUntil(id, previous));
-  };
-
-  const handleMoveToDo = (id: string) => {
-    const before = store.tasks.find((t) => t.id === id);
-    store.moveTask(id, "UI");
-    if (before) {
-      offerUndo(t.undo.movedToDo, () =>
-        store.updateTask(id, { category: before.category, ...pickReminderFields(before) })
-      );
     }
   };
 

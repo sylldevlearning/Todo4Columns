@@ -36,8 +36,9 @@ interface Props {
   now: number;
 }
 
-// Carte de tâche : glisser à droite pour terminer, à gauche pour supprimer
-export default function TaskCard({
+// Carte de tâche : glisser à droite pour terminer, à gauche pour supprimer.
+// Mémoïsée : ne se re-rend que si sa tâche, les réglages ou l'heure affichée changent.
+export default React.memo(function TaskCard({
   task,
   category,
   onToggleDone,
@@ -173,7 +174,7 @@ export default function TaskCard({
       </GestureDetector>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {
