@@ -424,6 +424,11 @@ export const fr = {
         ],
       },
     } as Record<Category, { action: string; examples: string[] }>,
+    weekTitle: "Ta semaine",
+    week: [
+      "La carte « Ta semaine », sur la matrice, montre dans quelles cases étaient les tâches que tu as terminées ces 7 derniers jours. Plus la part de « Planifier » est grande, plus tu anticipes.",
+      "Chaque semaine (par défaut le dimanche à 18 h), une notification t'invite à faire ta revue : trier « Si j'ai le temps », choisir jusqu'à 3 priorités et faire le point sur les tâches confiées.",
+    ],
     gesturesTitle: "Les gestes de l'app",
     gestures: {
       openQuadrant: "Touche une case de la matrice pour voir ses tâches.",
@@ -438,6 +443,9 @@ export const fr = {
       pastDue: "Une tâche « Planifier » dont l'échéance est passée propose « Passer en Faire ».",
       done: "Les tâches terminées sont rangées sous « Terminées », en bas de chaque case. « Vider les terminées » les supprime.",
       notification: "Dans une notification, « Fait » termine la tâche, « Reporter 1 h » repousse le rappel d'une heure et « Ouvrir » affiche sa case.",
+      balance: "Touche la carte « Ta semaine » pour ouvrir le bilan des 5 dernières semaines.",
+      review: "Touche l'icône calendrier de la matrice pour faire la revue de la semaine à tout moment.",
+      star: "Une étoile marque les priorités de la semaine, sur leur carte et dans la grille. Elle disparaît d'elle-même la semaine suivante.",
       info: "Touche une icône « i » pour une explication rapide.",
     },
   },

@@ -45,6 +45,8 @@ describe("page « Comment ça marche »", () => {
       expect(screen.getByText(action)).toBeOnTheScreen();
       for (const example of examples) expect(screen.getByText(`• ${example}`)).toBeOnTheScreen();
     }
+    expect(screen.getByRole("header", { name: "Ta semaine" })).toBeOnTheScreen();
+    for (const paragraph of fr.howTo.week) expect(screen.getByText(paragraph)).toBeOnTheScreen();
     for (const gesture of Object.values(fr.howTo.gestures)) {
       expect(screen.getByText(gesture)).toBeOnTheScreen();
     }

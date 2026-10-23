@@ -25,6 +25,9 @@ const GESTURE_ICONS: Record<Gesture, IconName> = {
   pastDue: "calendar-outline",
   done: "checkmark-done-outline",
   notification: "notifications-outline",
+  balance: "bar-chart-outline",
+  review: "calendar-outline",
+  star: "star-outline",
   info: "information-circle-outline",
 };
 
@@ -83,6 +86,13 @@ export default function HelpScreen() {
             </View>
           );
         })}
+
+        <Heading>{t.howTo.weekTitle}</Heading>
+        {t.howTo.week.map((paragraph) => (
+          <Text key={paragraph} style={styles.paragraph}>
+            {paragraph}
+          </Text>
+        ))}
 
         <Heading>{t.howTo.gesturesTitle}</Heading>
         <View style={styles.card}>

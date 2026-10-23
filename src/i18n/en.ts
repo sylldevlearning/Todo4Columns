@@ -412,6 +412,11 @@ export const en: Translations = {
         ],
       },
     },
+    weekTitle: "Your week",
+    week: [
+      "The “Your week” card, on the matrix, shows which boxes the tasks you completed in the last 7 days came from. The bigger the “Schedule” share, the more you stay ahead.",
+      "Every week (Sunday at 6 pm by default), a notification invites you to do your review: sort “Someday”, pick up to 3 priorities and check in on handed-off tasks.",
+    ],
     gesturesTitle: "Gestures in the app",
     gestures: {
       openQuadrant: "Tap a box in the matrix to see its tasks.",
@@ -426,6 +431,9 @@ export const en: Translations = {
       pastDue: "A “Schedule” task past its due date offers “Move to Do”.",
       done: "Completed tasks go under “Done”, at the bottom of each box. “Clear done” deletes them.",
       notification: "In a notification, “Done” completes the task, “Snooze 1 h” pushes the reminder back an hour and “Open” shows its box.",
+      balance: "Tap the “Your week” card to open the balance of the last 5 weeks.",
+      review: "Tap the calendar icon on the matrix to do the weekly review at any time.",
+      star: "A star marks the priorities of the week, on their card and in the grid. It goes away on its own the following week.",
       info: "Tap an “i” icon for a quick explanation.",
     },
   },
