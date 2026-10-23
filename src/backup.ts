@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as DocumentPicker from "expo-document-picker";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { Completion, COMPLETION_LOG_KEY, COMPLETION_LOG_VERSION, seedLog } from "./completionLog";
@@ -152,12 +151,13 @@ export async function shareBackupFile(file: BackupFile, name: string, dialogTitl
   });
 }
 
-// Choix d'un fichier ; null si l'utilisateur annule
+// Choix d'un fichier dans le sélecteur du système (aucune permission de stockage) ;
+// null si l'utilisateur annule. Certains gestionnaires de fichiers donnent au .json un type
+// générique : ils sont acceptés, le contenu est vérifié ensuite.
 export async function pickBackupText(): Promise<string | null> {
-  const result = await DocumentPicker.getDocumentAsync({
-    type: ["application/json", "text/plain", "application/octet-stream"],
-    copyToCacheDirectory: true,
+  const picked = await File.pickFileAsync({
+    mimeTypes: ["application/json", "text/plain", "application/octet-stream"],
   });
-  if (result.canceled || !result.assets?.[0]) return null;
-  return new File(result.assets[0].uri).text();
+  if (picked.canceled || !picked.result) return null;
+  return picked.result.text();
 }

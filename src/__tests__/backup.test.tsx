@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
-import * as DocumentPicker from "expo-document-picker";
 import * as Notifications from "expo-notifications";
 import * as Sharing from "expo-sharing";
 import React from "react";
@@ -27,6 +26,7 @@ import { makeTask } from "../testing/makeTask";
 jest.mock("expo-file-system", () => {
   const files = new Map<string, string>();
   class File {
+    static pickFileAsync = jest.fn();
     uri: string;
     constructor(...parts: (string | { uri: string })[]) {
       this.uri = parts.map((p) => (typeof p === "string" ? p : p.uri)).join("/");
@@ -43,10 +43,9 @@ jest.mock("expo-file-system", () => {
   return { File, Paths: { cache: { uri: "file:///cache" } }, __files: files };
 });
 jest.mock("expo-sharing", () => ({ shareAsync: jest.fn(async () => {}) }));
-jest.mock("expo-document-picker", () => ({ getDocumentAsync: jest.fn() }));
 
 const files: Map<string, string> = require("expo-file-system").__files;
-const mockPick = DocumentPicker.getDocumentAsync as jest.Mock;
+const mockPick = require("expo-file-system").File.pickFileAsync as jest.Mock;
 const scheduled = () =>
   (Notifications as unknown as { __state: { scheduled: { content: { data: { taskId?: string } } }[] } }).__state
     .scheduled;
@@ -84,7 +83,8 @@ const launch = async () => {
 // Fichier choisi dans le sélecteur
 const pickFile = (content: string) => {
   files.set("file:///picked.json", content);
-  mockPick.mockResolvedValueOnce({ canceled: false, assets: [{ uri: "file:///picked.json" }] });
+  const { File } = require("expo-file-system");
+  mockPick.mockResolvedValueOnce({ canceled: false, result: new File("file:///picked.json") });
 };
 
 let alerts: { title: string; message?: string; buttons?: AlertButton[] }[];
@@ -181,6 +181,8 @@ describe("import", () => {
     pickFile(validFile(createdAt));
     await act(() => backup.importData());
 
+    // Sélecteur du système, sans permission de stockage
+    expect(mockPick).toHaveBeenCalledWith({ mimeTypes: expect.arrayContaining(["application/json"]) });
     expect(alerts.at(-1)!.title).toBe("Importer cette sauvegarde ?");
     expect(alerts.at(-1)!.message).toContain("2 tâches, sauvegarde du 12 oct.");
     // Rien n'est touché avant la confirmation
@@ -270,7 +272,7 @@ describe("import", () => {
     await launch();
     const before = await AsyncStorage.getItem(STORAGE_KEY);
 
-    mockPick.mockResolvedValueOnce({ canceled: true, assets: null });
+    mockPick.mockResolvedValueOnce({ canceled: true, result: null });
     await act(() => backup.importData());
     expect(alerts).toHaveLength(0);
 
