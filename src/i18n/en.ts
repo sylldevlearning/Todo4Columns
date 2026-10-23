@@ -212,7 +212,7 @@ export const en: Translations = {
       },
       NDNI: {
         title: "Someday",
-        body: "Neither urgent nor important: only if you have time to spare. You can also drop it with no regrets.",
+        body: "Neither urgent nor important: only if you have time to spare. No pressure: keep it for a free moment.",
         example: "sorting the old photos on your phone.",
       },
       urgent: {
@@ -327,7 +327,7 @@ export const en: Translations = {
         ],
       },
       NDNI: {
-        action: "Only if you have time to spare. You can also drop it with no regrets.",
+        action: "Only if you have time to spare. No pressure: keep it for a free moment.",
         examples: [
           "Sort the old photos on your phone",
           "Rearrange the icons on your home screen",

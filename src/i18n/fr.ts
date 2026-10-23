@@ -218,7 +218,7 @@ export const fr = {
       },
       NDNI: {
         title: "Si j'ai le temps",
-        body: "Ni urgent ni important : à faire seulement s'il te reste du temps. Tu peux aussi l'oublier sans regret.",
+        body: "Ni urgent ni important : à faire seulement s'il te reste du temps. Pas de pression : garde-le pour un moment libre.",
         example: "trier les vieilles photos de ton téléphone.",
       },
       urgent: {
@@ -336,7 +336,7 @@ export const fr = {
         ],
       },
       NDNI: {
-        action: "Seulement s'il te reste du temps. Tu peux aussi l'oublier sans regret.",
+        action: "Seulement s'il te reste du temps. Pas de pression : garde-le pour un moment libre.",
         examples: [
           "Trier les vieilles photos du téléphone",
           "Réorganiser les icônes de ton écran d'accueil",
