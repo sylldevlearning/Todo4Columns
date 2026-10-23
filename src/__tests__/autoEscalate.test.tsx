@@ -5,6 +5,7 @@ import React from "react";
 import { AppState } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import EscalationNotice from "../components/EscalationNotice";
+import { FirstLaunchOnboarding } from "../components/Onboarding";
 import SettingsForm from "../components/SettingsForm";
 import TaskChips from "../components/TaskChips";
 import { CATEGORY_BY_KEY } from "../constants/categories";
@@ -12,7 +13,7 @@ import { useTasks } from "../hooks/useTasks";
 import { serializeTasks } from "../migrations";
 import { isLate, shouldEscalate } from "../notifications/status";
 import { withAnchors } from "../recurrence";
-import { DEFAULT_SETTINGS, parseSettings, Settings, SETTINGS_KEY } from "../settings";
+import { DEFAULT_SETTINGS, parseSettings, saveSettings, Settings, SETTINGS_KEY } from "../settings";
 import { STORAGE_KEY } from "../storage";
 import { TasksProvider, TasksState, useTasksSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
@@ -195,6 +196,7 @@ describe("puce et message", () => {
 
   it("« 1 tâche planifiée est passée en Faire », avec « Annuler »", async () => {
     await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([planned()]));
+    await saveSettings({ ...DEFAULT_SETTINGS, onboardingDone: true });
     let state: TasksState | undefined;
     const Grab = () => {
       state = useTasksSelector((s) => s);
@@ -214,6 +216,25 @@ describe("puce et message", () => {
     await fireEvent.press(screen.getByRole("button", { name: "Annuler : 1 tâche planifiée est passée en Faire" }));
     expect(screen.queryByText("1 tâche planifiée est passée en Faire")).toBeNull();
     expect(state!.tasks[0].category).toBe("INU");
+  });
+
+  it("jamais par-dessus la présentation : le message attend qu'elle soit terminée", async () => {
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([planned()]));
+    // Réglages sans onboardingDone : la présentation s'affiche
+    await render(
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <TasksProvider>
+          <EscalationNotice />
+          <FirstLaunchOnboarding />
+        </TasksProvider>
+      </SafeAreaProvider>
+    );
+    expect(await screen.findByRole("button", { name: "Passer" })).toBeOnTheScreen();
+    await act(async () => {});
+    expect(screen.queryByText("1 tâche planifiée est passée en Faire")).toBeNull();
+
+    await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
+    expect(await screen.findByText("1 tâche planifiée est passée en Faire")).toBeOnTheScreen();
   });
 
   it("pluriel", () => {

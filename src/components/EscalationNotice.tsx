@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "../i18n";
-import { TasksState, useTaskActions, useTasksSelector } from "../store/TasksContext";
+import {
+  TasksState,
+  useSettingsReady,
+  useSettingsSelector,
+  useTaskActions,
+  useTasksSelector,
+} from "../store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { FAB_SIZE } from "./Fab";
 
@@ -16,14 +22,19 @@ export default function EscalationNotice() {
   const escalation = useTasksSelector(selectEscalation);
   const { undoEscalation, dismissEscalation } = useTaskActions();
   const insets = useSafeAreaInsets();
+  // Jamais par-dessus la présentation du premier lancement : le message attend qu'elle soit
+  // terminée, et ses 8 secondes ne commencent qu'à ce moment
+  const settingsReady = useSettingsReady();
+  const onboardingDone = useSettingsSelector((s) => s.onboardingDone);
+  const visible = escalation !== null && settingsReady && onboardingDone;
 
   useEffect(() => {
-    if (!escalation) return;
+    if (!visible) return;
     const timeout = setTimeout(dismissEscalation, NOTICE_MS);
     return () => clearTimeout(timeout);
-  }, [escalation]);
+  }, [visible, escalation]);
 
-  if (!escalation) return null;
+  if (!visible) return null;
   const message = t.escalation.escalated(escalation.before.length);
 
   return (
