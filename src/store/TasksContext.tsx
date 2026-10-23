@@ -38,6 +38,8 @@ export type TaskActions = StoreActions & {
   getSettings: () => Settings;
   // À appeler au premier rappel créé : demande l'autorisation si besoin, puis programme tout
   requestNotificationPermission: () => Promise<PermissionState>;
+  // Tâches et journal courants, lus au moment de l'action (export d'une sauvegarde)
+  getTasksState: () => TasksState;
 };
 
 const ACTION_NAMES = [
@@ -57,6 +59,8 @@ const ACTION_NAMES = [
   "setWeekPriorities",
   "undoEscalation",
   "dismissEscalation",
+  "replaceAll",
+  "getTasksState",
   "startTimer",
   "resyncNotifications",
   "updateSettings",
@@ -115,6 +119,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       saveSettings(next).catch((e) => console.warn("Erreur sauvegarde réglages :", e));
     },
     getSettings: () => settingsStore.get(),
+    getTasksState: () => tasksStore.get(),
     requestNotificationPermission: async () => {
       const state = await ensurePermission();
       if (state === "granted") latest.current.resyncNotifications();

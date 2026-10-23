@@ -18,6 +18,21 @@ export function formatDue(ts: number): string {
   return `${capitalize(weekday)} ${day} · ${time}`;
 }
 
+// Date courte : « 12 oct. », avec l'année si ce n'est pas l'année en cours (« 12 oct. 2025 »)
+export function formatShortDate(ts: number, now: number = Date.now()): string {
+  const sameYear = new Date(ts).getFullYear() === new Date(now).getFullYear();
+  return new Date(ts).toLocaleDateString(t.locale, {
+    day: "numeric",
+    month: "short",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
+}
+
+// Jour complet : « vendredi 24 octobre » / « Friday, October 24 »
+export function formatDay(ts: number): string {
+  return new Date(ts).toLocaleDateString(t.locale, { weekday: "long", day: "numeric", month: "long" });
+}
+
 // Début de semaine : « 13 oct. » / « Oct 13 »
 export function formatWeekStart(ts: number): string {
   return new Date(ts).toLocaleDateString(t.locale, { day: "numeric", month: "short" });

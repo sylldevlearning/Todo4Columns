@@ -40,6 +40,8 @@ interface Props {
   onShowOnboarding?: () => void; // « Revoir la présentation »
   onOpenHowTo?: () => void; // page « Comment ça marche »
   onOpenReview?: () => void; // revue de la semaine
+  onExport?: () => void; // « Exporter mes données »
+  onImport?: () => void; // « Importer une sauvegarde »
 }
 
 function Section({ title, info, children }: { title: string; info?: InfoKey; children: ReactNode }) {
@@ -99,6 +101,8 @@ export default function SettingsForm({
   onShowOnboarding,
   onOpenHowTo,
   onOpenReview,
+  onExport,
+  onImport,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -275,6 +279,13 @@ export default function SettingsForm({
           ))
         )}
       </Section>
+
+      {onExport && onImport && (
+        <Section title={t.backup.section} info="backup">
+          <TextButton label={t.backup.export} onPress={onExport} />
+          <TextButton label={t.backup.import} onPress={onImport} />
+        </Section>
+      )}
 
       {(onOpenHowTo || onShowOnboarding) && (
         <Section title={t.settings.help}>

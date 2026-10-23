@@ -12,6 +12,7 @@
     "android": {
       "package": "com.saloum.sylla.matriceeisenhower",
       "versionCode": 7,
+      "allowBackup": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "monochromeImage": "./assets/monochrome-icon.png",

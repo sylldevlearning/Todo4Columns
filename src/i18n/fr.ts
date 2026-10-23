@@ -320,6 +320,11 @@ export const fr = {
         body: "Quand tu termines une tâche qui se répète, la suivante est créée toute seule, avec la prochaine échéance. Les occurrences manquées ne sont pas rattrapées : la suivante tombe toujours après aujourd'hui.",
         example: "« Payer le loyer » chaque mois le 31 : en avril, l'échéance passe au 30, le dernier jour du mois.",
       },
+      backup: {
+        title: "Sauvegarde",
+        body: "« Exporter » crée un fichier avec toutes tes données, à garder où tu veux (Drive, mail, fichiers). « Importer » remplace les données de ce téléphone par celles d'un fichier, après une copie de secours. Sur Android, la sauvegarde automatique de Google garde aussi tes données, si elle est activée sur le téléphone.",
+        example: "avant de changer de téléphone, exporte tes données dans Drive, puis importe le fichier sur le nouveau.",
+      },
       autoEscalate: {
         title: "Tâches en retard",
         body: "Quand l'échéance d'une tâche « Planifier » est dépassée, elle passe toute seule dans « Faire », avec ses relances. Un message te prévient, et « Annuler » la remet dans « Planifier ».",
@@ -421,6 +426,30 @@ export const fr = {
       streak: (n: number) => `${n} semaine${s(n)} de revue d'affilée`,
       back: "Terminer",
     },
+  },
+
+  // Sauvegarde : export et import des données
+  backup: {
+    section: "Sauvegarde",
+    export: "Exporter mes données",
+    import: "Importer une sauvegarde",
+    filePrefix: "dofirst-sauvegarde",
+    exportTitle: "Sauvegarde DoFirst",
+    exportErrorTitle: "Export impossible",
+    exportErrorBody: "Le fichier n'a pas pu être créé. Réessaie dans un instant.",
+    invalidTitle: "Fichier non reconnu",
+    invalidBody: "Ce fichier n'est pas une sauvegarde DoFirst valide. Rien n'a été modifié.",
+    newerTitle: "Sauvegarde trop récente",
+    newerBody:
+      "Elle vient d'une version plus récente de DoFirst. Mets l'app à jour pour l'importer. Rien n'a été modifié.",
+    confirmTitle: "Importer cette sauvegarde ?",
+    preview: (n: number, date: string) => `${n} tâche${s(n)}, sauvegarde du ${date}`,
+    confirmBody: "Tes données actuelles seront remplacées. Une copie de secours est gardée sur ce téléphone.",
+    replace: "Remplacer",
+    doneTitle: "Sauvegarde importée",
+    doneBody: (n: number) => `${n} tâche${s(n)} restaurée${s(n)}.`,
+    importErrorTitle: "Import impossible",
+    importErrorBody: "Les données n'ont pas pu être remplacées. Rien n'a été modifié.",
   },
 
   // Page « Comment ça marche »

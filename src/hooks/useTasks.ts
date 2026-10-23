@@ -440,6 +440,17 @@ export function useTasks(
 
   const dismissEscalation = () => setEscalation(null);
 
+  // Import d'une sauvegarde : tâches et journal remplacés. Toutes les notifications sont
+  // ensuite réconciliées, comme au démarrage.
+  const replaceAll = ({ tasks: next, completions: log }: { tasks: Task[]; completions: Completion[] }) => {
+    syncedRef.current = null;
+    idsRef.current = new Map();
+    loggedTasksRef.current = null;
+    setEscalation(null);
+    setTasks(next.map((t) => ({ ...t, notificationIds: [] })));
+    setCompletions(pruneLog(log, Date.now()));
+  };
+
   // Au démarrage (réglages lus), à l'heure de l'échéance si l'app est ouverte, et quand le
   // réglage est activé
   useEffect(() => {
@@ -635,6 +646,7 @@ export function useTasks(
     escalation,
     undoEscalation,
     dismissEscalation,
+    replaceAll,
     addTask,
     updateTask,
     moveTask,

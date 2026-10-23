@@ -6,6 +6,7 @@ import IconButton from "../src/components/IconButton";
 import Onboarding from "../src/components/Onboarding";
 import SettingsForm from "../src/components/SettingsForm";
 import { t } from "../src/i18n";
+import { useBackup } from "../src/hooks/useBackup";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
 import { sameItems } from "../src/store/selectableStore";
@@ -28,6 +29,7 @@ export default function SettingsScreen() {
   const [permission, refreshPermission] = usePermissionState();
   const archived = useTasksSelector(selectArchived, sameItems);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const backup = useBackup();
 
   const deleteForever = (id: string) => {
     const task = archived.find((t) => t.id === id);
@@ -64,6 +66,8 @@ export default function SettingsScreen() {
           onShowOnboarding={() => setShowOnboarding(true)}
           onOpenHowTo={() => router.push("/help")}
           onOpenReview={() => router.push("/review")}
+          onExport={backup.exportData}
+          onImport={backup.importData}
         />
       </ScrollView>
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}

@@ -312,6 +312,11 @@ export const en: Translations = {
         body: "When you complete a repeating task, the next one is created on its own, with the next due date. Missed occurrences aren't made up: the next one is always after today.",
         example: "“Pay the rent” every month on the 31st: in April, it's due on the 30th, the last day of the month.",
       },
+      backup: {
+        title: "Backup",
+        body: "“Export” creates a file with all your data, to keep wherever you like (Drive, email, files). “Import” replaces the data on this phone with a file's, after a safety copy. On Android, Google's automatic backup also keeps your data, if it's turned on on the phone.",
+        example: "before switching phones, export your data to Drive, then import the file on the new one.",
+      },
       autoEscalate: {
         title: "Overdue tasks",
         body: "When a “Schedule” task is past its due date, it moves to “Do” on its own, with its reminders. A message lets you know, and “Undo” puts it back in “Schedule”.",
@@ -408,6 +413,28 @@ export const en: Translations = {
       streak: (n) => `${n} week${s(n)} of reviews in a row`,
       back: "Finish",
     },
+  },
+
+  backup: {
+    section: "Backup",
+    export: "Export my data",
+    import: "Import a backup",
+    filePrefix: "dofirst-backup",
+    exportTitle: "DoFirst backup",
+    exportErrorTitle: "Export failed",
+    exportErrorBody: "The file couldn't be created. Try again in a moment.",
+    invalidTitle: "File not recognized",
+    invalidBody: "This file isn't a valid DoFirst backup. Nothing was changed.",
+    newerTitle: "Backup too recent",
+    newerBody: "It comes from a newer version of DoFirst. Update the app to import it. Nothing was changed.",
+    confirmTitle: "Import this backup?",
+    preview: (n, date) => `${n} task${s(n)}, backup from ${date}`,
+    confirmBody: "Your current data will be replaced. A safety copy is kept on this phone.",
+    replace: "Replace",
+    doneTitle: "Backup imported",
+    doneBody: (n) => `${n} task${s(n)} restored.`,
+    importErrorTitle: "Import failed",
+    importErrorBody: "Your data couldn't be replaced. Nothing was changed.",
   },
 
   howTo: {
