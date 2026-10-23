@@ -187,6 +187,7 @@ export const en: Translations = {
     deleteForever: "Delete permanently",
     deleteForeverBody: (title) => `“${title}” will be deleted for good.`,
     androidDelay: "On Android, a reminder may arrive a few minutes late.",
+    help: "Help",
   },
 
   help: {
@@ -265,6 +266,29 @@ export const en: Translations = {
         example: "swipe a task to the right to complete it and see the animation.",
       },
     },
+  },
+
+  onboarding: {
+    skip: "Skip",
+    next: "Next",
+    start: "Let's go",
+    progress: (page, total) => `Screen ${page} of ${total}`,
+    replay: "Replay the introduction",
+    matrix: {
+      title: "Urgent or important?",
+      body: "The Eisenhower matrix sorts each task with two questions. That makes 4 boxes, and each one tells you what to do.",
+    },
+    create: {
+      title: "Two questions, that's all",
+      body: "When you create a task, answer “Is it urgent?” and “Is it important?”. The app puts it in the right box for you.",
+    },
+    gestures: {
+      title: "Reminders and gestures",
+      body: "Swipe a task right to complete it, left to delete it. Reminders arrive as notifications: tap “Done” or “Snooze 1 h” without opening the app.",
+    },
+    sampleTask: "Send the report",
+    swipeRight: "Complete",
+    swipeLeft: "Delete",
   },
 
   celebrations: {

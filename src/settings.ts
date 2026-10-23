@@ -14,6 +14,7 @@ export interface Settings {
   quietHoursEnd: string; // fin de la plage silencieuse, "HH:MM"
   autoArchive: boolean; // archiver les tâches « Si j'ai le temps » (NDNI) restées 7 jours
   celebrations: boolean; // confettis et message quand une tâche est terminée
+  onboardingDone: boolean; // présentation du premier lancement déjà vue
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -26,6 +27,7 @@ export const DEFAULT_SETTINGS: Settings = {
   quietHoursEnd: "08:00",
   autoArchive: false,
   celebrations: true,
+  onboardingDone: false,
 };
 
 // Réglages qui changent les notifications programmées (pas les animations ni l'archivage)
@@ -98,6 +100,9 @@ export function parseSettings(json: string | null): Settings {
     // Absent des réglages enregistrés avant l'option : activé
     celebrations:
       typeof s.celebrations === "boolean" ? s.celebrations : DEFAULT_SETTINGS.celebrations,
+    // Absent des réglages enregistrés avant la 1.2 : présentation pas encore vue
+    onboardingDone:
+      typeof s.onboardingDone === "boolean" ? s.onboardingDone : DEFAULT_SETTINGS.onboardingDone,
   };
 }
 

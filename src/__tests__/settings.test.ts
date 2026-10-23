@@ -21,6 +21,7 @@ describe("settings", () => {
       quietHoursEnd: "08:00",
       autoArchive: false,
       celebrations: true,
+      onboardingDone: false,
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
   });
@@ -30,6 +31,16 @@ describe("settings", () => {
     expect(parseSettings(before).celebrations).toBe(true);
     const disabled = JSON.stringify({ schemaVersion: 1, settings: { celebrations: false } });
     expect(parseSettings(disabled).celebrations).toBe(false);
+  });
+
+  it("présentation : pas encore vue pour les réglages enregistrés avant la 1.2", () => {
+    const before = JSON.stringify({ schemaVersion: 1, settings: { doNagInterval: 30 } });
+    expect(parseSettings(before)).toEqual({ ...DEFAULT_SETTINGS, doNagInterval: 30 });
+    expect(parseSettings(before).onboardingDone).toBe(false);
+    const done = JSON.stringify({ schemaVersion: 1, settings: { onboardingDone: true } });
+    expect(parseSettings(done).onboardingDone).toBe(true);
+    const invalid = JSON.stringify({ schemaVersion: 1, settings: { onboardingDone: "oui" } });
+    expect(parseSettings(invalid).onboardingDone).toBe(false);
   });
 
   it("archivage automatique : désactivé pour les réglages enregistrés avant l'option", () => {

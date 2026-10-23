@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
+import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { useAppFonts } from "../src/fonts";
 import { configureNotifications } from "../src/notifications/setup";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
@@ -64,6 +65,7 @@ export default function RootLayout() {
         <TasksProvider>
           <Celebrations>
             <NotificationResponses />
+            <FirstLaunchOnboarding />
             <Stack
               screenOptions={{
                 headerShown: false,

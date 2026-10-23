@@ -32,6 +32,7 @@ interface Props {
   archivedTasks: Task[];
   onRestore: (id: string) => void;
   onDeleteForever: (id: string) => void;
+  onShowOnboarding?: () => void; // « Revoir la présentation »
 }
 
 function Section({ title, info, children }: { title: string; info?: InfoKey; children: ReactNode }) {
@@ -88,6 +89,7 @@ export default function SettingsForm({
   archivedTasks,
   onRestore,
   onDeleteForever,
+  onShowOnboarding,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -218,6 +220,12 @@ export default function SettingsForm({
           ))
         )}
       </Section>
+
+      {onShowOnboarding && (
+        <Section title={t.settings.help}>
+          <TextButton label={t.onboarding.replay} onPress={onShowOnboarding} />
+        </Section>
+      )}
 
       {Platform.OS === "android" && (
         <Text style={styles.footnote}>{t.settings.androidDelay}</Text>

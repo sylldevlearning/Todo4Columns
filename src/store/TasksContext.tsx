@@ -57,6 +57,8 @@ const ACTION_NAMES = [
 const TasksStateContext = createContext<SelectableStore<TasksState> | null>(null);
 const TaskActionsContext = createContext<TaskActions | null>(null);
 const SettingsContext = createContext<SelectableStore<Settings> | null>(null);
+// Lecture des réglages enregistrés terminée : avant, seuls les réglages par défaut sont connus
+const SettingsReadyContext = createContext(false);
 
 // Partage les tâches et les réglages entre tous les écrans
 export function TasksProvider({ children }: { children: ReactNode }) {
@@ -114,7 +116,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   return (
     <TasksStateContext.Provider value={tasksStore}>
       <TaskActionsContext.Provider value={actions}>
-        <SettingsContext.Provider value={settingsStore}>{children}</SettingsContext.Provider>
+        <SettingsContext.Provider value={settingsStore}>
+          <SettingsReadyContext.Provider value={settingsReady}>{children}</SettingsReadyContext.Provider>
+        </SettingsContext.Provider>
       </TaskActionsContext.Provider>
     </TasksStateContext.Provider>
   );
@@ -147,3 +151,5 @@ export function useSettingsSelector<S>(
 
 const allSettings = (settings: Settings) => settings;
 export const useSettings = (): Settings => useSettingsSelector(allSettings);
+
+export const useSettingsReady = (): boolean => useContext(SettingsReadyContext);

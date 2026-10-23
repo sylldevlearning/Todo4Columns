@@ -41,10 +41,13 @@ describe("synchronisation des notifications", () => {
     expect(notifier.reconcile).toHaveBeenCalledTimes(1);
   });
 
-  it("animations ou archivage modifiés : rien n'est reprogrammé", async () => {
+  it("animations, archivage ou présentation modifiés : rien n'est reprogrammé", async () => {
     const { rerender, notifier } = await setup();
     await rerender({ settings: { ...DEFAULT_SETTINGS, celebrations: false } });
     await rerender({ settings: { ...DEFAULT_SETTINGS, celebrations: false, autoArchive: true } });
+    await rerender({
+      settings: { ...DEFAULT_SETTINGS, celebrations: false, autoArchive: true, onboardingDone: true },
+    });
     await act(async () => {});
     expect(notifier.reconcile).toHaveBeenCalledTimes(1);
   });

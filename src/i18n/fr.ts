@@ -192,6 +192,7 @@ export const fr = {
     deleteForever: "Supprimer définitivement",
     deleteForeverBody: (title: string) => `« ${title} » sera supprimée sans retour possible.`,
     androidDelay: "Sur Android, un rappel peut arriver avec quelques minutes de décalage.",
+    help: "Aide",
   },
 
   // Aide : cartes des boutons « i »
@@ -271,6 +272,31 @@ export const fr = {
         example: "glisse une tâche vers la droite pour la terminer et voir l'animation.",
       },
     },
+  },
+
+  // Présentation au premier lancement (3 écrans)
+  onboarding: {
+    skip: "Passer",
+    next: "Suivant",
+    start: "C'est parti",
+    progress: (page: number, total: number) => `Écran ${page} sur ${total}`,
+    replay: "Revoir la présentation",
+    matrix: {
+      title: "Urgent ou important ?",
+      body: "La matrice d'Eisenhower range chaque tâche selon deux questions. Ça donne 4 cases, et chacune te dit quoi faire.",
+    },
+    create: {
+      title: "Deux questions, c'est tout",
+      body: "Quand tu crées une tâche, réponds à « C'est urgent ? » et « C'est important ? ». L'app la range toute seule dans la bonne case.",
+    },
+    gestures: {
+      title: "Rappels et gestes",
+      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Les rappels arrivent en notification : réponds « Fait » ou « Reporter 1 h » sans ouvrir l'app.",
+    },
+    // Textes des illustrations
+    sampleTask: "Rendre le dossier",
+    swipeRight: "Terminer",
+    swipeLeft: "Supprimer",
   },
 
   // Messages de célébration, tirés au hasard quand une tâche est terminée
