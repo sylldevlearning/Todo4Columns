@@ -44,7 +44,14 @@ export interface BackupContent {
 
 export type ParsedBackup =
   | { ok: true; backup: BackupContent }
-  | { ok: false; reason: "invalid" | "newer" };
+  | { ok: false; reason: "invalid" | "newer" | "tooLarge" };
+
+// Taille maximale d'un fichier à importer : une sauvegarde de plusieurs milliers de tâches pèse
+// moins d'1 Mo. Au-delà, ce n'est pas une sauvegarde DoFirst, et la lire saturerait la mémoire.
+export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
+
+// Fichier trop volumineux, refusé sans être lu
+export class BackupTooLargeError extends Error {}
 
 // « dofirst-sauvegarde-2026-10-23.json »
 export function backupFileName(now: number, prefix: string): string {
@@ -72,6 +79,7 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
 
 // Vérifie et lit un fichier de sauvegarde. Rien n'est écrit ici.
 export function parseBackup(json: string, now: number = Date.now()): ParsedBackup {
+  if (json.length > MAX_BACKUP_BYTES) return { ok: false, reason: "tooLarge" };
   let data: unknown;
   try {
     data = JSON.parse(json);
@@ -95,7 +103,8 @@ export function parseBackup(json: string, now: number = Date.now()): ParsedBacku
 
   let tasks: Task[];
   try {
-    tasks = parseStoredTasks(JSON.stringify(data.tasks), now).tasks;
+    // Une tâche sans titre n'aurait ni carte lisible ni notification utile : écartée
+    tasks = parseStoredTasks(JSON.stringify(data.tasks), now).tasks.filter((t) => t.title.trim() !== "");
   } catch {
     return { ok: false, reason: "invalid" };
   }
@@ -218,5 +227,6 @@ export async function pickBackupText(): Promise<string | null> {
     mimeTypes: ["application/json", "text/plain", "application/octet-stream"],
   });
   if (picked.canceled || !picked.result) return null;
+  if (picked.result.size > MAX_BACKUP_BYTES) throw new BackupTooLargeError();
   return picked.result.text();
 }

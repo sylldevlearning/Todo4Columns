@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import {
   BackupContent,
+  BackupTooLargeError,
   backupFileName,
   buildBackup,
   parseBackup,
@@ -96,6 +97,10 @@ export function useBackup() {
     try {
       text = await pickBackupText();
     } catch (e) {
+      if (e instanceof BackupTooLargeError) {
+        Alert.alert(t.backup.tooLargeTitle, t.backup.tooLargeBody);
+        return;
+      }
       console.warn("Erreur lecture sauvegarde :", e);
       Alert.alert(t.backup.invalidTitle, t.backup.invalidBody);
       return;
@@ -105,6 +110,7 @@ export function useBackup() {
     const parsed = parseBackup(text);
     if (!parsed.ok) {
       if (parsed.reason === "newer") Alert.alert(t.backup.newerTitle, t.backup.newerBody);
+      else if (parsed.reason === "tooLarge") Alert.alert(t.backup.tooLargeTitle, t.backup.tooLargeBody);
       else Alert.alert(t.backup.invalidTitle, t.backup.invalidBody);
       return;
     }

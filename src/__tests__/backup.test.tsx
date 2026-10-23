@@ -10,6 +10,7 @@ import {
   BACKUP_VERSION,
   backupFileName,
   buildBackup,
+  MAX_BACKUP_BYTES,
   parseBackup,
   PRE_IMPORT_BACKUP_KEY,
   removeExportedFiles,
@@ -42,6 +43,9 @@ jest.mock("expo-file-system", () => {
     }
     get name() {
       return this.uri.split("/").pop()!;
+    }
+    get size() {
+      return files.get(this.uri)?.length ?? 0;
     }
     delete() {
       files.delete(this.uri);
@@ -283,6 +287,33 @@ describe("import", () => {
     expect(await AsyncStorage.getItem(STORAGE_KEY)).toBe(before);
     expect(await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY)).toBeNull();
     expect(state.tasks.map((t) => t.id)).toEqual(["old"]);
+  });
+
+  it("tâches sans titre écartées", async () => {
+    await launch();
+    const file = JSON.parse(validFile(Date.now()));
+    file.tasks.tasks.push({ ...file.tasks.tasks[0], id: "vide", title: "   " }, { id: "sans", category: "UI" });
+    pickFile(JSON.stringify(file));
+    await act(() => backup.importData());
+    expect(alerts.at(-1)!.message).toContain("2 tâches, sauvegarde du");
+    await pressAlertButton("Remplacer");
+    expect(state.tasks.map((t) => t.id)).toEqual(["a", "b"]);
+  });
+
+  it("fichier trop volumineux : refusé sans être lu, rien n'est touché", async () => {
+    await launch();
+    const before = await AsyncStorage.getItem(STORAGE_KEY);
+    pickFile("x".repeat(MAX_BACKUP_BYTES + 1));
+    const read = jest.spyOn(require("expo-file-system").File.prototype, "text");
+    await act(() => backup.importData());
+    expect(read).not.toHaveBeenCalled();
+    expect(alerts.at(-1)).toMatchObject({
+      title: "Fichier trop volumineux",
+      message: "Ce fichier dépasse 5 Mo : ce n'est pas une sauvegarde DoFirst. Rien n'a été modifié.",
+    });
+    expect(await AsyncStorage.getItem(STORAGE_KEY)).toBe(before);
+    expect(parseBackup("x".repeat(MAX_BACKUP_BYTES + 1))).toEqual({ ok: false, reason: "tooLarge" });
+    read.mockRestore();
   });
 
   it("plus récent : refusé avec un message clair, rien n'est touché", async () => {

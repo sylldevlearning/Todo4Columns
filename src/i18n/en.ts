@@ -447,6 +447,8 @@ export const en: Translations = {
     invalidBody: "This file isn't a valid DoFirst backup. Nothing was changed.",
     newerTitle: "Backup too recent",
     newerBody: "It comes from a newer version of DoFirst. Update the app to import it. Nothing was changed.",
+    tooLargeTitle: "File too large",
+    tooLargeBody: "This file is over 5 MB: it isn't a DoFirst backup. Nothing was changed.",
     confirmTitle: "Import this backup?",
     preview: (n, date) => `${n} task${s(n)}, backup from ${date}`,
     confirmBody: "Your current data will be replaced. A safety copy is kept on this phone.",

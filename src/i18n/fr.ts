@@ -464,6 +464,8 @@ export const fr = {
     newerTitle: "Sauvegarde trop récente",
     newerBody:
       "Elle vient d'une version plus récente de DoFirst. Mets l'app à jour pour l'importer. Rien n'a été modifié.",
+    tooLargeTitle: "Fichier trop volumineux",
+    tooLargeBody: "Ce fichier dépasse 5 Mo : ce n'est pas une sauvegarde DoFirst. Rien n'a été modifié.",
     confirmTitle: "Importer cette sauvegarde ?",
     preview: (n: number, date: string) => `${n} tâche${s(n)}, sauvegarde du ${date}`,
     confirmBody: "Tes données actuelles seront remplacées. Une copie de secours est gardée sur ce téléphone.",
