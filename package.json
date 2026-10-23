@@ -56,6 +56,7 @@
       "^(expo-asset|expo-keep-awake)$": "<rootDir>/node_modules/expo/node_modules/$1",
       "^(expo-asset|expo-keep-awake)/(.*)$": "<rootDir>/node_modules/expo/node_modules/$1/$2"
     },
+    "globalSetup": "./jest/global-setup.js",
     "setupFilesAfterEnv": [
       "./jest.setup.js"
     ]
