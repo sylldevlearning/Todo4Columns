@@ -15,6 +15,11 @@ import { Category, ReminderFields, Task } from "../types";
 
 // setTimeout ne gère pas les délais > ~24,8 jours : on plafonne et on revérifie
 const MAX_TIMEOUT_MS = 60 * 60 * 1000;
+// Les modifications rapprochées (coche puis identifiants de notification…) sont écrites ensemble
+export const SAVE_DELAY_MS = 400;
+
+const isForeground = (state: string | null | undefined) =>
+  state !== "background" && state !== "inactive";
 
 export interface TaskInput extends Partial<ReminderFields> {
   title: string;
@@ -105,13 +110,42 @@ export function useTasks(
     })();
   }, []);
 
-  // Sauvegarder à chaque modification de la liste (une fois le chargement terminé)
+  // ---- Sauvegarde ----
+  // Liste à écrire et écriture programmée
+  const pendingSaveRef = useRef<Task[] | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushSave = () => {
+    if (saveTimerRef.current !== null) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = null;
+    const pending = pendingSaveRef.current;
+    if (pending === null) return;
+    pendingSaveRef.current = null;
+    saveTasks(pending).catch((e) => console.warn("Erreur sauvegarde tâches :", e));
+  };
+
+  // Sauvegarder chaque modification de la liste (une fois le chargement terminé), au plus une
+  // écriture toutes les SAVE_DELAY_MS. Hors de l'écran, écriture immédiate : les minuteries
+  // peuvent y être suspendues et l'app arrêtée à tout moment.
   useEffect(() => {
     if (!isLoaded) return;
-    saveTasks(tasks).catch((e) =>
-      console.warn("Erreur sauvegarde tâches :", e)
-    );
+    pendingSaveRef.current = tasks;
+    if (!isForeground(AppState.currentState)) flushSave();
+    else if (saveTimerRef.current === null) {
+      saveTimerRef.current = setTimeout(flushSave, SAVE_DELAY_MS);
+    }
   }, [tasks, isLoaded]);
+
+  // Rien ne reste en attente quand l'app quitte l'écran ou que le fournisseur est démonté
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (!isForeground(state)) flushSave();
+    });
+    return () => {
+      subscription.remove();
+      flushSave();
+    };
+  }, []);
 
   // Ajout, modification, déplacement, coche, suppression, annulation, restauration :
   // toute tâche dont la signature change est resynchronisée, toute tâche disparue est annulée.
