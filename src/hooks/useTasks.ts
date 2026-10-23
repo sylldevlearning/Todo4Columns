@@ -50,9 +50,11 @@ const scheduleSignature = (task: Task) =>
 const sameIds = (a: string[], b: string[]) =>
   a.length === b.length && a.every((id, i) => id === b[i]);
 
+// settingsReady : réglages enregistrés lus ; aucune notification n'est programmée avant
 export function useTasks(
   settings: Settings = DEFAULT_SETTINGS,
-  notifier: Notifier = defaultNotifier
+  notifier: Notifier = defaultNotifier,
+  settingsReady: boolean = true
 ) {
   const [tasks, setTasks] = useState<Task[]>([]);
   // Empêche la sauvegarde tant que les tâches n'ont pas été chargées.
@@ -69,6 +71,8 @@ export function useTasks(
   const syncedRef = useRef<Map<string, string> | null>(null);
   // Identifiants programmés connus pour chaque tâche
   const idsRef = useRef(new Map<string, string[]>());
+  // Réglages des rappels utilisés par la dernière réconciliation complète
+  const reconciledKeyRef = useRef<string | null>(null);
   // Les synchronisations s'exécutent l'une après l'autre
   const queueRef = useRef<Promise<void>>(Promise.resolve());
 
@@ -93,10 +97,12 @@ export function useTasks(
   };
 
   // Annule les orphelines et reprogramme ce qui manque, pour toutes les tâches
-  const reconcileAll = () =>
+  const reconcileAll = () => {
+    reconciledKeyRef.current = notificationSettingsKey(settingsRef.current);
     enqueue(async () => {
       applyIds(await notifier.reconcile(tasksRef.current, settingsRef.current));
     });
+  };
 
   // Charger les tâches sauvegardées au démarrage
   useEffect(() => {
@@ -150,7 +156,9 @@ export function useTasks(
   // Ajout, modification, déplacement, coche, suppression, annulation, restauration :
   // toute tâche dont la signature change est resynchronisée, toute tâche disparue est annulée.
   useEffect(() => {
-    if (!isLoaded) return;
+    // La première réconciliation attend les réglages enregistrés : sinon elle programmerait
+    // avec les réglages par défaut, puis tout serait annulé et reprogrammé
+    if (!isLoaded || !settingsReady) return;
     const signatures = new Map(tasks.map((t) => [t.id, scheduleSignature(t)]));
     const previous = syncedRef.current;
     syncedRef.current = signatures;
@@ -181,7 +189,7 @@ export function useTasks(
       }
       applyIds(result);
     });
-  }, [tasks, isLoaded]);
+  }, [tasks, isLoaded, settingsReady]);
 
   // Option activée : archive les tâches « Si j'ai le temps » restées 7 jours,
   // au chargement puis dès que l'option est cochée. Désactivée, rien n'est archivé
@@ -196,7 +204,7 @@ export function useTasks(
   // archivage) et la relecture de réglages identiques au démarrage ne déclenchent rien.
   const notificationKey = notificationSettingsKey(settings);
   useEffect(() => {
-    if (syncedRef.current !== null) reconcileAll();
+    if (syncedRef.current !== null && notificationKey !== reconciledKeyRef.current) reconcileAll();
   }, [notificationKey]);
 
   // À chaque retour dans l'app : reprogramme les notifications suivantes (limite iOS de 64)

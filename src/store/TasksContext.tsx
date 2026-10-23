@@ -15,14 +15,17 @@ const TasksContext = createContext<TaskStore | null>(null);
 // Partage les tâches et les réglages entre tous les écrans
 export function TasksProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  // Lecture des réglages terminée (réussie ou non) : les notifications peuvent être programmées
+  const [settingsReady, setSettingsReady] = useState(false);
 
   useEffect(() => {
     loadSettings()
       .then(setSettings)
-      .catch((e) => console.warn("Erreur récupération réglages :", e));
+      .catch((e) => console.warn("Erreur récupération réglages :", e))
+      .finally(() => setSettingsReady(true));
   }, []);
 
-  const store = useTasks(settings);
+  const store = useTasks(settings, undefined, settingsReady);
 
   const updateSettings = (next: Settings) => {
     setSettings(next);

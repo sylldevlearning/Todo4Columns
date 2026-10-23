@@ -55,6 +55,34 @@ describe("synchronisation des notifications", () => {
     await waitFor(() => expect(notifier.reconcile).toHaveBeenCalledTimes(2));
   });
 
+  it("la première réconciliation attend la lecture des réglages enregistrés", async () => {
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([makeTask({ id: "a", category: "UI" })]));
+    const notifier = fakeNotifier();
+    const saved: Settings = { ...DEFAULT_SETTINGS, doNagInterval: 30, quietHoursStart: "21:00" };
+    const { result, rerender } = await renderHook(
+      ({ settings, ready }: { settings: Settings; ready: boolean }) =>
+        useTasks(settings, notifier as Notifier, ready),
+      { initialProps: { settings: DEFAULT_SETTINGS, ready: false } }
+    );
+
+    // Tâches chargées, réglages pas encore lus : rien n'est programmé
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    await act(async () => {});
+    expect(notifier.reconcile).not.toHaveBeenCalled();
+    await act(() => result.current.toggleDone("a"));
+    expect(notifier.syncTask).not.toHaveBeenCalled();
+
+    // Réglages lus : une seule réconciliation, avec les réglages enregistrés
+    await rerender({ settings: saved, ready: true });
+    await waitFor(() => expect(notifier.reconcile).toHaveBeenCalledTimes(1));
+    expect(notifier.reconcile).toHaveBeenCalledWith(
+      [expect.objectContaining({ id: "a", isDone: true })],
+      saved
+    );
+    await act(async () => {});
+    expect(notifier.reconcile).toHaveBeenCalledTimes(1);
+  });
+
   it("une tâche modifiée : seule cette tâche est resynchronisée", async () => {
     const { result, notifier } = await setup();
     await act(() => result.current.toggleDone("a"));
