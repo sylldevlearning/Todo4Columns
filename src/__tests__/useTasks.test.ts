@@ -176,13 +176,13 @@ describe("useTasks", () => {
     ]);
   });
 
-  it("enregistre les tâches au format v5 et les retrouve au redémarrage", async () => {
+  it("enregistre les tâches au format v6 et les retrouve au redémarrage", async () => {
     const first = await setup();
     await act(() => first.result.current.addTask({ title: "Persistante", category: "UDI" }));
 
     await waitFor(async () => {
       const data = await stored();
-      expect(data.schemaVersion).toBe(5);
+      expect(data.schemaVersion).toBe(6);
       expect(data.tasks).toHaveLength(1);
     });
     await first.unmount();
@@ -211,7 +211,7 @@ describe("useTasks", () => {
       createdAt: 1717000000000,
       delegatedTo: null,
     });
-    await waitFor(async () => expect((await stored()).schemaVersion).toBe(5));
+    await waitFor(async () => expect((await stored()).schemaVersion).toBe(6));
   });
 
   it("ne sauvegarde rien si la lecture échoue", async () => {

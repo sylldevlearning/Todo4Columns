@@ -1,6 +1,16 @@
 // Clés de catégorie : NE PAS MODIFIER, elles sont enregistrées dans les données des utilisateurs
 export type Category = "UI" | "INU" | "UDI" | "NDNI";
 
+export type RecurrenceFreq = "daily" | "weekdays" | "weekly" | "monthly" | "yearly";
+
+// Règle de répétition d'une tâche à échéance
+export interface Recurrence {
+  freq: RecurrenceFreq;
+  days?: number[]; // weekly : jours de la semaine (0 = dimanche)
+  monthDay?: number; // monthly, yearly : jour du mois voulu (1-31, ramené au dernier jour si besoin)
+  month?: number; // yearly : mois (0 = janvier)
+}
+
 // Réglages de rappel d'une tâche (enregistrés, notifications programmées à l'étape 3)
 export interface ReminderFields {
   dueAt: number | null; // échéance (timestamp en ms) — Planifier
@@ -8,6 +18,7 @@ export interface ReminderFields {
   nagInterval: number | null; // relance après N minutes — Faire, Déléguer
   nagRepeat: boolean; // répéter la relance — Faire
   delegatedTo: string | null; // personne à qui la tâche est confiée — Déléguer
+  recurrence: Recurrence | null; // répétition — Planifier (gardée en Faire), avec une échéance
 }
 
 export interface Task extends ReminderFields {
@@ -25,4 +36,5 @@ export interface Task extends ReminderFields {
   // Absents des tâches importées par la récupération : équivalent à null
   completedAt?: number | null; // date où la tâche a été terminée (timestamp en ms)
   priorityWeek?: number | null; // priorité de la semaine qui commence à cette date (lundi 0 h)
+  nextOccurrenceId?: string | null; // tâche récurrente terminée : occurrence créée à sa place
 }

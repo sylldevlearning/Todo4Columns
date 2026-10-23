@@ -79,6 +79,7 @@ describe("TaskForm", () => {
       nagInterval: 30,
       nagRepeat: true,
       delegatedTo: null,
+      recurrence: null,
     });
   });
 

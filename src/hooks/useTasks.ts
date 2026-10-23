@@ -13,6 +13,7 @@ import {
 } from "../reminders";
 import { DEFAULT_SETTINGS, notificationSettingsKey, Settings } from "../settings";
 import { loadTasks, saveTasks } from "../storage";
+import { nextOccurrence } from "../recurrence";
 import { Category, ReminderFields, Task } from "../types";
 
 // setTimeout ne gère pas les délais > ~24,8 jours : on plafonne et on revérifie
@@ -336,6 +337,7 @@ export function useTasks(
       notificationIds: [],
       completedAt: null,
       priorityWeek: null,
+      nextOccurrenceId: null,
       ...fields,
     };
     setTasks((prev) => [...prev, newTask]);
@@ -366,20 +368,86 @@ export function useTasks(
         ...defaultReminderFields(category, settings),
         dueAt: t.dueAt,
         delegatedTo: t.delegatedTo,
+        recurrence: t.recurrence,
+        // Une tâche récurrente garde son rappel pour l'occurrence suivante
+        ...(t.recurrence && t.reminderOffset !== null ? { reminderOffset: t.reminderOffset } : {}),
       }),
     }));
   };
 
-  // La date de fin sert au bilan de la semaine ; rouvrir une tâche l'efface
+  // Occurrence suivante d'une tâche récurrente : mêmes champs, nouvel identifiant, échéance
+  // suivante après maintenant (sans rattrapage), de retour dans « Planifier »
+  const nextOccurrenceOf = (task: Task, id: string, now: number): Task => ({
+    ...task,
+    id,
+    category: "INU",
+    ...keepRelevantFields("INU", {
+      ...pickReminderFields(task),
+      reminderOffset: task.reminderOffset ?? settingsRef.current.planReminderOffset,
+      dueAt: nextOccurrence(task.recurrence!, task.dueAt!, now),
+    }),
+    isDone: false,
+    completedAt: null,
+    timerEnd: null,
+    createdAt: now,
+    updatedAt: now,
+    categoryChangedAt: now,
+    archivedAt: null,
+    snoozedUntil: null,
+    priorityWeek: null,
+    nextOccurrenceId: null,
+    notificationIds: [],
+  });
+
+  // Termine une tâche (date de fin pour le bilan). Récurrente : crée l'occurrence suivante.
+  const markDone = (id: string) => {
+    const now = Date.now();
+    const spawnId = newId(now);
+    setTasks((prev) => {
+      const index = prev.findIndex((t) => t.id === id);
+      const task = prev[index];
+      if (!task || task.isDone) return prev;
+      const spawn = task.recurrence && task.dueAt !== null ? nextOccurrenceOf(task, spawnId, now) : null;
+      const done: Task = {
+        ...task,
+        isDone: true,
+        completedAt: now,
+        updatedAt: now,
+        snoozedUntil: null,
+        nextOccurrenceId: spawn?.id ?? null,
+      };
+      const next = prev.map((t) => (t.id === id ? done : t));
+      if (spawn) next.splice(index + 1, 0, spawn);
+      return next;
+    });
+  };
+
+  // Rouvre une tâche (« Annuler ») : sa date de fin est effacée et l'occurrence qu'elle a
+  // créée, si elle n'est pas terminée, est supprimée
+  const reopen = (id: string) => {
+    const now = Date.now();
+    setTasks((prev) => {
+      const task = prev.find((t) => t.id === id);
+      if (!task || !task.isDone) return prev;
+      const spawnId = task.nextOccurrenceId;
+      return prev
+        .filter((t) => !(spawnId && t.id === spawnId && !t.isDone))
+        .map((t) =>
+          t.id === id
+            ? { ...t, isDone: false, completedAt: null, nextOccurrenceId: null, updatedAt: now, snoozedUntil: null }
+            : t
+        );
+    });
+  };
+
   const toggleDone = (id: string) => {
-    updateOne(id, (t) => ({ ...t, isDone: !t.isDone, completedAt: t.isDone ? null : Date.now() }));
+    if (tasksRef.current.find((t) => t.id === id)?.isDone) reopen(id);
+    else markDone(id);
   };
 
   // « Fait » depuis une notification : ne décoche jamais une tâche déjà terminée
   const completeTask = (id: string) => {
-    if (tasksRef.current.some((t) => t.id === id && !t.isDone)) {
-      updateOne(id, (t) => ({ ...t, isDone: true, completedAt: Date.now() }));
-    }
+    if (tasksRef.current.some((t) => t.id === id && !t.isDone)) markDone(id);
   };
 
   // « Reporter 1 h » : repousse la prochaine relance sans toucher à updatedAt

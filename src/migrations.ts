@@ -1,3 +1,4 @@
+import { parseRecurrence } from "./recurrence";
 import { Category, Task } from "./types";
 
 // Version du format enregistré sous la clé TASKS_4COLS
@@ -6,7 +7,8 @@ import { Category, Task } from "./types";
 // v3 : même enveloppe, ajout de delegatedTo sur chaque tâche
 // v4 : ajout de categoryChangedAt, archivedAt et snoozedUntil
 // v5 : ajout de completedAt et priorityWeek
-export const TASKS_SCHEMA_VERSION = 5;
+// v6 : ajout de recurrence et nextOccurrenceId
+export const TASKS_SCHEMA_VERSION = 6;
 
 export interface StoredTasks {
   schemaVersion: typeof TASKS_SCHEMA_VERSION;
@@ -81,6 +83,9 @@ export function normalizeTask(
       ? numberOrNull(raw.completedAt) ?? (fromVersion < 5 ? updatedAt : null)
       : null,
     priorityWeek: numberOrNull(raw.priorityWeek),
+    // Absents avant la v6 : pas de répétition
+    recurrence: parseRecurrence(raw.recurrence),
+    nextOccurrenceId: typeof raw.nextOccurrenceId === "string" ? raw.nextOccurrenceId : null,
   };
 }
 

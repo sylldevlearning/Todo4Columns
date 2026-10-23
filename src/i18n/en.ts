@@ -91,6 +91,20 @@ export const en: Translations = {
     soonUrgent: "Soon urgent",
   },
 
+  recurrence: {
+    label: "Repeat",
+    never: "Never",
+    daily: "Every day",
+    weekdays: "Weekdays",
+    weekly: "Every week",
+    monthly: "Every month",
+    yearly: "Every year",
+    days: "Days",
+    weeklyOn: (days) => `Every week · ${days}`,
+    repeats: (rule) => `Repeats: ${rule.toLowerCase()}`,
+    stop: "Stop repeating",
+  },
+
   escalation: {
     banner: (n) => (n > 1 ? `${n} tasks are becoming urgent` : "1 task is becoming urgent"),
     listTitle: "Soon urgent",
@@ -288,6 +302,11 @@ export const en: Translations = {
         title: "Review reminder",
         body: "A notification invites you to do your review every week, on the day and at the time you choose. If that time falls in quiet hours, the reminder arrives when they end.",
         example: "Sunday at 6 pm, to calmly get ready for the week ahead.",
+      },
+      recurrence: {
+        title: "Repeat",
+        body: "When you complete a repeating task, the next one is created on its own, with the next due date. Missed occurrences aren't made up: the next one is always after today.",
+        example: "“Pay the rent” every month on the 31st: in April, it's due on the 30th, the last day of the month.",
       },
       soonUrgent: {
         title: "Soon urgent",

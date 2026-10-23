@@ -47,6 +47,8 @@ describe("parseStoredTasks", () => {
       notificationIds: [],
       completedAt: null,
       priorityWeek: null,
+      recurrence: null,
+      nextOccurrenceId: null,
     });
   });
 
@@ -135,15 +137,42 @@ describe("parseStoredTasks", () => {
     expect(parseStoredTasks(JSON.stringify(v5), NOW).tasks[0].completedAt).toBeNull();
   });
 
-  it("relit à l'identique le format courant (v5)", () => {
+  it("migre le format v5 : aucune répétition", () => {
+    const v5 = { schemaVersion: 5, tasks: [{ ...v1Tasks[1], updatedAt: 60, completedAt: 50, priorityWeek: 7 }] };
+    const { tasks, fromVersion } = parseStoredTasks(JSON.stringify(v5), NOW);
+    expect(fromVersion).toBe(5);
+    expect(tasks[0]).toMatchObject({ completedAt: 50, priorityWeek: 7, recurrence: null, nextOccurrenceId: null });
+  });
+
+  it("v6 : une règle de répétition invalide est ignorée, une règle valide est nettoyée", () => {
+    const v6 = {
+      schemaVersion: 6,
+      tasks: [
+        { ...v1Tasks[1], dueAt: 5, recurrence: { freq: "toutes les heures" } },
+        { ...v1Tasks[1], dueAt: 5, recurrence: { freq: "weekly", days: [4, 1, 9, 1, "x"] } },
+        { ...v1Tasks[1], dueAt: 5, recurrence: { freq: "monthly", monthDay: 31 } },
+      ],
+    };
+    const { tasks } = parseStoredTasks(JSON.stringify(v6), NOW);
+    expect(tasks.map((t) => t.recurrence)).toEqual([
+      null,
+      { freq: "weekly", days: [1, 4] },
+      { freq: "monthly", monthDay: 31 },
+    ]);
+  });
+
+  it("relit à l'identique le format courant (v6)", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
     tasks[0].delegatedTo = "Marie";
     tasks[1].completedAt = 1234;
     tasks[0].priorityWeek = 5678;
+    tasks[1].dueAt = 99;
+    tasks[1].recurrence = { freq: "yearly", month: 1, monthDay: 29 };
+    tasks[1].nextOccurrenceId = "suivante";
     const json = serializeTasks(tasks);
 
-    expect(JSON.parse(json).schemaVersion).toBe(5);
-    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 5 });
+    expect(JSON.parse(json).schemaVersion).toBe(6);
+    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 6 });
   });
 
   it("lève une erreur sur un contenu illisible", () => {
@@ -173,7 +202,15 @@ describe("loadTasks", () => {
     expect(await AsyncStorage.getItem(backupKeyFor(2))).toBe(original);
   });
 
-  it("garde une copie du format v4 (TASKS_4COLS_BACKUP_V4) avant de passer en v5", async () => {
+  it("garde une copie du format v5 (TASKS_4COLS_BACKUP_V5) avant de passer en v6", async () => {
+    const original = JSON.stringify({ schemaVersion: 5, tasks: v1Tasks });
+    await AsyncStorage.setItem(STORAGE_KEY, original);
+
+    expect(await loadTasks()).toHaveLength(4);
+    expect(await AsyncStorage.getItem("TASKS_4COLS_BACKUP_V5")).toBe(original);
+  });
+
+  it("garde une copie du format v4 (TASKS_4COLS_BACKUP_V4) avant de passer en v6", async () => {
     const original = JSON.stringify({
       schemaVersion: 4,
       tasks: v1Tasks.map((t) => ({ ...t, updatedAt: 42 })),

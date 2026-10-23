@@ -21,6 +21,8 @@ export function makeTask(overrides: Partial<Task> = {}): Task {
     notificationIds: [],
     completedAt: null,
     priorityWeek: null,
+    recurrence: null,
+    nextOccurrenceId: null,
     ...overrides,
   };
 }

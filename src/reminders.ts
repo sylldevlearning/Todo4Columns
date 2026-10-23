@@ -45,6 +45,7 @@ export const EMPTY_REMINDER_FIELDS: ReminderFields = {
   nagInterval: null,
   nagRepeat: false,
   delegatedTo: null,
+  recurrence: null,
 };
 
 // Valeurs proposées par défaut pour une nouvelle tâche du quadrant
@@ -79,12 +80,19 @@ export function keepRelevantFields(
         ...EMPTY_REMINDER_FIELDS,
         nagInterval: fields.nagInterval,
         nagRepeat: fields.nagInterval !== null && fields.nagRepeat,
+        // Tâche récurrente passée en Faire : elle garde son échéance, sa répétition et son
+        // rappel, pour les reprendre à l'occurrence suivante (de retour dans « Planifier »)
+        ...(fields.recurrence && fields.dueAt !== null
+          ? { dueAt: fields.dueAt, recurrence: fields.recurrence, reminderOffset: fields.reminderOffset }
+          : {}),
       };
     case "INU":
       return {
         ...EMPTY_REMINDER_FIELDS,
         dueAt: fields.dueAt,
         reminderOffset: fields.reminderOffset,
+        // Une tâche récurrente a forcément une échéance
+        recurrence: fields.dueAt !== null ? fields.recurrence : null,
       };
     case "UDI":
       return {
@@ -111,8 +119,8 @@ export function hasReminder(category: Category, fields: ReminderFields): boolean
 }
 
 export function pickReminderFields(task: ReminderFields): ReminderFields {
-  const { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo } = task;
-  return { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo };
+  const { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo, recurrence } = task;
+  return { dueAt, reminderOffset, nagInterval, nagRepeat, delegatedTo, recurrence };
 }
 
 // « 30 min », « 2 h », « 3 j » (« 3 d » en anglais)

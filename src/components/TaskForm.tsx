@@ -11,8 +11,15 @@ import {
 } from "../reminders";
 import { Settings } from "../settings";
 import { isDueSoon } from "../notifications/status";
+import {
+  isRoutine,
+  proposedDue,
+  RECURRENCE_FREQS,
+  recurrenceLabel,
+  withAnchors,
+} from "../recurrence";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
-import { Category, ReminderFields, Task } from "../types";
+import { Category, Recurrence, ReminderFields, Task } from "../types";
 import DueDateField from "./DueDateField";
 import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
@@ -30,6 +37,14 @@ interface Props {
   onOpenSettings?: () => void;
   onSubmit: (values: TaskFormValues) => void;
 }
+
+// « Répéter » : Jamais, puis chaque règle (valeur = position dans RECURRENCE_FREQS)
+const RECURRENCE_OPTIONS = [
+  { label: t.recurrence.never, value: null },
+  ...RECURRENCE_FREQS.map((freq, i) => ({ label: t.recurrence[freq], value: i })),
+];
+// Jours de la semaine, du lundi au dimanche (0 = dimanche)
+const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0];
 
 // Création sans quadrant précisé : « Planifier » (important, pas urgent)
 const DEFAULT_CATEGORY: Category = "INU";
@@ -79,6 +94,14 @@ function SwitchRow({
   );
 }
 
+function LinkButton({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.link}>
+      <Text style={styles.linkText}>{label}</Text>
+    </Pressable>
+  );
+}
+
 // Formulaire de la fiche « Nouvelle tâche » / modification
 export default function TaskForm({
   task,
@@ -106,6 +129,7 @@ export default function TaskForm({
       ? task.reminderOffset
       : settings.planReminderOffset
   );
+  const [recurrence, setRecurrence] = useState<Recurrence | null>(task?.recurrence ?? null);
   const [delegateTo, setDelegateTo] = useState(task?.delegatedTo ?? "");
   const [delegateFollowUp, setDelegateFollowUp] = useState<number | null>(
     task?.category === "UDI" && task.nagInterval !== null
@@ -116,6 +140,47 @@ export default function TaskForm({
   const category = CATEGORY_BY_KEY[categoryFromFlags(urgent, important)];
   const canSubmit = title.trim() !== "";
 
+  // Une tâche récurrente a forcément une échéance : la retirer arrête la répétition
+  const changeDue = (value: number | null) => {
+    setPlanDue(value);
+    if (value === null) setRecurrence(null);
+  };
+
+  // Choix de la répétition ; sans échéance, la prochaine occurrence à 9 h est proposée
+  const chooseRecurrence = (value: number | null) => {
+    if (value === null) return setRecurrence(null);
+    const freq = RECURRENCE_FREQS[value];
+    const due = planDue ?? proposedDue({ freq }, Date.now());
+    if (planDue === null) setPlanDue(due);
+    setRecurrence(
+      freq === "weekly"
+        ? { freq, days: recurrence?.days?.length ? recurrence.days : [new Date(due).getDay()] }
+        : { freq }
+    );
+  };
+
+  // Au moins un jour reste choisi
+  const toggleDay = (day: number) => {
+    const days = recurrence?.days ?? [];
+    if (days.includes(day) && days.length === 1) return;
+    setRecurrence({
+      freq: "weekly",
+      days: days.includes(day) ? days.filter((d) => d !== day) : [...days, day],
+    });
+  };
+
+  // Règle enregistrée : jour du mois et mois repris de l'échéance, sauf s'ils n'ont pas changé
+  // (un 31 ramené au 30 avril doit redevenir le 31 en mai)
+  const savedRecurrence = (): Recurrence | null => {
+    if (!recurrence || planDue === null) return null;
+    const unchanged =
+      task?.recurrence?.freq === recurrence.freq && task.dueAt === planDue;
+    return withAnchors(
+      unchanged ? { ...task!.recurrence!, days: recurrence.days } : { freq: recurrence.freq, days: recurrence.days },
+      planDue
+    );
+  };
+
   const reminderFields = (): ReminderFields => {
     switch (category.key) {
       case "UI":
@@ -123,9 +188,18 @@ export default function TaskForm({
           ...EMPTY_REMINDER_FIELDS,
           nagInterval: doNag,
           nagRepeat: doNag !== null && doRepeat,
+          // Tâche récurrente passée en Faire : échéance et répétition gardées
+          ...(savedRecurrence()
+            ? { dueAt: planDue, recurrence: savedRecurrence(), reminderOffset: planReminder }
+            : {}),
         };
       case "INU":
-        return { ...EMPTY_REMINDER_FIELDS, dueAt: planDue, reminderOffset: planReminder };
+        return {
+          ...EMPTY_REMINDER_FIELDS,
+          dueAt: planDue,
+          reminderOffset: planReminder,
+          recurrence: savedRecurrence(),
+        };
       case "UDI":
         return {
           ...EMPTY_REMINDER_FIELDS,
@@ -214,16 +288,22 @@ export default function TaskForm({
               />
             </View>
           )}
+          {recurrence && planDue !== null && (
+            <View style={styles.repeats}>
+              <Text style={styles.note}>{t.recurrence.repeats(recurrenceLabel(recurrence))}</Text>
+              <LinkButton label={t.recurrence.stop} onPress={() => setRecurrence(null)} />
+            </View>
+          )}
         </>
       )}
 
       {category.key === "INU" && (
         <>
           <Field label={t.form.due}>
-            <DueDateField value={planDue} onChange={setPlanDue} color={category.textColor} />
+            <DueDateField value={planDue} onChange={changeDue} color={category.textColor} />
           </Field>
           {/* Échéance proche et « C'est urgent ? » sur Non : simple suggestion, rien n'est bloqué */}
-          {planDue !== null && isDueSoon(planDue, Date.now()) && (
+          {planDue !== null && isDueSoon(planDue, Date.now()) && !isRoutine(recurrence) && (
             <View style={styles.suggestion} accessibilityLiveRegion="polite">
               <Text style={styles.suggestionText}>{t.escalation.suggestion}</Text>
               <Pressable
@@ -245,6 +325,37 @@ export default function TaskForm({
               {...pillColors}
             />
           </Field>
+          <Field label={t.recurrence.label} info="recurrence">
+            <OptionPills
+              options={RECURRENCE_OPTIONS}
+              value={recurrence ? RECURRENCE_FREQS.indexOf(recurrence.freq) : null}
+              onChange={chooseRecurrence}
+              {...pillColors}
+            />
+          </Field>
+          {recurrence?.freq === "weekly" && (
+            <View style={styles.days} accessibilityLabel={t.recurrence.days}>
+              {WEEK_DAYS.map((day) => {
+                const checked = recurrence.days?.includes(day) ?? false;
+                return (
+                  <Pressable
+                    key={day}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked }}
+                    onPress={() => toggleDay(day)}
+                    style={[styles.day, checked && { backgroundColor: category.color, borderColor: category.color }]}
+                  >
+                    <Text style={[styles.dayText, checked && { color: category.onColor }]}>
+                      {t.settings.weekdays[day]}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
+          {task?.recurrence && recurrence && (
+            <LinkButton label={t.recurrence.stop} onPress={() => setRecurrence(null)} />
+          )}
         </>
       )}
 
@@ -398,6 +509,41 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     fontSize: 15,
     color: colors.text,
+  },
+  days: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    marginTop: -6,
+  },
+  day: {
+    minWidth: TOUCH_SIZE,
+    minHeight: TOUCH_SIZE,
+    paddingHorizontal: 8,
+    borderRadius: TOUCH_SIZE / 2,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dayText: {
+    fontFamily: fonts.bold,
+    fontSize: 13,
+    color: colors.text,
+  },
+  repeats: {
+    gap: 0,
+  },
+  link: {
+    minHeight: TOUCH_SIZE,
+    justifyContent: "center",
+    alignSelf: "flex-start",
+  },
+  linkText: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    color: colors.text,
+    textDecorationLine: "underline",
   },
   suggestion: {
     flexDirection: "row",

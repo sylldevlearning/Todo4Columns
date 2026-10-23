@@ -5,6 +5,7 @@ import { formatDue, formatDuration } from "../format";
 import { t } from "../i18n";
 import { isSoonUrgent, isWaiting, nextFollowUp } from "../notifications/status";
 import { CATEGORY_BY_KEY } from "../constants/categories";
+import { recurrenceLabel } from "../recurrence";
 import { reminderLabel } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { colors } from "../theme";
@@ -104,6 +105,11 @@ export default function TaskChips({
     if (reminder) {
       chips.push(
         <Chip key="reminder" icon="notifications-outline" label={reminder} {...chipColors} />
+      );
+    }
+    if (task.recurrence) {
+      chips.push(
+        <Chip key="repeat" icon="repeat" label={recurrenceLabel(task.recurrence)} {...chipColors} />
       );
     }
     if (task.delegatedTo !== null) {

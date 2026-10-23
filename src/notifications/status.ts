@@ -1,3 +1,4 @@
+import { isRoutine } from "../recurrence";
 import { Settings } from "../settings";
 import { Task } from "../types";
 import { computeSchedule, ScheduledNotification } from "./schedule";
@@ -44,6 +45,8 @@ export function isSoonUrgent(task: Task, now: number): boolean {
     !task.isDone &&
     task.archivedAt === null &&
     task.dueAt !== null &&
+    // Une tâche répétée chaque jour a toujours son échéance proche : pas d'alerte
+    !isRoutine(task.recurrence) &&
     isDueSoon(task.dueAt, now)
   );
 }

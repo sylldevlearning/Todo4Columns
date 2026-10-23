@@ -93,6 +93,21 @@ export const fr = {
     soonUrgent: "Bientôt urgente",
   },
 
+  // Tâches récurrentes
+  recurrence: {
+    label: "Répéter",
+    never: "Jamais",
+    daily: "Chaque jour",
+    weekdays: "Jours de semaine",
+    weekly: "Chaque semaine",
+    monthly: "Chaque mois",
+    yearly: "Chaque année",
+    days: "Jours",
+    weeklyOn: (days: string) => `Chaque semaine · ${days}`,
+    repeats: (rule: string) => `Se répète : ${rule.toLowerCase()}`,
+    stop: "Arrêter de répéter",
+  },
+
   // Escalade : tâches « Planifier » dont l'échéance arrive dans moins de 48 h
   escalation: {
     banner: (n: number) => (n > 1 ? `${n} tâches deviennent urgentes` : "1 tâche devient urgente"),
@@ -295,6 +310,11 @@ export const fr = {
         title: "Rappel de la revue",
         body: "Une notification t'invite à faire ta revue chaque semaine, au jour et à l'heure choisis. Si l'heure tombe dans la plage silencieuse, le rappel arrive à sa fin.",
         example: "le dimanche à 18 h, pour préparer tranquillement la semaine qui vient.",
+      },
+      recurrence: {
+        title: "Répéter",
+        body: "Quand tu termines une tâche qui se répète, la suivante est créée toute seule, avec la prochaine échéance. Les occurrences manquées ne sont pas rattrapées : la suivante tombe toujours après aujourd'hui.",
+        example: "« Payer le loyer » chaque mois le 31 : en avril, l'échéance passe au 30, le dernier jour du mois.",
       },
       soonUrgent: {
         title: "Bientôt urgente",
