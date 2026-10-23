@@ -354,7 +354,7 @@ export const en: Translations = {
     },
     delegated: {
       title: "Handed-off tasks",
-      body: "Any news? Mark what's done. “Still waiting” restarts the follow-up.",
+      body: "Any news? Mark what's done. Still waiting: you'll be reminded later.",
       empty: "No handed-off tasks waiting.",
       done: "Done",
       waiting: "Still waiting",

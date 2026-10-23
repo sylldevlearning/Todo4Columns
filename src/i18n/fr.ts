@@ -365,7 +365,7 @@ export const fr = {
     },
     delegated: {
       title: "Tâches confiées",
-      body: "As-tu des nouvelles ? Marque ce qui est fait. « Toujours en attente » relance le suivi à zéro.",
+      body: "As-tu des nouvelles ? Marque ce qui est fait. Toujours en attente : tu seras relancé plus tard.",
       empty: "Aucune tâche confiée en attente.",
       done: "Fait",
       waiting: "Toujours en attente",
