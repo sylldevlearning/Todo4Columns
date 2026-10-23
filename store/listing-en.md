@@ -20,27 +20,37 @@ Every task gets a place in one of four boxes:
 • Someday — neither urgent nor important: only if you have time to spare.
 
 ADD A TASK WITH TWO QUESTIONS
-"Is it urgent?" "Is it important?" Two switches, and DoFirst puts the task in the right box. See your whole matrix at a glance, with a preview of the tasks in each box.
+"Is it urgent?" "Is it important?" Two switches, and DoFirst puts the task in the right box. A short introduction and small "i" icons explain the method right when you need it.
 
 REMINDERS THAT FIT EACH BOX
 • Do: a nudge if the task still isn't done after 30 min, 2 h or 1 day, repeated if you want.
 • Schedule: a due date, plus a reminder on the day, 1 h before or the day before.
 • Delegate: the person's name, and a reminder to check in with them.
-• Someday: no reminders, so these tasks don't weigh on you. If you like, they can be archived automatically after 7 days and restored from the settings.
+• Someday: no reminders. These tasks can be archived automatically after 7 days.
+
+REPEATING TASKS
+Every day, on weekdays, on chosen days, every month or every year: when you complete a repeating task, the next one is created for you.
+
+NO MORE SURPRISES
+A Schedule task whose due date is close is flagged "Soon urgent". If the due date passes, it moves to Do with an "Overdue" chip (you can turn this off).
+
+DELEGATE IN ONE MESSAGE
+"Send to Maria" opens your phone's share sheet with a ready-made message, by text, WhatsApp or email. From the reminder, "Follow up" prepares a short nudge. No access to your contacts.
+
+YOUR BALANCE AND WEEKLY REVIEW
+The "Your week" card shows how much you got done ahead of time, and the balance screen compares your last 5 weeks. Every Sunday (or the day you choose), the weekly review guides you in 5 minutes: sort "Someday", pick up to 3 starred priorities and check in on handed-off tasks.
 
 ACT FROM THE NOTIFICATION
 Mark a task as done or snooze it for an hour without opening the app. Quiet hours (10 pm – 8 am by default) hold reminders back so they don't wake you up.
 
-STAY FOCUSED
-Start a timer on a task and work in focused sessions. A Do task that has been waiting too long is highlighted, with buttons to snooze it or move it.
-
 FAST, EVERY DAY
 • Swipe a task right to complete it, left to delete it.
 • Made a mistake? The Undo button fixes it right away.
-• Move a task to another box in two taps.
+• A timer to work in focused sessions.
+• Confetti when you complete a task (can be turned off).
 • A readable dark theme that is easy on the eyes at night.
 
 SIMPLE AND PRIVATE
-No account needed: your tasks are stored only on your phone, and the app works offline. DoFirst is available in English and French.
+No account needed, and the app works offline. Your tasks stay on your phone, and in your device's Google backup if it's turned on. Export a backup whenever you like and restore it on a new phone. DoFirst is available in English and French.
 
 The Eisenhower Matrix won't do your tasks for you. But it helps you pick the ones that deserve your energy today. Install DoFirst and do what matters first.
