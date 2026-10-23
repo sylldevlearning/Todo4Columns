@@ -393,6 +393,27 @@ describe("« Annuler le dernier import »", () => {
     expect(await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY)).not.toBeNull();
   });
 
+  it("échec d'écriture pendant l'import : la copie de secours est supprimée", async () => {
+    await launch();
+    const multiSet = AsyncStorage.multiSet as jest.Mock;
+    const original = multiSet.getMockImplementation()!;
+    // Dans le mock, setItem passe aussi par multiSet : la copie de secours réussit (1er appel),
+    // l'écriture des données importées échoue (2e appel)
+    multiSet.mockImplementationOnce(original).mockImplementationOnce(() => Promise.reject(new Error("disque plein")));
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      pickFile(validFile(Date.now()));
+      await act(() => backup.importData());
+      await pressAlertButton("Remplacer");
+    } finally {
+      multiSet.mockImplementation(original);
+    }
+    expect(alerts.at(-1)).toMatchObject({ title: "Import impossible" });
+    expect(await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY)).toBeNull();
+    expect(backup.canUndoImport).toBe(false);
+    expect(state.tasks.map((t) => t.id)).toEqual(["old"]);
+  });
+
   it("copie illisible : message clair, rien n'est modifié", async () => {
     await AsyncStorage.setItem(PRE_IMPORT_BACKUP_KEY, "{abîmée");
     await launch();

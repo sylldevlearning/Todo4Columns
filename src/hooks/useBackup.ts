@@ -54,11 +54,15 @@ export function useBackup() {
 
   // Copie de secours, écriture, puis remplacement en mémoire (notifications reprogrammées)
   const apply = async (backup: BackupContent) => {
+    let copied = false;
     try {
       await savePreImportCopy(Date.now());
+      copied = true;
       await writeImported(backup);
     } catch (e) {
       console.warn("Erreur import :", e);
+      // Aucun import n'a eu lieu : la copie ne doit pas proposer « Annuler le dernier import »
+      if (copied) await removePreImportCopy().catch(() => {});
       Alert.alert(t.backup.importErrorTitle, t.backup.importErrorBody);
       return;
     }
