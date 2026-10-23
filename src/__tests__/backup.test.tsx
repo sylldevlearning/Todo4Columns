@@ -125,7 +125,7 @@ const validFile = (createdAt: number) =>
         tasks: importedTasks,
         settings: { ...DEFAULT_SETTINGS, quietHoursStart: "21:00", weeklyReview: false, onboardingDone: true },
         completions: [{ date: Date.now() - HOUR, category: "INU" }],
-        reviewWeeks: [123],
+        reviewWeeks: ["2026-10-12"],
       },
       createdAt
     )
@@ -134,7 +134,7 @@ const validFile = (createdAt: number) =>
 describe("export", () => {
   it("fichier complet : tâches, réglages, journal et revues, ouvert dans le partage", async () => {
     await saveLog([{ date: Date.now() - HOUR, category: "UI" }]);
-    await AsyncStorage.setItem(REVIEW_LOG_KEY, JSON.stringify({ schemaVersion: 1, weeks: [42] }));
+    await AsyncStorage.setItem(REVIEW_LOG_KEY, JSON.stringify({ schemaVersion: 1, weeks: ["2026-10-19"] }));
     await launch();
 
     await act(() => backup.exportData());
@@ -151,7 +151,7 @@ describe("export", () => {
     expect(file.tasks.tasks[0]).toMatchObject({ id: "old", title: "Ancienne tâche", notificationIds: [] });
     expect(file.settings.settings).toMatchObject({ doNagInterval: 30 });
     expect(file.completionLog).toEqual([{ date: expect.any(Number), category: "UI" }]);
-    expect(file.reviewWeeks).toEqual([42]);
+    expect(file.reviewWeeks).toEqual(["2026-10-19"]);
     // Le fichier exporté se réimporte tel quel
     expect(parseBackup(files.get(uri)!).ok).toBe(true);
   });
@@ -201,7 +201,7 @@ describe("import", () => {
     expect(state.completions).toEqual([{ date: expect.any(Number), category: "INU" }]);
     expect(actions.getSettings().quietHoursStart).toBe("21:00");
     expect((await loadSettings()).quietHoursStart).toBe("21:00");
-    expect(await loadReviewWeeks()).toEqual([123]);
+    expect(await loadReviewWeeks()).toEqual(["2026-10-12"]);
     expect(JSON.parse((await AsyncStorage.getItem(COMPLETION_LOG_KEY))!).entries).toHaveLength(1);
     expect(alerts.at(-1)).toMatchObject({ title: "Sauvegarde importée", message: "2 tâches restaurées." });
 

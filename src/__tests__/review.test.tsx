@@ -7,7 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import MatrixScreen from "../../app/index";
 import ReviewScreen from "../../app/review";
 import SettingsScreen from "../../app/settings";
-import { addWeeks, startOfWeek } from "../balance";
+import { addWeeks, startOfWeek, weekKey } from "../balance";
 import MatrixGrid from "../components/MatrixGrid";
 import { useTasks } from "../hooks/useTasks";
 import { serializeTasks } from "../migrations";
@@ -33,16 +33,19 @@ const at = (y: number, m: number, d: number, h = 12) => new Date(y, m - 1, d, h)
 
 describe("priorités de la semaine", () => {
   it("du lundi au jeudi, pour la semaine en cours ; à partir du vendredi, pour la suivante", () => {
-    const week = at(2026, 10, 19, 0);
-    expect(priorityTargetWeek(at(2026, 10, 19, 9))).toBe(week); // lundi
-    expect(priorityTargetWeek(at(2026, 10, 22, 20))).toBe(week); // jeudi
-    expect(priorityTargetWeek(at(2026, 10, 23))).toBe(at(2026, 10, 26, 0)); // vendredi
-    expect(priorityTargetWeek(at(2026, 10, 25, 18))).toBe(at(2026, 10, 26, 0)); // dimanche 18 h
+    // Semaine désignée par la date locale de son lundi
+    expect(priorityTargetWeek(at(2026, 10, 19, 9))).toBe("2026-10-19"); // lundi
+    expect(priorityTargetWeek(at(2026, 10, 22, 20))).toBe("2026-10-19"); // jeudi
+    expect(priorityTargetWeek(at(2026, 10, 23))).toBe("2026-10-26"); // vendredi
+    expect(priorityTargetWeek(at(2026, 10, 25, 18))).toBe("2026-10-26"); // dimanche 18 h
+    // Changement de mois et d'année
+    expect(priorityTargetWeek(at(2026, 12, 31))).toBe("2026-12-28");
+    expect(priorityTargetWeek(at(2027, 1, 2))).toBe("2027-01-04");
   });
 
   it("l'étoile s'affiche jusqu'à la fin de la semaine visée, puis expire d'elle-même", () => {
     // Choisie le dimanche 25 à 18 h pour la semaine du lundi 26
-    const task = makeTask({ category: "INU", priorityWeek: at(2026, 10, 26, 0) });
+    const task = makeTask({ category: "INU", priorityWeek: "2026-10-26" });
     expect(isPriority(task, at(2026, 10, 25, 18))).toBe(true); // dès le choix
     expect(isPriority(task, at(2026, 10, 28))).toBe(true); // pendant la semaine
     expect(isPriority(task, at(2026, 11, 1, 23))).toBe(true); // dimanche soir
@@ -51,7 +54,7 @@ describe("priorités de la semaine", () => {
 
   it("pas d'étoile sur une tâche terminée, archivée ou sans priorité", () => {
     const now = at(2026, 10, 21);
-    const week = startOfWeek(now);
+    const week = weekKey(now);
     expect(isPriority(makeTask({ priorityWeek: week, isDone: true }), now)).toBe(false);
     expect(isPriority(makeTask({ priorityWeek: week, archivedAt: 1 }), now)).toBe(false);
     expect(isPriority(makeTask({ priorityWeek: null }), now)).toBe(false);
@@ -60,11 +63,12 @@ describe("priorités de la semaine", () => {
 
   it("l'étoile apparaît dans la grille, pas celle d'une semaine passée", async () => {
     const week = startOfWeek(Date.now());
+    const key = (n: number) => weekKey(addWeeks(week, n));
     await render(
       <MatrixGrid
         tasks={[
-          makeTask({ id: "a", title: "Préparer le budget", category: "INU", priorityWeek: week }),
-          makeTask({ id: "b", title: "Ancienne priorité", category: "INU", priorityWeek: addWeeks(week, -1) }),
+          makeTask({ id: "a", title: "Préparer le budget", category: "INU", priorityWeek: key(0) }),
+          makeTask({ id: "b", title: "Ancienne priorité", category: "INU", priorityWeek: key(-1) }),
         ]}
         onOpenQuadrant={() => {}}
       />
@@ -73,13 +77,14 @@ describe("priorités de la semaine", () => {
   });
 
   it("le choix remplace les priorités en cours, sans toucher au départ des relances", async () => {
-    const week = startOfWeek(Date.now());
+    const week = weekKey(Date.now());
+    const twoWeeksAgo = weekKey(addWeeks(startOfWeek(Date.now()), -2));
     await AsyncStorage.setItem(
       STORAGE_KEY,
       serializeTasks([
         makeTask({ id: "a", category: "INU", updatedAt: 5 }),
         makeTask({ id: "b", category: "INU", updatedAt: 6, priorityWeek: week }),
-        makeTask({ id: "c", category: "INU", updatedAt: 7, priorityWeek: addWeeks(week, -2) }),
+        makeTask({ id: "c", category: "INU", updatedAt: 7, priorityWeek: twoWeeksAgo }),
       ])
     );
     const { result } = await renderHook(() => useTasks());
@@ -90,7 +95,7 @@ describe("priorités de la semaine", () => {
     expect(byId.a).toMatchObject({ priorityWeek: week, updatedAt: 5 });
     expect(byId.b).toMatchObject({ priorityWeek: null, updatedAt: 6 });
     // Une priorité déjà expirée reste telle quelle (elle ne s'affiche plus)
-    expect(byId.c.priorityWeek).toBe(addWeeks(week, -2));
+    expect(byId.c.priorityWeek).toBe(twoWeeksAgo);
   });
 });
 
@@ -99,7 +104,7 @@ describe("série de revues", () => {
 
   it("compte les semaines d'affilée, depuis cette semaine ou la précédente", () => {
     const now = at(2026, 10, 22);
-    const w = (n: number) => addWeeks(startOfWeek(now), n);
+    const w = (n: number) => weekKey(addWeeks(startOfWeek(now), n));
     expect(reviewStreak([], now)).toBe(0);
     expect(reviewStreak([w(0)], now)).toBe(1);
     expect(reviewStreak([w(0), w(-1), w(-2), w(-4)], now)).toBe(3);
@@ -214,7 +219,7 @@ describe("parcours de la revue", () => {
     expect(screen.getByText("Ton équilibre cette semaine")).toBeOnTheScreen();
     expect(mockCelebrate).toHaveBeenCalledWith("INU");
     expect(await screen.findByText("1 semaine de revue d'affilée")).toBeOnTheScreen();
-    expect(await loadReviewWeeks()).toEqual([startOfWeek(Date.now())]);
+    expect(await loadReviewWeeks()).toEqual([weekKey(Date.now())]);
 
     await fireEvent.press(screen.getByRole("button", { name: "Terminer" }));
     expect(screen.getByRole("header", { name: "Ma matrice" })).toBeOnTheScreen();
@@ -242,7 +247,7 @@ describe("parcours de la revue", () => {
 
   it("étapes vides : un message, et les priorités en cours sont présélectionnées", async () => {
     await launch(
-      [makeTask({ id: "p1", title: "Préparer le budget", category: "INU", priorityWeek: startOfWeek(Date.now()) })],
+      [makeTask({ id: "p1", title: "Préparer le budget", category: "INU", priorityWeek: weekKey(Date.now()) })],
       "/review"
     );
     expect(screen.getByText("Rien dans « Si j'ai le temps ». Passe à la suite.")).toBeOnTheScreen();

@@ -139,10 +139,10 @@ describe("parseStoredTasks", () => {
   });
 
   it("migre le format v5 : aucune répétition", () => {
-    const v5 = { schemaVersion: 5, tasks: [{ ...v1Tasks[1], updatedAt: 60, completedAt: 50, priorityWeek: 7 }] };
+    const v5 = { schemaVersion: 5, tasks: [{ ...v1Tasks[1], updatedAt: 60, completedAt: 50, priorityWeek: "2026-10-19" }] };
     const { tasks, fromVersion } = parseStoredTasks(JSON.stringify(v5), NOW);
     expect(fromVersion).toBe(5);
-    expect(tasks[0]).toMatchObject({ completedAt: 50, priorityWeek: 7, recurrence: null, nextOccurrenceId: null });
+    expect(tasks[0]).toMatchObject({ completedAt: 50, priorityWeek: "2026-10-19", recurrence: null, nextOccurrenceId: null });
   });
 
   it("migration vers la v6 : une tâche « Planifier » déjà en retard ne bascule pas à la mise à jour", () => {
@@ -187,7 +187,7 @@ describe("parseStoredTasks", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
     tasks[0].delegatedTo = "Marie";
     tasks[1].completedAt = 1234;
-    tasks[0].priorityWeek = 5678;
+    tasks[0].priorityWeek = "2026-10-19";
     tasks[1].dueAt = 99;
     tasks[1].recurrence = { freq: "yearly", month: 1, monthDay: 29 };
     tasks[1].nextOccurrenceId = "suivante";

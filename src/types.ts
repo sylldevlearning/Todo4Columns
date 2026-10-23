@@ -39,7 +39,7 @@ export interface Task extends ReminderFields {
   notificationIds: string[]; // notifications programmées pour cette tâche
   // Absents des tâches importées par la récupération : équivalent à null
   completedAt?: number | null; // date où la tâche a été terminée (timestamp en ms)
-  priorityWeek?: number | null; // priorité de la semaine qui commence à cette date (lundi 0 h)
+  priorityWeek?: string | null; // priorité de la semaine du lundi « 2026-10-19 » (date locale)
   nextOccurrenceId?: string | null; // tâche récurrente terminée : occurrence créée à sa place
   escalationSkippedFor?: number | null; // bascule en Faire annulée pour cette échéance
 }

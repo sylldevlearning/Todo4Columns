@@ -1,3 +1,4 @@
+import { isWeekKey } from "./balance";
 import { parseRecurrence } from "./recurrence";
 import { Category, Task } from "./types";
 
@@ -89,7 +90,7 @@ export function normalizeTask(
     completedAt: isDone
       ? numberOrNull(raw.completedAt) ?? (fromVersion < 5 ? updatedAt : null)
       : null,
-    priorityWeek: numberOrNull(raw.priorityWeek),
+    priorityWeek: isWeekKey(raw.priorityWeek) ? raw.priorityWeek : null,
     // Absents avant la v6 : pas de répétition
     recurrence: parseRecurrence(raw.recurrence),
     nextOccurrenceId: typeof raw.nextOccurrenceId === "string" ? raw.nextOccurrenceId : null,

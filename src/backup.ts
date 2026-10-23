@@ -12,6 +12,7 @@ import { parseStoredTasks, serializeTasks, TASKS_SCHEMA_VERSION } from "./migrat
 import { parseReviewWeeksJson, REVIEW_LOG_KEY } from "./review";
 import { parseSettings, SETTINGS_KEY, SETTINGS_SCHEMA_VERSION, Settings } from "./settings";
 import { STORAGE_KEY } from "./storage";
+import { isWeekKey } from "./balance";
 import { Category, Task } from "./types";
 
 // Sauvegarde manuelle : un fichier JSON avec les tâches, les réglages, le journal des fins de
@@ -30,7 +31,7 @@ export interface BackupFile {
   tasks: unknown; // contenu de TASKS_4COLS : { schemaVersion, tasks }
   settings: unknown; // contenu de SETTINGS : { schemaVersion, settings }
   completionLog: Completion[];
-  reviewWeeks: number[];
+  reviewWeeks: string[];
 }
 
 export interface BackupContent {
@@ -38,7 +39,7 @@ export interface BackupContent {
   tasks: Task[];
   settings: Settings;
   completions: Completion[];
-  reviewWeeks: number[];
+  reviewWeeks: string[];
 }
 
 export type ParsedBackup =
@@ -110,7 +111,7 @@ export function parseBackup(json: string, now: number = Date.now()): ParsedBacku
           CATEGORY_KEYS.includes(c.category as Category)
       );
   const reviewWeeks = Array.isArray(data.reviewWeeks)
-    ? data.reviewWeeks.filter((w): w is number => typeof w === "number" && Number.isFinite(w))
+    ? data.reviewWeeks.filter(isWeekKey)
     : [];
 
   return {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 import { archiveStaleTasks } from "../archive";
-import { startOfWeek } from "../balance";
+import { weekKey } from "../balance";
 import { Completion, loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
 import { t } from "../i18n";
 import { SNOOZE_MINUTES } from "../notifications/schedule";
@@ -651,13 +651,13 @@ export function useTasks(
 
   // Priorités de la semaine week : remplacent les priorités encore en cours.
   // updatedAt reste inchangé : il sert de point de départ aux relances.
-  const setWeekPriorities = (ids: string[], week: number) => {
+  const setWeekPriorities = (ids: string[], week: string) => {
     const chosen = new Set(ids);
-    const currentWeek = startOfWeek(Date.now());
+    const currentWeek = weekKey(Date.now());
     setTasks((prev) =>
       prev.map((t) => {
         if (chosen.has(t.id)) return t.priorityWeek === week ? t : { ...t, priorityWeek: week };
-        const active = typeof t.priorityWeek === "number" && t.priorityWeek >= currentWeek;
+        const active = typeof t.priorityWeek === "string" && t.priorityWeek >= currentWeek;
         return active ? { ...t, priorityWeek: null } : t;
       })
     );

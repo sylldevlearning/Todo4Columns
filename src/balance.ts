@@ -37,6 +37,20 @@ export function addWeeks(weekStart: number, n: number): number {
   return d.getTime();
 }
 
+// Semaine désignée par la date locale de son lundi, « 2026-10-19 » : la même quel que soit le
+// fuseau horaire (un horodatage de lundi 0 h à Paris n'est pas un lundi 0 h à New York).
+// L'ordre alphabétique de ces dates est l'ordre chronologique.
+export type WeekKey = string;
+export const WEEK_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+export function weekKey(ts: number): WeekKey {
+  const d = new Date(startOfWeek(ts));
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+export const isWeekKey = (v: unknown): v is WeekKey => typeof v === "string" && WEEK_KEY_PATTERN.test(v);
+
 // Tâches terminées entre from (inclus) et to (exclu), par quadrant, d'après le journal
 export function countCompleted(log: Completion[], from: number, to: number): Counts {
   const counts = emptyCounts();
