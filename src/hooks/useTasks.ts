@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, AppState } from "react-native";
 import { archiveStaleTasks } from "../archive";
 import { startOfWeek } from "../balance";
+import { Completion, loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
 import { t } from "../i18n";
 import { SNOOZE_MINUTES } from "../notifications/schedule";
 import { defaultNotifier, Notifier } from "../notifications/service";
@@ -105,17 +106,53 @@ export function useTasks(
     });
   };
 
-  // Charger les tâches sauvegardées au démarrage
+  // ---- Journal des fins de tâches (bilan) ----
+  const [completions, setCompletions] = useState<Completion[]>([]);
+  // Journal lu (ou créé) : avant, rien n'est écrit pour ne pas écraser celui qui existe
+  const logReadyRef = useRef(false);
+  // Tâches lors du dernier passage, pour repérer celles qui viennent d'être terminées ou rouvertes
+  const loggedTasksRef = useRef<Task[] | null>(null);
+
+  // Charger les tâches sauvegardées au démarrage, puis le journal des fins de tâches
   useEffect(() => {
     (async () => {
+      let loaded: Task[];
       try {
-        setTasks(await loadTasks());
+        loaded = await loadTasks();
+        setTasks(loaded);
         setIsLoaded(true);
       } catch (e) {
         console.warn("Erreur récupération tâches :", e);
+        return;
+      }
+      try {
+        const now = Date.now();
+        const saved = await loadLog();
+        // Premier lancement avec le journal : rempli une seule fois avec les tâches terminées
+        const log = pruneLog(saved ?? seedLog(loaded, now), now);
+        if (saved === null || log !== saved) await saveLog(log);
+        logReadyRef.current = true;
+        setCompletions((current) => [...log, ...current]);
+      } catch (e) {
+        console.warn("Erreur journal des tâches terminées :", e);
       }
     })();
   }, []);
+
+  // Tâche terminée : ajoutée au journal ; rouverte (« Annuler ») : retirée
+  useEffect(() => {
+    if (!isLoaded) return;
+    const previous = loggedTasksRef.current;
+    loggedTasksRef.current = tasks;
+    if (previous === null || previous === tasks) return;
+    setCompletions((log) => pruneLog(updateLog(log, previous, tasks), Date.now()));
+  }, [tasks, isLoaded]);
+
+  useEffect(() => {
+    if (logReadyRef.current) {
+      saveLog(completions).catch((e) => console.warn("Erreur sauvegarde journal :", e));
+    }
+  }, [completions]);
 
   // ---- Sauvegarde ----
   // Liste à écrire et écriture programmée
@@ -431,6 +468,7 @@ export function useTasks(
   return {
     tasks,
     isLoaded,
+    completions,
     addTask,
     updateTask,
     moveTask,

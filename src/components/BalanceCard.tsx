@@ -4,18 +4,17 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { anticipated, lastSevenDays, MIN_FOR_BALANCE, totalOf } from "../balance";
 import { t } from "../i18n";
-import { sameItems } from "../store/selectableStore";
 import { TasksState, useTasksSelector } from "../store/TasksContext";
 import { colors, fonts } from "../theme";
 import BalanceBar from "./BalanceBar";
 import InfoButton from "./InfoButton";
 
 // Seules les tâches terminées comptent : en ajouter ou en modifier d'autres ne re-rend pas la carte
-const selectCompleted = ({ tasks }: TasksState) => tasks.filter((t) => t.isDone);
+const selectCompletions = ({ completions }: TasksState) => completions;
 
 // Carte « Ta semaine » de la matrice : équilibre des 7 derniers jours ; un appui ouvre le bilan
 export default function BalanceCard() {
-  const completed = useTasksSelector(selectCompleted, sameItems);
+  const completed = useTasksSelector(selectCompletions);
   const counts = lastSevenDays(completed, Date.now());
   const total = totalOf(counts);
   const enough = total >= MIN_FOR_BALANCE;

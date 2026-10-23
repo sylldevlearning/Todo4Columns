@@ -26,7 +26,7 @@ const openIn = (category: Category) => ({ tasks }: TasksState) =>
 const selectSomeday = openIn("NDNI");
 const selectPlanned = openIn("INU");
 const selectDelegated = openIn("UDI");
-const selectCompleted = ({ tasks }: TasksState) => tasks.filter((t) => t.isDone);
+const selectCompletions = ({ completions }: TasksState) => completions;
 
 // Choix unique parmi quelques options, pour une tâche
 function Choices<T extends string>({
@@ -78,7 +78,7 @@ export default function ReviewScreen() {
   const someday = useTasksSelector(selectSomeday, sameItems);
   const planned = useTasksSelector(selectPlanned, sameItems);
   const delegated = useTasksSelector(selectDelegated, sameItems);
-  const completed = useTasksSelector(selectCompleted, sameItems);
+  const completed = useTasksSelector(selectCompletions);
   const isLoaded = useTasksSelector(({ isLoaded }) => isLoaded);
 
   const [step, setStep] = useState(0); // 0 à 2, puis STEPS pour le résumé

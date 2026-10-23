@@ -58,18 +58,23 @@ describe("calcul de l'équilibre", () => {
     makeTask({ id: "i", category: "INU", isDone: true, completedAt: undefined }), // importée
   ];
 
+  // Journal des fins de tâches correspondant (les tâches sans date de fin n'y sont pas)
+  const log = tasks.flatMap((t) =>
+    t.isDone && typeof t.completedAt === "number" ? [{ date: t.completedAt, category: t.category }] : []
+  );
+
   it("compte les tâches terminées par quadrant, entre deux dates", () => {
     const week = startOfWeek(now);
-    expect(countCompleted(tasks, week, addWeeks(week, 1))).toEqual({ UI: 1, INU: 2, UDI: 0, NDNI: 0 });
+    expect(countCompleted(log, week, addWeeks(week, 1))).toEqual({ UI: 1, INU: 2, UDI: 0, NDNI: 0 });
   });
 
   it("carte « Ta semaine » : les 7 derniers jours glissants", () => {
     // Du jeudi 15 à 18 h au jeudi 22 à 18 h : sans la tâche du 14
-    expect(lastSevenDays(tasks, now)).toEqual({ UI: 1, INU: 2, UDI: 1, NDNI: 0 });
+    expect(lastSevenDays(log, now)).toEqual({ UI: 1, INU: 2, UDI: 1, NDNI: 0 });
   });
 
   it("bilan : la semaine en cours puis les 4 précédentes, même vides", () => {
-    const history = weeklyHistory(tasks, now);
+    const history = weeklyHistory(log, now);
     expect(history.map((w) => w.start)).toEqual([
       at(2026, 10, 19, 0),
       at(2026, 10, 12, 0),

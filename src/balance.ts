@@ -1,4 +1,5 @@
-import { Category, Task } from "./types";
+import type { Completion } from "./completionLog";
+import { Category } from "./types";
 
 // Équilibre des tâches terminées entre les 4 quadrants. Semaines du lundi 0 h au lundi suivant,
 // en heure locale (calculées par jour du calendrier : le passage à l'heure d'été ne décale rien).
@@ -36,26 +37,25 @@ export function addWeeks(weekStart: number, n: number): number {
   return d.getTime();
 }
 
-// Tâches terminées entre from (inclus) et to (exclu), par quadrant
-export function countCompleted(tasks: Task[], from: number, to: number): Counts {
+// Tâches terminées entre from (inclus) et to (exclu), par quadrant, d'après le journal
+export function countCompleted(log: Completion[], from: number, to: number): Counts {
   const counts = emptyCounts();
-  for (const task of tasks) {
-    const at = task.completedAt;
-    if (task.isDone && typeof at === "number" && at >= from && at < to) counts[task.category]++;
+  for (const { date, category } of log) {
+    if (date >= from && date < to) counts[category]++;
   }
   return counts;
 }
 
 // Carte « Ta semaine » : les 7 derniers jours glissants
-export const lastSevenDays = (tasks: Task[], now: number): Counts =>
-  countCompleted(tasks, now - 7 * DAY_MS, now + 1);
+export const lastSevenDays = (log: Completion[], now: number): Counts =>
+  countCompleted(log, now - 7 * DAY_MS, now + 1);
 
 // Semaine en cours, puis les semaines précédentes (de la plus récente à la plus ancienne)
-export function weeklyHistory(tasks: Task[], now: number, weeks = HISTORY_WEEKS): WeekCounts[] {
+export function weeklyHistory(log: Completion[], now: number, weeks = HISTORY_WEEKS): WeekCounts[] {
   const current = startOfWeek(now);
   return Array.from({ length: weeks + 1 }, (_, i) => {
     const start = addWeeks(current, -i);
-    return { start, counts: countCompleted(tasks, start, addWeeks(start, 1)) };
+    return { start, counts: countCompleted(log, start, addWeeks(start, 1)) };
   });
 }
 

@@ -11,6 +11,7 @@ import React, {
 import { useTasks } from "../hooks/useTasks";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
+import { Completion } from "../completionLog";
 import { Task } from "../types";
 import { createSelectableStore, SelectableStore, useStoreSelector } from "./selectableStore";
 
@@ -22,9 +23,10 @@ import { createSelectableStore, SelectableStore, useStoreSelector } from "./sele
 export interface TasksState {
   tasks: Task[];
   isLoaded: boolean;
+  completions: Completion[]; // journal des fins de tâches (bilan)
 }
 
-type StoreActions = Omit<ReturnType<typeof useTasks>, "tasks" | "isLoaded">;
+type StoreActions = Omit<ReturnType<typeof useTasks>, "tasks" | "isLoaded" | "completions">;
 
 export type TaskActions = StoreActions & {
   updateSettings: (settings: Settings) => void;
@@ -78,14 +80,18 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   const store = useTasks(settings, undefined, settingsReady);
 
   const [tasksStore] = useState(() =>
-    createSelectableStore<TasksState>({ tasks: store.tasks, isLoaded: store.isLoaded })
+    createSelectableStore<TasksState>({
+      tasks: store.tasks,
+      isLoaded: store.isLoaded,
+      completions: store.completions,
+    })
   );
   const [settingsStore] = useState(() => createSelectableStore(settings));
 
   // Publié avant l'affichage : les écrans abonnés se mettent à jour dans le même passage
   useLayoutEffect(() => {
-    tasksStore.set({ tasks: store.tasks, isLoaded: store.isLoaded });
-  }, [tasksStore, store.tasks, store.isLoaded]);
+    tasksStore.set({ tasks: store.tasks, isLoaded: store.isLoaded, completions: store.completions });
+  }, [tasksStore, store.tasks, store.isLoaded, store.completions]);
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
 
   // Dernières versions des fonctions, appelées par les actions à identité fixe

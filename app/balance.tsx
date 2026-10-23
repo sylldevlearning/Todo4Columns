@@ -16,11 +16,10 @@ import InfoButton from "../src/components/InfoButton";
 import { CATEGORIES } from "../src/constants/categories";
 import { formatWeekStart } from "../src/format";
 import { t } from "../src/i18n";
-import { sameItems } from "../src/store/selectableStore";
 import { TasksState, useTasksSelector } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
 
-const selectCompleted = ({ tasks }: TasksState) => tasks.filter((t) => t.isDone);
+const selectCompletions = ({ completions }: TasksState) => completions;
 
 // Hauteur de la colonne de la semaine la plus chargée
 const COLUMN_HEIGHT = 140;
@@ -77,7 +76,7 @@ function WeekColumns({ weeks }: { weeks: WeekCounts[] }) {
 
 // Écran « Bilan » : la semaine en cours, puis les 4 semaines précédentes
 export default function BalanceScreen() {
-  const completed = useTasksSelector(selectCompleted, sameItems);
+  const completed = useTasksSelector(selectCompletions);
   const [current, ...previous] = weeklyHistory(completed, Date.now());
   const total = totalOf(current.counts);
 
