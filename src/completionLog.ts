@@ -79,7 +79,11 @@ export function updateLog(log: Completion[], previous: Task[], next: Task[]): Co
     const now = typeof task.completedAt === "number" ? task.completedAt : null;
     if (was === now) continue;
     if (was !== null) {
-      const index = result.findIndex((c) => c.date === was);
+      // Date ET catégorie : deux tâches terminées dans la même milliseconde (« Fait » en série
+      // dans la revue) ne se confondent pas. Repli sur la date seule si la tâche terminée a
+      // changé de case depuis.
+      const exact = result.findIndex((c) => c.date === was && c.category === old.category);
+      const index = exact !== -1 ? exact : result.findIndex((c) => c.date === was);
       if (index !== -1) result = [...result.slice(0, index), ...result.slice(index + 1)];
     }
     if (now !== null) result = [...result, { date: now, category: task.category }];

@@ -37,6 +37,18 @@ describe("mise à jour du journal", () => {
     expect(updateLog([other, { date: 1000, category: "INU" }], [done], [open])).toEqual([other]);
   });
 
+  it("« Annuler » compare la date et la catégorie (deux fins dans la même milliseconde)", () => {
+    const ui: Completion = { date: 1000, category: "UI" };
+    const inu: Completion = { date: 1000, category: "INU" };
+    // La tâche « Planifier » est rouverte : seule son entrée part, celle de « Faire » reste
+    expect(updateLog([ui, inu], [done], [open])).toEqual([ui]);
+  });
+
+  it("tâche terminée puis déplacée : son entrée part quand même", () => {
+    const moved = { ...done, category: "UDI" as const };
+    expect(updateLog([{ date: 1000, category: "INU" }], [moved], [{ ...open, category: "UDI" }])).toEqual([]);
+  });
+
   it("supprimer ou restaurer une tâche terminée ne change rien", () => {
     const log: Completion[] = [{ date: 1000, category: "INU" }];
     expect(updateLog(log, [done], [])).toBe(log);
