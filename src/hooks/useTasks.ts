@@ -72,6 +72,9 @@ export function useTasks(
   const [isLoaded, setIsLoaded] = useState(false);
   // Lecture impossible : l'app affiche un message et bloque la saisie (rien ne serait enregistré)
   const [loadError, setLoadError] = useState(false);
+  // App à l'écran : les minuteries (fin d'un minuteur, échéance suivante) ne tournent pas en
+  // arrière-plan ; tout est revérifié au retour
+  const [foreground, setForeground] = useState(isForeground(AppState.currentState));
   // Dernière liste rendue, pour connaître la position des tâches supprimées
   const tasksRef = useRef(tasks);
   tasksRef.current = tasks;
@@ -297,8 +300,10 @@ export function useTasks(
   }, []);
 
   // ---- Expiration des timers ----
-  // Un seul setTimeout calé sur le prochain timer : l'état ne change que lorsqu'un timer expire
+  // Un seul setTimeout calé sur le prochain timer : l'état ne change que lorsqu'un timer expire.
+  // Arrêté en arrière-plan (la notification du minuteur prévient) ; revérifié au retour.
   useEffect(() => {
+    if (!foreground) return;
     const ends = tasks
       .map((t) => t.timerEnd)
       .filter((end): end is number => end !== null);
@@ -338,7 +343,7 @@ export function useTasks(
       Math.max(0, Math.min(nextEnd - Date.now(), MAX_TIMEOUT_MS))
     );
     return () => clearTimeout(timeout);
-  }, [tasks]);
+  }, [tasks, foreground]);
 
   // Applique une modification à une seule tâche.
   // updatedAt sert de point de départ aux relances : un report en cours n'a plus lieu d'être.
@@ -427,8 +432,6 @@ export function useTasks(
   const [escalation, setEscalation] = useState<Escalation | null>(null);
   // Fait avancer la vérification suivante (délai plafonné à MAX_TIMEOUT_MS)
   const [escalationTick, setEscalationTick] = useState(0);
-  // App à l'écran : la minuterie de l'échéance suivante ne tourne pas en arrière-plan
-  const [foreground, setForeground] = useState(isForeground(AppState.currentState));
 
   // Passe en Faire les tâches « Planifier » dont l'échéance est dépassée. Les relances partent
   // de maintenant ; les notifications sont reprogrammées selon la nouvelle catégorie.

@@ -44,7 +44,8 @@ afterEach(() => {
 });
 
 describe("bascule à l'échéance", () => {
-  it("aucune minuterie en arrière-plan ; vérification au retour dans l'app", async () => {
+  // Comportement seulement ; le comptage des minuteries est vérifié plus bas
+  it("pas de bascule en arrière-plan ; vérification au retour dans l'app", async () => {
     await AsyncStorage.setItem(
       STORAGE_KEY,
       serializeTasks([makeTask({ id: "p", category: "INU", dueAt: Date.now() + 300 })])
@@ -59,6 +60,44 @@ describe("bascule à l'échéance", () => {
 
     await emit("active");
     await waitFor(() => expect(result.current.tasks[0].category).toBe("UI"));
+    await unmount();
+  });
+});
+
+describe("aucune minuterie en arrière-plan", () => {
+  afterEach(() => jest.useRealTimers());
+
+  it("ni pour l'échéance suivante (bascule), ni pour la fin d'un minuteur", async () => {
+    // Minuteries simulées dès le départ : on peut compter celles qui restent programmées
+    jest.useFakeTimers();
+    await AsyncStorage.setItem(
+      STORAGE_KEY,
+      serializeTasks([
+        makeTask({ id: "p", category: "INU", dueAt: Date.now() + 60 * 60 * 1000 }),
+        makeTask({ id: "m", category: "UI", timerEnd: Date.now() + 30 * 60 * 1000 }),
+      ])
+    );
+    const { result, unmount } = await renderHook(() => useTasks(SETTINGS));
+    await waitFor(() => expect(result.current.isLoaded).toBe(true));
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(SAVE_DELAY_MS + 100);
+    });
+    // À l'écran : la minuterie de l'échéance et celle du minuteur sont programmées
+    expect(jest.getTimerCount()).toBeGreaterThanOrEqual(2);
+
+    // Laisse React appliquer le changement d'état (effets et nettoyages)
+    const settle = () => act(async () => {
+      await jest.advanceTimersByTimeAsync(0);
+    });
+
+    await emit("background");
+    await settle();
+    expect(jest.getTimerCount()).toBe(0);
+
+    // Retour : les deux minuteries reprennent
+    await emit("active");
+    await settle();
+    expect(jest.getTimerCount()).toBeGreaterThanOrEqual(2);
     await unmount();
   });
 });
