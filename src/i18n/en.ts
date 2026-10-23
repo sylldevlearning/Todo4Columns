@@ -260,6 +260,11 @@ export const en: Translations = {
         body: "A task left undone in “Someday” for 7 days moves to the archive. Your matrix stays light, and you can restore it here at any time.",
         example: "an idea added on Monday and not done is archived the following Monday.",
       },
+      balance: {
+        title: "Your balance",
+        body: "The bar shows which boxes the tasks you completed came from. Staying ahead means doing “Schedule” tasks before they become urgent: the bigger that share, the fewer emergencies you have.",
+        example: "“6 of 10 tasks done ahead of time”: 6 of the 10 tasks you completed came from “Schedule”.",
+      },
       celebrations: {
         title: "Celebration animations",
         body: "When you complete a task, confetti and a short message appear. Turn them off if you prefer a calmer app.",
@@ -289,6 +294,23 @@ export const en: Translations = {
     sampleTask: "Send the report",
     swipeRight: "Complete",
     swipeLeft: "Delete",
+  },
+
+  balance: {
+    cardTitle: "Your week",
+    anticipated: (n, total) => `${n} of ${total} task${s(total)} done ahead of time`,
+    notEnough: "Complete a few tasks to see your balance.",
+    open: "Opens the review of your balance",
+    title: "Balance",
+    thisWeek: "This week",
+    previousWeeks: "The previous 4 weeks",
+    weekOf: (date) => `Week of ${date}`,
+    done: (n) => `${n} task${s(n)} done`,
+    empty: "No tasks completed",
+    barLabel: (parts) => `Tasks completed: ${parts}`,
+    part: (name, n) => `${name} ${n}`,
+    insight:
+      "The more you schedule, the fewer emergencies you have: a “Schedule” task done in time never becomes urgent.",
   },
 
   howTo: {

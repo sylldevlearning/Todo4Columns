@@ -76,6 +76,7 @@ export default function RootLayout() {
               <Stack.Screen name="quadrant/[category]" />
               <Stack.Screen name="settings" />
               <Stack.Screen name="help" />
+              <Stack.Screen name="balance" />
               <Stack.Screen
                 name="task"
                 options={{

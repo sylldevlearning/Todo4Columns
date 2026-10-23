@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BalanceCard from "../src/components/BalanceCard";
 import Fab from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
@@ -35,6 +36,10 @@ export default function MatrixScreen() {
           label={t.common.settings}
           onPress={() => router.push("/settings")}
         />
+      </View>
+
+      <View style={styles.balance}>
+        <BalanceCard />
       </View>
 
       <View style={styles.grid}>
@@ -80,6 +85,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textMuted,
     marginTop: 2,
+  },
+  balance: {
+    paddingHorizontal: 12,
+    paddingBottom: 12,
   },
   grid: {
     flex: 1,

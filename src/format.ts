@@ -18,6 +18,11 @@ export function formatDue(ts: number): string {
   return `${capitalize(weekday)} ${day} · ${time}`;
 }
 
+// Début de semaine : « 13 oct. » / « Oct 13 »
+export function formatWeekStart(ts: number): string {
+  return new Date(ts).toLocaleDateString(t.locale, { day: "numeric", month: "short" });
+}
+
 // Durée lisible : « 45 min », « 1 h 20 », « 3 h », « 2 j » (« 2 d » en anglais)
 // round : "up" pour un délai à venir, "down" pour un temps écoulé
 export function formatDuration(ms: number, round: "up" | "down" = "down"): string {

@@ -266,6 +266,11 @@ export const fr = {
         body: "Une tâche restée 7 jours dans « Si j'ai le temps » sans être faite part dans les archives. Ta matrice reste légère, et tu peux la restaurer ici à tout moment.",
         example: "une idée ajoutée lundi et pas faite est archivée le lundi suivant.",
       },
+      balance: {
+        title: "Ton équilibre",
+        body: "La barre montre dans quelles cases étaient les tâches que tu as terminées. Anticiper, c'est faire les tâches « Planifier » avant qu'elles deviennent urgentes : plus cette part grandit, moins tu as d'urgences.",
+        example: "« 6 tâches sur 10 anticipées » : 6 des 10 tâches terminées venaient de « Planifier ».",
+      },
       celebrations: {
         title: "Animations de célébration",
         body: "Quand tu termines une tâche, des confettis et un petit mot s'affichent. Désactive-les si tu préfères une app plus sobre.",
@@ -297,6 +302,25 @@ export const fr = {
     sampleTask: "Rendre le dossier",
     swipeRight: "Terminer",
     swipeLeft: "Supprimer",
+  },
+
+  // Équilibre : carte « Ta semaine » et écran « Bilan »
+  balance: {
+    cardTitle: "Ta semaine",
+    anticipated: (n: number, total: number) =>
+      `${n} tâche${s(n)} sur ${total} anticipée${s(n)}`,
+    notEnough: "Termine quelques tâches pour voir ton équilibre.",
+    open: "Ouvre le bilan",
+    title: "Bilan",
+    thisWeek: "Cette semaine",
+    previousWeeks: "Les 4 semaines précédentes",
+    weekOf: (date: string) => `Semaine du ${date}`,
+    done: (n: number) => `${n} tâche${s(n)} terminée${s(n)}`,
+    empty: "Aucune tâche terminée",
+    barLabel: (parts: string) => `Tâches terminées : ${parts}`,
+    part: (name: string, n: number) => `${name} ${n}`,
+    insight:
+      "Plus tu planifies, moins tu as d'urgences : une tâche « Planifier » faite à temps ne devient jamais urgente.",
   },
 
   // Page « Comment ça marche »
