@@ -324,7 +324,7 @@ export const fr = {
       delegateSend: {
         title: "Envoyer la tâche",
         body: "Ouvre le partage de ton téléphone avec un message prêt à envoyer. Tu choisis l'appli (SMS, WhatsApp, mail…) et la personne : l'app n'a pas accès à tes contacts.",
-        example: "« Salut Marie, peux-tu t'occuper de : Compte rendu ? Merci ! »",
+        example: "Salut Marie, peux-tu t'occuper de « Compte rendu » ? Merci !",
       },
       backup: {
         title: "Sauvegarde",
@@ -438,7 +438,7 @@ export const fr = {
   delegation: {
     send: (name: string | null) => (name ? `Envoyer à ${name}` : "Envoyer"),
     message: (name: string | null, title: string, due: string | null) =>
-      `Salut${name ? ` ${name}` : ""}, peux-tu t'occuper de : ${title} ?${due ? ` (avant le ${due})` : ""} Merci !`,
+      `Salut${name ? ` ${name}` : ""}, peux-tu t'occuper de « ${title} »${due ? ` avant le ${due}` : ""} ? Merci !`,
     nudge: (name: string | null) => (name ? `Relancer ${name}` : "Relancer"),
     nudgeMessage: (title: string) => `Petit rappel : où en es-tu pour ${title} ?`,
   },

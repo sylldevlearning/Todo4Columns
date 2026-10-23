@@ -33,22 +33,22 @@ beforeEach(() => {
 describe("messages", () => {
   it("avec un nom et une échéance", () => {
     expect(delegationMessage({ title: "Compte rendu", delegatedTo: "Marie", dueAt: DUE })).toBe(
-      "Salut Marie, peux-tu t'occuper de : Compte rendu ? (avant le vendredi 23 octobre) Merci !"
+      "Salut Marie, peux-tu t'occuper de « Compte rendu » avant le vendredi 23 octobre ? Merci !"
     );
   });
 
   it("sans nom ni échéance", () => {
     expect(delegationMessage({ title: "Compte rendu", delegatedTo: null, dueAt: null })).toBe(
-      "Salut, peux-tu t'occuper de : Compte rendu ? Merci !"
+      "Salut, peux-tu t'occuper de « Compte rendu » ? Merci !"
     );
   });
 
   it("avec un nom, sans échéance ; sans nom, avec échéance", () => {
     expect(delegationMessage({ title: "Devis", delegatedTo: "Sam", dueAt: null })).toBe(
-      "Salut Sam, peux-tu t'occuper de : Devis ? Merci !"
+      "Salut Sam, peux-tu t'occuper de « Devis » ? Merci !"
     );
     expect(delegationMessage({ title: "Devis", delegatedTo: null, dueAt: DUE })).toBe(
-      "Salut, peux-tu t'occuper de : Devis ? (avant le vendredi 23 octobre) Merci !"
+      "Salut, peux-tu t'occuper de « Devis » avant le vendredi 23 octobre ? Merci !"
     );
   });
 
@@ -58,10 +58,10 @@ describe("messages", () => {
 
   it("en anglais", () => {
     expect(en.delegation.message("Maria", "Meeting notes", "Friday, October 23")).toBe(
-      "Hi Maria, could you take care of: Meeting notes? (before Friday, October 23) Thanks!"
+      "Hi Maria, could you take care of “Meeting notes” by Friday, October 23? Thanks!"
     );
     expect(en.delegation.message(null, "Meeting notes", null)).toBe(
-      "Hi, could you take care of: Meeting notes? Thanks!"
+      "Hi, could you take care of “Meeting notes”? Thanks!"
     );
     expect(en.delegation.nudgeMessage("Meeting notes")).toBe("Quick reminder: how's it going with Meeting notes?");
     expect(en.delegation.send(null)).toBe("Send");
@@ -76,7 +76,7 @@ describe("fiche « Déléguer » : « Envoyer »", () => {
 
     await fireEvent.press(screen.getByRole("button", { name: "Envoyer à Marie" }));
     expect(share).toHaveBeenCalledWith({
-      message: "Salut Marie, peux-tu t'occuper de : Compte rendu ? (avant le vendredi 23 octobre) Merci !",
+      message: "Salut Marie, peux-tu t'occuper de « Compte rendu » avant le vendredi 23 octobre ? Merci !",
     });
   });
 
@@ -86,7 +86,7 @@ describe("fiche « Déléguer » : « Envoyer »", () => {
 
     await fireEvent.changeText(screen.getByLabelText("Titre"), "Devis");
     await fireEvent.press(screen.getByRole("button", { name: "Envoyer" }));
-    expect(share).toHaveBeenCalledWith({ message: "Salut, peux-tu t'occuper de : Devis ? Merci !" });
+    expect(share).toHaveBeenCalledWith({ message: "Salut, peux-tu t'occuper de « Devis » ? Merci !" });
   });
 
   it("l'échéance facultative est enregistrée", async () => {

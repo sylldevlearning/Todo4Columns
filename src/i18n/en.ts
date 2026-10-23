@@ -316,7 +316,7 @@ export const en: Translations = {
       delegateSend: {
         title: "Send the task",
         body: "Opens your phone's share sheet with a ready-to-send message. You pick the app (text, WhatsApp, email…) and the person: the app has no access to your contacts.",
-        example: "“Hi Maria, could you take care of: Meeting notes? Thanks!”",
+        example: "Hi Maria, could you take care of “Meeting notes”? Thanks!",
       },
       backup: {
         title: "Backup",
@@ -424,7 +424,7 @@ export const en: Translations = {
   delegation: {
     send: (name) => (name ? `Send to ${name}` : "Send"),
     message: (name, title, due) =>
-      `Hi${name ? ` ${name}` : ""}, could you take care of: ${title}?${due ? ` (before ${due})` : ""} Thanks!`,
+      `Hi${name ? ` ${name}` : ""}, could you take care of “${title}”${due ? ` by ${due}` : ""}? Thanks!`,
     nudge: (name) => (name ? `Follow up with ${name}` : "Follow up"),
     nudgeMessage: (title) => `Quick reminder: how's it going with ${title}?`,
   },
