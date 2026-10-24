@@ -175,18 +175,33 @@ export default function SettingsForm({
       </Section>
 
       <Section title={t.settings.quietHours} info="quietHours">
-        <Text style={styles.hint}>{t.settings.quietHoursHint}</Text>
-        <TimeField
-          label={t.settings.start}
-          value={settings.quietHoursStart}
-          onChange={(v) => set("quietHoursStart", v)}
-        />
-        <View style={styles.separator} />
-        <TimeField
-          label={t.settings.end}
-          value={settings.quietHoursEnd}
-          onChange={(v) => set("quietHoursEnd", v)}
-        />
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t.settings.quietHoursToggle}</Text>
+          <Switch
+            accessibilityLabel={t.settings.quietHoursToggle}
+            value={settings.quietHoursEnabled}
+            onValueChange={(v) => set("quietHoursEnabled", v)}
+            trackColor={{ false: colors.border, true: doIt.color }}
+            thumbColor={colors.white}
+          />
+        </View>
+        {/* Horaires seulement quand la plage est activée */}
+        {settings.quietHoursEnabled && (
+          <>
+            <Text style={styles.hint}>{t.settings.quietHoursHint}</Text>
+            <TimeField
+              label={t.settings.start}
+              value={settings.quietHoursStart}
+              onChange={(v) => set("quietHoursStart", v)}
+            />
+            <View style={styles.separator} />
+            <TimeField
+              label={t.settings.end}
+              value={settings.quietHoursEnd}
+              onChange={(v) => set("quietHoursEnd", v)}
+            />
+          </>
+        )}
       </Section>
 
       {onOpenReview && (

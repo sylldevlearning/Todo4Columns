@@ -50,6 +50,12 @@ export function shiftOutOfQuietHours(ts: number, start: string, end: string): nu
   return shifted.getTime();
 }
 
+// Décalage selon les réglages : rien si la plage silencieuse est désactivée
+export const shiftForSettings = (ts: number, settings: Settings) =>
+  settings.quietHoursEnabled
+    ? shiftOutOfQuietHours(ts, settings.quietHoursStart, settings.quietHoursEnd)
+    : ts;
+
 // Relances « Faire » : updatedAt + k × intervalle, jusqu'au maximum si la répétition est active.
 // Un report (snoozedUntil) déplace la prochaine relance sans compter dans le maximum.
 function nagNotifications(task: Task, settings: Settings): ScheduledNotification[] {
@@ -65,9 +71,9 @@ function spaceOutOfQuietHours(
 ): ScheduledNotification[] {
   let last = -Infinity;
   return items.map((item) => {
-    let date = shiftOutOfQuietHours(item.date, settings.quietHoursStart, settings.quietHoursEnd);
+    let date = shiftForSettings(item.date, settings);
     if (date <= last) {
-      date = shiftOutOfQuietHours(last + interval, settings.quietHoursStart, settings.quietHoursEnd);
+      date = shiftForSettings(last + interval, settings);
     }
     last = date;
     return { ...item, date };
@@ -133,7 +139,7 @@ export function weeklyReviewTrigger(
   const [h, m] = settings.weeklyReviewTime.split(":").map(Number);
   date.setHours(h, m, 0, 0);
   const shifted = new Date(
-    shiftOutOfQuietHours(date.getTime(), settings.quietHoursStart, settings.quietHoursEnd)
+    shiftForSettings(date.getTime(), settings)
   );
   return { weekday: shifted.getDay() + 1, hour: shifted.getHours(), minute: shifted.getMinutes() };
 }
@@ -209,7 +215,7 @@ export function computeSchedule(
       date:
         item.type === "timer"
           ? item.date
-          : shiftOutOfQuietHours(item.date, settings.quietHoursStart, settings.quietHoursEnd),
+          : shiftForSettings(item.date, settings),
     }))
     .filter((item) => item.date > now)
     .sort((a, b) => a.date - b.date);

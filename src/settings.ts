@@ -10,6 +10,7 @@ export interface Settings {
   delegateFollowUp: number; // relance de la personne pour « Déléguer » (UDI), en minutes
   nagRepeat: boolean; // répéter la relance
   maxNags: number; // nombre maximum de relances
+  quietHoursEnabled: boolean; // plage silencieuse activée
   quietHoursStart: string; // début de la plage silencieuse, "HH:MM"
   quietHoursEnd: string; // fin de la plage silencieuse, "HH:MM"
   autoArchive: boolean; // archiver les tâches « Si j'ai le temps » (NDNI) restées 7 jours
@@ -27,6 +28,7 @@ export const DEFAULT_SETTINGS: Settings = {
   delegateFollowUp: 24 * 60, // demain
   nagRepeat: false,
   maxNags: 3,
+  quietHoursEnabled: false, // nouvelles installations : désactivée
   quietHoursStart: "22:00",
   quietHoursEnd: "08:00",
   autoArchive: false,
@@ -46,6 +48,7 @@ export const notificationSettingsKey = (s: Settings) =>
     s.delegateFollowUp,
     s.nagRepeat,
     s.maxNags,
+    s.quietHoursEnabled,
     s.quietHoursStart,
     s.quietHoursEnd,
     s.weeklyReview,
@@ -98,6 +101,8 @@ export function parseSettings(json: string | null): Settings {
       isPositiveNumber(s.maxNags) && Number.isInteger(s.maxNags)
         ? s.maxNags
         : DEFAULT_SETTINGS.maxNags,
+    // Absent des réglages enregistrés avant l'option : la plage était toujours active, elle le reste
+    quietHoursEnabled: typeof s.quietHoursEnabled === "boolean" ? s.quietHoursEnabled : true,
     quietHoursStart:
       typeof s.quietHoursStart === "string" && TIME_PATTERN.test(s.quietHoursStart)
         ? s.quietHoursStart
@@ -132,8 +137,17 @@ export function parseSettings(json: string | null): Settings {
   };
 }
 
+// Tâches enregistrées par une version précédente (clé de storage.ts, à ne pas modifier)
+const TASKS_KEY = "TASKS_4COLS";
+
 export async function loadSettings(): Promise<Settings> {
-  return parseSettings(await AsyncStorage.getItem(SETTINGS_KEY));
+  const json = await AsyncStorage.getItem(SETTINGS_KEY);
+  // Aucun réglage enregistré mais l'app était déjà installée (réglages jamais modifiés) : la
+  // plage silencieuse s'appliquait déjà, elle reste active. Nouvelle installation : désactivée.
+  if (json === null && (await AsyncStorage.getItem(TASKS_KEY)) !== null) {
+    return { ...DEFAULT_SETTINGS, quietHoursEnabled: true };
+  }
+  return parseSettings(json);
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {

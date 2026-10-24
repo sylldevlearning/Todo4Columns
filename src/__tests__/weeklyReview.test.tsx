@@ -36,11 +36,11 @@ describe("jour et heure de la notification de revue", () => {
   it("dans la plage silencieuse : décalée à sa fin, le lendemain si besoin", () => {
     // Samedi 23 h → dimanche 8 h
     expect(
-      weeklyReviewTrigger({ ...DEFAULT_SETTINGS, weeklyReviewDay: 6, weeklyReviewTime: "23:00" }, NOW)
+      weeklyReviewTrigger({ ...DEFAULT_SETTINGS, quietHoursEnabled: true, weeklyReviewDay: 6, weeklyReviewTime: "23:00" }, NOW)
     ).toEqual({ weekday: 1, hour: 8, minute: 0 });
     // Lundi 6 h 30 → lundi 8 h
     expect(
-      weeklyReviewTrigger({ ...DEFAULT_SETTINGS, weeklyReviewDay: 1, weeklyReviewTime: "06:30" }, NOW)
+      weeklyReviewTrigger({ ...DEFAULT_SETTINGS, quietHoursEnabled: true, weeklyReviewDay: 1, weeklyReviewTime: "06:30" }, NOW)
     ).toEqual({ weekday: 2, hour: 8, minute: 0 });
     // Sans plage silencieuse : l'heure choisie
     expect(

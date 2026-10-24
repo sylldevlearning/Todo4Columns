@@ -17,6 +17,7 @@ describe("settings", () => {
       delegateFollowUp: 1440,
       nagRepeat: false,
       maxNags: 3,
+      quietHoursEnabled: false,
       quietHoursStart: "22:00",
       quietHoursEnd: "08:00",
       autoArchive: false,
@@ -39,7 +40,8 @@ describe("settings", () => {
 
   it("présentation : pas encore vue pour les réglages enregistrés avant la 1.2", () => {
     const before = JSON.stringify({ schemaVersion: 1, settings: { doNagInterval: 30 } });
-    expect(parseSettings(before)).toEqual({ ...DEFAULT_SETTINGS, doNagInterval: 30 });
+    // (la plage silencieuse reste active pour les réglages enregistrés avant l'option)
+    expect(parseSettings(before)).toEqual({ ...DEFAULT_SETTINGS, doNagInterval: 30, quietHoursEnabled: true });
     expect(parseSettings(before).onboardingDone).toBe(false);
     const done = JSON.stringify({ schemaVersion: 1, settings: { onboardingDone: true } });
     expect(parseSettings(done).onboardingDone).toBe(true);
@@ -66,8 +68,40 @@ describe("settings", () => {
       schemaVersion: 1,
       settings: { doNagInterval: 30, maxNags: -1, quietHoursStart: "25:00" },
     });
-    expect(parseSettings(json)).toEqual({ ...DEFAULT_SETTINGS, doNagInterval: 30 });
+    expect(parseSettings(json)).toEqual({ ...DEFAULT_SETTINGS, doNagInterval: 30, quietHoursEnabled: true });
     expect(parseSettings("{pas du json")).toEqual(DEFAULT_SETTINGS);
+  });
+
+  it("plage silencieuse : désactivée pour une nouvelle installation", async () => {
+    expect(DEFAULT_SETTINGS.quietHoursEnabled).toBe(false);
+    expect(parseSettings(null).quietHoursEnabled).toBe(false);
+    expect((await loadSettings()).quietHoursEnabled).toBe(false);
+  });
+
+  it("plage silencieuse : les réglages déjà enregistrés restent intacts (active, mêmes horaires)", () => {
+    const saved = JSON.stringify({
+      schemaVersion: 1,
+      settings: { ...DEFAULT_SETTINGS, quietHoursEnabled: undefined, quietHoursStart: "23:00", quietHoursEnd: "07:00" },
+    });
+    expect(parseSettings(saved)).toMatchObject({ quietHoursEnabled: true, quietHoursStart: "23:00", quietHoursEnd: "07:00" });
+    const off = JSON.stringify({ schemaVersion: 1, settings: { quietHoursEnabled: false } });
+    expect(parseSettings(off).quietHoursEnabled).toBe(false);
+  });
+
+  it("plage silencieuse : app déjà installée sans réglages enregistrés, elle reste active", async () => {
+    await AsyncStorage.setItem("TASKS_4COLS", JSON.stringify({ schemaVersion: 6, tasks: [] }));
+    expect(await loadSettings()).toEqual({ ...DEFAULT_SETTINGS, quietHoursEnabled: true });
+  });
+
+  it("plage silencieuse désactivée : aucun rappel n'est décalé", () => {
+    const { computeSchedule } = require("../notifications/schedule");
+    const { makeTask } = require("../testing/makeTask");
+    const now = new Date(2026, 9, 22, 21).getTime();
+    const task = makeTask({ category: "UI", updatedAt: now, nagInterval: 120 }); // 23 h
+    expect(computeSchedule(task, DEFAULT_SETTINGS, now)[0].date).toBe(now + 120 * 60 * 1000);
+    expect(computeSchedule(task, { ...DEFAULT_SETTINGS, quietHoursEnabled: true }, now)[0].date).toBe(
+      new Date(2026, 9, 23, 8).getTime()
+    );
   });
 
   it("enregistre sous la clé SETTINGS et relit les réglages", async () => {

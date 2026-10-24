@@ -7,6 +7,8 @@ const MIN = 60 * 1000;
 const at = (h: number, m = 0, day = 22) => new Date(2026, 9, day, h, m).getTime();
 const NOW = at(10);
 const NO_QUIET: Settings = { ...DEFAULT_SETTINGS, quietHoursStart: "00:00", quietHoursEnd: "00:00" };
+// Plage silencieuse activée, 22:00 → 08:00
+const WITH_QUIET: Settings = { ...DEFAULT_SETTINGS, quietHoursEnabled: true };
 
 describe("shiftOutOfQuietHours (22:00 → 08:00)", () => {
   const shift = (ts: number) => shiftOutOfQuietHours(ts, "22:00", "08:00");
@@ -160,7 +162,7 @@ describe("computeSchedule", () => {
     const task = makeTask({ category: "UI", updatedAt: at(20), nagInterval: 180, nagRepeat: true });
 
     it("décale les relances tombant en plage silencieuse à sa fin", () => {
-      const items = computeSchedule(task, DEFAULT_SETTINGS, NOW);
+      const items = computeSchedule(task, WITH_QUIET, NOW);
       // 23 h, 2 h, 5 h -> une seule à 8 h le lendemain, les suivantes réespacées de 3 h
       expect(items.map((i) => i.date)).toEqual([at(8, 0, 23), at(11, 0, 23), at(14, 0, 23)]);
     });
@@ -185,7 +187,7 @@ describe("computeSchedule", () => {
 });
 
 describe("relances répétées et plage silencieuse (22:00 → 08:00)", () => {
-  const QUIET: Settings = { ...DEFAULT_SETTINGS, quietHoursStart: "22:00", quietHoursEnd: "08:00", maxNags: 5 };
+  const QUIET: Settings = { ...DEFAULT_SETTINGS, quietHoursEnabled: true, quietHoursStart: "22:00", quietHoursEnd: "08:00", maxNags: 5 };
   const nags = (overrides: { updatedAt?: number; snoozedUntil?: number } = {}) =>
     computeSchedule(
       makeTask({ category: "UI", updatedAt: at(21, 50), nagInterval: 30, nagRepeat: true, ...overrides }),

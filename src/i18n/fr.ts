@@ -201,6 +201,7 @@ export const fr = {
     delegateField: "Déléguer · relancer la personne",
     quietHours: "Plage silencieuse",
     quietHoursHint: "Les rappels prévus pendant cette plage sont décalés à sa fin.",
+    quietHoursToggle: "Activer la plage silencieuse",
     start: "Début",
     end: "Fin",
     notifications: "Notifications",

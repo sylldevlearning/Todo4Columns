@@ -194,6 +194,7 @@ export const en: Translations = {
     delegateField: "Delegate · follow up",
     quietHours: "Quiet hours",
     quietHoursHint: "Reminders due during quiet hours are moved to when they end.",
+    quietHoursToggle: "Turn on quiet hours",
     start: "Start",
     end: "End",
     notifications: "Notifications",

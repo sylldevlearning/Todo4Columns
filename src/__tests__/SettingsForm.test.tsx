@@ -79,6 +79,20 @@ describe("SettingsForm", () => {
     expect(props.onRequestPermission).toHaveBeenCalledTimes(1);
   });
 
+  it("plage silencieuse : un interrupteur, les horaires seulement quand elle est activée", async () => {
+    const props = await setup();
+    expect(screen.getByLabelText("Activer la plage silencieuse")).toHaveProp("value", false);
+    expect(screen.queryByText("Début")).toBeNull();
+    await fireEvent(screen.getByLabelText("Activer la plage silencieuse"), "valueChange", true);
+    expect(props.onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, quietHoursEnabled: true });
+  });
+
+  it("plage silencieuse activée : horaires affichés", async () => {
+    await setup({ settings: { ...DEFAULT_SETTINGS, quietHoursEnabled: true } });
+    expect(screen.getByText("Début")).toBeOnTheScreen();
+    expect(screen.getByText("Fin")).toBeOnTheScreen();
+  });
+
   it("désactive les animations de célébration, activées par défaut", async () => {
     const props = await setup();
     const toggle = screen.getByLabelText("Animations de célébration");
