@@ -1,7 +1,7 @@
 # DoFirst (Todo4Columns) — État de la version 1.2.0
 
 > Mis à jour le 23/10/2026, branche `version-1.2.0` (créée depuis `version-1.1.0`, elle-même partie de `master`).
-> Vérifié : 413 tests Jest (41 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21), export du bundle Android et prebuild Android dans une copie du projet.
+> Vérifié : 437 tests Jest (43 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21), export du bundle Android et prebuild Android dans une copie du projet.
 > **Pas encore vérifié sur un téléphone réel** et **aucun build EAS lancé** pour la 1.2.0 : voir la liste de tests à la fin.
 
 ---
@@ -191,11 +191,15 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
    - Icône de l'app, icône adaptative et monochrome, écran de démarrage, icône des notifications.
 3. **Polices** : les 5 graisses de Manrope partout, sans police système ; l'écran de démarrage disparaît vite.
 4. **Notifications**
-   - Autorisation demandée au premier rappel.
+   - Autorisation : fenêtre système au premier rappel activé (tâche, relance, revue hebdomadaire) ; après des refus répétés, carte « Les notifications sont désactivées… » avec « Ouvrir les réglages » et « Plus tard ». La tâche est bien enregistrée malgré le refus.
+   - Retour des réglages du téléphone après avoir autorisé DoFirst : la carte se ferme et les rappels arrivent.
+   - Réglages › Notifications : « activées / désactivées » et le bon bouton.
    - « Faire » : relance avec « Fait », « Reporter 1 h » et « Ouvrir », app ouverte, en arrière-plan et **arrêtée** (balayée des apps récentes) : chaque bouton ouvre l'app et l'action est appliquée.
    - « Planifier » : rappel puis échéance.
    - « Déléguer » : relance avec « Fait », « Relancer » et « Reporter 1 h ».
+   - Plage silencieuse désactivée sur une installation neuve, toujours active après une mise à jour depuis la 1.1.
    - Plage silencieuse respectée : relances répétées pendant la nuit, une seule à 8 h puis les suivantes espacées.
+   - Fiche : ligne « Ce rappel tombe dans ta plage silencieuse… ». **« Modifier la plage » ouvre les Réglages par-dessus la fiche** (à vérifier : la fiche est une feuille native) et le retour ramène à la fiche intacte ; « Désactiver la plage » fait disparaître la ligne.
    - Pas de rappel en double après la mise à jour.
    - Rappels encore programmés après un redémarrage du téléphone.
 5. **Célébrations**
