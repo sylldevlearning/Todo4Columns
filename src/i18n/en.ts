@@ -203,6 +203,8 @@ export const en: Translations = {
       undetermined: "Not requested yet",
     },
     allowNotifications: "Allow notifications",
+    notificationsOn: "Notifications: on",
+    notificationsOff: "Notifications: off",
     animations: "Animations",
     celebrations: "Celebration animations",
     celebrationsHint: "Confetti and a short message when you complete a task.",
@@ -427,6 +429,12 @@ export const en: Translations = {
       `Hi${name ? ` ${name}` : ""}, could you take care of “${title}”${due ? ` by ${due}` : ""}? Thanks!`,
     nudge: (name) => (name ? `Follow up with ${name}` : "Follow up"),
     nudgeMessage: (title) => `Quick reminder: how's it going with ${title}?`,
+  },
+
+  permissionCard: {
+    body: "Notifications are turned off for DoFirst. Without them, your reminders won't arrive.",
+    openSettings: "Open settings",
+    later: "Later",
   },
 
   loadError: {

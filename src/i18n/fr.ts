@@ -210,6 +210,8 @@ export const fr = {
       undetermined: "Pas encore demandées",
     },
     allowNotifications: "Autoriser les notifications",
+    notificationsOn: "Notifications : activées",
+    notificationsOff: "Notifications : désactivées",
     animations: "Animations",
     celebrations: "Animations de célébration",
     celebrationsHint: "Des confettis et un petit mot quand tu termines une tâche.",
@@ -448,6 +450,13 @@ export const fr = {
     title: "Impossible de lire tes tâches",
     body: "Tes tâches n'ont pas été modifiées. Réessaie ; si le problème continue, ferme complètement l'app puis rouvre-la.",
     retry: "Réessayer",
+  },
+
+  // Notifications refusées, fenêtre système plus disponible
+  permissionCard: {
+    body: "Les notifications sont désactivées pour DoFirst. Sans elles, tes rappels n'arriveront pas.",
+    openSettings: "Ouvrir les réglages",
+    later: "Plus tard",
   },
 
   // Sauvegarde : export et import des données

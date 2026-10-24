@@ -64,17 +64,28 @@ export async function configureNotifications(): Promise<void> {
   ]);
 }
 
+const toState = (status: string): PermissionState =>
+  status === "granted" ? "granted" : status === "denied" ? "denied" : "undetermined";
+
 export async function getPermissionState(): Promise<PermissionState> {
-  const { status } = await Notifications.getPermissionsAsync();
-  return status === "granted" ? "granted" : status === "denied" ? "denied" : "undetermined";
+  return toState((await Notifications.getPermissionsAsync()).status);
 }
 
-// Demande l'autorisation si elle n'a jamais été demandée ; renvoie l'état obtenu
-export async function ensurePermission(): Promise<PermissionState> {
-  const current = await getPermissionState();
-  if (current !== "undetermined") return current;
+// État et possibilité d'afficher la fenêtre système : Android ne la réaffiche plus après
+// des refus répétés (canAskAgain faux), seuls les réglages du téléphone permettent alors
+// d'autoriser les notifications
+export async function getPermissionDetails(): Promise<{ state: PermissionState; canAskAgain: boolean }> {
+  const { status, canAskAgain } = await Notifications.getPermissionsAsync();
+  return { state: toState(status), canAskAgain: canAskAgain !== false };
+}
+
+// Affiche la fenêtre système si elle peut l'être (jamais demandée, ou refusée une fois) ;
+// asked faux : refusée et Android ne la montre plus, il faut passer par les réglages
+export async function ensurePermission(): Promise<{ state: PermissionState; asked: boolean }> {
+  const { state, canAskAgain } = await getPermissionDetails();
+  if (state === "granted" || !canAskAgain) return { state, asked: false };
   const { status } = await Notifications.requestPermissionsAsync();
-  return status === "granted" ? "granted" : status === "denied" ? "denied" : "undetermined";
+  return { state: toState(status), asked: true };
 }
 
 export function openSystemSettings(): void {

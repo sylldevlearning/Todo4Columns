@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { AppState } from "react-native";
 import { Escalation, isForeground, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
+import { showPermissionCard } from "../notifications/permissionCard";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
 import { Completion } from "../completionLog";
@@ -38,7 +39,8 @@ export type TaskActions = StoreActions & {
   updateSettings: (settings: Settings) => void;
   // Réglages courants, lus au moment de l'action (sans s'abonner à leurs changements)
   getSettings: () => Settings;
-  // À appeler au premier rappel créé : demande l'autorisation si besoin, puis programme tout
+  // À appeler quand l'utilisateur active un rappel, une relance ou la revue : fenêtre système si
+  // elle peut s'afficher, sinon carte vers les réglages du téléphone ; accordée, tout est programmé
   requestNotificationPermission: () => Promise<PermissionState>;
   // Tâches et journal courants, lus au moment de l'action (export d'une sauvegarde)
   getTasksState: () => TasksState;
@@ -152,8 +154,10 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     getSettings: () => settingsStore.get(),
     getTasksState: () => tasksStore.get(),
     requestNotificationPermission: async () => {
-      const state = await ensurePermission();
+      const { state, asked } = await ensurePermission();
       if (state === "granted") latest.current.resyncNotifications();
+      // Refusée et fenêtre système plus disponible : seule la carte peut aider
+      else if (state === "denied" && !asked) showPermissionCard();
       return state;
     },
   };

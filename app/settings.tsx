@@ -26,7 +26,7 @@ const selectArchived = ({ tasks }: TasksState) =>
 export default function SettingsScreen() {
   const store = useTaskActions();
   const settings = useSettings();
-  const [permission, refreshPermission] = usePermissionState();
+  const [permission, refreshPermission, canAskPermission] = usePermissionState();
   const archived = useTasksSelector(selectArchived, sameItems);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const backup = useBackup();
@@ -56,6 +56,7 @@ export default function SettingsScreen() {
           settings={settings}
           onChange={store.updateSettings}
           permission={permission}
+          canAskPermission={canAskPermission}
           onRequestPermission={() =>
             store.requestNotificationPermission().finally(refreshPermission)
           }

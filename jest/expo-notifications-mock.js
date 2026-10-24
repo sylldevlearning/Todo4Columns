@@ -39,8 +39,12 @@ module.exports = {
     state.scheduled.map((n) => ({ ...n }))
   ),
   getPermissionsAsync: jest.fn(async () => permissionResponse()),
+  // La fenêtre système s'affiche si l'autorisation n'est pas accordée et peut encore être demandée
   requestPermissionsAsync: jest.fn(async () => {
-    if (state.permission === "undetermined") state.permission = state.requestResult ?? "granted";
+    if (state.permission !== "granted" && state.canAskAgain) {
+      state.permission = state.requestResult ?? "granted";
+      if (state.requestCanAskAgain !== undefined) state.canAskAgain = state.requestCanAskAgain;
+    }
     return permissionResponse();
   }),
   setNotificationChannelAsync: jest.fn(async (id, channel) => {
@@ -74,6 +78,7 @@ module.exports = {
     state.permission = "granted";
     state.canAskAgain = true;
     state.requestResult = undefined;
+    state.requestCanAskAgain = undefined;
     state.nextId = 1;
     state.listeners = [];
     state.lastResponse = null;

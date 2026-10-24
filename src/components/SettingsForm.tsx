@@ -32,6 +32,7 @@ interface Props {
   settings: Settings;
   onChange: (settings: Settings) => void;
   permission: PermissionState | null;
+  canAskPermission?: boolean; // faux : fenêtre système plus disponible, seuls les réglages du téléphone
   onRequestPermission: () => void;
   onOpenSystemSettings: () => void;
   archivedTasks: Task[];
@@ -94,6 +95,7 @@ export default function SettingsForm({
   settings,
   onChange,
   permission,
+  canAskPermission = true,
   onRequestPermission,
   onOpenSystemSettings,
   archivedTasks,
@@ -195,7 +197,11 @@ export default function SettingsForm({
             <Switch
               accessibilityLabel={t.settings.weeklyReminder}
               value={settings.weeklyReview}
-              onValueChange={(v) => set("weeklyReview", v)}
+              onValueChange={(v) => {
+                set("weeklyReview", v);
+                // Revue activée : elle a besoin des notifications
+                if (v) onRequestPermission();
+              }}
               trackColor={{ false: colors.border, true: plan.color }}
               thumbColor={colors.white}
             />
@@ -223,13 +229,23 @@ export default function SettingsForm({
       )}
 
       <Section title={t.settings.notifications}>
-        <Text style={styles.status}>
-          {permission === null ? "…" : PERMISSION_LABELS[permission]}
+        <Text style={styles.status} accessibilityLiveRegion="polite">
+          {permission === null
+            ? "…"
+            : permission === "granted"
+            ? t.settings.notificationsOn
+            : t.settings.notificationsOff}
         </Text>
-        {permission === "undetermined" && (
+        {permission !== null && permission !== "granted" && (
+          <Text style={styles.hint}>{PERMISSION_LABELS[permission]}</Text>
+        )}
+        {/* Fenêtre système si elle peut s'afficher, sinon les réglages du téléphone */}
+        {permission !== null && permission !== "granted" && canAskPermission && (
           <TextButton label={t.settings.allowNotifications} onPress={onRequestPermission} />
         )}
-        <TextButton label={t.common.openPhoneSettings} onPress={onOpenSystemSettings} />
+        {permission === "denied" && !canAskPermission && (
+          <TextButton label={t.permissionCard.openSettings} onPress={onOpenSystemSettings} />
+        )}
       </Section>
 
       <Section title={t.settings.animations}>

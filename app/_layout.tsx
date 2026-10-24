@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import EscalationNotice from "../src/components/EscalationNotice";
 import LoadErrorGate from "../src/components/LoadErrorGate";
+import PermissionCard from "../src/components/PermissionCard";
 import { removeExportedFiles } from "../src/backup";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { nudgeMessage, shareWhenActive } from "../src/delegation";
@@ -105,6 +106,7 @@ export default function RootLayout() {
             </Stack>
             </LoadErrorGate>
             <EscalationNotice />
+            <PermissionCard />
           </Celebrations>
         </TasksProvider>
       </SafeAreaProvider>

@@ -48,14 +48,35 @@ describe("SettingsForm", () => {
     expect(props.onChange).toHaveBeenLastCalledWith({ ...DEFAULT_SETTINGS, maxNags: 5 });
   });
 
-  it("affiche l'état de l'autorisation et les liens", async () => {
-    const props = await setup({ permission: "undetermined" });
+  it("état de l'autorisation : activées, sans bouton", async () => {
+    await setup({ permission: "granted" });
+    expect(screen.getByText("Notifications : activées")).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Autoriser les notifications" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ouvrir les réglages" })).toBeNull();
+  });
 
-    expect(screen.getByText("Pas encore demandées")).toBeOnTheScreen();
+  it("état de l'autorisation : pas encore demandée, la fenêtre système est proposée", async () => {
+    const props = await setup({ permission: "undetermined" });
+    expect(screen.getByText("Notifications : désactivées")).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole("button", { name: "Autoriser les notifications" }));
-    await fireEvent.press(screen.getByRole("button", { name: "Ouvrir les réglages du téléphone" }));
     expect(props.onRequestPermission).toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Ouvrir les réglages" })).toBeNull();
+  });
+
+  it("état de l'autorisation : refusée et fenêtre plus disponible, les réglages du téléphone", async () => {
+    const props = await setup({ permission: "denied", canAskPermission: false });
+    expect(screen.getByText("Notifications : désactivées")).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Autoriser les notifications" })).toBeNull();
+    await fireEvent.press(screen.getByRole("button", { name: "Ouvrir les réglages" }));
     expect(props.onOpenSystemSettings).toHaveBeenCalled();
+  });
+
+  it("activer la revue hebdomadaire vérifie l'autorisation", async () => {
+    const props = await setup({ settings: { ...DEFAULT_SETTINGS, weeklyReview: false }, onOpenReview: jest.fn() });
+    await fireEvent(screen.getByLabelText("Me rappeler chaque semaine"), "valueChange", true);
+    expect(props.onRequestPermission).toHaveBeenCalledTimes(1);
+    await fireEvent(screen.getByLabelText("Me rappeler chaque semaine"), "valueChange", false);
+    expect(props.onRequestPermission).toHaveBeenCalledTimes(1);
   });
 
   it("désactive les animations de célébration, activées par défaut", async () => {

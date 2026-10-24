@@ -62,11 +62,12 @@ describe("configuration", () => {
     }
   });
 
-  it("ne demande l'autorisation qu'une fois, si elle n'a jamais été demandée", async () => {
+  it("ne réaffiche pas la fenêtre système quand Android ne le permet plus", async () => {
     mock.__state.permission = "undetermined";
     mock.__state.requestResult = "denied";
-    expect(await ensurePermission()).toBe("denied");
-    expect(await ensurePermission()).toBe("denied");
+    (mock.__state as { requestCanAskAgain?: boolean }).requestCanAskAgain = false;
+    expect(await ensurePermission()).toEqual({ state: "denied", asked: true });
+    expect(await ensurePermission()).toEqual({ state: "denied", asked: false });
     expect(Notifications.requestPermissionsAsync).toHaveBeenCalledTimes(1);
   });
 });
