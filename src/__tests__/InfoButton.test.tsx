@@ -116,6 +116,13 @@ describe("textes des cartes d'info", () => {
     expect(en.help.info[key].body).not.toBe(fr.help.info[key].body);
   });
 
+  it("plage silencieuse : désactivée par défaut, et le mode « Ne pas déranger » du téléphone", () => {
+    expect(fr.help.info.quietHours.body).toMatch(/^Désactivée par défaut./);
+    expect(fr.help.info.quietHours.body).toContain("« Ne pas déranger » du téléphone peut aussi bloquer les rappels");
+    expect(fr.help.info.quietHours.body).toContain("paramètres du téléphone");
+    expect(en.help.info.quietHours.body).toContain("“Do Not Disturb” mode can also block reminders");
+  });
+
   it("les quadrants ont une carte nommée comme eux", () => {
     for (const lang of [fr, en]) {
       for (const key of ["UI", "INU", "UDI", "NDNI"] as const) {

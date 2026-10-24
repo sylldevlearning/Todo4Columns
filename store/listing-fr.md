@@ -41,7 +41,7 @@ TON ÉQUILIBRE ET TA REVUE DE LA SEMAINE
 La carte « Ta semaine » montre la part de tâches anticipées, et le bilan compare tes 5 dernières semaines. Chaque dimanche (ou le jour de ton choix), la revue de la semaine te guide en 5 minutes : trier « Si j'ai le temps », choisir jusqu'à 3 priorités marquées d'une étoile et faire le point sur les tâches confiées.
 
 AGIR DEPUIS LA NOTIFICATION
-Touche « Fait » ou « Reporter 1 h » dans la notification : l'app s'ouvre et s'en charge. Une plage silencieuse (22 h – 8 h par défaut) décale les rappels pour ne pas te réveiller.
+Touche « Fait » ou « Reporter 1 h » dans la notification : l'app s'ouvre et s'en charge. Une plage silencieuse, à activer dans les réglages, décale les rappels pour ne pas te réveiller.
 
 RAPIDE AU QUOTIDIEN
 • Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer.

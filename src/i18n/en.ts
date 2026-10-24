@@ -288,7 +288,7 @@ export const en: Translations = {
       },
       quietHours: {
         title: "Quiet hours",
-        body: "No reminders during quiet hours: any that would fall inside arrive when they end. Timers still ring on time.",
+        body: "Off by default. Once on, no reminders during quiet hours: any that would fall inside arrive when they end (timers still ring). Your phone's “Do Not Disturb” mode can also block reminders: it's set in the phone's settings.",
         example: "from 22:00 to 08:00, a reminder planned for 11 pm arrives at 8 am the next day.",
       },
       autoArchive: {
@@ -556,6 +556,8 @@ export const en: Translations = {
       send: "In a “Delegate” task, “Send” opens the share sheet with a ready message for the person. You pick the app and the recipient.",
       nudge: "In a handed-off task's reminder, or in step 3 of the review, “Follow up” prepares a short reminder to send.",
       backup: "Settings › Backup: “Export my data” creates a file to keep wherever you like; “Import a backup” puts it back on this phone.",
+      permission: "Notifications turned off: when you turn on a reminder, the app offers to open your phone's settings. The status shows in Settings › Notifications.",
+      quietHours: "Quiet hours (off by default, turn them on in Settings): reminders that would fall inside arrive when they end, and the task sheet lets you know when that happens.",
       info: "Tap an “i” icon for a quick explanation.",
     },
   },

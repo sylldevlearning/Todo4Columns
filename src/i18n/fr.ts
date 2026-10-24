@@ -296,7 +296,7 @@ export const fr = {
       },
       quietHours: {
         title: "Plage silencieuse",
-        body: "Aucun rappel pendant cette plage : ceux qui tomberaient dedans arrivent à sa fin. Les minuteurs sonnent quand même à l'heure.",
+        body: "Désactivée par défaut. Une fois activée, aucun rappel pendant cette plage : ceux qui tomberaient dedans arrivent à sa fin (les minuteurs sonnent quand même). Le mode « Ne pas déranger » du téléphone peut aussi bloquer les rappels : il se règle dans les paramètres du téléphone.",
         example: "de 22:00 à 08:00, une relance prévue à 23 h arrive à 8 h le lendemain.",
       },
       autoArchive: {
@@ -576,6 +576,8 @@ export const fr = {
       send: "Dans la fiche d'une tâche « Déléguer », « Envoyer » ouvre le partage avec un message prêt pour la personne. Tu choisis l'appli et le destinataire.",
       nudge: "Dans la relance d'une tâche confiée ou à l'étape 3 de la revue, « Relancer » prépare un petit rappel à envoyer.",
       backup: "Réglages › Sauvegarde : « Exporter mes données » crée un fichier à garder où tu veux, « Importer une sauvegarde » le remet sur ce téléphone.",
+      permission: "Notifications désactivées : quand tu actives un rappel, l'app te propose d'ouvrir les réglages du téléphone. L'état s'affiche dans Réglages › Notifications.",
+      quietHours: "Plage silencieuse (désactivée par défaut, à activer dans les Réglages) : les rappels qui tomberaient dedans arrivent à sa fin, et la fiche te prévient quand c'est le cas.",
       info: "Touche une icône « i » pour une explication rapide.",
     },
   },
