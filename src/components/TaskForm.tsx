@@ -13,6 +13,7 @@ import {
 import { Settings } from "../settings";
 import { delegationMessage, shareMessage } from "../delegation";
 import { isDueSoon } from "../notifications/status";
+import { quietNoticeFor } from "../quietNotice";
 import {
   isRoutine,
   proposedDue,
@@ -37,6 +38,8 @@ interface Props {
   settings: Settings;
   notificationsDenied?: boolean; // autorisation refusée : les rappels ne s'afficheront pas
   onOpenSettings?: () => void;
+  onEditQuietHours?: () => void; // « Modifier la plage » : Réglages, section plage silencieuse
+  onDisableQuietHours?: () => void; // « Désactiver la plage »
   onSubmit: (values: TaskFormValues) => void;
 }
 
@@ -111,6 +114,8 @@ export default function TaskForm({
   settings,
   notificationsDenied = false,
   onOpenSettings,
+  onEditQuietHours,
+  onDisableQuietHours,
   onSubmit,
 }: Props) {
   const start = CATEGORY_BY_KEY[task?.category ?? initialCategory ?? DEFAULT_CATEGORY];
@@ -221,6 +226,11 @@ export default function TaskForm({
   };
 
   const pillColors = { color: category.color, onColor: category.onColor };
+  const quietNotice = quietNoticeFor(
+    { category: category.key, ...reminderFields() },
+    settings,
+    Date.now()
+  );
 
   return (
     <View style={styles.container}>
@@ -418,6 +428,24 @@ export default function TaskForm({
         </>
       )}
 
+      {/* Rappel dans la plage silencieuse : simple information, rien n'est bloqué */}
+      {quietNotice && (
+        <View style={styles.quiet} accessibilityLiveRegion="polite">
+          <View style={styles.quietRow}>
+            <Ionicons name="moon-outline" size={16} color={colors.textMuted} />
+            <Text style={styles.quietText}>
+              {t.quietNotice.message(quietNotice.start, quietNotice.end, quietNotice.arrival)}
+            </Text>
+          </View>
+          <View style={styles.quietActions}>
+            {onEditQuietHours && <LinkButton label={t.quietNotice.edit} onPress={onEditQuietHours} />}
+            {onDisableQuietHours && (
+              <LinkButton label={t.quietNotice.disable} onPress={onDisableQuietHours} />
+            )}
+          </View>
+        </View>
+      )}
+
       {category.key === "NDNI" && (
         <Text style={styles.note}>
           {settings.autoArchive ? t.form.ndniNoteArchive : t.form.ndniNote}
@@ -564,6 +592,30 @@ const styles = StyleSheet.create({
   sendText: {
     fontFamily: fonts.bold,
     fontSize: 15,
+  },
+  quiet: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 14,
+    paddingTop: 10,
+  },
+  quietRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+  },
+  quietText: {
+    flex: 1,
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.textMuted,
+  },
+  quietActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    columnGap: 20,
   },
   days: {
     flexDirection: "row",

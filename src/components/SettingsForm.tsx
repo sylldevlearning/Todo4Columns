@@ -44,11 +44,22 @@ interface Props {
   onExport?: () => void; // « Exporter mes données »
   onImport?: () => void; // « Importer une sauvegarde »
   onUndoImport?: () => void; // « Annuler le dernier import » (seulement après un import)
+  onQuietHoursLayout?: (y: number) => void; // position de la section, pour y faire défiler
 }
 
-function Section({ title, info, children }: { title: string; info?: InfoKey; children: ReactNode }) {
+function Section({
+  title,
+  info,
+  onLayout,
+  children,
+}: {
+  title: string;
+  info?: InfoKey;
+  onLayout?: (y: number) => void;
+  children: ReactNode;
+}) {
   return (
-    <View style={styles.section}>
+    <View style={styles.section} onLayout={onLayout && ((e) => onLayout(e.nativeEvent.layout.y))}>
       <View style={styles.labelRow}>
         <Text style={styles.sectionTitle} accessibilityRole="header">
           {title}
@@ -107,6 +118,7 @@ export default function SettingsForm({
   onExport,
   onImport,
   onUndoImport,
+  onQuietHoursLayout,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -174,7 +186,7 @@ export default function SettingsForm({
         </Field>
       </Section>
 
-      <Section title={t.settings.quietHours} info="quietHours">
+      <Section title={t.settings.quietHours} info="quietHours" onLayout={onQuietHoursLayout}>
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>{t.settings.quietHoursToggle}</Text>
           <Switch

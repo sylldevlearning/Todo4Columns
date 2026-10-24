@@ -432,6 +432,13 @@ export const en: Translations = {
     nudgeMessage: (title) => `Quick reminder: how's it going with ${title}?`,
   },
 
+  quietNotice: {
+    message: (start, end, arrival) =>
+      `This reminder falls in your quiet hours (${start}–${end}): it will arrive at ${arrival}.`,
+    edit: "Change quiet hours",
+    disable: "Turn off quiet hours",
+  },
+
   permissionCard: {
     body: "Notifications are turned off for DoFirst. Without them, your reminders won't arrive.",
     openSettings: "Open settings",

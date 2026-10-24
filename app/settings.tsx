@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import React, { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useRef, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IconButton from "../src/components/IconButton";
@@ -29,6 +29,12 @@ export default function SettingsScreen() {
   const [permission, refreshPermission, canAskPermission] = usePermissionState();
   const archived = useTasksSelector(selectArchived, sameItems);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  // Ouvert depuis la fiche (« Modifier la plage ») : défile jusqu'à la plage silencieuse
+  const { section } = useLocalSearchParams<{ section?: string }>();
+  const scroll = useRef<ScrollView>(null);
+  const scrollToQuietHours = (y: number) => {
+    if (section === "quietHours") scroll.current?.scrollTo({ y, animated: false });
+  };
   const backup = useBackup();
 
   const deleteForever = (id: string) => {
@@ -51,7 +57,7 @@ export default function SettingsScreen() {
           {t.settings.title}
         </Text>
       </View>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView ref={scroll} contentContainerStyle={styles.content}>
         <SettingsForm
           settings={settings}
           onChange={store.updateSettings}
@@ -70,6 +76,7 @@ export default function SettingsScreen() {
           onExport={backup.exportData}
           onImport={backup.importData}
           onUndoImport={backup.canUndoImport ? backup.undoImport : undefined}
+          onQuietHoursLayout={scrollToQuietHours}
         />
       </ScrollView>
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}

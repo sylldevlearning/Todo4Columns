@@ -453,6 +453,14 @@ export const fr = {
     retry: "Réessayer",
   },
 
+  // Fiche : rappel qui tombe dans la plage silencieuse
+  quietNotice: {
+    message: (start: string, end: string, arrival: string) =>
+      `Ce rappel tombe dans ta plage silencieuse (${start}–${end}) : il arrivera à ${arrival}.`,
+    edit: "Modifier la plage",
+    disable: "Désactiver la plage",
+  },
+
   // Notifications refusées, fenêtre système plus disponible
   permissionCard: {
     body: "Les notifications sont désactivées pour DoFirst. Sans elles, tes rappels n'arriveront pas.",

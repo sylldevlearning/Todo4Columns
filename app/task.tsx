@@ -14,7 +14,8 @@ import { colors } from "../src/theme";
 // Paramètres : id (modification) ou category (création depuis un quadrant)
 export default function TaskSheet() {
   const { id, category } = useLocalSearchParams<{ id?: string; category?: string }>();
-  const { addTask, updateTask, requestNotificationPermission } = useTaskActions();
+  const { addTask, updateTask, requestNotificationPermission, updateSettings, getSettings } =
+    useTaskActions();
   const settings = useSettings();
   // Seulement la tâche modifiée : les autres changements ne re-rendent pas la fiche
   const task = useTasksSelector(({ tasks }) => (id ? tasks.find((t) => t.id === id) : undefined));
@@ -51,6 +52,10 @@ export default function TaskSheet() {
         settings={settings}
         notificationsDenied={permission === "denied"}
         onOpenSettings={openSystemSettings}
+        onEditQuietHours={() =>
+          router.push({ pathname: "/settings", params: { section: "quietHours" } })
+        }
+        onDisableQuietHours={() => updateSettings({ ...getSettings(), quietHoursEnabled: false })}
         onSubmit={submit}
       />
     </ScrollView>
