@@ -16,6 +16,7 @@ import { DEFAULT_SETTINGS } from "../settings";
 import { STORAGE_KEY } from "../storage";
 import { TasksProvider, TasksState, useTasksSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
+import { METRICS } from "../testing/metrics";
 
 const HOUR = 60 * 60 * 1000;
 const NOW = new Date(2026, 9, 22, 10).getTime();
@@ -78,10 +79,6 @@ describe("carte d'une tâche bientôt urgente", () => {
 });
 
 describe("bandeau de la matrice", () => {
-  const METRICS = {
-    frame: { x: 0, y: 0, width: 390, height: 844 },
-    insets: { top: 40, left: 0, right: 0, bottom: 20 },
-  };
   let state: TasksState;
   function Grab() {
     state = useTasksSelector((s) => s);

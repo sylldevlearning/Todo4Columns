@@ -9,11 +9,7 @@ import { en } from "../i18n/en";
 import { fr } from "../i18n/fr";
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY } from "../settings";
 import { TasksProvider } from "../store/TasksContext";
-
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
+import { METRICS } from "../testing/metrics";
 
 // Application relancée : nouveau TasksProvider qui relit les réglages enregistrés
 const launch = async (screen: React.ReactNode = <FirstLaunchOnboarding />) => {

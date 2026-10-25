@@ -20,6 +20,7 @@ import { STORAGE_KEY } from "../storage";
 import { TasksProvider } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
 import { Category } from "../types";
+import { METRICS } from "../testing/metrics";
 
 // Dates en heure locale : les semaines commencent le lundi à 0 h
 const at = (y: number, m: number, d: number, h = 12) => new Date(y, m - 1, d, h).getTime();
@@ -100,10 +101,6 @@ describe("calcul de l'équilibre", () => {
 });
 
 describe("carte « Ta semaine » et écran « Bilan »", () => {
-  const METRICS = {
-    frame: { x: 0, y: 0, width: 390, height: 844 },
-    insets: { top: 40, left: 0, right: 0, bottom: 20 },
-  };
   function Layout() {
     return (
       <SafeAreaProvider initialMetrics={METRICS}>

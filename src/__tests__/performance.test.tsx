@@ -12,6 +12,7 @@ import { DEFAULT_SETTINGS, SETTINGS_KEY, Settings } from "../settings";
 import { STORAGE_KEY } from "../storage";
 import { TaskActions, TasksProvider, useTaskActions } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
+import { METRICS } from "../testing/metrics";
 
 const SETTINGS: Settings = { ...DEFAULT_SETTINGS, quietHoursStart: "00:00", quietHoursEnd: "00:00", weeklyReview: false };
 const wait = (ms: number) => act(() => new Promise<void>((r) => setTimeout(r, ms)));
@@ -175,11 +176,6 @@ describe("écritures regroupées", () => {
 });
 
 describe("écrans Bilan et Revue : pas de rendus inutiles", () => {
-  const METRICS = {
-    frame: { x: 0, y: 0, width: 390, height: 844 },
-    insets: { top: 40, left: 0, right: 0, bottom: 20 },
-  };
-
   it("une tâche terminée ou un réglage modifié ne re-rend pas la revue en cours ; le bilan seulement quand le journal change", async () => {
     await AsyncStorage.setItem(
       STORAGE_KEY,

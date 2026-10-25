@@ -23,6 +23,7 @@ import { DEFAULT_SETTINGS, loadSettings, saveSettings, SETTINGS_KEY } from "../s
 import { STORAGE_KEY } from "../storage";
 import { TaskActions, TasksProvider, TasksState, useTaskActions, useTasksSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
+import { METRICS } from "../testing/metrics";
 
 // Système de fichiers en mémoire
 jest.mock("expo-file-system", () => {
@@ -70,10 +71,6 @@ const scheduled = () =>
   (Notifications as unknown as { __state: { scheduled: { content: { data: { taskId?: string } } }[] } }).__state
     .scheduled;
 
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 const HOUR = 60 * 60 * 1000;
 
 let actions: TaskActions;

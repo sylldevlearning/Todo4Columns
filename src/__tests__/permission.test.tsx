@@ -13,6 +13,7 @@ import { DEFAULT_SETTINGS, saveSettings } from "../settings";
 import { STORAGE_KEY } from "../storage";
 import { TaskActions, TasksProvider, TasksState, useTaskActions, useTasksSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
+import { METRICS } from "../testing/metrics";
 
 const mock = Notifications as unknown as {
   __state: {
@@ -24,11 +25,6 @@ const mock = Notifications as unknown as {
   };
 };
 const scheduledFor = () => mock.__state.scheduled.map((n) => n.content.data?.taskId);
-
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 
 // AppState simulé pour le retour des réglages du téléphone
 let listeners: ((state: AppStateStatus) => void)[] = [];

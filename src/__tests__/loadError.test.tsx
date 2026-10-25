@@ -8,11 +8,7 @@ import { serializeTasks } from "../migrations";
 import { STORAGE_KEY } from "../storage";
 import { TasksProvider } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
-
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
+import { METRICS } from "../testing/metrics";
 
 const getItem = AsyncStorage.getItem as jest.Mock;
 const original = getItem.getMockImplementation()!;

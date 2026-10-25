@@ -18,6 +18,7 @@ import { STORAGE_KEY } from "../storage";
 import { TasksProvider, TasksState, useTasksSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
 import { Task } from "../types";
+import { METRICS } from "../testing/metrics";
 
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
@@ -180,11 +181,6 @@ describe("notification d'échéance", () => {
 });
 
 describe("puce et message", () => {
-  const METRICS = {
-    frame: { x: 0, y: 0, width: 390, height: 844 },
-    insets: { top: 40, left: 0, right: 0, bottom: 20 },
-  };
-
   beforeEach(() => AsyncStorage.clear());
 
   it("puce « En retard »", async () => {

@@ -20,6 +20,7 @@ import { serializeTasks } from "../migrations";
 import { STORAGE_KEY } from "../storage";
 import { TaskActions, TasksProvider, useTaskActions } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
+import { METRICS } from "../testing/metrics";
 
 const DAY = 24 * 60 * 60 * 1000;
 const NOW = new Date(2026, 9, 22, 10).getTime();
@@ -87,7 +88,7 @@ describe("demande d'avis dans l'app", () => {
   const launch = async (children?: React.ReactNode) => {
     await render(
       <SafeAreaProvider
-        initialMetrics={{ frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}
+        initialMetrics={METRICS}
       >
         <TasksProvider>
           <CelebrationProvider enabled>

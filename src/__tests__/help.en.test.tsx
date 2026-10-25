@@ -6,16 +6,13 @@ import HelpScreen from "../../app/help";
 import InfoButton from "../components/InfoButton";
 import { FirstLaunchOnboarding } from "../components/Onboarding";
 import { TasksProvider } from "../store/TasksContext";
+import { METRICS } from "../testing/metrics";
 
 // Téléphone en anglais
 jest.mock("expo-localization", () => ({
   getLocales: () => [{ languageCode: "en", languageTag: "en-US" }],
 }));
 
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 const wrap = (ui: React.ReactNode) => (
   <SafeAreaProvider initialMetrics={METRICS}>
     <TasksProvider>{ui}</TasksProvider>

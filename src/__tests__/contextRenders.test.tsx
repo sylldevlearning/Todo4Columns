@@ -11,6 +11,7 @@ import { STORAGE_KEY } from "../storage";
 import { TaskActions, TasksProvider, useTaskActions } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
 import { Task } from "../types";
+import { METRICS } from "../testing/metrics";
 
 // Les puces complètes sont rendues par chaque carte non terminée : elles comptent les rendus
 // des cartes (la matrice utilise les puces compactes, non comptées)
@@ -29,11 +30,6 @@ jest.mock("expo-haptics", () => ({
   NotificationFeedbackType: { Success: "success" },
   ImpactFeedbackStyle: { Light: "light", Medium: "medium" },
 }));
-
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 
 // Nombre de rendus de chaque écran (un rendu de n'importe quel composant de l'écran compte)
 const renders: Record<string, number> = {};

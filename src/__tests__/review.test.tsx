@@ -23,6 +23,7 @@ import { STORAGE_KEY } from "../storage";
 import { TasksProvider, TasksState, useTasksSelector } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
 import { Task } from "../types";
+import { METRICS } from "../testing/metrics";
 
 const mockCelebrate = jest.fn(() => 1);
 jest.mock("../celebration/CelebrationProvider", () => ({
@@ -128,10 +129,6 @@ describe("série de revues", () => {
 });
 
 describe("parcours de la revue", () => {
-  const METRICS = {
-    frame: { x: 0, y: 0, width: 390, height: 844 },
-    insets: { top: 40, left: 0, right: 0, bottom: 20 },
-  };
   let state: TasksState;
   function Grab() {
     state = useTasksSelector((s) => s);

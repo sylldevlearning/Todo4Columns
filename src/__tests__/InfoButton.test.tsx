@@ -8,11 +8,8 @@ import { en } from "../i18n/en";
 import { fr } from "../i18n/fr";
 import { DEFAULT_SETTINGS } from "../settings";
 import { TOUCH_SIZE } from "../theme";
+import { METRICS } from "../testing/metrics";
 
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 const render = (ui: React.ReactElement) =>
   renderScreen(<SafeAreaProvider initialMetrics={METRICS}>{ui}</SafeAreaProvider>);
 

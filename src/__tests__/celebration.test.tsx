@@ -13,6 +13,7 @@ import {
 } from "../celebration/plan";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { fr } from "../i18n/fr";
+import { METRICS } from "../testing/metrics";
 
 jest.mock("expo-haptics", () => ({
   notificationAsync: jest.fn(() => Promise.resolve()),
@@ -20,11 +21,6 @@ jest.mock("expo-haptics", () => ({
   NotificationFeedbackType: { Success: "success" },
   ImpactFeedbackStyle: { Light: "light", Medium: "medium" },
 }));
-
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 
 describe("planCelebration", () => {
   it("ne joue rien quand l'option est désactivée", () => {

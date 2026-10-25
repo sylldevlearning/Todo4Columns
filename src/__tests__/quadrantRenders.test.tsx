@@ -11,6 +11,7 @@ import { STORAGE_KEY } from "../storage";
 import { TasksProvider } from "../store/TasksContext";
 import { makeTask } from "../testing/makeTask";
 import { Task } from "../types";
+import { METRICS } from "../testing/metrics";
 
 // Les puces sont rendues par chaque carte non terminée : elles comptent les rendus des cartes
 const chipRenders: string[] = [];
@@ -28,11 +29,6 @@ jest.mock("expo-haptics", () => ({
   NotificationFeedbackType: { Success: "success" },
   ImpactFeedbackStyle: { Light: "light", Medium: "medium" },
 }));
-
-const METRICS = {
-  frame: { x: 0, y: 0, width: 390, height: 844 },
-  insets: { top: 40, left: 0, right: 0, bottom: 20 },
-};
 
 function Layout() {
   return (
