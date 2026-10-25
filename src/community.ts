@@ -10,7 +10,7 @@ export const PLAY_STORE_URL = `https://play.google.com/store/apps/details?id=${A
 // Fiche dans l'app Play Store (repli sur la page web si elle n'est pas installée)
 const PLAY_STORE_APP_URL = `market://details?id=${ANDROID_PACKAGE}`;
 // Adresse des suggestions et des signalements (aussi dans store/privacy-policy-*.md)
-export const FEEDBACK_EMAIL = "syll.dev.learning@gmail.com";
+export const FEEDBACK_EMAIL = "sylldevlearning@gmail.com";
 
 // Version de l'app (app.json), ex. « 1.2.1 »
 export const appVersion = (): string => Constants.expoConfig?.version ?? "?";

@@ -62,4 +62,4 @@ If this policy changes, the new version will be published at the same address wi
 
 ## Contact
 
-For any question about this policy: syll.dev.learning@gmail.com
+For any question about this policy: sylldevlearning@gmail.com

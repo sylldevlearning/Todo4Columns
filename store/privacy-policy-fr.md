@@ -62,4 +62,4 @@ Si ces règles changent, la nouvelle version sera publiée à la même adresse a
 
 ## Contact
 
-Pour toute question sur ces règles : syll.dev.learning@gmail.com
+Pour toute question sur ces règles : sylldevlearning@gmail.com

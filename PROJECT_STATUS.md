@@ -186,7 +186,7 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
-- **Adresse de contact :** `syll.dev.learning@gmail.com` (à confirmer : la demande portait « À REMPLACER PAR MON ADRESSE ») dans `src/community.ts` et les deux règles de confidentialité.
+- **Adresse de contact :** `sylldevlearning@gmail.com` dans `src/community.ts` et les deux règles de confidentialité.
 
 ### Dette technique
 
