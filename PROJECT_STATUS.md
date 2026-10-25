@@ -1,8 +1,8 @@
-# DoFirst (Todo4Columns) — État de la version 1.2.0
+# DoFirst (Todo4Columns) — État de la version 1.2.1
 
-> Mis à jour le 23/10/2026, branche `version-1.2.0` (créée depuis `version-1.1.0`, elle-même partie de `master`).
-> Vérifié : 437 tests Jest (43 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21), export du bundle Android et prebuild Android dans une copie du projet.
-> **Pas encore vérifié sur un téléphone réel** et **aucun build EAS lancé** pour la 1.2.0 : voir la liste de tests à la fin.
+> Mis à jour le 25/10/2026, branche `version-1.2.1` (créée depuis `version-1.2.0`).
+> Vérifié : 460 tests Jest (45 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
+> **Aucun build EAS lancé** pour la 1.2.1 ; le build de production 1.2.0 (versionCode 7) ne contient ni les ajustements des rappels ni le blocage d'AD_ID. Voir la liste de tests à la fin.
 
 ---
 
@@ -23,7 +23,7 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
 
 - **1.0.x** : un seul écran de quatre colonnes, en JavaScript, sans tests.
 - **1.1** : réécriture en TypeScript avec expo-router (matrice 2×2, quadrants, fiche de tâche, réglages). Rappels par quadrant avec notifications et actions « Fait », « Reporter 1 h » et « Ouvrir ». Plage silencieuse, archivage, célébrations, migration des anciennes données et récupération des tâches de l'ancienne app, nouveau nom DoFirst. S'y ajoute un audit de performance : R8, `shrinkResources`, polices intégrées, contexte découpé.
-- **1.2** (cette branche) :
+- **1.2** :
   - aide intégrée ;
   - équilibre et bilan ;
   - revue hebdomadaire et priorités ;
@@ -32,6 +32,11 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
   - tâches récurrentes ;
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
+- **1.2.1** (cette branche) :
+  - demande d'avis dans l'app (fenêtre officielle de Google Play) ;
+  - Réglages › À propos : noter, partager, suggérer une idée, version ;
+  - `useTasks` découpé en hooks dédiés, code dupliqué mis en commun ;
+  - règles de confidentialité ; permission AD_ID bloquée.
 
 ## 3. Stack technique
 
@@ -46,7 +51,7 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
 | Animations / gestes | Reanimated 4, Worklets, Gesture Handler |
 | Tests | Jest (jest-expo), React Native Testing Library |
 
-Modules Expo : `expo-notifications`, `expo-localization`, `expo-haptics`, `expo-font`, `expo-splash-screen`, `expo-router`, `expo-linking`, `expo-constants`, `expo-dev-client`, `expo-build-properties`, `expo-file-system`, `expo-sharing`. Plus `@react-native-community/datetimepicker`, `@expo/vector-icons` (Ionicons) et `@expo-google-fonts/manrope`.
+Modules Expo : `expo-notifications`, `expo-localization`, `expo-haptics`, `expo-font`, `expo-splash-screen`, `expo-router`, `expo-linking`, `expo-constants`, `expo-dev-client`, `expo-build-properties`, `expo-file-system`, `expo-sharing`, `expo-store-review` (1.2.1). Plus `@react-native-community/datetimepicker`, `@expo/vector-icons` (Ionicons) et `@expo-google-fonts/manrope`.
 
 ## 4. Organisation du code
 
@@ -61,15 +66,20 @@ app/                    Écrans (expo-router)
   balance.tsx           Bilan
   review.tsx            Revue de la semaine
 src/
-  hooks/useTasks.ts     État des tâches, sauvegardes regroupées, notifications, journal, bascule
+  hooks/useTasks.ts     État des tâches et actions, assemblé à partir des hooks dédiés :
+    useCompletionLog (journal), useTaskSaving (sauvegarde), useNotificationSync
+    (notifications), useTimers (minuteurs), useEscalation (bascule),
+    useRecurrence (fin, réouverture, occurrence suivante), useForeground
   store/                Contexte découpé et magasin à sélecteurs
   notifications/        Calcul, programmation, réconciliation, réponses
   migrations.ts         Schémas v1 → v6 ;  storage.ts  chargement et sauvegarde
   recovery.ts           Récupération des tâches de l'ancienne app (à ne pas modifier)
   balance.ts, completionLog.ts, review.ts, recurrence.ts, backup.ts, delegation.ts
+  reviewPrompt.ts       Conditions de la demande d'avis ; community.ts  liens « À propos »
+  guards.ts             isRecord, CATEGORY_KEYS (recovery.ts garde ses propres copies)
   components/           Cartes, formulaires, InfoButton, présentation…
   i18n/fr.ts, en.ts     Tous les textes (mêmes clés, vérifié par test)
-store/                  Fiches Play Store et notes de version
+store/                  Fiches Play Store, notes de version, règles de confidentialité
 ```
 
 ## 5. Données enregistrées (AsyncStorage)
@@ -80,7 +90,7 @@ store/                  Fiches Play Store et notes de version
 | `TASKS_4COLS_BACKUP_V1` … `V5` | Copie du format d'origine, écrite une seule fois avant chaque migration |
 | `TASKS_4COLS_CORRUPT_<date>` | Contenu illisible mis de côté |
 | `TASKS_4COLS_RECOVERY_DONE`, `TASKS_4COLS_RECOVERY_LOG` | Récupération des anciennes tâches |
-| `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut) |
+| `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis) |
 | `COMPLETION_LOG` | Journal `{ date, catégorie }` des tâches terminées, 26 semaines |
 | `WEEKLY_REVIEW_LOG` | Semaines où une revue a été faite |
 | `BACKUP_BEFORE_IMPORT` | Copie des données avant le dernier import |
@@ -142,22 +152,31 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 **Réglages**
 - Rappels par défaut, plage silencieuse, notifications, revue, bascule en retard.
 - Célébrations, archivage, sauvegarde, aide.
+- À propos : « Noter DoFirst » (fiche Play Store), « Partager DoFirst » (partage natif avec le lien), « Suggérer une idée / signaler un problème » (e-mail prérempli avec les versions de l'app et d'Android), numéro de version.
+
+**Demande d'avis** (1.2.1)
+- Fenêtre officielle de Google Play (`expo-store-review`), sans quitter l'app.
+- Après la fin d'une revue de la semaine, ou une tâche terminée dès la 10e (journal des fins de tâches).
+- Jamais pendant les 3 premiers jours, au plus une fois tous les 90 jours, jamais dans les 30 s après un « Annuler » (tâche, bascule, import), jamais par-dessus une célébration (attend sa fin).
+- Première utilisation inconnue (réglages d'avant la 1.2.1) : estimée par la plus ancienne tâche ou fin de tâche.
+- Google décide seul d'afficher ou non la fenêtre (quota) : l'app ne sait pas si elle est apparue.
 
 ## 7. Publication
 
 | Élément | Valeur |
 |---|---|
-| Version | **1.2.0** (`app.json`, `package.json`) |
+| Version | **1.2.1** (`app.json`, `package.json`) |
 | versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
 | Fiche Play Store | `store/listing-fr.md`, `store/listing-en.md` |
-| Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` |
+| Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` (encore celles de la 1.2.0) |
+| Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
 
 **Permissions du manifeste final**
 - **Attendues :** `INTERNET`, `VIBRATE`, `RECEIVE_BOOT_COMPLETED` et `POST_NOTIFICATIONS` (expo-notifications).
-- **Retirées :** `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` et `SYSTEM_ALERT_WINDOW`, via `android.blockedPermissions`.
+- **Retirées :** `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `SYSTEM_ALERT_WINDOW` et `com.google.android.gms.permission.AD_ID`, via `android.blockedPermissions`.
 
 Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n'a lieu qu'au build.
 
@@ -167,13 +186,12 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
+- **Adresse de contact :** `syll.dev.learning@gmail.com` (à confirmer : la demande portait « À REMPLACER PAR MON ADRESSE ») dans `src/community.ts` et les deux règles de confidentialité.
 
-### Dette technique (pour la 1.2.1)
+### Dette technique
 
-- **`useTasks` trop gros** (environ 700 lignes) : il mélange synchronisation des notifications, journal, bascule, récurrence, minuteurs et sauvegarde. À découper en hooks dédiés.
-- **Gros fichiers** : `TaskForm.tsx` (près de 700 lignes) et `app/review.tsx` (plus de 500) gagneraient à être découpés.
-- **Code dupliqué** : `isRecord` (×3), `CATEGORY_KEYS` (×4), `selectCompletions` (×3), `isForeground` (×2) et la constante `METRICS` dans une quinzaine de tests.
-- **Code mort** : le champ `Escalation.at` n'est jamais lu.
+- **Réglée en 1.2.1 :** `useTasks` découpé en hooks dédiés ; `isRecord`, `CATEGORY_KEYS`, `selectCompletions`, `isForeground` et `METRICS` (tests) mis en commun ; `Escalation.at` supprimé.
+- **Reste :** `TaskForm.tsx` (près de 700 lignes) et `app/review.tsx` (plus de 500) gagneraient à être découpés. `recovery.ts` garde ses copies d'`isRecord` et `CATEGORY_KEYS` (fichier à ne pas modifier).
 
 ## 9. Reste à vérifier sur téléphone (dans l'ordre)
 
@@ -239,6 +257,14 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - « Envoyer à Marie » par SMS ou WhatsApp.
     - « Relancer » depuis la notification (app fermée et en arrière-plan) et depuis la revue.
 12. **Anglais** : téléphone en anglais. Tous les écrans, les boutons de notification et le nom de fichier de la sauvegarde.
-13. **Poids et batterie**
+13. **Demande d'avis** (1.2.1) : la fenêtre de Google ne s'affiche que pour une app installée depuis le Play Store (piste de test interne comprise), et Google limite sa fréquence.
+    - Après une revue de la semaine terminée, une fois les confettis finis.
+    - Sur un compte de test, la fenêtre peut ne pas apparaître du tout : vérifier seulement l'absence de plantage.
+14. **À propos** (1.2.1)
+    - « Noter DoFirst » ouvre la fiche dans l'app Play Store.
+    - « Partager DoFirst » : message et lien corrects dans SMS ou WhatsApp.
+    - « Suggérer une idée » : Gmail s'ouvre avec l'adresse, l'objet et les versions de l'app et d'Android.
+    - Numéro de version affiché : 1.2.1.
+15. **Poids et batterie**
     - Taille de l'AAB comparée à la 1.1.
     - App en arrière-plan : pas de réveils inutiles.
