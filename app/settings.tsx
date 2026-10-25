@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import IconButton from "../src/components/IconButton";
 import Onboarding from "../src/components/Onboarding";
 import SettingsForm from "../src/components/SettingsForm";
+import { appVersion, openStoreListing, sendFeedback, shareApp } from "../src/community";
 import { t } from "../src/i18n";
 import { useBackup } from "../src/hooks/useBackup";
 import { openSystemSettings } from "../src/notifications/setup";
@@ -17,6 +18,13 @@ import {
   useTasksSelector,
 } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
+
+const ABOUT = {
+  version: appVersion(),
+  onRate: openStoreListing,
+  onShare: shareApp,
+  onFeedback: sendFeedback,
+};
 
 // Seules les archives sont affichées : cocher une tâche ne re-rend pas cet écran
 const selectArchived = ({ tasks }: TasksState) =>
@@ -77,6 +85,7 @@ export default function SettingsScreen() {
           onImport={backup.importData}
           onUndoImport={backup.canUndoImport ? backup.undoImport : undefined}
           onQuietHoursLayout={scrollToQuietHours}
+          about={ABOUT}
         />
       </ScrollView>
       {showOnboarding && <Onboarding onDone={() => setShowOnboarding(false)} />}

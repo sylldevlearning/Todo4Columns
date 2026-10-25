@@ -451,6 +451,20 @@ export const en: Translations = {
     retry: "Try again",
   },
 
+  about: {
+    section: "About",
+    rate: "Rate DoFirst",
+    share: "Share DoFirst",
+    shareMessage: (url) =>
+      `I use DoFirst to sort my tasks between urgent and important. Give it a try: ${url}`,
+    feedback: "Suggest an idea / report a problem",
+    feedbackSubject: "DoFirst: idea or problem",
+    feedbackBody: (version, system) => `\n\n\n---\nDoFirst ${version}\n${system}`,
+    noMailTitle: "No email app",
+    noMailBody: (email) => `You can write to ${email}.`,
+    version: (version) => `Version ${version}`,
+  },
+
   backup: {
     section: "Backup",
     export: "Export my data",

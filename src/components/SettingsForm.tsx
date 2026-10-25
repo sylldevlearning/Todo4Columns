@@ -45,6 +45,12 @@ interface Props {
   onImport?: () => void; // « Importer une sauvegarde »
   onUndoImport?: () => void; // « Annuler le dernier import » (seulement après un import)
   onQuietHoursLayout?: (y: number) => void; // position de la section, pour y faire défiler
+  about?: {
+    version: string; // version de l'app
+    onRate: () => void; // « Noter DoFirst »
+    onShare: () => void; // « Partager DoFirst »
+    onFeedback: () => void; // « Suggérer une idée / signaler un problème »
+  };
 }
 
 function Section({
@@ -119,6 +125,7 @@ export default function SettingsForm({
   onImport,
   onUndoImport,
   onQuietHoursLayout,
+  about,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
@@ -339,6 +346,15 @@ export default function SettingsForm({
           {onShowOnboarding && (
             <TextButton label={t.onboarding.replay} onPress={onShowOnboarding} />
           )}
+        </Section>
+      )}
+
+      {about && (
+        <Section title={t.about.section}>
+          <TextButton label={t.about.rate} onPress={about.onRate} />
+          <TextButton label={t.about.share} onPress={about.onShare} />
+          <TextButton label={t.about.feedback} onPress={about.onFeedback} />
+          <Text style={styles.hint}>{t.about.version(about.version)}</Text>
         </Section>
       )}
 

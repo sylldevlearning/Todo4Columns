@@ -468,6 +468,22 @@ export const fr = {
     later: "Plus tard",
   },
 
+  // Réglages › À propos : noter, partager, écrire au développeur
+  about: {
+    section: "À propos",
+    rate: "Noter DoFirst",
+    share: "Partager DoFirst",
+    shareMessage: (url: string) =>
+      `J'utilise DoFirst pour trier mes tâches entre l'urgent et l'important. Essaie-la : ${url}`,
+    feedback: "Suggérer une idée / signaler un problème",
+    feedbackSubject: "DoFirst : idée ou problème",
+    feedbackBody: (version: string, system: string) =>
+      `\n\n\n---\nDoFirst ${version}\n${system}`,
+    noMailTitle: "Aucune app de messagerie",
+    noMailBody: (email: string) => `Tu peux écrire à ${email}.`,
+    version: (version: string) => `Version ${version}`,
+  },
+
   // Sauvegarde : export et import des données
   backup: {
     section: "Sauvegarde",
