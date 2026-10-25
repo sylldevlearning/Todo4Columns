@@ -11,6 +11,7 @@ import InfoButton from "../src/components/InfoButton";
 import { CATEGORY_BY_KEY } from "../src/constants/categories";
 import { t } from "../src/i18n";
 import { isPriority, MAX_PRIORITIES, priorityTargetWeek, recordReview } from "../src/review";
+import { requestReviewPrompt } from "../src/reviewPrompt";
 import { sameItems } from "../src/store/selectableStore";
 import { TasksState, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
 import { nudgeMessage, shareMessage } from "../src/delegation";
@@ -101,6 +102,8 @@ export default function ReviewScreen() {
     if (step !== STEPS || finished.current) return;
     finished.current = true;
     celebrate("INU");
+    // Demande d'avis éventuelle, une fois la célébration finie
+    requestReviewPrompt("weeklyReview");
     recordReview(Date.now())
       .then(setStreak)
       .catch((e) => console.warn("Erreur enregistrement revue :", e));

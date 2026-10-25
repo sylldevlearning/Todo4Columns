@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "../i18n";
+import { noteUndo } from "../reviewPrompt";
 import {
   TasksState,
   useSettingsReady,
@@ -48,7 +49,10 @@ export default function EscalationNotice() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${t.undo.action} : ${message}`}
-        onPress={undoEscalation}
+        onPress={() => {
+          noteUndo();
+          undoEscalation();
+        }}
         style={styles.action}
       >
         <Text style={styles.actionText}>{t.undo.action}</Text>

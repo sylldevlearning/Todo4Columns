@@ -20,6 +20,9 @@ export interface Settings {
   weeklyReviewDay: number; // jour de la revue : 0 = dimanche … 6 = samedi
   weeklyReviewTime: string; // heure de la revue, "HH:MM"
   autoEscalate: boolean; // tâches « Planifier » en retard basculées dans « Faire »
+  // Demande d'avis (1.2.1), absents des réglages plus anciens
+  firstUseAt?: number; // première utilisation, enregistrée à la première occasion de demander
+  reviewAskedAt?: number; // dernière demande d'avis
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -134,6 +137,9 @@ export function parseSettings(json: string | null): Settings {
     // Absent avant la 1.2 : activé
     autoEscalate:
       typeof s.autoEscalate === "boolean" ? s.autoEscalate : DEFAULT_SETTINGS.autoEscalate,
+    // Absents avant la 1.2.1, ou invalides : non renseignés
+    ...(isPositiveNumber(s.firstUseAt) ? { firstUseAt: s.firstUseAt } : {}),
+    ...(isPositiveNumber(s.reviewAskedAt) ? { reviewAskedAt: s.reviewAskedAt } : {}),
   };
 }
 

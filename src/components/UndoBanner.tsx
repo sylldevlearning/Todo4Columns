@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "../i18n";
+import { noteUndo } from "../reviewPrompt";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { FAB_SIZE } from "./Fab";
 
@@ -24,7 +25,11 @@ export default function UndoBanner({ message, onUndo }: Props) {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t.undo.action}
-        onPress={onUndo}
+        onPress={() => {
+          // Pas de demande d'avis juste après un « Annuler »
+          noteUndo();
+          onUndo();
+        }}
         style={styles.action}
       >
         <Text style={styles.actionText}>{t.undo.action}</Text>

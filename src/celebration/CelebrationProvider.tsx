@@ -29,11 +29,14 @@ interface CelebrationApi {
   celebrate: (category: Category, anchor?: Anchor | null) => number | null;
   // Fait disparaître la célébration (toutes, ou seulement celle indiquée)
   dismiss: (id?: number) => void;
+  // Une célébration est à l'écran (rien ne doit s'afficher par-dessus)
+  isCelebrating: () => boolean;
 }
 
 const CelebrationContext = createContext<CelebrationApi>({
   celebrate: () => null,
   dismiss: () => {},
+  isCelebrating: () => false,
 });
 
 export const useCelebration = () => useContext(CelebrationContext);
@@ -59,6 +62,8 @@ export function CelebrationProvider({ enabled, children }: { enabled: boolean; c
   const reduceMotion = useReduceMotion();
   const { width, height } = useWindowDimensions();
   const [active, setActive] = useState<Active | null>(null);
+  const activeRef = useRef(active);
+  activeRef.current = active;
 
   const latest = useRef({ enabled, reduceMotion, width, height });
   latest.current = { enabled, reduceMotion, width, height };
@@ -108,7 +113,8 @@ export function CelebrationProvider({ enabled, children }: { enabled: boolean; c
     setActive(null);
   }, []);
 
-  const api = useMemo(() => ({ celebrate, dismiss }), [celebrate, dismiss]);
+  const isCelebrating = useCallback(() => activeRef.current !== null, []);
+  const api = useMemo(() => ({ celebrate, dismiss, isCelebrating }), [celebrate, dismiss, isCelebrating]);
   const category = active ? CATEGORY_BY_KEY[active.category] : null;
 
   return (

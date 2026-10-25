@@ -8,6 +8,7 @@ import { CelebrationProvider, useCelebration } from "../src/celebration/Celebrat
 import EscalationNotice from "../src/components/EscalationNotice";
 import LoadErrorGate from "../src/components/LoadErrorGate";
 import PermissionCard from "../src/components/PermissionCard";
+import ReviewPrompter from "../src/components/ReviewPrompter";
 import { removeExportedFiles } from "../src/backup";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { nudgeMessage, shareWhenActive } from "../src/delegation";
@@ -107,6 +108,7 @@ export default function RootLayout() {
             </LoadErrorGate>
             <EscalationNotice />
             <PermissionCard />
+            <ReviewPrompter />
           </Celebrations>
         </TasksProvider>
       </SafeAreaProvider>

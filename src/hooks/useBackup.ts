@@ -17,6 +17,7 @@ import {
 import { formatShortDate } from "../format";
 import { t } from "../i18n";
 import { loadReviewWeeks } from "../review";
+import { noteUndo } from "../reviewPrompt";
 import { useTaskActions } from "../store/TasksContext";
 
 // Export et import de la sauvegarde, depuis les Réglages
@@ -73,6 +74,7 @@ export function useBackup() {
 
   // « Annuler le dernier import » : les données d'avant reviennent, la copie est supprimée
   const restore = async () => {
+    noteUndo();
     try {
       const previous = await readPreImportCopy();
       await writeImported(previous);
