@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { AppState, AppStateStatus } from "react-native";
-
-const isForeground = (state: AppStateStatus | null | undefined) =>
-  state !== "background" && state !== "inactive";
+import { AppState } from "react-native";
+import { isForeground } from "./useForeground";
 
 // Heure courante, rafraîchie à intervalle régulier (délais affichés, tâches en attente).
 // Rien ne tourne quand l'app n'est pas à l'écran ; au retour, l'heure est relue aussitôt.

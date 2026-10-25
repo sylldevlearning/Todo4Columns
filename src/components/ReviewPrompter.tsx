@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { AppState } from "react-native";
 import { useCelebration } from "../celebration/CelebrationProvider";
 import { Completion } from "../completionLog";
-import { isForeground } from "../hooks/useTasks";
+import { isForeground } from "../hooks/useForeground";
 import {
   canAskForReview,
   clearReviewPrompt,

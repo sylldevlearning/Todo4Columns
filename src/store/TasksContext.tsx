@@ -9,7 +9,8 @@ import React, {
   useState,
 } from "react";
 import { AppState } from "react-native";
-import { Escalation, isForeground, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
+import { isForeground } from "../hooks/useForeground";
+import { Escalation, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
 import { showPermissionCard } from "../notifications/permissionCard";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
