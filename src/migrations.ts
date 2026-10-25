@@ -1,4 +1,5 @@
 import { isWeekKey } from "./balance";
+import { CATEGORY_KEYS, isRecord } from "./guards";
 import { parseRecurrence } from "./recurrence";
 import { Category, Task } from "./types";
 
@@ -21,10 +22,7 @@ export interface ParsedTasks {
   fromVersion: number | null; // null = rien d'enregistré
 }
 
-const CATEGORY_KEYS: Category[] = ["UI", "INU", "UDI", "NDNI"];
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
 
 const numberOrNull = (v: unknown): number | null =>
   typeof v === "number" && Number.isFinite(v) ? v : null;

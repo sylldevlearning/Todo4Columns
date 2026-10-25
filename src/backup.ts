@@ -13,6 +13,7 @@ import { parseReviewWeeksJson, REVIEW_LOG_KEY } from "./review";
 import { parseSettings, SETTINGS_KEY, SETTINGS_SCHEMA_VERSION, Settings } from "./settings";
 import { STORAGE_KEY } from "./storage";
 import { isWeekKey } from "./balance";
+import { CATEGORY_KEYS, isRecord } from "./guards";
 import { Category, Task } from "./types";
 
 // Sauvegarde manuelle : un fichier JSON avec les tâches, les réglages, le journal des fins de
@@ -73,9 +74,6 @@ export function buildBackup(content: Omit<BackupContent, "createdAt">, now: numb
   };
 }
 
-const CATEGORY_KEYS: Category[] = ["UI", "INU", "UDI", "NDNI"];
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
 
 // Vérifie et lit un fichier de sauvegarde. Rien n'est écrit ici.
 export function parseBackup(json: string, now: number = Date.now()): ParsedBackup {

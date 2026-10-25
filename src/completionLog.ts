@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addWeeks, startOfWeek } from "./balance";
+import { CATEGORY_KEYS } from "./guards";
 import { Category, Task } from "./types";
 
 // Journal des fins de tâches : la date et le quadrant de chaque tâche terminée, sans titre.
@@ -13,8 +14,6 @@ export interface Completion {
   date: number; // timestamp en ms
   category: Category;
 }
-
-const CATEGORY_KEYS: Category[] = ["UI", "INU", "UDI", "NDNI"];
 
 const isCompletion = (v: unknown): v is Completion =>
   typeof v === "object" &&

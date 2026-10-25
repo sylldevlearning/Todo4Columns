@@ -16,14 +16,13 @@ import {
   reviewRequests,
 } from "../reviewPrompt";
 import { useStoreSelector } from "../store/selectableStore";
-import { TasksState, useTaskActions, useTasksSelector } from "../store/TasksContext";
+import { selectCompletions, useTaskActions, useTasksSelector } from "../store/TasksContext";
 
 // Nouvel essai tant qu'une célébration est à l'écran
 const RETRY_MS = 500;
 // Une fin de tâche plus ancienne vient du chargement ou d'un import, pas de l'utilisateur
 const LIVE_COMPLETION_MS = 5 * 1000;
 
-const selectCompletions = ({ completions }: TasksState) => completions;
 const identity = (trigger: ReviewTrigger | null) => trigger;
 
 // Demande d'avis : après la fin d'une revue ou une tâche terminée (dès la 10e), une fois la

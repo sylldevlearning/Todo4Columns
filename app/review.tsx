@@ -13,7 +13,7 @@ import { t } from "../src/i18n";
 import { isPriority, MAX_PRIORITIES, priorityTargetWeek, recordReview } from "../src/review";
 import { requestReviewPrompt } from "../src/reviewPrompt";
 import { sameItems } from "../src/store/selectableStore";
-import { TasksState, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
+import { selectCompletions, TasksState, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
 import { nudgeMessage, shareMessage } from "../src/delegation";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../src/theme";
 import { Category, Task } from "../src/types";
@@ -28,7 +28,6 @@ const openIn = (category: Category) => ({ tasks }: TasksState) =>
 const selectSomeday = openIn("NDNI");
 const selectPlanned = openIn("INU");
 const selectDelegated = openIn("UDI");
-const selectCompletions = ({ completions }: TasksState) => completions;
 
 // Choix unique parmi quelques options, pour une tâche
 function Choices<T extends string>({

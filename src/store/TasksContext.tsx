@@ -31,6 +31,9 @@ export interface TasksState {
   loadError: boolean; // lecture des tâches impossible
 }
 
+// Journal des fins de tâches (bilan, revue, demande d'avis)
+export const selectCompletions = ({ completions }: TasksState) => completions;
+
 type StoreActions = Omit<
   ReturnType<typeof useTasks>,
   "tasks" | "isLoaded" | "completions" | "escalation" | "loadError"

@@ -16,10 +16,9 @@ import InfoButton from "../src/components/InfoButton";
 import { CATEGORIES } from "../src/constants/categories";
 import { formatWeekStart } from "../src/format";
 import { t } from "../src/i18n";
-import { TasksState, useTasksSelector } from "../src/store/TasksContext";
+import { selectCompletions, useTasksSelector } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
 
-const selectCompletions = ({ completions }: TasksState) => completions;
 
 // Hauteur de la colonne de la semaine la plus chargée
 const COLUMN_HEIGHT = 140;
