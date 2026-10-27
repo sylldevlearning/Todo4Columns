@@ -11,11 +11,18 @@ import React, {
 } from "react";
 import { AccessibilityInfo, StyleSheet, useWindowDimensions, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
+import { t } from "../i18n";
 import { Category } from "../types";
 import CelebrationMessage from "./CelebrationMessage";
 import Confetti, { Point } from "./Confetti";
 import { createMessagePicker } from "./messages";
-import { CELEBRATION_MS, CelebrationPlan, HapticKind, planCelebration } from "./plan";
+import {
+  CELEBRATION_MS,
+  CelebrationPlan,
+  HapticKind,
+  planCelebration,
+  planStepCelebration,
+} from "./plan";
 import { useReduceMotion } from "./useReduceMotion";
 
 // Délai maximal pour connaître la position de la tâche ; au-delà, l'explosion part du centre
@@ -27,6 +34,8 @@ export type Anchor = { measureInWindow: (callback: (x: number, y: number, width:
 interface CelebrationApi {
   // Lance la célébration d'une tâche terminée ; renvoie son identifiant, ou null si rien n'est joué
   celebrate: (category: Category, anchor?: Anchor | null) => number | null;
+  // Étape cochée : petit message et retour haptique léger, sans confettis
+  celebrateStep: (category: Category) => number | null;
   // Fait disparaître la célébration (toutes, ou seulement celle indiquée)
   dismiss: (id?: number) => void;
   // Une célébration est à l'écran (rien ne doit s'afficher par-dessus)
@@ -35,6 +44,7 @@ interface CelebrationApi {
 
 const CelebrationContext = createContext<CelebrationApi>({
   celebrate: () => null,
+  celebrateStep: () => null,
   dismiss: () => {},
   isCelebrating: () => false,
 });
@@ -107,6 +117,25 @@ export function CelebrationProvider({ enabled, children }: { enabled: boolean; c
     return id;
   }, []);
 
+  const celebrateStep = useCallback((category: Category) => {
+    const plan = planStepCelebration({ enabled: latest.current.enabled });
+    // Célébrations désactivées : seulement le retour haptique
+    if (!plan) {
+      playHaptic("light");
+      return null;
+    }
+    clearTimers();
+    const id = ++lastId.current;
+    const message = t.steps.stepDone;
+    playHaptic(plan.haptic);
+    AccessibilityInfo.announceForAccessibility(message);
+    setActive({ id, category, message, plan, origin: null });
+    timers.current.push(
+      setTimeout(() => setActive((c) => (c?.id === id ? null : c)), CELEBRATION_MS)
+    );
+    return id;
+  }, []);
+
   const dismiss = useCallback((id?: number) => {
     if (id !== undefined && id !== lastId.current) return; // déjà remplacée
     clearTimers();
@@ -114,7 +143,10 @@ export function CelebrationProvider({ enabled, children }: { enabled: boolean; c
   }, []);
 
   const isCelebrating = useCallback(() => activeRef.current !== null, []);
-  const api = useMemo(() => ({ celebrate, dismiss, isCelebrating }), [celebrate, dismiss, isCelebrating]);
+  const api = useMemo(
+    () => ({ celebrate, celebrateStep, dismiss, isCelebrating }),
+    [celebrate, celebrateStep, dismiss, isCelebrating]
+  );
   const category = active ? CATEGORY_BY_KEY[active.category] : null;
 
   return (

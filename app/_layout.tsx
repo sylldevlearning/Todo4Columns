@@ -13,6 +13,7 @@ import { removeExportedFiles } from "../src/backup";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { nudgeMessage, shareWhenActive } from "../src/delegation";
 import { useAppFonts } from "../src/fonts";
+import { askToFinish } from "../src/finishPrompt";
 import { configureNotifications } from "../src/notifications/setup";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
 import {
@@ -36,8 +37,8 @@ const allTasks = (state: TasksState) => state;
 // Applique les actions choisies dans les notifications
 function NotificationResponses() {
   const { isLoaded, tasks } = useTasksSelector(allTasks);
-  const { completeTask, snoozeTask } = useTaskActions();
-  const { celebrate } = useCelebration();
+  const { completeTask, snoozeTask, completeStep, postponeStep, getTasksState } = useTaskActions();
+  const { celebrate, celebrateStep } = useCelebration();
   useNotificationResponses({
     isLoaded,
     tasks,
@@ -52,6 +53,21 @@ function NotificationResponses() {
     },
     // « Fait » touché pendant que l'app est à l'écran
     onCompletedInApp: (task) => celebrate(task.category),
+    completeStep,
+    postponeStep,
+    // « Fait » d'une étape, app à l'écran : petite célébration ; la dernière propose de finir
+    onStepCompletedInApp: (task, stepId) => {
+      celebrateStep(task.category);
+      const others = (task.steps ?? []).filter((s) => s.id !== stepId);
+      if (!task.isDone && others.every((s) => s.done)) {
+        askToFinish(() => {
+          if (getTasksState().tasks.some((t) => t.id === task.id && !t.isDone)) {
+            completeTask(task.id);
+            celebrate(task.category);
+          }
+        });
+      }
+    },
   });
   return null;
 }

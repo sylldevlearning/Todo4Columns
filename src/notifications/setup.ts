@@ -7,6 +7,7 @@ import {
   DELEGATE_CATEGORY_ID,
   NotificationData,
   REVIEW_TYPE,
+  STEP_CATEGORY_ID,
 } from "./service";
 
 // Identifiants des boutons de notification
@@ -14,6 +15,7 @@ export const ACTION_DONE = "done";
 export const ACTION_SNOOZE = "snooze";
 export const ACTION_OPEN = "open";
 export const ACTION_NUDGE = "nudge";
+export const ACTION_POSTPONE = "postpone"; // « Reporter à demain » (étape)
 
 export type PermissionState = "granted" | "denied" | "undetermined";
 
@@ -62,6 +64,16 @@ export async function configureNotifications(): Promise<void> {
       options: { opensAppToForeground: true },
     },
   ]);
+
+  // Étape du jour : « Fait » coche l'étape, « Reporter à demain » la décale d'un jour
+  await Notifications.setNotificationCategoryAsync(STEP_CATEGORY_ID, [
+    { identifier: ACTION_DONE, buttonTitle: t.notifications.actionDone, options: { opensAppToForeground: true } },
+    {
+      identifier: ACTION_POSTPONE,
+      buttonTitle: t.notifications.actionPostpone,
+      options: { opensAppToForeground: true },
+    },
+  ]);
 }
 
 const toState = (status: string): PermissionState =>
@@ -98,6 +110,8 @@ export interface ResponseHandlers {
   open: (taskId: string) => void; // « Ouvrir » ou tap sur la notification
   openReview?: () => void; // tap sur la notification de revue de la semaine
   nudge?: (taskId: string) => void; // « Relancer » d'une tâche confiée
+  completeStep?: (taskId: string, stepId: string) => void; // « Fait » d'une étape
+  postponeStep?: (taskId: string, stepId: string) => void; // « Reporter à demain »
 }
 
 // Applique l'action choisie dans une notification ; renvoie false si elle ne concerne aucune tâche
@@ -111,6 +125,17 @@ export function handleNotificationResponse(
     return true;
   }
   if (!data?.taskId) return false;
+  // Rappel d'une étape : « Fait » et « Reporter à demain » concernent l'étape, un appui ouvre la tâche
+  if (typeof data.stepId === "string") {
+    if (response.actionIdentifier === ACTION_DONE && handlers.completeStep) {
+      handlers.completeStep(data.taskId, data.stepId);
+    } else if (response.actionIdentifier === ACTION_POSTPONE && handlers.postponeStep) {
+      handlers.postponeStep(data.taskId, data.stepId);
+    } else {
+      handlers.open(data.taskId);
+    }
+    return true;
+  }
   switch (response.actionIdentifier) {
     case ACTION_DONE:
       handlers.complete(data.taskId);

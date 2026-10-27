@@ -18,9 +18,13 @@ interface Options {
   nudge?: (task: Task) => void; // « Relancer » : message à la personne
   // « Fait » reçu pendant que l'app est au premier plan (pour la célébration)
   onCompletedInApp?: (task: Task) => void;
+  completeStep?: (taskId: string, stepId: string) => void; // « Fait » d'une étape
+  postponeStep?: (taskId: string, stepId: string) => void; // « Reporter à demain »
+  // « Fait » d'une étape reçu au premier plan : célébration discrète, proposition de fin
+  onStepCompletedInApp?: (task: Task, stepId: string) => void;
 }
 
-// Applique « Fait », « Reporter 1 h », « Ouvrir » et le tap sur une notification,
+// Applique « Fait », « Reporter 1 h », « Ouvrir », « Reporter à demain » (étape) et le tap sur une notification,
 // y compris quand l'app était fermée (dernière réponse lue au démarrage)
 export function useNotificationResponses(options: Options): void {
   const latest = useRef(options);
@@ -44,6 +48,15 @@ export function useNotificationResponses(options: Options): void {
         }
       },
       snooze: (id) => latest.current.snoozeTask(id),
+      completeStep: (id, stepId) => {
+        const task = latest.current.tasks.find((t) => t.id === id);
+        latest.current.completeStep?.(id, stepId);
+        const step = task?.steps?.find((s) => s.id === stepId);
+        if (live && task && step && !step.done && AppState.currentState === "active") {
+          latest.current.onStepCompletedInApp?.(task, stepId);
+        }
+      },
+      postponeStep: (id, stepId) => latest.current.postponeStep?.(id, stepId),
       openReview: () => latest.current.openReview?.(),
       nudge: (id) => {
         const task = latest.current.tasks.find((t) => t.id === id);

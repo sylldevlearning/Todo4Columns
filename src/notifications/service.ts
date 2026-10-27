@@ -15,9 +15,16 @@ export const CATEGORY_ID = "task-reminder";
 // Relance d'une tâche confiée : « Fait », « Relancer » (message à la personne), « Reporter 1 h »
 export const DELEGATE_CATEGORY_ID = "task-delegate";
 
+// Rappel d'une étape : « Fait » (l'étape), « Reporter à demain »
+export const STEP_CATEGORY_ID = "task-step";
+
 // Boutons de la notification selon la tâche
 export const categoryFor = (task: Task) =>
   task.category === "UDI" ? DELEGATE_CATEGORY_ID : CATEGORY_ID;
+
+// Boutons d'une notification : ceux de l'étape, sinon ceux de la tâche
+const categoryOf = (task: Task, item: ScheduledNotification) =>
+  item.stepId !== undefined ? STEP_CATEGORY_ID : categoryFor(task);
 // iOS ne garde que 64 notifications programmées
 export const MAX_SCHEDULED = 64;
 
@@ -27,6 +34,7 @@ export interface NotificationData {
   type: NotificationType;
   date: number;
   category?: string; // boutons de la notification (absent avant l'action « Relancer »)
+  stepId?: string; // rappel d'une étape
 }
 
 // Données de la notification hebdomadaire de revue (elle ne concerne aucune tâche)
@@ -45,8 +53,14 @@ async function canSchedule(): Promise<boolean> {
 
 // Déclencheur de type date : pas besoin de la permission SCHEDULE_EXACT_ALARM
 function scheduleItem(task: Task, item: ScheduledNotification): Promise<string> {
-  const category = categoryFor(task);
-  const data: NotificationData = { taskId: task.id, type: item.type, date: item.date, category };
+  const category = categoryOf(task, item);
+  const data: NotificationData = {
+    taskId: task.id,
+    type: item.type,
+    date: item.date,
+    category,
+    ...(item.stepId !== undefined ? { stepId: item.stepId } : {}),
+  };
   return Notifications.scheduleNotificationAsync({
     content: {
       title: item.content.title,
@@ -114,15 +128,16 @@ export async function syncTaskNotifications(
   return ids;
 }
 
-// Identifie une notification par son contenu : tâche, type, date, texte et boutons
+// Identifie une notification par son contenu : tâche, type, date, texte, boutons et étape
 const keyOf = (
   taskId: string,
   type: string,
   date: number,
   title: string,
   body: string,
-  category: string
-) => JSON.stringify([taskId, type, date, title, body, category]);
+  category: string,
+  stepId: string | undefined
+) => JSON.stringify([taskId, type, date, title, body, category, stepId ?? null]);
 
 const reviewKeyOf = (trigger: WeeklyTrigger, title: string, body: string) =>
   JSON.stringify([REVIEW_TYPE, trigger.weekday, trigger.hour, trigger.minute, title, body]);
@@ -147,7 +162,7 @@ export async function reconcileNotifications(
   const reviewKey = review ? reviewKeyOf(review, reviewTitle, reviewBody) : null;
   const desiredKeys = new Set(
     desired.map(({ task, item }) =>
-      keyOf(task.id, item.type, item.date, item.content.title, item.content.body, categoryFor(task))
+      keyOf(task.id, item.type, item.date, item.content.title, item.content.body, categoryOf(task, item), item.stepId)
     )
   );
   if (reviewKey) desiredKeys.add(reviewKey);
@@ -166,7 +181,8 @@ export async function reconcileNotifications(
           n.content.title ?? "",
           n.content.body ?? "",
           // Programmées avant l'action « Relancer » : boutons d'origine, remplacées si besoin
-          data.category ?? CATEGORY_ID
+          data.category ?? CATEGORY_ID,
+          data.stepId
         )
       : null;
     if (key !== null && desiredKeys.has(key) && !kept.has(key)) kept.set(key, n.identifier);
@@ -183,7 +199,8 @@ export async function reconcileNotifications(
       item.date,
       item.content.title,
       item.content.body,
-      categoryFor(task)
+      categoryOf(task, item),
+      item.stepId
     );
     result[task.id].push(kept.get(key) ?? (await scheduleItem(task, item)));
   }

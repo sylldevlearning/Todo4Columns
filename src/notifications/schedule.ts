@@ -1,6 +1,7 @@
 import { formatDue } from "../format";
 import { t } from "../i18n";
 import { Settings } from "../settings";
+import { stepReminderDate, stepsOf } from "../steps";
 import { Task } from "../types";
 
 const MINUTE = 60 * 1000;
@@ -14,7 +15,8 @@ export type NotificationType =
   | "due" // Planifier : échéance atteinte
   | "delegate" // Déléguer : relance de la personne
   | "timer" // minuteur terminé
-  | "snooze"; // rappel reporté avec « Reporter 1 h »
+  | "snooze" // rappel reporté avec « Reporter 1 h »
+  | "step"; // étape prévue ce jour-là
 
 export interface ScheduledNotification {
   date: number; // timestamp en ms, hors plage silencieuse
@@ -22,6 +24,7 @@ export interface ScheduledNotification {
   content: { title: string; body: string };
   nagIndex?: number; // relance n° nagIndex sur nagTotal (Faire)
   nagTotal?: number;
+  stepId?: string; // rappel d'une étape
 }
 
 const toMinutes = (hhmm: string) => {
@@ -149,6 +152,17 @@ export const weeklyReviewContent = () => ({
   body: t.notifications.weeklyReview,
 });
 
+// Étapes non faites avec un jour prévu : un rappel ce jour-là (à leur heure, 9:00 par défaut),
+// quel que soit le quadrant
+function stepNotifications(task: Task): ScheduledNotification[] {
+  return stepsOf(task).flatMap((step) => {
+    const date = step.done ? null : stepReminderDate(step);
+    return date === null
+      ? []
+      : [{ date, type: "step" as const, content: { title: task.title, body: t.notifications.step(step.title) }, stepId: step.id }];
+  });
+}
+
 // Notifications à programmer pour une tâche, triées par date.
 // Les dates en plage silencieuse sont décalées à sa fin (sauf les minuteurs),
 // les dates passées sont ignorées.
@@ -157,9 +171,9 @@ export function computeSchedule(
   settings: Settings,
   now: number
 ): ScheduledNotification[] {
-  if (task.isDone || task.archivedAt !== null || task.category === "NDNI") return [];
+  if (task.isDone || task.archivedAt !== null) return [];
 
-  const items: ScheduledNotification[] = [];
+  const items: ScheduledNotification[] = stepNotifications(task);
   switch (task.category) {
     case "UI":
       items.push(...nagNotifications(task, settings));
@@ -200,7 +214,8 @@ export function computeSchedule(
       break;
   }
 
-  if (task.timerEnd !== null) {
+  // « Si j'ai le temps » : aucun rappel ni minuteur, seulement ceux de ses étapes
+  if (task.timerEnd !== null && task.category !== "NDNI") {
     items.push({
       date: task.timerEnd,
       type: "timer",

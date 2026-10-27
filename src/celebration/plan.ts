@@ -65,6 +65,12 @@ export function planCelebration(
   return { style, confetti: !reduceMotion, haptic: style.haptic };
 }
 
+// Étape cochée : célébration discrète, sans confettis (petit retour haptique et message)
+export function planStepCelebration({ enabled }: { enabled: boolean }): CelebrationPlan | null {
+  if (!enabled) return null;
+  return { style: CELEBRATION_STYLES.NDNI, confetti: false, haptic: "light" };
+}
+
 export interface Particle {
   vx: number; // vitesse initiale, px/s
   vy: number;
