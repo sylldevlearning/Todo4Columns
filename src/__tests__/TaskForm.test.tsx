@@ -80,6 +80,7 @@ describe("TaskForm", () => {
       nagRepeat: true,
       delegatedTo: null,
       recurrence: null,
+      steps: [],
     });
   });
 

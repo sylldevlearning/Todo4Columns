@@ -1,7 +1,9 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { useCelebration } from "../celebration/CelebrationProvider";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
+import { askToFinish } from "../finishPrompt";
 import { t } from "../i18n";
 import {
   DELEGATE_FOLLOW_UP_OPTIONS,
@@ -21,15 +23,18 @@ import {
   recurrenceLabel,
   withAnchors,
 } from "../recurrence";
+import { allStepsDone, stepsOf } from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
-import { Category, Recurrence, ReminderFields, Task } from "../types";
+import { Category, Recurrence, ReminderFields, Task, TaskStep } from "../types";
 import DueDateField from "./DueDateField";
 import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
+import StepsEditor from "./StepsEditor";
 
 export interface TaskFormValues extends ReminderFields {
   title: string;
   category: Category;
+  steps: TaskStep[];
 }
 
 interface Props {
@@ -41,6 +46,8 @@ interface Props {
   onEditQuietHours?: () => void; // « Modifier la plage » : Réglages, section plage silencieuse
   onDisableQuietHours?: () => void; // « Désactiver la plage »
   onSubmit: (values: TaskFormValues) => void;
+  // Dernière étape cochée et « Terminer » choisi : enregistre puis termine la tâche
+  onComplete?: (values: TaskFormValues) => void;
 }
 
 // « Répéter » : Jamais, puis chaque règle (valeur = position dans RECURRENCE_FREQS)
@@ -117,6 +124,7 @@ export default function TaskForm({
   onEditQuietHours,
   onDisableQuietHours,
   onSubmit,
+  onComplete,
 }: Props) {
   const start = CATEGORY_BY_KEY[task?.category ?? initialCategory ?? DEFAULT_CATEGORY];
 
@@ -143,6 +151,9 @@ export default function TaskForm({
       ? task.nagInterval
       : settings.delegateFollowUp
   );
+
+  const [steps, setSteps] = useState<TaskStep[]>(task ? stepsOf(task) : []);
+  const { celebrateStep } = useCelebration();
 
   const category = CATEGORY_BY_KEY[categoryFromFlags(urgent, important)];
   const canSubmit = title.trim() !== "";
@@ -220,9 +231,26 @@ export default function TaskForm({
     }
   };
 
+  const values = (nextSteps: TaskStep[] = steps): TaskFormValues => ({
+    title: title.trim(),
+    category: category.key,
+    ...reminderFields(),
+    // Étape sans titre : retirée
+    steps: nextSteps.filter((s) => s.title.trim() !== "").map((s) => ({ ...s, title: s.title.trim() })),
+  });
+
   const submit = () => {
     if (!canSubmit) return;
-    onSubmit({ title: title.trim(), category: category.key, ...reminderFields() });
+    onSubmit(values());
+  };
+
+  // Étape cochée : petite célébration ; la dernière d'une tâche existante propose de la terminer
+  const stepToggled = (step: TaskStep, next: TaskStep[]) => {
+    if (!step.done) return;
+    celebrateStep(category.key);
+    if (task && !task.isDone && onComplete && canSubmit && allStepsDone(next)) {
+      askToFinish(() => onComplete(values(next)));
+    }
   };
 
   const pillColors = { color: category.color, onColor: category.onColor };
@@ -427,6 +455,17 @@ export default function TaskForm({
           )}
         </>
       )}
+
+      <Field label={t.steps.section} info="steps">
+        <StepsEditor
+          steps={steps}
+          onChange={setSteps}
+          onToggled={stepToggled}
+          color={category.color}
+          onColor={category.onColor}
+          textColor={category.textColor}
+        />
+      </Field>
 
       {/* Rappel dans la plage silencieuse : simple information, rien n'est bloqué */}
       {quietNotice && (
