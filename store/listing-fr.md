@@ -2,55 +2,48 @@
 
 ## Titre (30 caractères max)
 
-DoFirst : matrice d'Eisenhower
+DoFirst : to-do list & rappels
 
 ## Description courte (80 caractères max)
 
-Trie tes tâches en 4 cases et fais d'abord ce qui compte vraiment.
+To-do list et rappels : la matrice d’Eisenhower pour gérer tes priorités.
 
 ## Description complète (4 000 caractères max)
 
-Trop de choses à faire, et l'impression de courir sans avancer ? DoFirst t'aide à trier tes tâches avec la matrice d'Eisenhower, la méthode simple qui sépare l'urgent de l'important.
+DoFirst est une to-do list simple et intelligente qui t’aide à organiser tes tâches et à gérer tes priorités grâce à la matrice d’Eisenhower. Liste de tâches, rappels, planificateur et gestion du temps réunis dans une seule appli.
 
-Chaque tâche trouve sa place dans l'une des quatre cases :
+DEUX QUESTIONS, C’EST TOUT
+Pour chaque tâche, réponds à « C’est urgent ? » et « C’est important ? ». DoFirst la range toute seule dans la bonne case :
+• Faire : urgent et important, à traiter maintenant
+• Planifier : important mais pas urgent, à prévoir
+• Déléguer : urgent mais pas pour toi, à confier
+• Si j’ai le temps : ni urgent ni important, sans pression
 
-• Faire — urgent et important : tu t'y mets maintenant.
-• Planifier — important mais pas urgent : tu bloques un créneau.
-• Déléguer — urgent mais pas important : tu confies et tu relances.
-• Si j'ai le temps — ni urgent ni important : seulement s'il te reste du temps.
+DÉCOUPE LES GROSSES TÂCHES
+• Divise une tâche en étapes à cocher et suis ta progression
+• Donne un jour à chaque étape : aujourd’hui, demain ou une date
+• Répartis un projet en séances, par exemple 1 h par jour pendant 5 jours
 
-CRÉER UNE TÂCHE EN DEUX QUESTIONS
-« C'est urgent ? » « C'est important ? » Deux interrupteurs, et DoFirst range la tâche dans la bonne case. Une courte présentation et de petites icônes « i » t'expliquent la méthode au bon moment.
+DES RAPPELS QUI NE TE LÂCHENT PAS
+• Notifications et relances tant qu’une tâche urgente n’est pas faite
+• Rappel la veille ou une heure avant une échéance
+• Une tâche planifiée qui devient urgente te prévient, puis passe dans « Faire » si l’échéance est dépassée
+• Touche « Fait » ou « Reporter 1 h » directement dans la notification
 
-DES RAPPELS ADAPTÉS À CHAQUE CASE
-• Faire : une relance si la tâche n'est toujours pas faite après 30 min, 2 h ou 1 jour, répétée si tu le souhaites.
-• Planifier : une échéance et un rappel le jour J, 1 h avant ou la veille.
-• Déléguer : le nom de la personne et un rappel pour lui demander des nouvelles.
-• Si j'ai le temps : aucun rappel. Ces tâches peuvent être archivées automatiquement au bout de 7 jours.
+ORGANISE TA SEMAINE
+• « Ta semaine » : vois quelle part de tes tâches tu as anticipée
+• Revue de la semaine : 5 minutes pour faire le tri et choisir 3 priorités
+• Tâches récurrentes : chaque jour, chaque semaine, chaque mois…
 
-TÂCHES RÉCURRENTES
-Chaque jour, en semaine, certains jours, chaque mois ou chaque année : quand tu termines une tâche qui se répète, la suivante est créée toute seule.
+DÉLÈGUE SANS OUBLIER
+Envoie la tâche par SMS ou WhatsApp en un geste, et relance la personne au bon moment.
 
-PLUS DE MAUVAISES SURPRISES
-Une tâche « Planifier » dont l'échéance approche est signalée « Bientôt urgente ». Si l'échéance passe, elle bascule dans « Faire » avec la puce « En retard » (désactivable).
+SIMPLE ET MOTIVANT
+• Glisse vers la droite pour terminer, vers la gauche pour supprimer
+• Une petite célébration à chaque tâche terminée
+• Aide intégrée : un « i » explique chaque option
 
-DÉLÉGUER EN UN MESSAGE
-« Envoyer à Marie » ouvre le partage de ton téléphone avec un message prêt, par SMS, WhatsApp ou mail. Depuis la relance, « Relancer » prépare un petit rappel. Aucun accès à tes contacts.
+TES DONNÉES T’APPARTIENNENT
+Sans compte et sans publicité. Tes tâches restent sur ton téléphone, et tu peux les exporter dans un fichier de sauvegarde à tout moment.
 
-TON ÉQUILIBRE ET TA REVUE DE LA SEMAINE
-La carte « Ta semaine » montre la part de tâches anticipées, et le bilan compare tes 5 dernières semaines. Chaque dimanche (ou le jour de ton choix), la revue de la semaine te guide en 5 minutes : trier « Si j'ai le temps », choisir jusqu'à 3 priorités marquées d'une étoile et faire le point sur les tâches confiées.
-
-AGIR DEPUIS LA NOTIFICATION
-Touche « Fait » ou « Reporter 1 h » dans la notification : l'app s'ouvre et s'en charge. Une plage silencieuse, à activer dans les réglages, décale les rappels pour ne pas te réveiller.
-
-RAPIDE AU QUOTIDIEN
-• Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer.
-• Une erreur ? Le bouton Annuler la répare tout de suite.
-• Un minuteur pour avancer par sessions.
-• Des confettis quand tu termines une tâche (désactivables).
-• Un thème sombre lisible, qui repose les yeux le soir.
-
-SIMPLE ET PRIVÉ
-Pas de compte à créer, l'app fonctionne hors connexion. Tes tâches restent sur ton téléphone, et dans la sauvegarde Google de ton appareil si elle est activée. Exporte une sauvegarde quand tu veux et retrouve-la sur un nouveau téléphone. DoFirst est disponible en français et en anglais.
-
-La matrice d'Eisenhower ne fera pas tes tâches à ta place. Mais elle t'aide à choisir celles qui méritent ton énergie aujourd'hui. Installe DoFirst et fais d'abord ce qui compte.
+Pour le travail, les études ou la maison, DoFirst remplace ta liste de choses à faire, ton pense-bête et ta checklist du quotidien. Gagne en productivité et en sérénité : fais d’abord ce qui compte.
