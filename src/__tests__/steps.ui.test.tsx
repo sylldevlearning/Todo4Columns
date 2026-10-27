@@ -156,6 +156,44 @@ describe("section « Étapes » de la fiche", () => {
     expect(screen.getByRole("link", { name: "Ouvrir les réglages du téléphone" })).toBeOnTheScreen();
   });
 
+  it("un jour reporté ailleurs (« Reporter à demain ») est gardé ; un jour changé dans la fiche l'emporte", async () => {
+    const before = makeTask({
+      id: "t",
+      title: "Exposé",
+      category: "INU",
+      steps: [
+        step({ id: "a", title: "Relire", day: TODAY, time: "18:00" }),
+        step({ id: "b", title: "Envoyer", day: TODAY }),
+      ],
+    });
+    const onSubmit = jest.fn();
+    const ui = (task: typeof before) => (
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <TaskForm task={task} settings={DEFAULT_SETTINGS} onSubmit={onSubmit} />
+      </SafeAreaProvider>
+    );
+    const view = await render(ui(before));
+    // Dans la fiche : « Relire » renommée (jour non touché), « Envoyer » sans jour
+    await fireEvent.changeText(screen.getByLabelText("Étape 1"), "Relire tout");
+    await fireEvent.press(screen.getByRole("button", { name: "Jour de « Envoyer » : Aujourd'hui" }));
+    await fireEvent.press(screen.getByRole("radio", { name: "Aucun" }));
+    // Ailleurs : les deux reportées à demain
+    await view.rerender(
+      ui({
+        ...before,
+        steps: [
+          step({ id: "a", title: "Relire", day: "2026-10-23", time: "18:00" }),
+          step({ id: "b", title: "Envoyer", day: "2026-10-23" }),
+        ],
+      })
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Enregistrer" }));
+    expect(onSubmit.mock.calls[0][0].steps).toEqual([
+      expect.objectContaining({ id: "a", title: "Relire tout", day: "2026-10-23", time: "18:00" }),
+      expect.objectContaining({ id: "b", day: null, time: null }),
+    ]);
+  });
+
   it("choisir « Aucun » efface aussi l'heure de l'étape", async () => {
     const task = makeTask({
       id: "t",

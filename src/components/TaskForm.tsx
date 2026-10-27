@@ -22,7 +22,7 @@ import {
   recurrenceLabel,
   withAnchors,
 } from "../recurrence";
-import { keepStoredChecks, stepsOf } from "../steps";
+import { keepStoredChanges, stepsOf } from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Category, Recurrence, ReminderFields, Task, TaskStep } from "../types";
 import DueDateField from "./DueDateField";
@@ -152,7 +152,7 @@ export default function TaskForm({
   );
 
   const [steps, setSteps] = useState<TaskStep[]>(task ? stepsOf(task) : []);
-  // Étapes à l'ouverture : une coche faite ailleurs entre-temps n'est pas écrasée
+  // Étapes à l'ouverture : une coche ou un jour changés ailleurs entre-temps ne sont pas écrasés
   const initialSteps = useRef(steps);
 
   const category = CATEGORY_BY_KEY[categoryFromFlags(urgent, important)];
@@ -236,7 +236,7 @@ export default function TaskForm({
     category: category.key,
     ...reminderFields(),
     // Étape sans titre : retirée
-    steps: keepStoredChecks(
+    steps: keepStoredChanges(
       nextSteps.filter((s) => s.title.trim() !== "").map((s) => ({ ...s, title: s.title.trim() })),
       initialSteps.current,
       task ? stepsOf(task) : []

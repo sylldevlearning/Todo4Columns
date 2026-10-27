@@ -98,16 +98,24 @@ export function moveStep(steps: TaskStep[], from: number, to: number): TaskStep[
   return next;
 }
 
-// Enregistrement de la fiche : une étape dont la coche n'a pas été touchée dans la fiche reprend
-// l'état fait / faitLe du magasin (cochée ailleurs pendant que la fiche était ouverte : rappel, carte)
-export function keepStoredChecks(draft: TaskStep[], initial: TaskStep[], stored: TaskStep[]): TaskStep[] {
+// Enregistrement de la fiche : ce qui n'a pas été touché dans la fiche reprend l'état du magasin,
+// modifié ailleurs pendant que la fiche était ouverte (rappel, carte) :
+// - coche non touchée : fait / faitLe du magasin ;
+// - jour et heure non touchés : jour et heure du magasin (« Reporter à demain »)
+export function keepStoredChanges(draft: TaskStep[], initial: TaskStep[], stored: TaskStep[]): TaskStep[] {
   const before = new Map(initial.map((s) => [s.id, s]));
   const current = new Map(stored.map((s) => [s.id, s]));
   return draft.map((s) => {
     const was = before.get(s.id);
     const live = current.get(s.id);
-    if (!was || !live || was.done !== s.done || was.doneAt !== s.doneAt) return s;
-    return live.done === s.done && live.doneAt === s.doneAt ? s : { ...s, done: live.done, doneAt: live.doneAt };
+    if (!was || !live) return s;
+    const checkUntouched = was.done === s.done && was.doneAt === s.doneAt;
+    const dayUntouched = was.day === s.day && was.time === s.time;
+    return {
+      ...s,
+      ...(checkUntouched ? { done: live.done, doneAt: live.doneAt } : {}),
+      ...(dayUntouched ? { day: live.day, time: live.time } : {}),
+    };
   });
 }
 
