@@ -1,7 +1,7 @@
-# DoFirst (Todo4Columns) — État de la version 1.2.1
+# DoFirst (Todo4Columns) — État de la version 1.3 (étape 1 : étapes et séances)
 
-> Mis à jour le 25/10/2026, branche `version-1.2.1` (créée depuis `version-1.2.0`).
-> Vérifié : 460 tests Jest (45 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
+> Mis à jour le 27/10/2026, branche `version-1.3.0` (créée depuis `version-1.2.1`). Numéro de version encore 1.2.1 dans `app.json`.
+> Vérifié : 498 tests Jest (47 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
 > **Aucun build EAS lancé** pour la 1.2.1 ; le build de production 1.2.0 (versionCode 7) ne contient ni les ajustements des rappels ni le blocage d'AD_ID. Voir la liste de tests à la fin.
 
 ---
@@ -32,7 +32,8 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
   - tâches récurrentes ;
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
-- **1.2.1** (cette branche) :
+- **1.3** (cette branche), étape 1 : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape.
+- **1.2.1** :
   - demande d'avis dans l'app (fenêtre officielle de Google Play) ;
   - Réglages › À propos : noter, partager, suggérer une idée, version ;
   - `useTasks` découpé en hooks dédiés, code dupliqué mis en commun ;
@@ -72,7 +73,7 @@ src/
     useRecurrence (fin, réouverture, occurrence suivante), useForeground
   store/                Contexte découpé et magasin à sélecteurs
   notifications/        Calcul, programmation, réconciliation, réponses
-  migrations.ts         Schémas v1 → v6 ;  storage.ts  chargement et sauvegarde
+  migrations.ts         Schémas v1 → v7 ;  storage.ts  chargement et sauvegarde
   recovery.ts           Récupération des tâches de l'ancienne app (à ne pas modifier)
   balance.ts, completionLog.ts, review.ts, recurrence.ts, backup.ts, delegation.ts
   reviewPrompt.ts       Conditions de la demande d'avis ; community.ts  liens « À propos »
@@ -86,8 +87,8 @@ store/                  Fiches Play Store, notes de version, règles de confiden
 
 | Clé | Contenu |
 |---|---|
-| `TASKS_4COLS` | Tâches, schéma **v6** (`{ schemaVersion, tasks }`) |
-| `TASKS_4COLS_BACKUP_V1` … `V5` | Copie du format d'origine, écrite une seule fois avant chaque migration |
+| `TASKS_4COLS` | Tâches, schéma **v7** (`{ schemaVersion, tasks }`) |
+| `TASKS_4COLS_BACKUP_V1` … `V6` | Copie du format d'origine, écrite une seule fois avant chaque migration |
 | `TASKS_4COLS_CORRUPT_<date>` | Contenu illisible mis de côté |
 | `TASKS_4COLS_RECOVERY_DONE`, `TASKS_4COLS_RECOVERY_LOG` | Récupération des anciennes tâches |
 | `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis) |
@@ -99,6 +100,7 @@ store/                  Fiches Play Store, notes de version, règles de confiden
 Champs ajoutés aux tâches en 1.2 :
 - **v5 :** `completedAt`, `priorityWeek`.
 - **v6 :** `recurrence`, `nextOccurrenceId`, `escalationSkippedFor`.
+- **v7 (1.3) :** `steps`, liste de `{ id, title, done, doneAt, day (« 2026-10-27 », facultatif), time (« 14:30 », facultatif) }`, vide par défaut.
 
 Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) ne sont pas renseignés par la récupération, qui n'a pas été modifiée.
 
@@ -134,6 +136,14 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 **Revue de la semaine**
 - Notification hebdomadaire (dimanche 18 h par défaut, réglable).
 - Trois étapes : « Si j'ai le temps », jusqu'à 3 priorités étoilées, tâches confiées. Puis célébration et série de semaines.
+
+**Étapes** (1.3)
+- Fiche : section « Étapes » : ajouter, renommer, cocher, supprimer, réordonner (appui long puis glisser ; « Monter » / « Descendre » pour TalkBack), jour prévu (Aucun / Aujourd'hui / Demain / Date) et heure du rappel.
+- « Répartir sur plusieurs jours » : 2 à 14 séances de 30 min, 1 h ou 2 h, à partir d'aujourd'hui ou de demain, week-ends sautés au choix ; aperçu avant de créer « Séance 1/5 · 1 h »…
+- Carte : « 2/5 », « Aujourd'hui : … » et « En retard : … », à cocher depuis la carte. Grille : « 2/5 » à côté du titre.
+- Rappel le jour prévu (à l'heure de l'étape, 9:00 par défaut), dans tous les quadrants, avec « Fait » et « Reporter à demain » ; plage silencieuse et plafond de 64 respectés.
+- Étape cochée : célébration discrète (message « Étape faite ! », vibration légère). Dernière étape : « Terminer la tâche ? », puis célébration complète.
+- Le journal ne compte que les tâches terminées. L'occurrence suivante d'une tâche récurrente reprend les étapes, décochées et sans jour.
 
 **Délégation**
 - « Envoyer à Marie » et « Relancer » ouvrent le partage natif avec un message prêt, sans accès aux contacts.
@@ -265,6 +275,13 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - « Partager DoFirst » : message et lien corrects dans SMS ou WhatsApp.
     - « Suggérer une idée » : Gmail s'ouvre avec l'adresse, l'objet et les versions de l'app et d'Android.
     - Numéro de version affiché : 1.2.1.
-15. **Poids et batterie**
+15. **Étapes** (1.3)
+    - Appui long puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher ; le défilement de la fiche reste possible.
+    - Choix « Date » : calendrier natif ; heure du rappel.
+    - « Répartir sur plusieurs jours » : aperçu, week-ends sautés, création.
+    - Rappel d'étape à 9:00 avec « Fait » et « Reporter à demain », app ouverte, en arrière-plan et arrêtée.
+    - Cocher la dernière étape dans la fiche : « Terminer la tâche ? » puis la fiche se ferme et les confettis partent. Dans la fiche, le message « Étape faite ! » est caché par la feuille : seule la vibration se sent.
+    - Carte : « Aujourd'hui : … » à cocher, « En retard : … » en rouge ; grille « 2/5 ».
+16. **Poids et batterie**
     - Taille de l'AAB comparée à la 1.1.
     - App en arrière-plan : pas de réveils inutiles.
