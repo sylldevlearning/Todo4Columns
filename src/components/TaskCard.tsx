@@ -19,6 +19,7 @@ import { useTaskActions } from "../store/TasksContext";
 import { Task } from "../types";
 import TaskAlerts from "./TaskAlerts";
 import IconButton from "./IconButton";
+import StepSummary from "./StepSummary";
 import TaskChips from "./TaskChips";
 
 // Distance de glissement qui déclenche l'action
@@ -161,6 +162,7 @@ export default React.memo(function TaskCard({
               {!task.isDone && (
                 <>
                   <TaskChips task={task} category={category} settings={settings} now={now} />
+                  <StepSummary task={task} category={category} now={now} />
                   <TaskAlerts
                     task={task}
                     now={now}

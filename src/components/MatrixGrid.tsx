@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CategoryInfo, CATEGORIES } from "../constants/categories";
 import { t } from "../i18n";
 import { isPriority } from "../review";
+import { stepProgress, stepsOf } from "../steps";
 import { colors, fonts, withAlpha } from "../theme";
 import { Category, Task } from "../types";
 import TaskChips from "./TaskChips";
@@ -62,24 +63,36 @@ function QuadrantCell({
       </Text>
 
       <View style={styles.preview}>
-        {preview.map((task) => (
-          <View key={task.id} style={styles.previewTask}>
-            <View style={styles.previewTitleRow}>
-              {isPriority(task, now) && (
-                <Ionicons
-                  name="star"
-                  size={11}
-                  color={colors.warning}
-                  accessibilityLabel={t.review.priority}
-                />
-              )}
-              <Text style={styles.previewTitle} numberOfLines={1}>
-                {task.title}
-              </Text>
+        {preview.map((task) => {
+          const progress = stepProgress(stepsOf(task));
+          return (
+            <View key={task.id} style={styles.previewTask}>
+              <View style={styles.previewTitleRow}>
+                {isPriority(task, now) && (
+                  <Ionicons
+                    name="star"
+                    size={11}
+                    color={colors.warning}
+                    accessibilityLabel={t.review.priority}
+                  />
+                )}
+                <Text style={styles.previewTitle} numberOfLines={1}>
+                  {task.title}
+                </Text>
+                {/* Étapes : progression discrète à côté du titre */}
+                {progress && (
+                  <Text
+                    style={styles.progress}
+                    accessibilityLabel={t.steps.progressLabel(progress.done, progress.total)}
+                  >
+                    {t.steps.progress(progress.done, progress.total)}
+                  </Text>
+                )}
+              </View>
+              <TaskChips task={task} category={category} compact />
             </View>
-            <TaskChips task={task} category={category} compact />
-          </View>
-        ))}
+          );
+        })}
         {others > 0 && (
           <Text style={styles.others}>
             {t.matrix.others(others)}
@@ -222,6 +235,11 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     fontSize: 13,
     color: colors.text,
+  },
+  progress: {
+    fontFamily: fonts.semibold,
+    fontSize: 11,
+    color: colors.textMuted,
   },
   others: {
     fontFamily: fonts.semibold,
