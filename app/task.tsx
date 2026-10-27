@@ -1,11 +1,12 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCelebration } from "../src/celebration/CelebrationProvider";
 import TaskForm, { TaskFormValues } from "../src/components/TaskForm";
 import { isCategory } from "../src/constants/categories";
+import { useFocusedFieldScroll } from "../src/hooks/useFocusedFieldScroll";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
 import { hasReminder } from "../src/reminders";
@@ -24,6 +25,7 @@ export default function TaskSheet() {
   const task = useTasksSelector(({ tasks }) => (id ? tasks.find((t) => t.id === id) : undefined));
   const [permission] = usePermissionState();
   const insets = useSafeAreaInsets();
+  const { scrollRef, contentRef, keyboardHeight, onTouchEnd } = useFocusedFieldScroll();
   const missing = id !== undefined && task === undefined;
 
   // Tâche supprimée entre-temps : on ferme la fiche
@@ -56,24 +58,28 @@ export default function TaskSheet() {
     // Glissement des étapes : la fiche a sa propre racine de gestes (feuille native)
     <GestureHandlerRootView style={styles.root}>
       <ScrollView
+        ref={scrollRef}
+        testID="task-sheet"
         style={styles.sheet}
-        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 }]}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 + keyboardHeight }]}
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets
       >
-        <TaskForm
-          task={task}
-          initialCategory={isCategory(category) ? category : undefined}
-          settings={settings}
-          notificationsDenied={permission === "denied"}
-          onOpenSettings={openSystemSettings}
-          onEditQuietHours={() =>
-            router.push({ pathname: "/settings", params: { section: "quietHours" } })
-          }
-          onDisableQuietHours={() => updateSettings({ ...getSettings(), quietHoursEnabled: false })}
-          onSubmit={submit}
-          onComplete={complete}
-        />
+        <View ref={contentRef} onTouchEnd={onTouchEnd}>
+          <TaskForm
+            task={task}
+            initialCategory={isCategory(category) ? category : undefined}
+            settings={settings}
+            notificationsDenied={permission === "denied"}
+            onOpenSettings={openSystemSettings}
+            onEditQuietHours={() =>
+              router.push({ pathname: "/settings", params: { section: "quietHours" } })
+            }
+            onDisableQuietHours={() => updateSettings({ ...getSettings(), quietHoursEnabled: false })}
+            onSubmit={submit}
+            onComplete={complete}
+          />
+        </View>
       </ScrollView>
     </GestureHandlerRootView>
   );
