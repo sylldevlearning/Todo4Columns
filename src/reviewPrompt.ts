@@ -30,10 +30,18 @@ export const canAskForReview = ({ firstUseAt, reviewAskedAt, lastUndoAt }: Revie
   (reviewAskedAt === undefined || now - reviewAskedAt >= REVIEW_INTERVAL_DAYS * DAY_MS) &&
   (lastUndoAt === null || now - lastUndoAt >= UNDO_GRACE_MS);
 
+// Dates plus anciennes ignorées : identifiants numériques des tout premiers formats pris pour des
+// dates (« 1 » donnerait 1970 et la règle des 3 jours sauterait)
+export const OLDEST_PLAUSIBLE_DATE = new Date(2020, 0, 1).getTime();
+
 // Première utilisation pas encore enregistrée (réglages d'avant la 1.2.1) : la plus ancienne
 // tâche ou fin de tâche connue
 export const estimateFirstUse = (tasks: Task[], completions: Completion[], now: number) =>
-  Math.min(now, ...tasks.map((t) => t.createdAt), ...completions.map((c) => c.date));
+  Math.min(
+    now,
+    ...tasks.map((t) => t.createdAt).filter((date) => date >= OLDEST_PLAUSIBLE_DATE),
+    ...completions.map((c) => c.date)
+  );
 
 // ---- Demandes en attente et derniers « Annuler » ----
 const pending = createSelectableStore<ReviewTrigger | null>(null);

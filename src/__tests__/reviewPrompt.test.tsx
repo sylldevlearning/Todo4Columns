@@ -53,6 +53,13 @@ describe("conditions de la demande d'avis", () => {
     expect(estimateFirstUse([], [], NOW)).toBe(NOW);
   });
 
+  it("première utilisation : dates de création antérieures à 2020 ignorées", () => {
+    // Identifiant « 1 » d'un ancien format, pris pour une date de 1970
+    const tasks = [makeTask({ createdAt: 1 }), makeTask({ id: "b", createdAt: NOW - DAY })];
+    expect(estimateFirstUse(tasks, [], NOW)).toBe(NOW - DAY);
+    expect(estimateFirstUse([makeTask({ createdAt: new Date(2019, 11, 31).getTime() })], [], NOW)).toBe(NOW);
+  });
+
   it("dates mémorisées dans les réglages : champs optionnels, réglages existants inchangés", async () => {
     const before = JSON.stringify({ schemaVersion: 1, settings: { ...DEFAULT_SETTINGS, doNagInterval: 30 } });
     expect(parseSettings(before)).toEqual({ ...DEFAULT_SETTINGS, doNagInterval: 30 });
