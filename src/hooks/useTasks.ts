@@ -22,7 +22,7 @@ import { useSteps } from "./useSteps";
 import { useTaskSaving } from "./useTaskSaving";
 import { useTimers } from "./useTimers";
 
-export { SAVE_DELAY_MS } from "./useTaskSaving";
+export { SAVE_DELAY_MS } from "./batching";
 export type { Escalation } from "./useEscalation";
 
 export interface TaskInput extends Partial<ReminderFields> {

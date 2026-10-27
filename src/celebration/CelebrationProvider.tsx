@@ -154,7 +154,7 @@ export function CelebrationProvider({ enabled, children }: { enabled: boolean; c
       {children}
       {active && category && (
         <View pointerEvents="none" style={styles.overlay}>
-          {active.plan.confetti && active.origin && (
+          {active.plan.confetti && active.plan.style && active.origin && (
             <Confetti
               key={`confetti-${active.id}`}
               origin={active.origin}

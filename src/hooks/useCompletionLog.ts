@@ -3,7 +3,7 @@ import { AppState } from "react-native";
 import { Completion, loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
 import { Task } from "../types";
 import { isForeground } from "./useForeground";
-import { SAVE_DELAY_MS } from "./useTaskSaving";
+import { SAVE_DELAY_MS } from "./batching";
 
 // Journal des fins de tâches (bilan) : tenu à jour d'après les tâches, écritures regroupées
 export function useCompletionLog(tasks: Task[], isLoaded: boolean) {

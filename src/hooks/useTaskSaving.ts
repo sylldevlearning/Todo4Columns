@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 import { AppState } from "react-native";
 import { saveTasks } from "../storage";
 import { Task } from "../types";
+import { SAVE_DELAY_MS } from "./batching";
 import { isForeground } from "./useForeground";
 
-// Les modifications rapprochées (coche puis identifiants de notification…) sont écrites ensemble
-export const SAVE_DELAY_MS = 400;
 
 // Sauvegarde de chaque modification de la liste (une fois le chargement terminé), au plus une
 // écriture toutes les SAVE_DELAY_MS. Hors de l'écran, écriture immédiate : les minuteries

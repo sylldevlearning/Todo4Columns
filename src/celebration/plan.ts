@@ -50,7 +50,7 @@ export const CELEBRATION_STYLES: Record<Category, CelebrationStyle> = {
 };
 
 export interface CelebrationPlan {
-  style: CelebrationStyle;
+  style: CelebrationStyle | null; // confettis ; null sans confettis (étape cochée)
   confetti: boolean; // false si l'option « Réduire les animations » du téléphone est active
   haptic: HapticKind;
 }
@@ -68,7 +68,7 @@ export function planCelebration(
 // Étape cochée : célébration discrète, sans confettis (petit retour haptique et message)
 export function planStepCelebration({ enabled }: { enabled: boolean }): CelebrationPlan | null {
   if (!enabled) return null;
-  return { style: CELEBRATION_STYLES.NDNI, confetti: false, haptic: "light" };
+  return { style: null, confetti: false, haptic: "light" };
 }
 
 export interface Particle {
