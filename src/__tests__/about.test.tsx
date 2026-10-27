@@ -70,7 +70,7 @@ describe("Réglages › À propos", () => {
     expect(about.onFeedback).toHaveBeenCalled();
   });
 
-  it("version de l'app : celle d'app.json", () => {
+  it("version de l'app : vérifie la simulation d'expo-constants (lue dans app.json), pas l'app", () => {
     expect(appVersion()).toBe(appJson.expo.version);
   });
 

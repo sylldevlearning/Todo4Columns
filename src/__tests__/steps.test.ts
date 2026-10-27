@@ -464,3 +464,70 @@ describe("rappels d'étape dans la plage silencieuse", () => {
     ]);
   });
 });
+
+describe("rappel d'étape, app arrêtée (réponse lue au démarrage)", () => {
+  const { useNotificationResponses } = require("../notifications/useNotificationResponses");
+  const { ACTION_DONE: DONE, ACTION_POSTPONE: POSTPONE } = require("../notifications/setup");
+  const state = (Notifications as unknown as { __state: { lastResponse: unknown } }).__state;
+  let now: jest.SpyInstance;
+  beforeEach(() => {
+    now = jest.spyOn(Date, "now").mockReturnValue(NOW);
+  });
+  afterEach(() => now.mockRestore());
+
+  // L'app démarre sur la réponse : tâches chargées, puis réponse appliquée (sans célébration)
+  const startFrom = async (actionIdentifier: string) => {
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([makeTask({ id: "t", steps: [step({ id: "a", day: TODAY, time: "18:00" })] })]));
+    state.lastResponse = {
+      actionIdentifier,
+      notification: {
+        date: NOW,
+        request: { identifier: "n1", content: { data: { taskId: "t", stepId: "a", type: "step" } } },
+      },
+    };
+    const onStepCompletedInApp = jest.fn();
+    const hook = await renderHook(() => {
+      const store = useTasks(NO_QUIET);
+      useNotificationResponses({
+        isLoaded: store.isLoaded,
+        tasks: store.tasks,
+        completeTask: store.completeTask,
+        snoozeTask: store.snoozeTask,
+        openQuadrant: jest.fn(),
+        completeStep: store.completeStep,
+        postponeStep: store.postponeStep,
+        onStepCompletedInApp,
+      });
+      return store;
+    });
+    await waitFor(() => expect(hook.result.current.isLoaded).toBe(true));
+    await act(async () => {});
+    return { hook, onStepCompletedInApp };
+  };
+
+  it("« Fait » : l'étape est cochée au démarrage, sans célébration", async () => {
+    const { hook, onStepCompletedInApp } = await startFrom(DONE);
+    await waitFor(() => expect(hook.result.current.tasks[0].steps![0]).toMatchObject({ done: true, doneAt: NOW }));
+    expect(onStepCompletedInApp).not.toHaveBeenCalled();
+    expect(hook.result.current.tasks[0].isDone).toBe(false);
+  });
+
+  it("« Reporter à demain » : l'étape passe au lendemain au démarrage", async () => {
+    const { hook } = await startFrom(POSTPONE);
+    await waitFor(() => expect(hook.result.current.tasks[0].steps![0].day).toBe("2026-10-23"));
+    expect(hook.result.current.tasks[0].steps![0].done).toBe(false);
+  });
+});
+
+describe("plafond de 64 avec la revue de la semaine active", () => {
+  it("63 rappels d'étape au plus : la 64e place reste à la revue", async () => {
+    jest.clearAllMocks();
+    const steps = Array.from({ length: 80 }, (_, i) => step({ id: `s${i}`, title: `Séance ${i}`, day: addDays(TODAY, i + 1) }));
+    const withReview = { ...NO_QUIET, weeklyReview: true };
+    const result = await reconcileNotifications([makeTask({ id: "t", steps })], withReview, NOW);
+    expect(mock.__state.scheduled).toHaveLength(MAX_SCHEDULED);
+    expect(result.t).toHaveLength(MAX_SCHEDULED - 1);
+    expect(mock.__state.scheduled.filter((n) => n.content.data?.type === "review")).toHaveLength(1);
+  });
+});
