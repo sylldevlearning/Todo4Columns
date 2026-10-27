@@ -36,7 +36,7 @@ export default function TaskSheet() {
     if (task) updateTask(task.id, values);
     else addTask(values);
     // Premier rappel : c'est le moment de demander l'autorisation
-    if (hasReminder(values.category, values)) {
+    if (hasReminder(values.category, values, values.steps)) {
       requestNotificationPermission().catch(() => {});
     }
     router.back();

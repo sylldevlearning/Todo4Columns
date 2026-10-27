@@ -405,3 +405,13 @@ describe("sauvegarde et import", () => {
 it("jour local", () => {
   expect(dayKey(NOW)).toBe(TODAY);
 });
+
+describe("étapes datées et autorisation des notifications", () => {
+  it("hasReminder : une étape non faite avec un jour suffit", () => {
+    const { hasReminder, EMPTY_REMINDER_FIELDS } = require("../reminders");
+    expect(hasReminder("NDNI", EMPTY_REMINDER_FIELDS, [step({ day: TODAY })])).toBe(true);
+    expect(hasReminder("NDNI", EMPTY_REMINDER_FIELDS, [step({ day: TODAY, done: true, doneAt: 1 })])).toBe(false);
+    expect(hasReminder("NDNI", EMPTY_REMINDER_FIELDS, [step()])).toBe(false);
+    expect(hasReminder("NDNI", EMPTY_REMINDER_FIELDS)).toBe(false);
+  });
+});

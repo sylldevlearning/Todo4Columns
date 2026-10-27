@@ -145,6 +145,15 @@ describe("section « Étapes » de la fiche", () => {
     expect(onSubmit.mock.calls[0][0].steps[0]).toMatchObject({ done: false, doneAt: null });
   });
 
+  it("notifications refusées : l'avertissement s'affiche pour une étape datée", async () => {
+    await renderForm({ initialCategory: "NDNI", notificationsDenied: true });
+    expect(screen.queryByText(/ce rappel ne s'affichera pas/)).toBeNull();
+    await addStep("Trier");
+    await fireEvent.press(screen.getByRole("button", { name: "Jour de « Trier » : Sans jour" }));
+    await fireEvent.press(screen.getByRole("radio", { name: "Demain" }));
+    expect(screen.getByRole("link", { name: "Ouvrir les réglages du téléphone" })).toBeOnTheScreen();
+  });
+
   it("choisir « Aucun » efface aussi l'heure de l'étape", async () => {
     const task = makeTask({
       id: "t",

@@ -157,6 +157,19 @@ describe("autorisation des notifications quand un rappel est activé", () => {
     expect(scheduledFor()).toEqual([]);
   });
 
+  it("une étape avec un jour compte comme un rappel : autorisation demandée (même dans « Si j'ai le temps »)", async () => {
+    mock.__state.permission = "undetermined";
+    await launch();
+    await act(() => router.push("/task?category=NDNI"));
+    await fireEvent.changeText(screen.getByLabelText("Titre"), "Ranger la cave");
+    await fireEvent.changeText(screen.getByLabelText("Nouvelle étape"), "Trier les cartons");
+    await fireEvent.press(screen.getByRole("button", { name: "Ajouter une étape" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Jour de « Trier les cartons » : Sans jour" }));
+    await fireEvent.press(screen.getByRole("radio", { name: "Demain" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Ajouter à « Si j'ai le temps »" }));
+    await waitFor(() => expect(Notifications.requestPermissionsAsync).toHaveBeenCalledTimes(1));
+  });
+
   it("la tâche est enregistrée même si l'autorisation est refusée", async () => {
     mock.__state.permission = "denied";
     mock.__state.canAskAgain = false;

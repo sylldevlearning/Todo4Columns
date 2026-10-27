@@ -1,6 +1,6 @@
 import { t } from "./i18n";
 import { Settings } from "./settings";
-import { Category, ReminderFields, Task } from "./types";
+import { Category, ReminderFields, Task, TaskStep } from "./types";
 
 export interface ReminderOption {
   label: string;
@@ -109,7 +109,9 @@ export function keepRelevantFields(
 }
 
 // Vrai si ces réglages donneront lieu à un rappel (hors minuteur)
-export function hasReminder(category: Category, fields: ReminderFields): boolean {
+// Rappel enregistré : celui du quadrant, ou une étape non faite avec un jour prévu
+export function hasReminder(category: Category, fields: ReminderFields, steps: TaskStep[] = []): boolean {
+  if (steps.some((s) => !s.done && s.day !== null)) return true;
   switch (category) {
     case "UI":
     case "UDI":

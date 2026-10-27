@@ -494,7 +494,7 @@ export default function TaskForm({
         </Text>
       )}
 
-      {notificationsDenied && hasReminder(category.key, reminderFields()) && (
+      {notificationsDenied && hasReminder(category.key, reminderFields(), steps) && (
         <View style={styles.denied}>
           <Text style={styles.deniedText}>{t.form.notificationsDenied}</Text>
           <Pressable accessibilityRole="link" onPress={onOpenSettings} style={styles.deniedLink}>
