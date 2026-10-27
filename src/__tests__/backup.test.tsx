@@ -163,7 +163,7 @@ describe("export", () => {
 
     const file = JSON.parse(files.get(uri)!);
     expect(file).toMatchObject({ app: "dofirst", backupVersion: BACKUP_VERSION });
-    expect(file.tasks.schemaVersion).toBe(6);
+    expect(file.tasks.schemaVersion).toBe(7);
     expect(file.tasks.tasks).toHaveLength(1);
     expect(file.tasks.tasks[0]).toMatchObject({ id: "old", title: "Ancienne tâche", notificationIds: [] });
     expect(file.settings.settings).toMatchObject({ doNagInterval: 30 });

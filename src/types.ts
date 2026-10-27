@@ -25,6 +25,16 @@ export interface ReminderFields {
   recurrence: Recurrence | null; // répétition — Planifier (gardée en Faire), avec une échéance
 }
 
+// Étape d'une tâche (1.3)
+export interface TaskStep {
+  id: string; // unique dans la tâche
+  title: string;
+  done: boolean;
+  doneAt: number | null; // date où l'étape a été cochée (timestamp en ms)
+  day: string | null; // jour prévu, date locale « 2026-10-27 » : rappel ce jour-là
+  time: string | null; // heure du rappel « 14:30 » ; sans heure, 9:00
+}
+
 export interface Task extends ReminderFields {
   id: string;
   title: string;
@@ -42,4 +52,6 @@ export interface Task extends ReminderFields {
   priorityWeek?: string | null; // priorité de la semaine du lundi « 2026-10-19 » (date locale)
   nextOccurrenceId?: string | null; // tâche récurrente terminée : occurrence créée à sa place
   escalationSkippedFor?: number | null; // bascule en Faire annulée pour cette échéance
+  // Absent des tâches importées par la récupération : aucune étape
+  steps?: TaskStep[];
 }

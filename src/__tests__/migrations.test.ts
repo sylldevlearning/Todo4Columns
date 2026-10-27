@@ -50,6 +50,7 @@ describe("parseStoredTasks", () => {
       recurrence: null,
       nextOccurrenceId: null,
       escalationSkippedFor: null,
+      steps: [],
     });
   });
 
@@ -198,7 +199,7 @@ describe("parseStoredTasks", () => {
     ]);
   });
 
-  it("relit à l'identique le format courant (v6)", () => {
+  it("relit à l'identique le format courant (v7)", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
     tasks[0].delegatedTo = "Marie";
     tasks[1].completedAt = 1234;
@@ -208,8 +209,8 @@ describe("parseStoredTasks", () => {
     tasks[1].nextOccurrenceId = "suivante";
     const json = serializeTasks(tasks);
 
-    expect(JSON.parse(json).schemaVersion).toBe(6);
-    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 6 });
+    expect(JSON.parse(json).schemaVersion).toBe(7);
+    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 7 });
   });
 
   it("lève une erreur sur un contenu illisible", () => {

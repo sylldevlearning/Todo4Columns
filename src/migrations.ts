@@ -1,6 +1,7 @@
 import { isWeekKey } from "./balance";
 import { CATEGORY_KEYS, isRecord } from "./guards";
 import { parseRecurrence } from "./recurrence";
+import { parseSteps } from "./steps";
 import { Category, Task } from "./types";
 
 // Version du format enregistré sous la clé TASKS_4COLS
@@ -10,7 +11,8 @@ import { Category, Task } from "./types";
 // v4 : ajout de categoryChangedAt, archivedAt et snoozedUntil
 // v5 : ajout de completedAt et priorityWeek
 // v6 : ajout de recurrence, nextOccurrenceId et escalationSkippedFor
-export const TASKS_SCHEMA_VERSION = 6;
+// v7 : ajout de steps (étapes, vide par défaut)
+export const TASKS_SCHEMA_VERSION = 7;
 
 export interface StoredTasks {
   schemaVersion: typeof TASKS_SCHEMA_VERSION;
@@ -93,6 +95,8 @@ export function normalizeTask(
     recurrence: parseRecurrence(raw.recurrence),
     nextOccurrenceId: typeof raw.nextOccurrenceId === "string" ? raw.nextOccurrenceId : null,
     escalationSkippedFor: overdueAtUpdate ? dueAt : numberOrNull(raw.escalationSkippedFor),
+    // Absentes avant la v7 : aucune étape
+    steps: parseSteps(raw.steps),
   };
 }
 
