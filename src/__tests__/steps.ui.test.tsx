@@ -98,6 +98,51 @@ describe("section « Étapes » de la fiche", () => {
     ]);
   });
 
+  it("une étape cochée ailleurs pendant que la fiche est ouverte n'est pas décochée à l'enregistrement", async () => {
+    const before = makeTask({
+      id: "t",
+      title: "Exposé",
+      category: "INU",
+      steps: [step({ id: "a", title: "Relire" }), step({ id: "b", title: "Envoyer" })],
+    });
+    const onSubmit = jest.fn();
+    const ui = (task: typeof before) => (
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <TaskForm task={task} settings={DEFAULT_SETTINGS} onSubmit={onSubmit} />
+      </SafeAreaProvider>
+    );
+    const view = await render(ui(before));
+    // Dans la fiche : « Envoyer » renommé (sa coche n'est pas touchée)
+    await fireEvent.changeText(screen.getByLabelText("Étape 2"), "Envoyer le PDF");
+    // Ailleurs (rappel « Fait ») : « Relire » et « Envoyer » cochées dans le magasin
+    await view.rerender(
+      ui({
+        ...before,
+        steps: [step({ id: "a", title: "Relire", done: true, doneAt: 5 }), step({ id: "b", title: "Envoyer", done: true, doneAt: 6 })],
+      })
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Enregistrer" }));
+    expect(onSubmit.mock.calls[0][0].steps).toEqual([
+      expect.objectContaining({ id: "a", title: "Relire", done: true, doneAt: 5 }),
+      expect.objectContaining({ id: "b", title: "Envoyer le PDF", done: true, doneAt: 6 }),
+    ]);
+  });
+
+  it("une coche changée dans la fiche l'emporte", async () => {
+    const before = makeTask({ id: "t", title: "Exposé", steps: [step({ id: "a", title: "Relire", done: true, doneAt: 5 })] });
+    const onSubmit = jest.fn();
+    const ui = (task: typeof before) => (
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <TaskForm task={task} settings={DEFAULT_SETTINGS} onSubmit={onSubmit} />
+      </SafeAreaProvider>
+    );
+    const view = await render(ui(before));
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Décocher « Relire »" }));
+    await view.rerender(ui({ ...before }));
+    await fireEvent.press(screen.getByRole("button", { name: "Enregistrer" }));
+    expect(onSubmit.mock.calls[0][0].steps[0]).toMatchObject({ done: false, doneAt: null });
+  });
+
   it("choisir « Aucun » efface aussi l'heure de l'étape", async () => {
     const task = makeTask({
       id: "t",

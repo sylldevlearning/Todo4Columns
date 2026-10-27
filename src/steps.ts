@@ -79,6 +79,19 @@ export function moveStep(steps: TaskStep[], from: number, to: number): TaskStep[
   return next;
 }
 
+// Enregistrement de la fiche : une étape dont la coche n'a pas été touchée dans la fiche reprend
+// l'état fait / faitLe du magasin (cochée ailleurs pendant que la fiche était ouverte : rappel, carte)
+export function keepStoredChecks(draft: TaskStep[], initial: TaskStep[], stored: TaskStep[]): TaskStep[] {
+  const before = new Map(initial.map((s) => [s.id, s]));
+  const current = new Map(stored.map((s) => [s.id, s]));
+  return draft.map((s) => {
+    const was = before.get(s.id);
+    const live = current.get(s.id);
+    if (!was || !live || was.done !== s.done || was.doneAt !== s.doneAt) return s;
+    return live.done === s.done && live.doneAt === s.doneAt ? s : { ...s, done: live.done, doneAt: live.doneAt };
+  });
+}
+
 // Coche ou décoche une étape
 export const toggleStepIn = (steps: TaskStep[], id: string, now: number): TaskStep[] =>
   steps.map((s) => (s.id === id ? { ...s, done: !s.done, doneAt: s.done ? null : now } : s));

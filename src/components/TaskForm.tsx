@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
 import { askToFinish } from "../finishPrompt";
@@ -22,7 +22,7 @@ import {
   recurrenceLabel,
   withAnchors,
 } from "../recurrence";
-import { allStepsDone, stepsOf } from "../steps";
+import { allStepsDone, keepStoredChecks, stepsOf } from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Category, Recurrence, ReminderFields, Task, TaskStep } from "../types";
 import DueDateField from "./DueDateField";
@@ -152,6 +152,8 @@ export default function TaskForm({
   );
 
   const [steps, setSteps] = useState<TaskStep[]>(task ? stepsOf(task) : []);
+  // Étapes à l'ouverture : une coche faite ailleurs entre-temps n'est pas écrasée
+  const initialSteps = useRef(steps);
 
   const category = CATEGORY_BY_KEY[categoryFromFlags(urgent, important)];
   const canSubmit = title.trim() !== "";
@@ -234,7 +236,11 @@ export default function TaskForm({
     category: category.key,
     ...reminderFields(),
     // Étape sans titre : retirée
-    steps: nextSteps.filter((s) => s.title.trim() !== "").map((s) => ({ ...s, title: s.title.trim() })),
+    steps: keepStoredChecks(
+      nextSteps.filter((s) => s.title.trim() !== "").map((s) => ({ ...s, title: s.title.trim() })),
+      initialSteps.current,
+      task ? stepsOf(task) : []
+    ),
   });
 
   const submit = () => {
