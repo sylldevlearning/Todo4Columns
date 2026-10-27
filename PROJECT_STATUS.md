@@ -1,8 +1,11 @@
 # DoFirst (Todo4Columns) — État de la version 1.3 (étape 1 : étapes et séances)
 
 > Mis à jour le 27/10/2026, branche `version-1.3.0` (créée depuis `version-1.2.1`). Numéro de version encore 1.2.1 dans `app.json`.
-> Vérifié : 498 tests Jest (47 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
-> **Aucun build EAS lancé** pour la 1.2.1 ; le build de production 1.2.0 (versionCode 7) ne contient ni les ajustements des rappels ni le blocage d'AD_ID. Voir la liste de tests à la fin.
+> Vérifié : 501 tests Jest (47 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
+> **Builds EAS :**
+> - **Production 1.2.0** (versionCode 7, build `fde044da`) : ne contient ni les ajustements des rappels, ni le blocage d'AD_ID, ni la 1.2.1.
+> - **APK de test 1.2.1** (profil `preview`, commit `ea7a7db`, versionCode 7 non incrémenté) : build `39ba178d-94ce-4b28-8f2a-8b65fd3d02b9`, installable hors Play Store.
+> - **Aucun build de production 1.2.1**, et aucun build de la 1.3. Voir la liste de tests à la fin.
 
 ---
 
@@ -142,7 +145,7 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 - « Répartir sur plusieurs jours » : 2 à 14 séances de 30 min, 1 h ou 2 h, à partir d'aujourd'hui ou de demain, week-ends sautés au choix ; aperçu avant de créer « Séance 1/5 · 1 h »…
 - Carte : « 2/5 », « Aujourd'hui : … » et « En retard : … », à cocher depuis la carte. Grille : « 2/5 » à côté du titre.
 - Rappel le jour prévu (à l'heure de l'étape, 9:00 par défaut), dans tous les quadrants, avec « Fait » et « Reporter à demain » ; plage silencieuse et plafond de 64 respectés.
-- Étape cochée : célébration discrète (message « Étape faite ! », vibration légère). Dernière étape : « Terminer la tâche ? », puis célébration complète.
+- Étape cochée dans la fiche : coche animée, ligne brièvement surlignée en vert et vibration légère (sans fondu ni rebond si « Réduire les animations » est activé). Depuis la carte ou un rappel : célébration discrète (message « Étape faite ! », vibration légère). Dernière étape : « Terminer la tâche ? », puis célébration complète.
 - Le journal ne compte que les tâches terminées. L'occurrence suivante d'une tâche récurrente reprend les étapes, décochées et sans jour.
 
 **Délégation**
@@ -280,7 +283,8 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - Choix « Date » : calendrier natif ; heure du rappel.
     - « Répartir sur plusieurs jours » : aperçu, week-ends sautés, création.
     - Rappel d'étape à 9:00 avec « Fait » et « Reporter à demain », app ouverte, en arrière-plan et arrêtée.
-    - Cocher la dernière étape dans la fiche : « Terminer la tâche ? » puis la fiche se ferme et les confettis partent. Dans la fiche, le message « Étape faite ! » est caché par la feuille : seule la vibration se sent.
+    - Cocher une étape dans la fiche : coche animée, ligne surlignée en vert, vibration ; avec « Réduire les animations », vert affiché sans fondu.
+    - Cocher la dernière étape dans la fiche : « Terminer la tâche ? » puis la fiche se ferme et les confettis partent.
     - Carte : « Aujourd'hui : … » à cocher, « En retard : … » en rouge ; grille « 2/5 ».
 16. **Poids et batterie**
     - Taille de l'AAB comparée à la 1.1.
