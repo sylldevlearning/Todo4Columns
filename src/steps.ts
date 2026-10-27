@@ -92,6 +92,19 @@ export function keepStoredChecks(draft: TaskStep[], initial: TaskStep[], stored:
   });
 }
 
+// Position mesurée d'une ligne d'étape dans la liste (onLayout)
+export interface RowLayout {
+  y: number;
+  height: number;
+}
+
+// Place d'une étape lâchée après un glissement de dy : nombre d'autres lignes dont le milieu est
+// au-dessus du milieu de la ligne glissée (lignes de hauteurs différentes comprises)
+export function dropIndex(rows: RowLayout[], from: number, dy: number): number {
+  const center = rows[from].y + rows[from].height / 2 + dy;
+  return rows.filter((r, i) => i !== from && r.y + r.height / 2 < center).length;
+}
+
 // Coche ou décoche une étape
 export const toggleStepIn = (steps: TaskStep[], id: string, now: number): TaskStep[] =>
   steps.map((s) => (s.id === id ? { ...s, done: !s.done, doneAt: s.done ? null : now } : s));

@@ -17,7 +17,7 @@ import { useReduceMotion } from "../celebration/useReduceMotion";
 import { t } from "../i18n";
 import { addDays, dayKey, dayStart } from "../dates";
 import { dayLabel } from "../format";
-import { DEFAULT_STEP_TIME, makeStep, moveStep } from "../steps";
+import { DEFAULT_STEP_TIME, dropIndex, makeStep, moveStep, RowLayout } from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";
@@ -26,8 +26,8 @@ import OptionPills from "./OptionPills";
 import SplitSessions from "./SplitSessions";
 import TimeField from "./TimeField";
 
-// Hauteur d'une ligne repliée : sert à calculer la nouvelle place pendant le glissement
-export const STEP_ROW_HEIGHT = 52;
+// Hauteur minimale d'une ligne repliée
+const STEP_ROW_HEIGHT = 52;
 // Appui long avant de pouvoir glisser une étape
 const DRAG_DELAY_MS = 350;
 // Étape cochée : ligne surlignée en vert pendant cette durée
@@ -139,6 +139,8 @@ function StepRow({
   onRename,
   onRemove,
   onMove,
+  onDrop,
+  onLayout,
   onExpand,
   onChangeDay,
   reduceMotion,
@@ -152,7 +154,9 @@ function StepRow({
   onToggle: () => void;
   onRename: (title: string) => void;
   onRemove: () => void;
-  onMove: (to: number) => void;
+  onMove: (to: number) => void; // « Monter » / « Descendre »
+  onDrop: (dy: number) => void; // lâchée après un glissement vertical de dy
+  onLayout: (layout: RowLayout) => void;
   onExpand: () => void;
   onChangeDay: (patch: Partial<TaskStep>) => void;
 } & Colors) {
@@ -197,8 +201,10 @@ function StepRow({
   const flashStyle = useAnimatedStyle(() => ({ opacity: flashOpacity.value }));
 
   const lift = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-  // Appui long puis glisser : la ligne suit le doigt et prend sa nouvelle place au lâcher
+  // Appui long sur la poignée puis glisser : la ligne suit le doigt et prend sa place au lâcher,
+  // calculée à partir des positions mesurées des lignes
   const drag = Gesture.Pan()
+    .withTestId(`step-drag-${index}`)
     .activateAfterLongPress(DRAG_DELAY_MS)
     .onStart(() => {
       lifted.value = 1;
@@ -208,8 +214,7 @@ function StepRow({
       translateY.value = e.translationY;
     })
     .onEnd((e) => {
-      const offset = Math.round(e.translationY / STEP_ROW_HEIGHT);
-      if (offset !== 0) scheduleOnRN(onMove, index + offset);
+      scheduleOnRN(onDrop, e.translationY);
       translateY.value = withSpring(0, { damping: 20, stiffness: 240 });
       lifted.value = 0;
     });
@@ -223,7 +228,11 @@ function StepRow({
   const dayText = step.day === null ? t.steps.noDay : dayLabel(step.day, now);
 
   return (
-    <Animated.View style={[styles.step, rowStyle]}>
+    <Animated.View
+      style={[styles.step, rowStyle]}
+      onLayout={(e) => onLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height })}
+      testID={`step-${index}`}
+    >
       {flash && (
         <Animated.View
           pointerEvents="none"
@@ -231,21 +240,29 @@ function StepRow({
           style={[styles.flash, !reduceMotion && flashStyle]}
         />
       )}
-      <GestureDetector gesture={drag}>
-        <View
-          style={styles.stepRow}
-          accessibilityHint={t.steps.dragHint}
-          accessibilityActions={[
-            ...(index > 0 ? [{ name: "moveUp", label: t.steps.moveUp }] : []),
-            ...(index < count - 1 ? [{ name: "moveDown", label: t.steps.moveDown }] : []),
-          ]}
-          onAccessibilityAction={(e) => {
-            if (e.nativeEvent.actionName === "moveUp") onMove(index - 1);
-            else if (e.nativeEvent.actionName === "moveDown") onMove(index + 1);
-          }}
-          testID={`step-${index}`}
-        >
-          <Ionicons name="reorder-two" size={18} color={colors.textMuted} style={styles.handle} />
+      <View style={styles.stepRow}>
+        {/* Poignée : seul endroit d'où l'on glisse (le titre garde l'appui long du texte) ;
+            « Monter » / « Descendre » pour les lecteurs d'écran */}
+        <GestureDetector gesture={drag}>
+          <View
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={t.steps.reorder(step.title)}
+            accessibilityHint={t.steps.dragHint}
+            accessibilityActions={[
+              ...(index > 0 ? [{ name: "moveUp", label: t.steps.moveUp }] : []),
+              ...(index < count - 1 ? [{ name: "moveDown", label: t.steps.moveDown }] : []),
+            ]}
+            onAccessibilityAction={(e) => {
+              if (e.nativeEvent.actionName === "moveUp") onMove(index - 1);
+              else if (e.nativeEvent.actionName === "moveDown") onMove(index + 1);
+            }}
+            testID={`step-handle-${index}`}
+            style={styles.handle}
+          >
+            <Ionicons name="reorder-two" size={20} color={colors.textMuted} />
+          </View>
+        </GestureDetector>
           <Pressable
             accessibilityRole="checkbox"
             accessibilityState={{ checked: step.done }}
@@ -292,8 +309,7 @@ function StepRow({
             color={colors.textMuted}
             onPress={onRemove}
           />
-        </View>
-      </GestureDetector>
+      </View>
       {expanded && <DayEditor step={step} onChange={onChangeDay} {...colorProps} />}
     </Animated.View>
   );
@@ -305,6 +321,14 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
   const [expanded, setExpanded] = useState<string | null>(null);
   const [splitting, setSplitting] = useState(false);
   const reduceMotion = useReduceMotion();
+  // Positions mesurées des lignes, pour placer une étape lâchée
+  const layouts = useRef(new Map<string, RowLayout>());
+
+  const drop = (index: number, dy: number) => {
+    const rows = steps.map((s) => layouts.current.get(s.id));
+    if (rows.some((r) => r === undefined)) return;
+    onChange(moveStep(steps, index, dropIndex(rows as RowLayout[], index, dy)));
+  };
 
   const update = (id: string, patch: Partial<TaskStep>) =>
     onChange(steps.map((s) => (s.id === id ? { ...s, ...patch } : s)));
@@ -337,6 +361,8 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
           onRename={(title) => update(step.id, { title })}
           onRemove={() => onChange(steps.filter((s) => s.id !== step.id))}
           onMove={(to) => onChange(moveStep(steps, index, to))}
+          onDrop={(dy) => drop(index, dy)}
+          onLayout={(layout) => layouts.current.set(step.id, layout)}
           onExpand={() => setExpanded(expanded === step.id ? null : step.id)}
           onChangeDay={(patch) => update(step.id, patch)}
           reduceMotion={reduceMotion}
@@ -424,10 +450,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     minHeight: STEP_ROW_HEIGHT - 2,
-    paddingLeft: 6,
   },
   handle: {
-    paddingHorizontal: 2,
+    width: TOUCH_SIZE,
+    height: TOUCH_SIZE,
+    alignItems: "center",
+    justifyContent: "center",
   },
   checkArea: {
     width: TOUCH_SIZE,

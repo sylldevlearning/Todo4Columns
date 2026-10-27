@@ -7,6 +7,8 @@ import { AccessibilityInfo, Alert, AppState, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider } from "../celebration/CelebrationProvider";
 import MatrixGrid from "../components/MatrixGrid";
+import { State } from "react-native-gesture-handler";
+import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { STEP_FLASH_MS } from "../components/StepsEditor";
 import StepSummary from "../components/StepSummary";
 import TaskForm from "../components/TaskForm";
@@ -201,21 +203,58 @@ describe("section « Étapes » de la fiche", () => {
     reduce.mockResolvedValue(false);
   });
 
-  it("réordonner (actions d'accessibilité, comme le glisser après un appui long)", async () => {
+  it("réordonner avec « Monter » / « Descendre » de la poignée (lecteur d'écran)", async () => {
     const onSubmit = await renderForm();
     for (const title of ["A", "B", "C"]) await addStep(title);
-    expect(screen.getByTestId("step-0").props.accessibilityHint).toBe(
-      "Appui long puis glisser pour changer l'ordre"
-    );
-    expect(screen.getByTestId("step-0").props.accessibilityActions.map((a: { name: string }) => a.name)).toEqual([
-      "moveDown",
-    ]);
-    await fireEvent(screen.getByTestId("step-0"), "accessibilityAction", { nativeEvent: { actionName: "moveDown" } });
-    await fireEvent(screen.getByTestId("step-2"), "accessibilityAction", { nativeEvent: { actionName: "moveUp" } });
+    await fireEvent(screen.getByTestId("step-handle-0"), "accessibilityAction", { nativeEvent: { actionName: "moveDown" } });
+    await fireEvent(screen.getByTestId("step-handle-2"), "accessibilityAction", { nativeEvent: { actionName: "moveUp" } });
 
     await fireEvent.changeText(screen.getByLabelText("Titre"), "Ordre");
     await fireEvent.press(screen.getByRole("button", { name: "Ajouter à « Planifier »" }));
     expect(onSubmit.mock.calls[0][0].steps.map((s: TaskStep) => s.title)).toEqual(["B", "C", "A"]);
+  });
+
+  it("poignée accessible : élément focalisable, libellé, consigne et actions ; le titre n'en porte pas", async () => {
+    await renderForm();
+    for (const title of ["A", "B"]) await addStep(title);
+    const handle = screen.getByRole("button", { name: "Déplacer « A »" });
+    expect(handle.props.testID).toBe("step-handle-0");
+    expect(handle.props.accessible).toBe(true);
+    expect(handle.props.accessibilityHint).toBe("Appui long sur la poignée puis glisser pour changer l'ordre");
+    expect(handle.props.accessibilityActions).toEqual([{ name: "moveDown", label: "Descendre" }]);
+    expect(screen.getByRole("button", { name: "Déplacer « B »" }).props.accessibilityActions).toEqual([
+      { name: "moveUp", label: "Monter" },
+    ]);
+    // Zone tactile de 44 px
+    expect(StyleSheet.flatten(handle.props.style)).toMatchObject({ width: 44, height: 44 });
+    expect(screen.getByLabelText("Étape 1").props.accessibilityActions).toBeUndefined();
+  });
+
+  it("glisser depuis la poignée : place au lâcher calculée sur les positions mesurées", async () => {
+    const onSubmit = await renderForm();
+    for (const title of ["A", "B", "C", "D"]) await addStep(title);
+    // Positions mesurées : « B » a son jour ouvert (ligne haute)
+    const rows = [
+      { y: 0, height: 52 },
+      { y: 58, height: 180 },
+      { y: 244, height: 52 },
+      { y: 302, height: 52 },
+    ];
+    for (const [i, layout] of rows.entries()) {
+      await fireEvent(screen.getByTestId(`step-${i}`), "layout", { nativeEvent: { layout: { x: 0, width: 300, ...layout } } });
+    }
+    // « A » glissée de 250 px : son milieu (26 + 250) dépasse ceux de « B » (148) et « C » (270)
+    await act(async () =>
+      fireGestureHandler(getByGestureTestId("step-drag-0"), [
+        { state: State.BEGAN, translationY: 0 },
+        { state: State.ACTIVE, translationY: 250 },
+        { state: State.END, translationY: 250 },
+      ])
+    );
+    await fireEvent.changeText(screen.getByLabelText("Titre"), "Ordre");
+    await fireEvent.press(screen.getByRole("button", { name: "Ajouter à « Planifier »" }));
+    // Avec une hauteur fixe de 52 px, « A » serait partie 5 places plus bas (au bout)
+    expect(onSubmit.mock.calls[0][0].steps.map((s: TaskStep) => s.title)).toEqual(["B", "C", "A", "D"]);
   });
 
   it("jour de l'étape : Aucun / Aujourd'hui / Demain / Date, puis l'heure du rappel", async () => {

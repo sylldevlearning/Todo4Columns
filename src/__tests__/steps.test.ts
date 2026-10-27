@@ -117,6 +117,25 @@ describe("étapes", () => {
     expect(moveStep(steps, 1, 1)).toBe(steps);
   });
 
+  it("place au lâcher d'après les positions mesurées, lignes de hauteurs différentes comprises", () => {
+    const { dropIndex } = require("../steps");
+    // Écart de 6 px entre les lignes ; la 2e a son jour ouvert
+    const rows = [
+      { y: 0, height: 52 },
+      { y: 58, height: 180 },
+      { y: 244, height: 52 },
+      { y: 302, height: 52 },
+    ];
+    expect(dropIndex(rows, 0, 20)).toBe(0); // pas assez loin
+    expect(dropIndex(rows, 0, 130)).toBe(1); // passe le milieu de la 2e (148)
+    expect(dropIndex(rows, 0, 250)).toBe(2);
+    expect(dropIndex(rows, 0, 400)).toBe(3);
+    expect(dropIndex(rows, 3, -300)).toBe(1); // milieu à 28 : juste sous celui de la 1re (26)
+    expect(dropIndex(rows, 3, -310)).toBe(0);
+    expect(dropIndex(rows, 2, -60)).toBe(2); // reste sous la ligne haute
+    expect(dropIndex(rows, 2, -130)).toBe(1);
+  });
+
   it("rappel le jour prévu, à 9:00 par défaut ou à son heure", () => {
     expect(stepReminderDate(step({ day: "2026-10-23" }))).toBe(at(23, 9));
     expect(stepReminderDate(step({ day: "2026-10-23", time: "18:30" }))).toBe(at(23, 18, 30));
