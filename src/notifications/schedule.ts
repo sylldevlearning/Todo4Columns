@@ -152,15 +152,29 @@ export const weeklyReviewContent = () => ({
   body: t.notifications.weeklyReview,
 });
 
+// Rappels d'étape décalés à la fin de la plage silencieuse : réespacés de 5 minutes
+export const STEP_QUIET_SPACING_MS = 5 * MINUTE;
+
 // Étapes non faites avec un jour prévu : un rappel ce jour-là (à leur heure, 9:00 par défaut),
-// quel que soit le quadrant
-function stepNotifications(task: Task): ScheduledNotification[] {
-  return stepsOf(task).flatMap((step) => {
+// quel que soit le quadrant. Plusieurs rappels repoussés par la plage silencieuse n'arrivent pas
+// tous ensemble à sa fin.
+function stepNotifications(task: Task, settings: Settings): ScheduledNotification[] {
+  const items = stepsOf(task).flatMap((step) => {
     const date = step.done ? null : stepReminderDate(step);
     return date === null
       ? []
       : [{ date, type: "step" as const, content: { title: task.title, body: t.notifications.step(step.title) }, stepId: step.id }];
   });
+  let last = -Infinity;
+  return items
+    .sort((a, b) => a.date - b.date)
+    .map((item) => {
+      const shifted = shiftForSettings(item.date, settings);
+      if (shifted === item.date) return item;
+      const date = shifted <= last ? last + STEP_QUIET_SPACING_MS : shifted;
+      last = date;
+      return { ...item, date };
+    });
 }
 
 // Notifications à programmer pour une tâche, triées par date.
@@ -173,7 +187,7 @@ export function computeSchedule(
 ): ScheduledNotification[] {
   if (task.isDone || task.archivedAt !== null) return [];
 
-  const items: ScheduledNotification[] = stepNotifications(task);
+  const items: ScheduledNotification[] = stepNotifications(task, settings);
   switch (task.category) {
     case "UI":
       items.push(...nagNotifications(task, settings));

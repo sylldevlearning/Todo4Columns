@@ -444,3 +444,23 @@ describe("rappel d'aujourd'hui déjà passé", () => {
     ]);
   });
 });
+
+describe("rappels d'étape dans la plage silencieuse", () => {
+  it("décalés à sa fin puis réespacés de 5 minutes", () => {
+    const quiet = { ...NO_QUIET, quietHoursEnabled: true }; // 22:00 → 08:00
+    const task = makeTask({
+      steps: [
+        step({ id: "a", day: TODAY, time: "22:30" }),
+        step({ id: "b", day: TODAY, time: "23:00" }),
+        step({ id: "c", day: "2026-10-23", time: "06:00" }),
+        step({ id: "d", day: "2026-10-23", time: "10:00" }),
+      ],
+    });
+    expect(computeSchedule(task, quiet, NOW).map((i) => [i.stepId, i.date])).toEqual([
+      ["a", at(23, 8)],
+      ["b", at(23, 8, 5)],
+      ["c", at(23, 8, 10)],
+      ["d", at(23, 10)],
+    ]);
+  });
+});
