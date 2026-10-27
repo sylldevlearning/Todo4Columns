@@ -337,7 +337,7 @@ export const fr = {
       splitSessions: {
         title: "Répartir sur plusieurs jours",
         body: "Crée d'un coup plusieurs séances de travail, une par jour, chacune avec son rappel. Tu choisis le nombre de séances, leur durée, le premier jour et si les week-ends sont sautés. Un aperçu s'affiche avant de valider.",
-        example: "5 séances d'1 h à partir de demain, en semaine seulement : du mardi au lundi suivant, sans le samedi ni le dimanche.",
+        example: "5 séances d'1 h à partir d'un jeudi, en semaine seulement : jeudi, vendredi, lundi, mardi et mercredi.",
       },
       backup: {
         title: "Sauvegarde",

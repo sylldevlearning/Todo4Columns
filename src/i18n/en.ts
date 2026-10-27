@@ -329,7 +329,7 @@ export const en: Translations = {
       splitSessions: {
         title: "Spread over several days",
         body: "Creates several work sessions at once, one per day, each with its reminder. You choose how many sessions, how long, the first day and whether weekends are skipped. A preview shows before you confirm.",
-        example: "5 one-hour sessions starting tomorrow, weekdays only: Tuesday to the following Monday, skipping Saturday and Sunday.",
+        example: "5 one-hour sessions starting on a Thursday, weekdays only: Thursday, Friday, Monday, Tuesday and Wednesday.",
       },
       backup: {
         title: "Backup",

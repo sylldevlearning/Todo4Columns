@@ -178,6 +178,24 @@ describe("répartir sur plusieurs jours", () => {
   it("anglais", () => {
     expect(en.steps.session(1, 5, en.steps.durations[60])).toBe("Session 1/5 · 1 h");
   });
+
+  it("exemple du « i » : 5 séances à partir d'un jeudi, en semaine seulement", () => {
+    const { fr } = require("../i18n/fr");
+    expect(fr.help.info.splitSessions.example).toBe(
+      "5 séances d'1 h à partir d'un jeudi, en semaine seulement : jeudi, vendredi, lundi, mardi et mercredi."
+    );
+    expect(en.help.info.splitSessions.example).toBe(
+      "5 one-hour sessions starting on a Thursday, weekdays only: Thursday, Friday, Monday, Tuesday and Wednesday."
+    );
+    // L'exemple correspond au calcul : jeudi 22, vendredi 23, lundi 26, mardi 27, mercredi 28
+    expect(sessionDays({ count: 5, minutes: 60, from: "today", weekdaysOnly: true }, NOW)).toEqual([
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-26",
+      "2026-10-27",
+      "2026-10-28",
+    ]);
+  });
 });
 
 describe("rappels d'étape", () => {
