@@ -1,4 +1,4 @@
-import { addDays, dayKey, isDayKey, isTime } from "./dates";
+import { addDays, dayKey, isDayKey, isTime, pad } from "./dates";
 import { isRecord } from "./guards";
 import { Task, TaskStep } from "./types";
 
@@ -67,6 +67,25 @@ export function stepReminderDate(step: TaskStep): number | null {
   const [h, m] = (step.time ?? DEFAULT_STEP_TIME).split(":").map(Number);
   const [y, mo, d] = step.day.split("-").map(Number);
   return new Date(y, mo - 1, d, h, m).getTime();
+}
+
+// Heure pleine suivante, « 15:00 » ; null après 23:00 (plus d'heure pleine aujourd'hui)
+export function nextFullHour(now: number): string | null {
+  const hour = new Date(now).getHours() + 1;
+  return hour <= 23 ? `${pad(hour)}:00` : null;
+}
+
+// Étape prévue aujourd'hui dont le rappel est déjà passé : rappel à l'heure pleine suivante
+export function keepTodayReminder(step: TaskStep, now: number): TaskStep {
+  if (step.done || step.day !== dayKey(now) || stepReminderDate(step)! > now) return step;
+  const time = nextFullHour(now);
+  return time === null ? step : { ...step, time };
+}
+
+// Rappel encore à venir aujourd'hui pour cette étape : son heure, sinon null
+export function todayReminderTime(step: TaskStep, now: number): string | null {
+  if (step.done || step.day !== dayKey(now) || stepReminderDate(step)! <= now) return null;
+  return step.time ?? DEFAULT_STEP_TIME;
 }
 
 // Déplace l'étape from à la position to

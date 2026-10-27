@@ -415,3 +415,32 @@ describe("étapes datées et autorisation des notifications", () => {
     expect(hasReminder("NDNI", EMPTY_REMINDER_FIELDS)).toBe(false);
   });
 });
+
+describe("rappel d'aujourd'hui déjà passé", () => {
+  const { keepTodayReminder, nextFullHour, todayReminderTime } = require("../steps");
+
+  it("heure pleine suivante, jusqu'à 23:00", () => {
+    expect(nextFullHour(at(22, 14, 20))).toBe("15:00");
+    expect(nextFullHour(at(22, 22, 59))).toBe("23:00");
+    expect(nextFullHour(at(22, 23, 10))).toBeNull();
+  });
+
+  it("étape d'aujourd'hui : 9:00 passé → heure pleine suivante ; sinon inchangée", () => {
+    expect(keepTodayReminder(step({ day: TODAY }), at(22, 14, 20)).time).toBe("15:00");
+    expect(keepTodayReminder(step({ day: TODAY, time: "12:00" }), at(22, 14, 20)).time).toBe("15:00");
+    expect(keepTodayReminder(step({ day: TODAY }), at(22, 8)).time).toBeNull();
+    expect(keepTodayReminder(step({ day: "2026-10-23" }), at(22, 14)).time).toBeNull();
+    // Après 23:00 : plus d'heure pleine aujourd'hui
+    expect(keepTodayReminder(step({ day: TODAY }), at(22, 23, 30)).time).toBeNull();
+    expect(todayReminderTime(step({ day: TODAY, time: "15:00" }), at(22, 14, 20))).toBe("15:00");
+    expect(todayReminderTime(step({ day: TODAY }), at(22, 14, 20))).toBeNull();
+  });
+
+  it("répartition à partir d'aujourd'hui : même règle pour la séance du jour", () => {
+    const sessions = splitSessions({ count: 2, minutes: 60, from: "today", weekdaysOnly: false }, at(22, 14, 20));
+    expect(sessions.map((s) => [s.day, s.time])).toEqual([
+      [TODAY, "15:00"],
+      ["2026-10-23", null],
+    ]);
+  });
+});

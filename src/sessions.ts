@@ -1,6 +1,6 @@
 import { addDays, dayKey, dayStart } from "./dates";
 import { t } from "./i18n";
-import { makeStep } from "./steps";
+import { keepTodayReminder, makeStep } from "./steps";
 import { TaskStep } from "./types";
 
 // « Répartir sur plusieurs jours » : séances d'une durée choisie, une par jour
@@ -32,10 +32,14 @@ export function sessionDays({ count, from, weekdaysOnly }: SplitOptions, now: nu
   return days;
 }
 
-// « Séance 1/5 · 1 h » … avec un jour chacune
+// « Séance 1/5 · 1 h » … avec un jour chacune. Séance d'aujourd'hui dont 9:00 est passé :
+// rappel à l'heure pleine suivante
 export function splitSessions(options: SplitOptions, now: number): TaskStep[] {
   const count = Math.max(MIN_SESSIONS, Math.min(MAX_SESSIONS, Math.round(options.count)));
   return sessionDays({ ...options, count }, now).map((day, i) =>
-    makeStep(t.steps.session(i + 1, count, t.steps.durations[options.minutes] ?? `${options.minutes} min`), day)
+    keepTodayReminder(
+      makeStep(t.steps.session(i + 1, count, t.steps.durations[options.minutes] ?? `${options.minutes} min`), day),
+      now
+    )
   );
 }

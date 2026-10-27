@@ -276,11 +276,15 @@ describe("section « Étapes » de la fiche", () => {
     await fireEvent.press(screen.getByRole("radio", { name: "Demain" }));
     expect(screen.getByRole("button", { name: "Jour de « Relire » : Demain" })).toBeOnTheScreen();
     expect(screen.getByText("Heure du rappel")).toBeOnTheScreen();
+    // Demain : rappel à 9:00, pas de ligne « aujourd'hui »
+    expect(screen.queryByText(/Rappel aujourd'hui/)).toBeNull();
+    // Aujourd'hui à 10:00 : 9:00 est passé, rappel à l'heure pleine suivante
     await fireEvent.press(screen.getByRole("radio", { name: "Aujourd'hui" }));
+    expect(screen.getByText("Rappel aujourd'hui à 11:00")).toBeOnTheScreen();
 
     await fireEvent.changeText(screen.getByLabelText("Titre"), "Relecture");
     await fireEvent.press(screen.getByRole("button", { name: "Ajouter à « Planifier »" }));
-    expect(onSubmit.mock.calls[0][0].steps[0]).toMatchObject({ day: TODAY, time: null });
+    expect(onSubmit.mock.calls[0][0].steps[0]).toMatchObject({ day: TODAY, time: "11:00" });
   });
 
   it("« Répartir sur plusieurs jours » : réglages, aperçu, puis création", async () => {
@@ -311,6 +315,21 @@ describe("section « Étapes » de la fiche", () => {
       ["Séance 2/3 · 30 min", "2026-10-26"],
       ["Séance 3/3 · 30 min", "2026-10-27"],
     ]);
+  });
+
+  it("répartir à partir d'aujourd'hui à 10:00 : la séance du jour a son rappel à 11:00", async () => {
+    const onSubmit = await renderForm();
+    await fireEvent.press(screen.getByRole("button", { name: "Répartir sur plusieurs jours" }));
+    const sheet = within(screen.getByTestId("split-sessions"));
+    await fireEvent.press(sheet.getByRole("radio", { name: "Aujourd'hui" }));
+    expect(sheet.getByText("Aujourd'hui, 11:00")).toBeOnTheScreen();
+    await fireEvent.press(sheet.getByRole("button", { name: "Créer les 5 séances" }));
+    expect(screen.getByText("Rappel aujourd'hui à 11:00")).toBeOnTheScreen();
+    await fireEvent.changeText(screen.getByLabelText("Titre"), "Réviser");
+    await fireEvent.press(screen.getByRole("button", { name: "Ajouter à « Planifier »" }));
+    const steps = onSubmit.mock.calls[0][0].steps;
+    expect(steps[0]).toMatchObject({ day: TODAY, time: "11:00" });
+    expect(steps[1]).toMatchObject({ day: "2026-10-23", time: null });
   });
 
   it("« Annuler » ne crée aucune séance", async () => {

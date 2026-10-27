@@ -107,7 +107,9 @@ export default function SplitSessions({ color, onColor, textColor, onCancel, onC
               {sessions.map((s, i) => (
                 <View key={i} style={styles.previewRow}>
                   <Text style={styles.previewTitle}>{s.title}</Text>
-                  <Text style={[styles.previewDay, { color: textColor }]}>{dayLabel(s.day!, now)}</Text>
+                  <Text style={[styles.previewDay, { color: textColor }]}>
+                    {s.time ? t.steps.dayAt(dayLabel(s.day!, now), s.time) : dayLabel(s.day!, now)}
+                  </Text>
                 </View>
               ))}
             </View>

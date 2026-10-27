@@ -477,6 +477,8 @@ export const fr = {
     dayOf: (title: string, day: string) => `Jour de « ${title} » : ${day}`,
     noDay: "Sans jour",
     time: "Heure du rappel",
+    todayReminder: (time: string) => `Rappel aujourd'hui à ${time}`,
+    dayAt: (day: string, time: string) => `${day}, ${time}`,
     progress: (done: number, total: number) => `${done}/${total}`,
     progressLabel: (done: number, total: number) =>
       `${done} étape${s(done)} faite${s(done)} sur ${total}`,

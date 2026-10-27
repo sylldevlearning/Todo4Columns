@@ -17,7 +17,15 @@ import { useReduceMotion } from "../celebration/useReduceMotion";
 import { t } from "../i18n";
 import { addDays, dayKey, dayStart } from "../dates";
 import { dayLabel } from "../format";
-import { DEFAULT_STEP_TIME, dropIndex, makeStep, moveStep, RowLayout } from "../steps";
+import {
+  DEFAULT_STEP_TIME,
+  dropIndex,
+  keepTodayReminder,
+  makeStep,
+  moveStep,
+  RowLayout,
+  todayReminderTime,
+} from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";
@@ -226,6 +234,7 @@ function StepRow({
   }));
 
   const dayText = step.day === null ? t.steps.noDay : dayLabel(step.day, now);
+  const reminderToday = todayReminderTime(step, now);
 
   return (
     <Animated.View
@@ -310,6 +319,12 @@ function StepRow({
             onPress={onRemove}
           />
       </View>
+      {reminderToday !== null && (
+        <View style={styles.reminderLine}>
+          <Ionicons name="notifications-outline" size={13} color={textColor} />
+          <Text style={[styles.reminderText, { color: textColor }]}>{t.steps.todayReminder(reminderToday)}</Text>
+        </View>
+      )}
       {expanded && <DayEditor step={step} onChange={onChangeDay} {...colorProps} />}
     </Animated.View>
   );
@@ -330,8 +345,13 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
     onChange(moveStep(steps, index, dropIndex(rows as RowLayout[], index, dy)));
   };
 
+  // Jour choisi aujourd'hui alors que l'heure du rappel est passée : heure pleine suivante
   const update = (id: string, patch: Partial<TaskStep>) =>
-    onChange(steps.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+    onChange(
+      steps.map((s) =>
+        s.id !== id ? s : "day" in patch ? keepTodayReminder({ ...s, ...patch }, Date.now()) : { ...s, ...patch }
+      )
+    );
 
   const add = () => {
     const title = draft.trim();
@@ -500,6 +520,18 @@ const styles = StyleSheet.create({
   },
   late: {
     color: colors.danger,
+  },
+  reminderLine: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingLeft: TOUCH_SIZE * 2,
+    paddingBottom: 8,
+    marginTop: -4,
+  },
+  reminderText: {
+    fontFamily: fonts.medium,
+    fontSize: 12,
   },
   dayEditor: {
     gap: 4,
