@@ -14,16 +14,14 @@ import {
 } from "../notifications/service";
 import { ACTION_DONE, ACTION_POSTPONE, configureNotifications, handleNotificationResponse } from "../notifications/setup";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
+import { addDays, dayKey } from "../dates";
+import { sessionDays, splitSessions } from "../sessions";
 import {
-  addDays,
-  dayKey,
   isStepLate,
   makeStep,
   moveStep,
   parseSteps,
   resetSteps,
-  sessionDays,
-  splitSessions,
   stepProgress,
   stepReminderDate,
   todayStep,

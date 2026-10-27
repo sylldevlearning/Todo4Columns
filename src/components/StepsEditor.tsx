@@ -15,7 +15,9 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useReduceMotion } from "../celebration/useReduceMotion";
 import { t } from "../i18n";
-import { addDays, dayKey, dayLabel, dayStart, DEFAULT_STEP_TIME, makeStep, moveStep } from "../steps";
+import { addDays, dayKey, dayStart } from "../dates";
+import { dayLabel } from "../format";
+import { DEFAULT_STEP_TIME, makeStep, moveStep } from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";

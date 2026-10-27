@@ -3,6 +3,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import React from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { hhmm } from "../dates";
 import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 
@@ -19,8 +20,7 @@ const toDate = (hhmm: string) => {
   return d;
 };
 
-const toHHMM = (d: Date) =>
-  `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+const toHHMM = (d: Date) => hhmm(d.getTime());
 
 // Sélecteur d'heure : dialogue natif sur Android, sélecteur compact sur iOS
 export default function TimeField({ label, value, onChange }: Props) {

@@ -1,3 +1,4 @@
+import { addDays, dayKey, dayStart, pad } from "./dates";
 import { t } from "./i18n";
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -51,12 +52,23 @@ export function formatDuration(ms: number, round: "up" | "down" = "down"): strin
   return t.reminders.days(Math.floor(minutes / (24 * 60)));
 }
 
+// Jour d'une étape : « Aujourd'hui », « Demain », sinon « jeu. 30 oct. »
+export function dayLabel(day: string, now: number): string {
+  const today = dayKey(now);
+  if (day === today) return t.steps.dayToday;
+  if (day === addDays(today, 1)) return t.steps.dayTomorrow;
+  return new Date(dayStart(day)).toLocaleDateString(t.locale, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+}
+
 // Temps restant « MM:SS », ou « H:MM:SS » au-delà d'une heure
 export function formatRemaining(ms: number): string {
   const total = Math.max(Math.ceil(ms / 1000), 0);
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
-  const pad = (n: number) => n.toString().padStart(2, "0");
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
 }

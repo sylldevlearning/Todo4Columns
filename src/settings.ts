@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TIME_PATTERN } from "./dates";
 
 // Réglages des rappels, modifiables dans l'écran Réglages
 export const SETTINGS_KEY = "SETTINGS";
@@ -62,8 +63,6 @@ export const notificationSettingsKey = (s: Settings) =>
 
 export const sameReminderSettings = (a: Settings, b: Settings) =>
   notificationSettingsKey(a) === notificationSettingsKey(b);
-
-const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 const isNonNegativeNumber = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v) && v >= 0;

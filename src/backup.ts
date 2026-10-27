@@ -13,6 +13,7 @@ import { parseReviewWeeksJson, REVIEW_LOG_KEY } from "./review";
 import { parseSettings, SETTINGS_KEY, SETTINGS_SCHEMA_VERSION, Settings } from "./settings";
 import { STORAGE_KEY } from "./storage";
 import { isWeekKey } from "./balance";
+import { pad } from "./dates";
 import { CATEGORY_KEYS, isRecord } from "./guards";
 import { Category, Task } from "./types";
 
@@ -57,7 +58,6 @@ export class BackupTooLargeError extends Error {}
 // « dofirst-sauvegarde-2026-10-23.json »
 export function backupFileName(now: number, prefix: string): string {
   const d = new Date(now);
-  const pad = (n: number) => n.toString().padStart(2, "0");
   return `${prefix}-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`;
 }
 

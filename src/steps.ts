@@ -1,43 +1,11 @@
+import { addDays, dayKey, isDayKey, isTime } from "./dates";
 import { isRecord } from "./guards";
-import { t } from "./i18n";
 import { Task, TaskStep } from "./types";
 
 // Étapes d'une tâche : jours prévus en date locale « 2026-10-27 », heure « 09:30 »
 
-export const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 // Heure du rappel d'une étape sans heure
 export const DEFAULT_STEP_TIME = "09:00";
-
-// Répartition sur plusieurs jours
-export const MIN_SESSIONS = 2;
-export const MAX_SESSIONS = 14;
-export const SESSION_MINUTES = [30, 60, 120] as const;
-
-const pad = (n: number) => n.toString().padStart(2, "0");
-
-// Jour local d'un timestamp
-export const dayKey = (ts: number) => {
-  const d = new Date(ts);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
-
-// Minuit local du jour
-export const dayStart = (day: string) => {
-  const [y, m, d] = day.split("-").map(Number);
-  return new Date(y, m - 1, d).getTime();
-};
-
-// Jour décalé de n jours (calendrier local : sans souci de changement d'heure)
-export const addDays = (day: string, n: number) => {
-  const [y, m, d] = day.split("-").map(Number);
-  return dayKey(new Date(y, m - 1, d + n).getTime());
-};
-
-export const isDayKey = (v: unknown): v is string =>
-  typeof v === "string" && DAY_PATTERN.test(v) && dayKey(dayStart(v)) === v;
-
-const isTime = (v: unknown): v is string => typeof v === "string" && TIME_PATTERN.test(v);
 
 // Identifiant d'étape, unique dans sa tâche
 export const newStepId = () => `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -73,18 +41,6 @@ export const makeStep = (title: string, day: string | null = null): TaskStep => 
   day,
   time: null,
 });
-
-// « Aujourd'hui », « Demain », sinon « jeu. 30 oct. »
-export function dayLabel(day: string, now: number): string {
-  const today = dayKey(now);
-  if (day === today) return t.steps.dayToday;
-  if (day === addDays(today, 1)) return t.steps.dayTomorrow;
-  return new Date(dayStart(day)).toLocaleDateString(t.locale, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
-}
 
 // Progression « 2/5 » ; null sans étapes
 export function stepProgress(steps: TaskStep[]): { done: number; total: number } | null {
@@ -134,36 +90,3 @@ export const postponeStepIn = (steps: TaskStep[], id: string, now: number): Task
 // Occurrence suivante d'une tâche récurrente : mêmes étapes, décochées, sans jour prévu
 export const resetSteps = (steps: TaskStep[]): TaskStep[] =>
   steps.map((s) => ({ ...s, done: false, doneAt: null, day: null }));
-
-// ---- Répartir sur plusieurs jours ----
-
-export interface SplitOptions {
-  count: number; // nombre de séances (2 à 14)
-  minutes: number; // durée par séance
-  from: "today" | "tomorrow";
-  weekdaysOnly: boolean; // week-ends sautés
-}
-
-const isWeekend = (day: string) => {
-  const weekday = new Date(dayStart(day)).getDay();
-  return weekday === 0 || weekday === 6;
-};
-
-// Jours des séances, un par séance, à partir d'aujourd'hui ou de demain
-export function sessionDays({ count, from, weekdaysOnly }: SplitOptions, now: number): string[] {
-  const days: string[] = [];
-  let day = addDays(dayKey(now), from === "today" ? 0 : 1);
-  while (days.length < count) {
-    if (!weekdaysOnly || !isWeekend(day)) days.push(day);
-    day = addDays(day, 1);
-  }
-  return days;
-}
-
-// « Séance 1/5 · 1 h » … avec un jour chacune
-export function splitSessions(options: SplitOptions, now: number): TaskStep[] {
-  const count = Math.max(MIN_SESSIONS, Math.min(MAX_SESSIONS, Math.round(options.count)));
-  return sessionDays({ ...options, count }, now).map((day, i) =>
-    makeStep(t.steps.session(i + 1, count, t.steps.durations[options.minutes] ?? `${options.minutes} min`), day)
-  );
-}

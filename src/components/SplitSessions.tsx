@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "../i18n";
+import { dayLabel } from "../format";
 import {
-  dayLabel,
   MAX_SESSIONS,
   MIN_SESSIONS,
   SESSION_MINUTES,
   SplitOptions,
   splitSessions,
-} from "../steps";
+} from "../sessions";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";

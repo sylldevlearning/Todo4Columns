@@ -1,4 +1,5 @@
 import type { Completion } from "./completionLog";
+import { DAY_PATTERN, pad } from "./dates";
 import { Category } from "./types";
 
 // Équilibre des tâches terminées entre les 4 quadrants. Semaines du lundi 0 h au lundi suivant,
@@ -41,11 +42,10 @@ export function addWeeks(weekStart: number, n: number): number {
 // fuseau horaire (un horodatage de lundi 0 h à Paris n'est pas un lundi 0 h à New York).
 // L'ordre alphabétique de ces dates est l'ordre chronologique.
 export type WeekKey = string;
-export const WEEK_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+export const WEEK_KEY_PATTERN = DAY_PATTERN;
 
 export function weekKey(ts: number): WeekKey {
   const d = new Date(startOfWeek(ts));
-  const pad = (n: number) => n.toString().padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 

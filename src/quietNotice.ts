@@ -1,3 +1,4 @@
+import { hhmm } from "./dates";
 import { computeSchedule, shiftOutOfQuietHours } from "./notifications/schedule";
 import { Settings } from "./settings";
 import { Category, ReminderFields, Task } from "./types";
@@ -7,11 +8,6 @@ export interface QuietNotice {
   end: string; // fin de la plage
   arrival: string; // heure d'arrivée du rappel, "HH:MM"
 }
-
-const hhmm = (ts: number) => {
-  const d = new Date(ts);
-  return `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
-};
 
 // Rappel de la fiche (tel qu'il serait enregistré maintenant) qui tombe dans la plage
 // silencieuse : il arrivera à sa fin. null si la plage est désactivée ou si aucun ne tombe dedans.
