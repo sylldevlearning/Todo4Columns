@@ -531,3 +531,18 @@ describe("plafond de 64 avec la revue de la semaine active", () => {
     expect(mock.__state.scheduled.filter((n) => n.content.data?.type === "review")).toHaveLength(1);
   });
 });
+
+describe("trop tard pour un rappel aujourd'hui", () => {
+  it("après 23:00 seulement, pour une étape d'aujourd'hui non faite", () => {
+    const { isTooLateToday } = require("../steps");
+    expect(isTooLateToday(step({ day: TODAY }), at(22, 23, 30))).toBe(true);
+    expect(isTooLateToday(step({ day: TODAY }), at(22, 22, 30))).toBe(false); // 23:00 reste possible
+    expect(isTooLateToday(step({ day: TODAY, time: "23:45" }), at(22, 23, 30))).toBe(false);
+    expect(isTooLateToday(step({ day: TODAY, done: true, doneAt: 1 }), at(22, 23, 30))).toBe(false);
+    expect(isTooLateToday(step({ day: "2026-10-23" }), at(22, 23, 30))).toBe(false);
+  });
+
+  it("anglais", () => {
+    expect(en.steps.tooLateToday).toBe("Too late for a reminder today");
+  });
+});

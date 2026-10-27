@@ -478,6 +478,7 @@ export const en: Translations = {
     noDay: "No day",
     time: "Reminder time",
     todayReminder: (time) => `Reminder today at ${time}`,
+    tooLateToday: "Too late for a reminder today",
     dayAt: (day, time) => `${day}, ${time}`,
     progress: (done, total) => `${done}/${total}`,
     progressLabel: (done, total) => `${done} of ${total} step${s(total)} done`,

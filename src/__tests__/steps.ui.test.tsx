@@ -194,6 +194,19 @@ describe("section « Étapes » de la fiche", () => {
     ]);
   });
 
+  it("« Aujourd'hui » choisi après 23:00 : « Trop tard pour un rappel aujourd'hui »", async () => {
+    now.mockReturnValue(new Date(2026, 9, 22, 23, 30).getTime());
+    await renderForm();
+    await addStep("Relire");
+    await fireEvent.press(screen.getByRole("button", { name: "Jour de « Relire » : Sans jour" }));
+    await fireEvent.press(screen.getByRole("radio", { name: "Aujourd'hui" }));
+    expect(screen.getByText("Trop tard pour un rappel aujourd'hui")).toBeOnTheScreen();
+    expect(screen.queryByText(/Rappel aujourd'hui à/)).toBeNull();
+    // Demain : la ligne disparaît
+    await fireEvent.press(screen.getByRole("radio", { name: "Demain" }));
+    expect(screen.queryByText("Trop tard pour un rappel aujourd'hui")).toBeNull();
+  });
+
   it("choisir « Aucun » efface aussi l'heure de l'étape", async () => {
     const task = makeTask({
       id: "t",

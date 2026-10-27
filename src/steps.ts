@@ -88,6 +88,10 @@ export function todayReminderTime(step: TaskStep, now: number): string | null {
   return step.time ?? DEFAULT_STEP_TIME;
 }
 
+// Étape prévue aujourd'hui dont le rappel est passé, sans heure pleine restante (après 23:00)
+export const isTooLateToday = (step: TaskStep, now: number) =>
+  !step.done && step.day === dayKey(now) && stepReminderDate(step)! <= now && nextFullHour(now) === null;
+
 // Déplace l'étape from à la position to
 export function moveStep(steps: TaskStep[], from: number, to: number): TaskStep[] {
   if (from === to || from < 0 || from >= steps.length) return steps;

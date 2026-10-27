@@ -480,6 +480,7 @@ export const fr = {
     noDay: "Sans jour",
     time: "Heure du rappel",
     todayReminder: (time: string) => `Rappel aujourd'hui à ${time}`,
+    tooLateToday: "Trop tard pour un rappel aujourd'hui",
     dayAt: (day: string, time: string) => `${day}, ${time}`,
     progress: (done: number, total: number) => `${done}/${total}`,
     progressLabel: (done: number, total: number) =>

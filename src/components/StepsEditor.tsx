@@ -20,6 +20,7 @@ import { dayLabel } from "../format";
 import {
   DEFAULT_STEP_TIME,
   dropIndex,
+  isTooLateToday,
   keepTodayReminder,
   makeStep,
   moveStep,
@@ -235,6 +236,7 @@ function StepRow({
 
   const dayText = step.day === null ? t.steps.noDay : dayLabel(step.day, now);
   const reminderToday = todayReminderTime(step, now);
+  const tooLateToday = isTooLateToday(step, now);
 
   return (
     <Animated.View
@@ -323,6 +325,13 @@ function StepRow({
         <View style={styles.reminderLine}>
           <Ionicons name="notifications-outline" size={13} color={textColor} />
           <Text style={[styles.reminderText, { color: textColor }]}>{t.steps.todayReminder(reminderToday)}</Text>
+        </View>
+      )}
+      {/* Choisie après 23:00 : plus d'heure pleine pour un rappel aujourd'hui */}
+      {tooLateToday && (
+        <View style={styles.reminderLine}>
+          <Ionicons name="notifications-off-outline" size={13} color={colors.textMuted} />
+          <Text style={[styles.reminderText, { color: colors.textMuted }]}>{t.steps.tooLateToday}</Text>
         </View>
       )}
       {expanded && <DayEditor step={step} onChange={onChangeDay} {...colorProps} />}
