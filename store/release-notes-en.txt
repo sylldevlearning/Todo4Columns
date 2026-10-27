@@ -1,8 +1,5 @@
-New in 1.2:
-• Built-in help: introduction, "i" icons and a "How it works" page
-• "Your week" card and a balance screen
-• Weekly review, with 3 starred priorities
-• Repeating tasks
-• "Soon urgent" tasks, and overdue tasks moved to Do
-• Delegate by message: "Send" and "Follow up"
-• Backup: export and import your data
+• Break big tasks down into steps to check off
+• Give each step a day, with a reminder
+• Spread a project over several days (e.g. 1 hour a day)
+• Rate DoFirst, share it or send an idea from Settings › About
+• Stability and performance improvements

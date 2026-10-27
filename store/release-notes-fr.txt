@@ -1,8 +1,5 @@
-Nouveau dans la 1.2 :
-• Aide intégrée : présentation, icônes « i » et page « Comment ça marche »
-• Carte « Ta semaine » et bilan de ton équilibre
-• Revue de la semaine, avec 3 priorités étoilées
-• Tâches récurrentes
-• Tâches « Bientôt urgentes », et bascule en Faire des tâches en retard
-• Délégation par message : « Envoyer » et « Relancer »
-• Sauvegarde : export et import de tes données
+• Découpe tes grosses tâches en étapes à cocher
+• Donne un jour à chaque étape, avec un rappel
+• Répartis un projet sur plusieurs jours (ex. 1 h par jour)
+• Note DoFirst, partage-la ou envoie une idée depuis Réglages › À propos
+• Améliorations de stabilité et de performance
