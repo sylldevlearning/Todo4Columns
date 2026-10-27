@@ -1,11 +1,11 @@
-# DoFirst (Todo4Columns) — État de la version 1.3 (étape 1 : étapes et séances)
+# DoFirst (Todo4Columns) — État de la version 1.3.0
 
-> Mis à jour le 27/10/2026, branche `version-1.3.0` (créée depuis `version-1.2.1`). Numéro de version encore 1.2.1 dans `app.json`.
-> Vérifié : 536 tests Jest (50 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
+> Mis à jour le 27/10/2026, branche `version-1.3.0` (créée depuis `version-1.2.1`). Version **1.3.0** dans `app.json`, finalisée.
+> Vérifié : 540 tests Jest (50 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
 > **Builds EAS :**
 > - **Production 1.2.0** (versionCode 7, build `fde044da`) : ne contient ni les ajustements des rappels, ni le blocage d'AD_ID, ni la 1.2.1.
 > - **APK de test 1.2.1** (profil `preview`, commit `ea7a7db`, versionCode 7 non incrémenté) : build `39ba178d-94ce-4b28-8f2a-8b65fd3d02b9`, installable hors Play Store.
-> - **Aucun build de production 1.2.1**, et aucun build de la 1.3. Voir la liste de tests à la fin.
+> - **Aucun build de production 1.2.1 ni 1.3.0.** Le prochain build de production (1.3.0) passera au versionCode 8. Voir la liste de tests à la fin.
 
 ---
 
@@ -35,7 +35,7 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
   - tâches récurrentes ;
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
-- **1.3** (cette branche), étape 1 : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape.
+- **1.3.0** (cette branche) : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
 - **1.2.1** :
   - demande d'avis dans l'app (fenêtre officielle de Google Play) ;
   - Réglages › À propos : noter, partager, suggérer une idée, version ;
@@ -141,7 +141,7 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 - Trois étapes : « Si j'ai le temps », jusqu'à 3 priorités étoilées, tâches confiées. Puis célébration et série de semaines.
 
 **Étapes** (1.3)
-- Fiche : section « Étapes » : ajouter, renommer, cocher, supprimer, réordonner (appui long sur la poignée puis glisser, place calculée sur les positions mesurées ; « Monter » / « Descendre » sur la poignée pour TalkBack), jour prévu (Aucun / Aujourd'hui / Demain / Date) et heure du rappel. « Aujourd'hui » après l'heure du rappel : rappel à l'heure pleine suivante, avec « Rappel aujourd'hui à 15:00 ». Une coche faite ailleurs pendant que la fiche est ouverte n'est pas écrasée.
+- Fiche : section « Étapes » : ajouter, renommer, cocher, supprimer, réordonner (appui long sur la poignée puis glisser, place calculée sur les positions mesurées ; « Monter » / « Descendre » sur la poignée pour TalkBack), jour prévu (Aucun / Aujourd'hui / Demain / Date) et heure du rappel. « Aujourd'hui » après l'heure du rappel : rappel à l'heure pleine suivante, avec « Rappel aujourd'hui à 15:00 ». Après 23:00, « Trop tard pour un rappel aujourd'hui ». Une coche, un jour ou une heure changés ailleurs pendant que la fiche est ouverte ne sont pas écrasés (si la fiche ne les a pas touchés).
 - « Répartir sur plusieurs jours » : 2 à 14 séances de 30 min, 1 h ou 2 h, à partir d'aujourd'hui ou de demain, week-ends sautés au choix ; aperçu avant de créer « Séance 1/5 · 1 h »…
 - Carte : « 2/5 », « Aujourd'hui : … » et « En retard : … », à cocher depuis la carte avec « Étape cochée » et « Annuler » (dernière étape : « Terminer » puis « Tâche terminée » et « Annuler »). Grille : « 2/5 » à côté du titre.
 - Rappel le jour prévu (à l'heure de l'étape, 9:00 par défaut), dans tous les quadrants, avec « Fait » et « Reporter à demain » ; plage silencieuse et plafond de 64 respectés.
@@ -178,13 +178,13 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 
 | Élément | Valeur |
 |---|---|
-| Version | **1.2.1** (`app.json`, `package.json`) |
+| Version | **1.3.0** (`app.json`, `package.json`) |
 | versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
-| Fiche Play Store | `store/listing-fr.md`, `store/listing-en.md` |
-| Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` (encore celles de la 1.2.0) |
+| Fiche Play Store | `store/listing-fr.md`, `store/listing-en.md` (1.3.0 : titres « DoFirst : to-do list & rappels » 30/30 et « DoFirst: To-Do List & Planner » 29/30) |
+| Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` (1.3.0 : 274 et 247 caractères) |
 | Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
 
 **Permissions du manifeste final**
@@ -203,7 +203,6 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **Acceptés sans correction (revue de la 1.3, étape 1) :**
   - **Demande d'avis sur un APK de test :** installée hors Play Store, l'app enregistre `reviewAskedAt` alors que Google n'affiche rien ; la demande est ensuite bloquée 90 jours. Sans effet en production.
   - **Étape au titre vidé :** elle disparaît à l'enregistrement de la fiche, sans avertissement.
-- **Coche faite ailleurs pendant que la fiche est ouverte :** gardée ; en revanche un jour reporté ailleurs (« Reporter à demain ») est remplacé par celui de la fiche à l'enregistrement.
 
 ### Dette technique
 
@@ -286,7 +285,8 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - Appui long sur la poignée puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher, y compris avec le jour d'une étape ouvert ; le défilement de la fiche reste possible ; un appui long sur le titre sélectionne le texte.
     - TalkBack : la poignée annonce « Déplacer « … » » et propose « Monter » / « Descendre ».
     - Fiche longue, clavier ouvert : « Nouvelle étape » et les titres des étapes restent visibles au-dessus du clavier.
-    - « Aujourd'hui » choisi après 9:00 : ligne « Rappel aujourd'hui à 15:00 » et rappel reçu à cette heure.
+    - « Aujourd'hui » choisi après 9:00 : ligne « Rappel aujourd'hui à 15:00 » et rappel reçu à cette heure ; après 23:00, « Trop tard pour un rappel aujourd'hui ».
+    - « Reporter à demain » depuis un rappel pendant que la fiche de la tâche est ouverte : le report est gardé à l'enregistrement.
     - Choix « Date » : calendrier natif ; heure du rappel.
     - « Répartir sur plusieurs jours » : aperçu, week-ends sautés, création.
     - Rappel d'étape à 9:00 avec « Fait » et « Reporter à demain », app ouverte, en arrière-plan et arrêtée.
