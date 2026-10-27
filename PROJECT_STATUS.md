@@ -1,7 +1,7 @@
 # DoFirst (Todo4Columns) — État de la version 1.3 (étape 1 : étapes et séances)
 
 > Mis à jour le 27/10/2026, branche `version-1.3.0` (créée depuis `version-1.2.1`). Numéro de version encore 1.2.1 dans `app.json`.
-> Vérifié : 501 tests Jest (47 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
+> Vérifié : 536 tests Jest (50 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
 > **Builds EAS :**
 > - **Production 1.2.0** (versionCode 7, build `fde044da`) : ne contient ni les ajustements des rappels, ni le blocage d'AD_ID, ni la 1.2.1.
 > - **APK de test 1.2.1** (profil `preview`, commit `ea7a7db`, versionCode 7 non incrémenté) : build `39ba178d-94ce-4b28-8f2a-8b65fd3d02b9`, installable hors Play Store.
@@ -141,9 +141,9 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 - Trois étapes : « Si j'ai le temps », jusqu'à 3 priorités étoilées, tâches confiées. Puis célébration et série de semaines.
 
 **Étapes** (1.3)
-- Fiche : section « Étapes » : ajouter, renommer, cocher, supprimer, réordonner (appui long puis glisser ; « Monter » / « Descendre » pour TalkBack), jour prévu (Aucun / Aujourd'hui / Demain / Date) et heure du rappel.
+- Fiche : section « Étapes » : ajouter, renommer, cocher, supprimer, réordonner (appui long sur la poignée puis glisser, place calculée sur les positions mesurées ; « Monter » / « Descendre » sur la poignée pour TalkBack), jour prévu (Aucun / Aujourd'hui / Demain / Date) et heure du rappel. « Aujourd'hui » après l'heure du rappel : rappel à l'heure pleine suivante, avec « Rappel aujourd'hui à 15:00 ». Une coche faite ailleurs pendant que la fiche est ouverte n'est pas écrasée.
 - « Répartir sur plusieurs jours » : 2 à 14 séances de 30 min, 1 h ou 2 h, à partir d'aujourd'hui ou de demain, week-ends sautés au choix ; aperçu avant de créer « Séance 1/5 · 1 h »…
-- Carte : « 2/5 », « Aujourd'hui : … » et « En retard : … », à cocher depuis la carte. Grille : « 2/5 » à côté du titre.
+- Carte : « 2/5 », « Aujourd'hui : … » et « En retard : … », à cocher depuis la carte avec « Étape cochée » et « Annuler » (dernière étape : « Terminer » puis « Tâche terminée » et « Annuler »). Grille : « 2/5 » à côté du titre.
 - Rappel le jour prévu (à l'heure de l'étape, 9:00 par défaut), dans tous les quadrants, avec « Fait » et « Reporter à demain » ; plage silencieuse et plafond de 64 respectés.
 - Étape cochée dans la fiche : coche animée, ligne brièvement surlignée en vert et vibration légère (sans fondu ni rebond si « Réduire les animations » est activé). Depuis la carte ou un rappel : célébration discrète (message « Étape faite ! », vibration légère). Dernière étape : « Terminer la tâche ? », puis célébration complète.
 - Le journal ne compte que les tâches terminées. L'occurrence suivante d'une tâche récurrente reprend les étapes, décochées et sans jour.
@@ -200,6 +200,10 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
 - **Adresse de contact :** `sylldevlearning@gmail.com` dans `src/community.ts` et les deux règles de confidentialité.
+- **Acceptés sans correction (revue de la 1.3, étape 1) :**
+  - **Demande d'avis sur un APK de test :** installée hors Play Store, l'app enregistre `reviewAskedAt` alors que Google n'affiche rien ; la demande est ensuite bloquée 90 jours. Sans effet en production.
+  - **Étape au titre vidé :** elle disparaît à l'enregistrement de la fiche, sans avertissement.
+- **Coche faite ailleurs pendant que la fiche est ouverte :** gardée ; en revanche un jour reporté ailleurs (« Reporter à demain ») est remplacé par celui de la fiche à l'enregistrement.
 
 ### Dette technique
 
@@ -279,13 +283,17 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - « Suggérer une idée » : Gmail s'ouvre avec l'adresse, l'objet et les versions de l'app et d'Android.
     - Numéro de version affiché : 1.2.1.
 15. **Étapes** (1.3)
-    - Appui long puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher ; le défilement de la fiche reste possible.
+    - Appui long sur la poignée puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher, y compris avec le jour d'une étape ouvert ; le défilement de la fiche reste possible ; un appui long sur le titre sélectionne le texte.
+    - TalkBack : la poignée annonce « Déplacer « … » » et propose « Monter » / « Descendre ».
+    - Fiche longue, clavier ouvert : « Nouvelle étape » et les titres des étapes restent visibles au-dessus du clavier.
+    - « Aujourd'hui » choisi après 9:00 : ligne « Rappel aujourd'hui à 15:00 » et rappel reçu à cette heure.
     - Choix « Date » : calendrier natif ; heure du rappel.
     - « Répartir sur plusieurs jours » : aperçu, week-ends sautés, création.
     - Rappel d'étape à 9:00 avec « Fait » et « Reporter à demain », app ouverte, en arrière-plan et arrêtée.
     - Cocher une étape dans la fiche : coche animée, ligne surlignée en vert, vibration ; avec « Réduire les animations », vert affiché sans fondu.
     - Cocher la dernière étape dans la fiche : « Terminer la tâche ? » puis la fiche se ferme et les confettis partent.
-    - Carte : « Aujourd'hui : … » à cocher, « En retard : … » en rouge ; grille « 2/5 ».
+    - Carte : « Aujourd'hui : … » à cocher, puis « Étape cochée » et « Annuler » ; « En retard : … » en rouge ; grille « 2/5 ».
+    - Demande d'avis : jamais juste après avoir ouvert l'app depuis une notification, ni par-dessus la fiche, une alerte, la carte d'autorisation ou le message de bascule.
 16. **Poids et batterie**
     - Taille de l'AAB comparée à la 1.1.
     - App en arrière-plan : pas de réveils inutiles.
