@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode, useRef, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
-import { askToFinish } from "../finishPrompt";
+import { offerToFinishAfterStep } from "../finishPrompt";
 import { t } from "../i18n";
 import {
   DELEGATE_FOLLOW_UP_OPTIONS,
@@ -22,7 +22,7 @@ import {
   recurrenceLabel,
   withAnchors,
 } from "../recurrence";
-import { allStepsDone, keepStoredChecks, stepsOf } from "../steps";
+import { keepStoredChecks, stepsOf } from "../steps";
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { Category, Recurrence, ReminderFields, Task, TaskStep } from "../types";
 import DueDateField from "./DueDateField";
@@ -251,8 +251,8 @@ export default function TaskForm({
   // Étape cochée (retour visible sur sa ligne) : la dernière d'une tâche existante propose de la terminer
   const stepToggled = (step: TaskStep, next: TaskStep[]) => {
     if (!step.done) return;
-    if (task && !task.isDone && onComplete && canSubmit && allStepsDone(next)) {
-      askToFinish(() => onComplete(values(next)));
+    if (task && !task.isDone && onComplete && canSubmit) {
+      offerToFinishAfterStep(next, step.id, () => onComplete(values(next)));
     }
   };
 

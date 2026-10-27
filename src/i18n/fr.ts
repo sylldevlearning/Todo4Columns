@@ -68,6 +68,7 @@ export const fr = {
     action: "Annuler",
     reopened: "Tâche rouverte",
     completed: "Tâche terminée",
+    stepDone: "Étape cochée",
     deleted: (n: number) => (n > 1 ? `${n} tâches supprimées` : "Tâche supprimée"),
     snoozed: "Relance reportée d'1 h",
     movedToDo: "Passée en Faire",

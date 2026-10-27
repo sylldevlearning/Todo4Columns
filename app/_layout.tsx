@@ -13,8 +13,9 @@ import { removeExportedFiles } from "../src/backup";
 import { FirstLaunchOnboarding } from "../src/components/Onboarding";
 import { nudgeMessage, shareWhenActive } from "../src/delegation";
 import { useAppFonts } from "../src/fonts";
-import { askToFinish } from "../src/finishPrompt";
+import { offerToFinishAfterStep } from "../src/finishPrompt";
 import { configureNotifications } from "../src/notifications/setup";
+import { stepsOf } from "../src/steps";
 import { useNotificationResponses } from "../src/notifications/useNotificationResponses";
 import {
   TasksProvider,
@@ -58,15 +59,13 @@ function NotificationResponses() {
     // « Fait » d'une étape, app à l'écran : petite célébration ; la dernière propose de finir
     onStepCompletedInApp: (task, stepId) => {
       celebrateStep(task.category);
-      const others = (task.steps ?? []).filter((s) => s.id !== stepId);
-      if (!task.isDone && others.every((s) => s.done)) {
-        askToFinish(() => {
-          if (getTasksState().tasks.some((t) => t.id === task.id && !t.isDone)) {
-            completeTask(task.id);
-            celebrate(task.category);
-          }
-        });
-      }
+      if (task.isDone) return;
+      offerToFinishAfterStep(stepsOf(task), stepId, () => {
+        if (getTasksState().tasks.some((t) => t.id === task.id && !t.isDone)) {
+          completeTask(task.id);
+          celebrate(task.category);
+        }
+      });
     },
   });
   return null;

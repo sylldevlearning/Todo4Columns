@@ -1,12 +1,9 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useCelebration } from "../celebration/CelebrationProvider";
 import { CategoryInfo } from "../constants/categories";
-import { askToFinish } from "../finishPrompt";
 import { t } from "../i18n";
 import { lateSteps, stepProgress, stepsOf, todayStep } from "../steps";
-import { useTaskActions } from "../store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { Task, TaskStep } from "../types";
 
@@ -14,12 +11,11 @@ interface Props {
   task: Task;
   category: CategoryInfo;
   now: number;
+  onCheck: (step: TaskStep) => void; // étape cochée depuis la carte
 }
 
 // Carte d'une tâche à étapes : progression « 2/5 », étape en retard et étape du jour, à cocher
-export default function StepSummary({ task, category, now }: Props) {
-  const { toggleStep, completeTask } = useTaskActions();
-  const { celebrate, celebrateStep } = useCelebration();
+export default function StepSummary({ task, category, now, onCheck }: Props) {
   const steps = stepsOf(task);
   const progress = stepProgress(steps);
   if (!progress) return null;
@@ -27,25 +23,13 @@ export default function StepSummary({ task, category, now }: Props) {
   const late = lateSteps(steps, now)[0] ?? null;
   const today = todayStep(steps, now);
 
-  // Coche l'étape ; la dernière propose de terminer la tâche
-  const check = (step: TaskStep) => {
-    toggleStep(task.id, step.id);
-    celebrateStep(task.category);
-    if (steps.every((s) => s.done || s.id === step.id)) {
-      askToFinish(() => {
-        completeTask(task.id);
-        celebrate(task.category);
-      });
-    }
-  };
-
   const line = (step: TaskStep, text: string, color: string) => (
     <View style={styles.line} key={step.id}>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: false }}
         accessibilityLabel={t.steps.check(step.title)}
-        onPress={() => check(step)}
+        onPress={() => onCheck(step)}
         style={styles.checkArea}
       >
         <View style={[styles.check, { borderColor: color }]} />

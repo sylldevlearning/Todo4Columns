@@ -2,6 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render, renderHook, screen, waitFor, within } from "@testing-library/react-native";
 import * as Haptics from "expo-haptics";
 import * as Notifications from "expo-notifications";
+import { Slot } from "expo-router";
+import { renderRouter } from "expo-router/testing-library";
+import QuadrantScreen from "../../app/quadrant/[category]";
+import { getLastUndoAt, noteUndo } from "../reviewPrompt";
 import React from "react";
 import { AccessibilityInfo, Alert, AppState, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,9 +14,7 @@ import MatrixGrid from "../components/MatrixGrid";
 import { State } from "react-native-gesture-handler";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { STEP_FLASH_MS } from "../components/StepsEditor";
-import StepSummary from "../components/StepSummary";
 import TaskForm from "../components/TaskForm";
-import { CATEGORY_BY_KEY } from "../constants/categories";
 import { serializeTasks } from "../migrations";
 import { ACTION_DONE } from "../notifications/setup";
 import { useNotificationResponses } from "../notifications/useNotificationResponses";
@@ -377,25 +379,23 @@ describe("carte et grille", () => {
     state = useTasksSelector((s) => s);
     return null;
   };
+  // Écran du quadrant « Planifier », comme dans l'app (bandeau « Annuler » compris)
+  const Layout = () => (
+    <SafeAreaProvider initialMetrics={METRICS}>
+      <TasksProvider>
+        <CelebrationProvider enabled>
+          <Slot />
+          <Grab />
+        </CelebrationProvider>
+      </TasksProvider>
+    </SafeAreaProvider>
+  );
   const seed = async (steps: TaskStep[]) => {
     await AsyncStorage.clear();
     await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([makeTask({ id: "t", title: "Exposé", category: "INU", steps })]));
     await saveSettings({ ...DEFAULT_SETTINGS, onboardingDone: true, weeklyReview: false });
-    function Card() {
-      const task = useTasksSelector((s) => s.tasks[0]);
-      return task ? <StepSummary task={task} category={CATEGORY_BY_KEY.INU} now={NOW} /> : null;
-    }
-    await render(
-      <SafeAreaProvider initialMetrics={METRICS}>
-        <TasksProvider>
-          <CelebrationProvider enabled>
-            <Card />
-            <Grab />
-          </CelebrationProvider>
-        </TasksProvider>
-      </SafeAreaProvider>
-    );
-    await waitFor(() => expect(state.isLoaded).toBe(true));
+    await renderRouter({ _layout: Layout, "quadrant/[category]": QuadrantScreen }, { initialUrl: "/quadrant/INU" });
+    await screen.findByText("Exposé");
   };
 
   it("progression « 1/3 », étape du jour, étape en retard", async () => {
@@ -410,18 +410,36 @@ describe("carte et grille", () => {
     expect(screen.getByText("En retard : Relire")).toBeOnTheScreen();
   });
 
-  it("cocher l'étape du jour depuis la carte ; la dernière propose de terminer la tâche", async () => {
+  it("cocher une étape depuis la carte : célébration discrète et « Annuler » (enregistré pour la demande d'avis)", async () => {
+    await seed([step({ id: "b", title: "Relire", day: TODAY }), step({ id: "c", title: "Envoyer" })]);
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Relire »" }));
+    expect(state.tasks[0].steps![0].done).toBe(true);
+    expect(screen.getByText("Étape faite !")).toBeOnTheScreen();
+    expect(screen.getByText("Étape cochée")).toBeOnTheScreen();
+    expect(alert).not.toHaveBeenCalled();
+
+    noteUndo(0);
+    await fireEvent.press(screen.getByRole("button", { name: "Annuler" }));
+    expect(state.tasks[0].steps![0].done).toBe(false);
+    expect(getLastUndoAt()).toBe(NOW);
+  });
+
+  it("dernière étape depuis la carte : « Terminer » termine la tâche, avec célébration complète et « Annuler »", async () => {
     await seed([step({ id: "a", done: true, doneAt: 1 }), step({ id: "c", title: "Envoyer", day: TODAY })]);
     await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Envoyer »" }));
     expect(state.tasks[0].steps![1].done).toBe(true);
-    expect(screen.getByText("2/2")).toBeOnTheScreen();
-    // Depuis la carte : célébration discrète (message)
-    expect(screen.getByText("Étape faite !")).toBeOnTheScreen();
     expect(alert).toHaveBeenCalledWith("Terminer la tâche ?", "Toutes les étapes sont faites.", expect.any(Array));
 
     await pressAlertButton("Terminer");
     await waitFor(() => expect(state.tasks[0].isDone).toBe(true));
     expect(state.completions).toHaveLength(1);
+    expect(screen.getByText("Tâche terminée")).toBeOnTheScreen();
+    expect(screen.queryByText("Étape faite !")).toBeNull(); // remplacée par la célébration complète
+
+    noteUndo(0);
+    await fireEvent.press(screen.getByRole("button", { name: "Annuler" }));
+    expect(state.tasks[0].isDone).toBe(false);
+    expect(getLastUndoAt()).toBe(NOW);
   });
 
   it("grille : progression discrète à côté du titre", async () => {

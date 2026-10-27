@@ -35,6 +35,7 @@ interface Props {
   onOpenMenu: (id: string) => void;
   onSnooze: (id: string) => void; // « Reporter 1 h » d'une tâche en attente
   onMoveToDo: (id: string) => void; // « Passer en Faire » à échéance passée
+  onCheckStep: (taskId: string, stepId: string) => void; // étape du jour ou en retard cochée
   settings: Settings; // réglages des rappels (puces)
   now: number;
 }
@@ -50,6 +51,7 @@ export default React.memo(function TaskCard({
   onOpenMenu,
   onSnooze,
   onMoveToDo,
+  onCheckStep,
   settings,
   now,
 }: Props) {
@@ -162,7 +164,12 @@ export default React.memo(function TaskCard({
               {!task.isDone && (
                 <>
                   <TaskChips task={task} category={category} settings={settings} now={now} />
-                  <StepSummary task={task} category={category} now={now} />
+                  <StepSummary
+                    task={task}
+                    category={category}
+                    now={now}
+                    onCheck={(step) => onCheckStep(task.id, step.id)}
+                  />
                   <TaskAlerts
                     task={task}
                     now={now}

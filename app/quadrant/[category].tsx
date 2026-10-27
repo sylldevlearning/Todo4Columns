@@ -12,12 +12,14 @@ import TaskMenu from "../../src/components/TaskMenu";
 import TimerModal from "../../src/components/TimerModal";
 import UndoBanner from "../../src/components/UndoBanner";
 import { CATEGORY_BY_KEY, isCategory } from "../../src/constants/categories";
+import { offerToFinishAfterStep } from "../../src/finishPrompt";
 import { useNow } from "../../src/hooks/useNow";
 import { useStableCallback } from "../../src/hooks/useStableCallback";
 import { RemovedTask } from "../../src/hooks/useTasks";
 import { t } from "../../src/i18n";
 import { pickReminderFields } from "../../src/reminders";
 import { sameReminderSettings, Settings } from "../../src/settings";
+import { stepsOf } from "../../src/steps";
 import { sameItems } from "../../src/store/selectableStore";
 import {
   useSettingsSelector,
@@ -95,6 +97,27 @@ export default function QuadrantScreen() {
     });
   });
 
+  // Étape cochée depuis la carte : petite célébration et « Annuler ». La dernière propose de
+  // terminer la tâche, avec la célébration complète et « Annuler », comme la coche de la tâche.
+  const handleCheckStep = useStableCallback((taskId: string, stepId: string) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task || stepsOf(task).every((s) => s.id !== stepId || s.done)) return;
+    store.toggleStep(taskId, stepId);
+    const stepCelebration = celebration.celebrateStep(task.category);
+    offerUndo(t.undo.stepDone, () => {
+      if (stepCelebration !== null) celebration.dismiss(stepCelebration);
+      store.toggleStep(taskId, stepId);
+    });
+    offerToFinishAfterStep(stepsOf(task), stepId, () => {
+      store.completeTask(taskId);
+      const celebrationId = celebration.celebrate(task.category);
+      offerUndo(t.undo.completed, () => {
+        if (celebrationId !== null) celebration.dismiss(celebrationId);
+        store.toggleDone(taskId);
+      });
+    });
+  });
+
   const handleDelete = useStableCallback((id: string) => {
     offerUndo(t.undo.deleted(1), restoreLater(store.removeTask(id)));
   });
@@ -142,6 +165,7 @@ export default function QuadrantScreen() {
     onOpenMenu: setMenuTaskId,
     onSnooze: handleSnooze,
     onMoveToDo: handleMoveToDo,
+    onCheckStep: handleCheckStep,
     settings,
     now,
   };

@@ -66,6 +66,7 @@ export const en: Translations = {
     action: "Undo",
     reopened: "Task reopened",
     completed: "Task completed",
+    stepDone: "Step checked",
     deleted: (n) => (n > 1 ? `${n} tasks deleted` : "Task deleted"),
     snoozed: "Reminder snoozed for 1 h",
     movedToDo: "Moved to Do",

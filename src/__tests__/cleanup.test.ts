@@ -17,3 +17,26 @@ describe("nettoyage", () => {
     expect(fromUseTasks).toBe(SAVE_DELAY_MS);
   });
 });
+
+describe("« dernière étape → Terminer la tâche ? » : un seul utilitaire", () => {
+  const { Alert } = require("react-native");
+  const { offerToFinishAfterStep } = require("../finishPrompt");
+  const step = (id: string, done: boolean) => ({ id, title: id, done, doneAt: done ? 1 : null, day: null, time: null });
+
+  it("pose la question seulement quand l'étape cochée était la dernière à faire", () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    alert.mockClear();
+    expect(offerToFinishAfterStep([step("a", true), step("b", false)], "b", () => {})).toBe(true);
+    expect(offerToFinishAfterStep([step("a", false), step("b", false)], "b", () => {})).toBe(false);
+    expect(offerToFinishAfterStep([step("a", true)], "inconnue", () => {})).toBe(false);
+    expect(alert).toHaveBeenCalledTimes(1);
+  });
+
+  it("utilisé par la carte (quadrant), la fiche et le rappel d'étape ; stepsOf partout", () => {
+    for (const file of ["../app/quadrant/[category].tsx", "components/TaskForm.tsx", "../app/_layout.tsx"]) {
+      expect(source(file)).toContain("offerToFinishAfterStep(");
+    }
+    expect(source("components/StepSummary.tsx")).not.toContain("askToFinish");
+    expect(source("../app/_layout.tsx")).not.toMatch(/\.steps \?\? \[\]/);
+  });
+});
