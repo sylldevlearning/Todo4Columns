@@ -98,6 +98,16 @@ describe("section « Étapes » de la fiche", () => {
     ]);
   });
 
+  it("« Nouvelle étape » : Entrée ajoute l'étape et garde le clavier (submitBehavior, pas blurOnSubmit)", async () => {
+    await renderForm();
+    const input = screen.getByLabelText("Nouvelle étape");
+    expect(input.props.submitBehavior).toBe("submit");
+    expect(input.props.blurOnSubmit).toBeUndefined();
+    await fireEvent.changeText(input, "Relire");
+    await fireEvent(input, "submitEditing");
+    expect(screen.getByLabelText("Étape 1").props.value).toBe("Relire");
+  });
+
   it("cocher dans la fiche : coche animée, ligne surlignée en vert, vibration ; pas de message caché", async () => {
     const impact = Haptics.impactAsync as jest.Mock;
     impact.mockClear();

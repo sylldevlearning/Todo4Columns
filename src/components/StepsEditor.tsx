@@ -354,7 +354,7 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
           accessibilityLabel={t.steps.addPlaceholder}
           returnKeyType="done"
           onSubmitEditing={add}
-          blurOnSubmit={false}
+          submitBehavior="submit"
         />
         <Pressable
           accessibilityRole="button"
