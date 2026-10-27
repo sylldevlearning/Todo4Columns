@@ -11,13 +11,14 @@ import {
 } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { loadTasks } from "../storage";
-import { Category, ReminderFields, Task } from "../types";
+import { Category, ReminderFields, Task, TaskStep } from "../types";
 import { newId } from "./newId";
 import { useCompletionLog } from "./useCompletionLog";
 import { useEscalation } from "./useEscalation";
 import { useForeground } from "./useForeground";
 import { useNotificationSync } from "./useNotificationSync";
 import { useRecurrence } from "./useRecurrence";
+import { useSteps } from "./useSteps";
 import { useTaskSaving } from "./useTaskSaving";
 import { useTimers } from "./useTimers";
 
@@ -27,6 +28,7 @@ export type { Escalation } from "./useEscalation";
 export interface TaskInput extends Partial<ReminderFields> {
   title: string;
   category: Category;
+  steps?: TaskStep[]; // étapes de la fiche
 }
 
 // Tâche retirée de la liste, avec sa position pour pouvoir l'annuler
@@ -43,7 +45,7 @@ function defined<T extends object>(obj: T): Partial<T> {
 }
 
 // État des tâches et actions. Le détail est dans des hooks dédiés : journal des fins de tâches,
-// sauvegarde, notifications, minuteurs, bascule des tâches en retard, récurrence.
+// sauvegarde, notifications, minuteurs, bascule des tâches en retard, récurrence, étapes.
 // settingsReady : réglages enregistrés lus ; aucune notification n'est programmée avant
 export function useTasks(
   settings: Settings = DEFAULT_SETTINGS,
@@ -157,6 +159,7 @@ export function useTasks(
       priorityWeek: null,
       nextOccurrenceId: null,
       ...fields,
+      steps: input.steps ?? [],
     };
     setTasks((prev) => [...prev, newTask]);
   };
@@ -180,6 +183,7 @@ export function useTasks(
           ...pickReminderFields(t),
           ...defined(patch),
         }),
+        ...(patch.steps ? { steps: patch.steps } : {}),
       });
     });
   };
@@ -221,6 +225,7 @@ export function useTasks(
   };
 
   const { markDone, reopen } = useRecurrence(setTasks, settingsRef);
+  const { toggleStep, completeStep, postponeStep } = useSteps(setTasks);
 
   const toggleDone = (id: string) => {
     if (tasksRef.current.find((t) => t.id === id)?.isDone) reopen(id);
@@ -335,6 +340,9 @@ export function useTasks(
     archiveTask,
     setWeekPriorities,
     startTimer,
+    toggleStep,
+    completeStep,
+    postponeStep,
     resyncNotifications: reconcileAll,
   };
 }

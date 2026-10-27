@@ -2,6 +2,7 @@ import { Dispatch, MutableRefObject, SetStateAction } from "react";
 import { keepRelevantFields, pickReminderFields } from "../reminders";
 import { nextOccurrence } from "../recurrence";
 import { Settings } from "../settings";
+import { resetSteps, stepsOf } from "../steps";
 import { Task } from "../types";
 import { newId } from "./newId";
 
@@ -33,6 +34,8 @@ export function useRecurrence(
     nextOccurrenceId: null,
     escalationSkippedFor: null,
     notificationIds: [],
+    // Mêmes étapes, décochées et sans jour prévu
+    steps: resetSteps(stepsOf(task)),
   });
 
   // Termine une tâche (date de fin pour le bilan). Récurrente : crée l'occurrence suivante.
