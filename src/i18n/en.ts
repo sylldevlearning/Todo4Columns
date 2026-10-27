@@ -8,6 +8,7 @@ export const en: Translations = {
 
   common: {
     cancel: "Cancel",
+    ok: "OK",
     back: "Back",
     delete: "Delete",
     settings: "Settings",

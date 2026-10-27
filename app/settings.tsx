@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IconButton from "../src/components/IconButton";
 import Onboarding from "../src/components/Onboarding";
@@ -18,6 +18,7 @@ import {
   useTasksSelector,
 } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
+import { showAlert } from "../src/appWindows";
 
 const ABOUT = {
   version: appVersion(),
@@ -47,7 +48,7 @@ export default function SettingsScreen() {
 
   const deleteForever = (id: string) => {
     const task = archived.find((t) => t.id === id);
-    Alert.alert(
+    showAlert(
       t.settings.deleteForever,
       t.settings.deleteForeverBody(task?.title ?? ""),
       [

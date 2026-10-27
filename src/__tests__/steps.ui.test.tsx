@@ -353,7 +353,7 @@ describe("section « Étapes » de la fiche", () => {
     const onComplete = jest.fn();
     await renderForm({ task, onComplete });
     await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Répéter »" }));
-    expect(alert).toHaveBeenCalledWith("Terminer la tâche ?", "Toutes les étapes sont faites.", expect.any(Array));
+    expect(alert).toHaveBeenCalledWith("Terminer la tâche ?", "Toutes les étapes sont faites.", expect.any(Array), expect.any(Object));
 
     await pressAlertButton("Terminer");
     expect(onComplete).toHaveBeenCalledTimes(1);
@@ -428,7 +428,7 @@ describe("carte et grille", () => {
     await seed([step({ id: "a", done: true, doneAt: 1 }), step({ id: "c", title: "Envoyer", day: TODAY })]);
     await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Envoyer »" }));
     expect(state.tasks[0].steps![1].done).toBe(true);
-    expect(alert).toHaveBeenCalledWith("Terminer la tâche ?", "Toutes les étapes sont faites.", expect.any(Array));
+    expect(alert).toHaveBeenCalledWith("Terminer la tâche ?", "Toutes les étapes sont faites.", expect.any(Array), expect.any(Object));
 
     await pressAlertButton("Terminer");
     await waitFor(() => expect(state.tasks[0].isDone).toBe(true));

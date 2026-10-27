@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { t } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { showAlert } from "../appWindows";
 
 interface Props {
   visible: boolean;
@@ -38,7 +30,7 @@ export default function TimerModal({
   const validate = () => {
     const minutes = parseInt(input, 10);
     if (isNaN(minutes) || minutes <= 0) {
-      Alert.alert(t.timer.invalidTitle, t.timer.invalidBody);
+      showAlert(t.timer.invalidTitle, t.timer.invalidBody);
       return;
     }
     onValidate(minutes);

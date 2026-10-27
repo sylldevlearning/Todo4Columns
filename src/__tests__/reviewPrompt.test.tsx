@@ -6,7 +6,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import ReviewScreen from "../../app/review";
 import { CelebrationProvider, useCelebration } from "../celebration/CelebrationProvider";
 import { Completion, saveLog } from "../completionLog";
+import { isAnyWindowOpen, markWindowClosed, markWindowOpen, showAlert } from "../appWindows";
+import PermissionCard from "../components/PermissionCard";
 import ReviewPrompter from "../components/ReviewPrompter";
+import { hidePermissionCard, showPermissionCard } from "../notifications/permissionCard";
+import { noteNotificationResponse } from "../reviewPrompt";
 import UndoBanner from "../components/UndoBanner";
 import {
   canAskForReview,
@@ -123,6 +127,7 @@ describe("demande d'avis dans l'app", () => {
     requestReview.mockClear();
     isAvailable.mockClear();
     noteUndo(0);
+    noteNotificationResponse(0);
   });
   afterEach(() => jest.useRealTimers());
 
@@ -200,6 +205,48 @@ describe("demande d'avis dans l'app", () => {
     expect(celebration.isCelebrating()).toBe(true);
     await wait(REVIEW_DELAY_MS + 200);
     expect(requestReview).toHaveBeenCalledTimes(1);
+  });
+
+  it("tâche terminée depuis une notification : pas de demande (l'app vient de s'ouvrir)", async () => {
+    await seed();
+    await launch();
+    noteNotificationResponse();
+    await act(() => actions.completeTask("open"));
+    await wait(REVIEW_DELAY_MS * 2);
+    expect(requestReview).not.toHaveBeenCalled();
+  });
+
+  it("jamais par-dessus une fenêtre de l'app : attend qu'elle soit fermée", async () => {
+    await seed({ done: 0 });
+    await launch();
+    markWindowOpen("taskSheet");
+    await act(async () => requestReviewPrompt("weeklyReview"));
+    await wait(REVIEW_DELAY_MS * 3);
+    expect(requestReview).not.toHaveBeenCalled();
+    markWindowClosed("taskSheet");
+    await wait(600);
+    expect(requestReview).toHaveBeenCalledTimes(1);
+  });
+
+  it("fenêtres suivies : alerte jusqu'au choix d'un bouton ou à sa fermeture, carte d'autorisation", async () => {
+    const { Alert } = require("react-native");
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    showAlert("Titre", "Texte", [{ text: "OK", onPress: jest.fn() }]);
+    expect(isAnyWindowOpen()).toBe(true);
+    (alert.mock.calls.at(-1)![2] as { onPress: () => void }[])[0].onPress();
+    expect(isAnyWindowOpen()).toBe(false);
+    showAlert("Sans bouton");
+    expect(isAnyWindowOpen()).toBe(true);
+    (alert.mock.calls.at(-1)![3] as { onDismiss: () => void }).onDismiss();
+    expect(isAnyWindowOpen()).toBe(false);
+    alert.mockClear();
+
+    await seed({ done: 0 });
+    await launch(<PermissionCard />);
+    await act(async () => showPermissionCard());
+    expect(isAnyWindowOpen()).toBe(true);
+    await act(async () => hidePermissionCard());
+    expect(isAnyWindowOpen()).toBe(false);
   });
 
   it("fenêtre d'avis indisponible : rien n'est demandé", async () => {

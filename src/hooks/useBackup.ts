@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+
 import {
   BackupContent,
   BackupTooLargeError,
@@ -19,6 +19,7 @@ import { t } from "../i18n";
 import { loadReviewWeeks } from "../review";
 import { noteUndo } from "../reviewPrompt";
 import { useTaskActions } from "../store/TasksContext";
+import { showAlert } from "../appWindows";
 
 // Export et import de la sauvegarde, depuis les Réglages
 export function useBackup() {
@@ -49,7 +50,7 @@ export function useBackup() {
       await shareBackupFile(file, backupFileName(now, t.backup.filePrefix), t.backup.exportTitle);
     } catch (e) {
       console.warn("Erreur export :", e);
-      Alert.alert(t.backup.exportErrorTitle, t.backup.exportErrorBody);
+      showAlert(t.backup.exportErrorTitle, t.backup.exportErrorBody);
     }
   };
 
@@ -64,12 +65,12 @@ export function useBackup() {
       console.warn("Erreur import :", e);
       // Aucun import n'a eu lieu : la copie ne doit pas proposer « Annuler le dernier import »
       if (copied) await removePreImportCopy().catch(() => {});
-      Alert.alert(t.backup.importErrorTitle, t.backup.importErrorBody);
+      showAlert(t.backup.importErrorTitle, t.backup.importErrorBody);
       return;
     }
     replaceInMemory(backup);
     setLastImport(Date.now());
-    Alert.alert(t.backup.doneTitle, t.backup.doneBody(backup.tasks.length));
+    showAlert(t.backup.doneTitle, t.backup.doneBody(backup.tasks.length));
   };
 
   // « Annuler le dernier import » : les données d'avant reviennent, la copie est supprimée
@@ -82,16 +83,16 @@ export function useBackup() {
       replaceInMemory(previous);
     } catch (e) {
       console.warn("Erreur restauration :", e);
-      Alert.alert(t.backup.undoErrorTitle, t.backup.undoErrorBody);
+      showAlert(t.backup.undoErrorTitle, t.backup.undoErrorBody);
       return;
     }
     setLastImport(null);
-    Alert.alert(t.backup.undoneTitle, t.backup.undoneBody);
+    showAlert(t.backup.undoneTitle, t.backup.undoneBody);
   };
 
   const undoImport = () => {
     if (lastImport === null) return;
-    Alert.alert(t.backup.undoConfirmTitle, t.backup.undoConfirmBody(formatShortDate(lastImport)), [
+    showAlert(t.backup.undoConfirmTitle, t.backup.undoConfirmBody(formatShortDate(lastImport)), [
       { text: t.common.cancel, style: "cancel" },
       { text: t.backup.undoAction, style: "destructive", onPress: restore },
     ]);
@@ -104,24 +105,24 @@ export function useBackup() {
       text = await pickBackupText();
     } catch (e) {
       if (e instanceof BackupTooLargeError) {
-        Alert.alert(t.backup.tooLargeTitle, t.backup.tooLargeBody);
+        showAlert(t.backup.tooLargeTitle, t.backup.tooLargeBody);
         return;
       }
       console.warn("Erreur lecture sauvegarde :", e);
-      Alert.alert(t.backup.invalidTitle, t.backup.invalidBody);
+      showAlert(t.backup.invalidTitle, t.backup.invalidBody);
       return;
     }
     if (text === null) return; // annulé
 
     const parsed = parseBackup(text);
     if (!parsed.ok) {
-      if (parsed.reason === "newer") Alert.alert(t.backup.newerTitle, t.backup.newerBody);
-      else if (parsed.reason === "tooLarge") Alert.alert(t.backup.tooLargeTitle, t.backup.tooLargeBody);
-      else Alert.alert(t.backup.invalidTitle, t.backup.invalidBody);
+      if (parsed.reason === "newer") showAlert(t.backup.newerTitle, t.backup.newerBody);
+      else if (parsed.reason === "tooLarge") showAlert(t.backup.tooLargeTitle, t.backup.tooLargeBody);
+      else showAlert(t.backup.invalidTitle, t.backup.invalidBody);
       return;
     }
     const { backup } = parsed;
-    Alert.alert(
+    showAlert(
       t.backup.confirmTitle,
       `${t.backup.preview(backup.tasks.length, formatShortDate(backup.createdAt))}\n\n${t.backup.confirmBody}`,
       [

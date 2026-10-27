@@ -1,6 +1,7 @@
 import * as StoreReview from "expo-store-review";
 import { useEffect, useRef } from "react";
 import { AppState } from "react-native";
+import { isAnyWindowOpen } from "../appWindows";
 import { useCelebration } from "../celebration/CelebrationProvider";
 import { Completion } from "../completionLog";
 import { isForeground } from "../hooks/useForeground";
@@ -8,6 +9,7 @@ import {
   canAskForReview,
   clearReviewPrompt,
   estimateFirstUse,
+  getLastNotificationAt,
   getLastUndoAt,
   requestReviewPrompt,
   REVIEW_DELAY_MS,
@@ -41,13 +43,17 @@ export default function ReviewPrompter() {
     if (before === null || completions.length <= before.length) return;
     const last = completions[completions.length - 1];
     if (Date.now() - last.date > LIVE_COMPLETION_MS) return;
+    // Terminée depuis une notification : l'app vient de s'ouvrir, pas le moment de demander
+    const fromNotification = getLastNotificationAt();
+    if (fromNotification !== null && Date.now() - fromNotification <= LIVE_COMPLETION_MS) return;
     if (completions.length >= REVIEW_TASKS_DONE) requestReviewPrompt("tasksDone");
   }, [completions]);
 
   useEffect(() => {
     if (trigger === null) return;
     const check = () => {
-      if (isCelebrating()) {
+      // Célébration ou fenêtre de l'app ouverte (fiche, alerte, autorisation, bascule) : on attend
+      if (isCelebrating() || isAnyWindowOpen()) {
         timeout = setTimeout(check, RETRY_MS);
         return;
       }

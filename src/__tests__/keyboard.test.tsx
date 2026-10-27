@@ -5,6 +5,7 @@ import React from "react";
 import { Keyboard, Platform, ScrollView, StyleSheet, TextInput } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TaskSheet from "../../app/task";
+import { isAnyWindowOpen } from "../appWindows";
 import { FOCUS_MARGIN } from "../hooks/useFocusedFieldScroll";
 import { DEFAULT_SETTINGS, saveSettings } from "../settings";
 import { TasksProvider } from "../store/TasksContext";
@@ -71,6 +72,12 @@ describe("fiche longue et clavier (Android)", () => {
 
     await emit("keyboardDidHide");
     expect(paddingBottom()).toBe(before);
+  });
+
+  it("fiche ouverte : comptée comme fenêtre (pas de demande d'avis par-dessus)", async () => {
+    expect(isAnyWindowOpen()).toBe(true);
+    await act(() => router.back());
+    expect(isAnyWindowOpen()).toBe(false);
   });
 
   it("sans champ ayant le focus : rien ne défile", async () => {

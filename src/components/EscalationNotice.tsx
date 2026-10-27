@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWindowOpen } from "../appWindows";
 import { t } from "../i18n";
 import { noteUndo } from "../reviewPrompt";
 import {
@@ -28,6 +29,7 @@ export default function EscalationNotice() {
   const settingsReady = useSettingsReady();
   const onboardingDone = useSettingsSelector((s) => s.onboardingDone);
   const visible = escalation !== null && settingsReady && onboardingDone;
+  useWindowOpen("escalationNotice", visible);
 
   useEffect(() => {
     if (!visible) return;

@@ -1,10 +1,10 @@
-import { Alert } from "react-native";
 import { t } from "./i18n";
 import { TaskStep } from "./types";
+import { showAlert } from "./appWindows";
 
 // « Terminer la tâche ? » ; « Terminer » lance onFinish
 export function askToFinish(onFinish: () => void): void {
-  Alert.alert(t.steps.finishTitle, t.steps.finishBody, [
+  showAlert(t.steps.finishTitle, t.steps.finishBody, [
     { text: t.steps.finishNo, style: "cancel" },
     { text: t.steps.finishYes, onPress: onFinish },
   ]);

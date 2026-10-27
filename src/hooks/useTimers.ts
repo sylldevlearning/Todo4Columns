@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { Alert } from "react-native";
+
 import { t } from "../i18n";
 import { Task } from "../types";
+import { showAlert } from "../appWindows";
 
 // setTimeout ne gère pas les délais > ~24,8 jours : on plafonne et on revérifie
 export const MAX_TIMEOUT_MS = 60 * 60 * 1000;
@@ -44,7 +45,7 @@ export function useTimers(
             : t
         )
       );
-      Alert.alert(
+      showAlert(
         t.timer.expiredTitle,
         expired.length === 1
           ? t.timer.expiredOne(expired[0].title)

@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import { useEffect, useRef } from "react";
 import { AppState } from "react-native";
+import { noteNotificationResponse } from "../reviewPrompt";
 import { Category, Task } from "../types";
 import { handleNotificationResponse, responseKey } from "./setup";
 
@@ -38,6 +39,7 @@ export function useNotificationResponses(options: Options): void {
     if (handled.current.has(key)) return;
     handled.current.add(key);
     AsyncStorage.setItem(HANDLED_RESPONSE_KEY, key).catch(() => {});
+    noteNotificationResponse();
     handleNotificationResponse(response, {
       complete: (id) => {
         const task = latest.current.tasks.find((t) => t.id === id);

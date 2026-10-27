@@ -1,7 +1,8 @@
 import Constants from "expo-constants";
-import { Alert, Linking, Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import { shareMessage } from "./delegation";
 import { t } from "./i18n";
+import { showAlert } from "./appWindows";
 
 // Réglages › À propos : noter, partager, écrire au développeur
 
@@ -43,6 +44,6 @@ export const feedbackMailUrl = () =>
 // « Suggérer une idée / signaler un problème » ; sans app de messagerie, l'adresse est affichée
 export function sendFeedback(): void {
   Linking.openURL(feedbackMailUrl()).catch(() =>
-    Alert.alert(t.about.noMailTitle, t.about.noMailBody(FEEDBACK_EMAIL))
+    showAlert(t.about.noMailTitle, t.about.noMailBody(FEEDBACK_EMAIL))
   );
 }

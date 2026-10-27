@@ -8,6 +8,7 @@ export const fr = {
 
   common: {
     cancel: "Annuler",
+    ok: "OK",
     back: "Retour",
     delete: "Supprimer",
     settings: "Réglages",

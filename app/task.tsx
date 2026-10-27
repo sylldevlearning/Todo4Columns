@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCelebration } from "../src/celebration/CelebrationProvider";
 import TaskForm, { TaskFormValues } from "../src/components/TaskForm";
+import { useWindowOpen } from "../src/appWindows";
 import { isCategory } from "../src/constants/categories";
 import { useFocusedFieldScroll } from "../src/hooks/useFocusedFieldScroll";
 import { openSystemSettings } from "../src/notifications/setup";
@@ -26,6 +27,8 @@ export default function TaskSheet() {
   const [permission] = usePermissionState();
   const insets = useSafeAreaInsets();
   const { scrollRef, contentRef, keyboardHeight, onTouchEnd } = useFocusedFieldScroll();
+  // Fiche ouverte : pas de demande d'avis par-dessus
+  useWindowOpen("taskSheet");
   const missing = id !== undefined && task === undefined;
 
   // Tâche supprimée entre-temps : on ferme la fiche

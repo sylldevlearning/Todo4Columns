@@ -214,6 +214,23 @@ describe("puce et message", () => {
     expect(state!.tasks[0].category).toBe("INU");
   });
 
+  it("message de bascule affiché : compté comme fenêtre ouverte (pas de demande d'avis par-dessus)", async () => {
+    const { isAnyWindowOpen } = require("../appWindows");
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([planned()]));
+    await saveSettings({ ...DEFAULT_SETTINGS, onboardingDone: true });
+    await render(
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <TasksProvider>
+          <EscalationNotice />
+        </TasksProvider>
+      </SafeAreaProvider>
+    );
+    expect(await screen.findByText("1 tâche planifiée est passée en Faire")).toBeOnTheScreen();
+    expect(isAnyWindowOpen()).toBe(true);
+    await fireEvent.press(screen.getByRole("button", { name: "Annuler : 1 tâche planifiée est passée en Faire" }));
+    expect(isAnyWindowOpen()).toBe(false);
+  });
+
   it("jamais par-dessus la présentation : le message attend qu'elle soit terminée", async () => {
     await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([planned()]));
     // Réglages sans onboardingDone : la présentation s'affiche

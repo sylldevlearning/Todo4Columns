@@ -53,6 +53,14 @@ export const reviewRequests = pending;
 export const requestReviewPrompt = (trigger: ReviewTrigger) => pending.set(trigger);
 export const clearReviewPrompt = () => pending.set(null);
 
+// Réponse à une notification (« Fait », « Ouvrir »…) : les fins de tâches qui suivent ne
+// déclenchent pas de demande d'avis (l'app vient de s'ouvrir depuis la notification)
+let lastNotificationAt: number | null = null;
+export const noteNotificationResponse = (now: number = Date.now()) => {
+  lastNotificationAt = now;
+};
+export const getLastNotificationAt = () => lastNotificationAt;
+
 // À appeler à chaque « Annuler » (tâche, bascule, import)
 export const noteUndo = (now: number = Date.now()) => {
   lastUndoAt = now;

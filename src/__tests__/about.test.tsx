@@ -171,7 +171,7 @@ describe("suggérer une idée / signaler un problème", () => {
     openURL.mockRejectedValueOnce(new Error("aucune app"));
     sendFeedback();
     await flush();
-    expect(alert).toHaveBeenCalledWith("Aucune app de messagerie", `Tu peux écrire à ${FEEDBACK_EMAIL}.`);
+    expect(alert).toHaveBeenCalledWith("Aucune app de messagerie", `Tu peux écrire à ${FEEDBACK_EMAIL}.`, expect.any(Array), expect.any(Object));
     alert.mockClear();
   });
 });

@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useEffect } from "react";
 import { AppState, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWindowOpen } from "../appWindows";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { hidePermissionCard, usePermissionCardVisible } from "../notifications/permissionCard";
@@ -16,6 +17,7 @@ export default function PermissionCard() {
   const visible = usePermissionCardVisible();
   const { resyncNotifications } = useTaskActions();
   const insets = useSafeAreaInsets();
+  useWindowOpen("permissionCard", visible);
 
   useEffect(() => {
     if (!visible) return;
