@@ -1,11 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render, renderHook, screen, waitFor, within } from "@testing-library/react-native";
+import * as Haptics from "expo-haptics";
 import * as Notifications from "expo-notifications";
 import React from "react";
-import { Alert, AppState } from "react-native";
+import { AccessibilityInfo, Alert, AppState, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider } from "../celebration/CelebrationProvider";
 import MatrixGrid from "../components/MatrixGrid";
+import { STEP_FLASH_MS } from "../components/StepsEditor";
 import StepSummary from "../components/StepSummary";
 import TaskForm from "../components/TaskForm";
 import { CATEGORY_BY_KEY } from "../constants/categories";
@@ -18,6 +20,13 @@ import { TasksProvider, TasksState, useTasksSelector } from "../store/TasksConte
 import { makeTask } from "../testing/makeTask";
 import { METRICS } from "../testing/metrics";
 import { TaskStep } from "../types";
+
+jest.mock("expo-haptics", () => ({
+  notificationAsync: jest.fn(() => Promise.resolve()),
+  impactAsync: jest.fn(() => Promise.resolve()),
+  NotificationFeedbackType: { Success: "success" },
+  ImpactFeedbackStyle: { Light: "light", Medium: "medium" },
+}));
 
 const NOW = new Date(2026, 9, 22, 10).getTime(); // jeudi 22 octobre 2026
 const TODAY = "2026-10-22";
@@ -77,8 +86,6 @@ describe("section « Étapes » de la fiche", () => {
     await fireEvent.changeText(screen.getByLabelText("Étape 2"), "Faire le plan détaillé");
     await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Chercher les sources »" }));
     expect(screen.getByRole("checkbox", { name: "Décocher « Chercher les sources »" })).toBeChecked();
-    // Petite célébration discrète
-    expect(screen.getByText("Étape faite !")).toBeOnTheScreen();
     expect(alert).not.toHaveBeenCalled();
 
     await fireEvent.press(screen.getByRole("button", { name: "Supprimer l'étape « Brouillon »" }));
@@ -89,6 +96,40 @@ describe("section « Étapes » de la fiche", () => {
       expect.objectContaining({ title: "Chercher les sources", done: true, doneAt: NOW, day: null }),
       expect.objectContaining({ title: "Faire le plan détaillé", done: false }),
     ]);
+  });
+
+  it("cocher dans la fiche : coche animée, ligne surlignée en vert, vibration ; pas de message caché", async () => {
+    const impact = Haptics.impactAsync as jest.Mock;
+    impact.mockClear();
+    await renderForm();
+    await addStep("Plan");
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Plan »" }));
+    const flash = screen.getByTestId("step-flash-0");
+    expect(StyleSheet.flatten(flash.props.style)).toMatchObject({ opacity: expect.any(Number) });
+    expect(impact).toHaveBeenCalledWith("light");
+    expect(screen.queryByText("Étape faite !")).toBeNull();
+    // Le surlignage disparaît de lui-même
+    await waitFor(() => expect(screen.queryByTestId("step-flash-0")).toBeNull(), { timeout: STEP_FLASH_MS + 1000 });
+
+    // Décocher : ni surlignage ni vibration
+    impact.mockClear();
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Décocher « Plan »" }));
+    expect(screen.queryByTestId("step-flash-0")).toBeNull();
+    expect(impact).not.toHaveBeenCalled();
+  });
+
+  it("« Réduire les animations » : surlignage sans fondu, vibration gardée", async () => {
+    const reduce = jest.spyOn(AccessibilityInfo, "isReduceMotionEnabled").mockResolvedValue(true);
+    const impact = Haptics.impactAsync as jest.Mock;
+    impact.mockClear();
+    await renderForm();
+    await act(async () => {});
+    await addStep("Plan");
+    await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Plan »" }));
+    // Pas d'opacité animée : le vert s'affiche tel quel, puis disparaît
+    expect(StyleSheet.flatten(screen.getByTestId("step-flash-0").props.style).opacity).toBeUndefined();
+    expect(impact).toHaveBeenCalledWith("light");
+    reduce.mockResolvedValue(false);
   });
 
   it("réordonner (actions d'accessibilité, comme le glisser après un appui long)", async () => {
@@ -238,6 +279,8 @@ describe("carte et grille", () => {
     await fireEvent.press(screen.getByRole("checkbox", { name: "Cocher « Envoyer »" }));
     expect(state.tasks[0].steps![1].done).toBe(true);
     expect(screen.getByText("2/2")).toBeOnTheScreen();
+    // Depuis la carte : célébration discrète (message)
+    expect(screen.getByText("Étape faite !")).toBeOnTheScreen();
     expect(alert).toHaveBeenCalledWith("Terminer la tâche ?", "Toutes les étapes sont faites.", expect.any(Array));
 
     await pressAlertButton("Terminer");

@@ -1,7 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
-import { useCelebration } from "../celebration/CelebrationProvider";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
 import { askToFinish } from "../finishPrompt";
 import { t } from "../i18n";
@@ -153,7 +152,6 @@ export default function TaskForm({
   );
 
   const [steps, setSteps] = useState<TaskStep[]>(task ? stepsOf(task) : []);
-  const { celebrateStep } = useCelebration();
 
   const category = CATEGORY_BY_KEY[categoryFromFlags(urgent, important)];
   const canSubmit = title.trim() !== "";
@@ -244,10 +242,9 @@ export default function TaskForm({
     onSubmit(values());
   };
 
-  // Étape cochée : petite célébration ; la dernière d'une tâche existante propose de la terminer
+  // Étape cochée (retour visible sur sa ligne) : la dernière d'une tâche existante propose de la terminer
   const stepToggled = (step: TaskStep, next: TaskStep[]) => {
     if (!step.done) return;
-    celebrateStep(category.key);
     if (task && !task.isDone && onComplete && canSubmit && allStepsDone(next)) {
       askToFinish(() => onComplete(values(next)));
     }

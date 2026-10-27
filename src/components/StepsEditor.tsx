@@ -1,14 +1,22 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { useReduceMotion } from "../celebration/useReduceMotion";
 import { t } from "../i18n";
 import { addDays, dayKey, dayLabel, dayStart, DEFAULT_STEP_TIME, makeStep, moveStep } from "../steps";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";
 import InfoButton from "./InfoButton";
@@ -20,6 +28,8 @@ import TimeField from "./TimeField";
 export const STEP_ROW_HEIGHT = 52;
 // Appui long avant de pouvoir glisser une étape
 const DRAG_DELAY_MS = 350;
+// Étape cochée : ligne surlignée en vert pendant cette durée
+export const STEP_FLASH_MS = 900;
 
 // Choix du jour : Aucun, Aujourd'hui, Demain, Date
 const NONE = 0;
@@ -129,8 +139,10 @@ function StepRow({
   onMove,
   onExpand,
   onChangeDay,
+  reduceMotion,
   ...colorProps
 }: {
+  reduceMotion: boolean; // « Réduire les animations » : surlignage sans fondu, coche sans rebond
   step: TaskStep;
   index: number;
   count: number;
@@ -147,6 +159,40 @@ function StepRow({
   const lifted = useSharedValue(0);
   const now = Date.now();
   const late = !step.done && step.day !== null && step.day < dayKey(now);
+
+  // Retour visible quand l'étape est cochée : coche animée, ligne brièvement surlignée en vert,
+  // vibration légère (la fiche cacherait le message de célébration)
+  const [flash, setFlash] = useState(false);
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const checkScale = useSharedValue(1);
+  const flashOpacity = useSharedValue(0);
+  useEffect(
+    () => () => {
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+    },
+    []
+  );
+  const toggle = () => {
+    if (!step.done) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      setFlash(true);
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+      flashTimer.current = setTimeout(() => setFlash(false), STEP_FLASH_MS);
+      if (!reduceMotion) {
+        checkScale.value = withSequence(
+          withTiming(1.35, { duration: 120 }),
+          withSpring(1, { damping: 12, stiffness: 260 })
+        );
+        flashOpacity.value = withSequence(
+          withTiming(1, { duration: 120 }),
+          withDelay(STEP_FLASH_MS - 520, withTiming(0, { duration: 400 }))
+        );
+      }
+    }
+    onToggle();
+  };
+  const checkStyle = useAnimatedStyle(() => ({ transform: [{ scale: checkScale.value }] }));
+  const flashStyle = useAnimatedStyle(() => ({ opacity: flashOpacity.value }));
 
   const lift = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
   // Appui long puis glisser : la ligne suit le doigt et prend sa nouvelle place au lâcher
@@ -176,6 +222,13 @@ function StepRow({
 
   return (
     <Animated.View style={[styles.step, rowStyle]}>
+      {flash && (
+        <Animated.View
+          pointerEvents="none"
+          testID={`step-flash-${index}`}
+          style={[styles.flash, !reduceMotion && flashStyle]}
+        />
+      )}
       <GestureDetector gesture={drag}>
         <View
           style={styles.stepRow}
@@ -195,12 +248,14 @@ function StepRow({
             accessibilityRole="checkbox"
             accessibilityState={{ checked: step.done }}
             accessibilityLabel={step.done ? t.steps.uncheck(step.title) : t.steps.check(step.title)}
-            onPress={onToggle}
+            onPress={toggle}
             style={styles.checkArea}
           >
-            <View style={[styles.check, { borderColor: color }, step.done && { backgroundColor: color }]}>
+            <Animated.View
+              style={[styles.check, { borderColor: color }, step.done && { backgroundColor: color }, checkStyle]}
+            >
               {step.done && <Ionicons name="checkmark" size={14} color={onColor} />}
-            </View>
+            </Animated.View>
           </Pressable>
           <TextInput
             style={[styles.stepTitle, step.done && styles.stepTitleDone]}
@@ -247,6 +302,7 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
   const [draft, setDraft] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [splitting, setSplitting] = useState(false);
+  const reduceMotion = useReduceMotion();
 
   const update = (id: string, patch: Partial<TaskStep>) =>
     onChange(steps.map((s) => (s.id === id ? { ...s, ...patch } : s)));
@@ -281,6 +337,7 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
           onMove={(to) => onChange(moveStep(steps, index, to))}
           onExpand={() => setExpanded(expanded === step.id ? null : step.id)}
           onChangeDay={(patch) => update(step.id, patch)}
+          reduceMotion={reduceMotion}
           {...colorProps}
         />
       ))}
@@ -351,6 +408,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.bg,
+  },
+  flash: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 11,
+    backgroundColor: withAlpha(colors.success, 0.22),
   },
   stepRow: {
     flexDirection: "row",
