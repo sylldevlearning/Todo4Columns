@@ -92,7 +92,7 @@ function DayEditor({
     }
   };
   const choose = (value: number | null) => {
-    if (value === NONE || value === null) onChange({ day: null });
+    if (value === NONE || value === null) onChange({ day: null, time: null });
     else if (value === TODAY) onChange({ day: today });
     else if (value === TOMORROW) onChange({ day: addDays(today, 1) });
     else pickDate();

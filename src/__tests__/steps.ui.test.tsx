@@ -98,6 +98,20 @@ describe("section « Étapes » de la fiche", () => {
     ]);
   });
 
+  it("choisir « Aucun » efface aussi l'heure de l'étape", async () => {
+    const task = makeTask({
+      id: "t",
+      title: "Exposé",
+      category: "INU",
+      steps: [step({ id: "a", title: "Relire", day: "2026-10-23", time: "14:30" })],
+    });
+    const onSubmit = await renderForm({ task });
+    await fireEvent.press(screen.getByRole("button", { name: "Jour de « Relire » : Demain" }));
+    await fireEvent.press(screen.getByRole("radio", { name: "Aucun" }));
+    await fireEvent.press(screen.getByRole("button", { name: "Enregistrer" }));
+    expect(onSubmit.mock.calls[0][0].steps[0]).toMatchObject({ day: null, time: null });
+  });
+
   it("« Nouvelle étape » : Entrée ajoute l'étape et garde le clavier (submitBehavior, pas blurOnSubmit)", async () => {
     await renderForm();
     const input = screen.getByLabelText("Nouvelle étape");
