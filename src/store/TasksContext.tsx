@@ -11,6 +11,7 @@ import React, {
 import { AppState } from "react-native";
 import { isForeground } from "../hooks/useForeground";
 import { Escalation, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
+import { setLanguagePreference } from "../i18n";
 import { showPermissionCard } from "../notifications/permissionCard";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
@@ -145,6 +146,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     });
   }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation, store.loadError]);
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
+  // Réglage « Langue » : appliqué avant les effets, donc avant la reprogrammation des notifications
+  useLayoutEffect(() => setLanguagePreference(settings.language), [settings.language]);
 
   // Dernières versions des fonctions, appelées par les actions à identité fixe
   const latest = useRef<TaskActions>(null!);

@@ -9,7 +9,7 @@ import BalanceBar from "../src/components/BalanceBar";
 import IconButton from "../src/components/IconButton";
 import InfoButton from "../src/components/InfoButton";
 import { CATEGORY_BY_KEY } from "../src/constants/categories";
-import { t } from "../src/i18n";
+import { t, useLanguage } from "../src/i18n";
 import { isPriority, MAX_PRIORITIES, priorityTargetWeek, recordReview } from "../src/review";
 import { requestReviewPrompt } from "../src/reviewPrompt";
 import { sameItems } from "../src/store/selectableStore";
@@ -74,6 +74,7 @@ function TaskRow({ task, children }: { task: Task; children?: React.ReactNode })
 
 // Revue de la semaine : 3 étapes (« Passer » sur chacune), puis le résumé
 export default function ReviewScreen() {
+  useLanguage(); // textes mis à jour quand la langue change
   const actions = useTaskActions();
   const { celebrate } = useCelebration();
   const someday = useTasksSelector(selectSomeday, sameItems);

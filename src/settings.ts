@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TIME_PATTERN } from "./dates";
+import { isLanguagePreference, LanguagePreference } from "./i18n";
 
 // Réglages des rappels, modifiables dans l'écran Réglages
 export const SETTINGS_KEY = "SETTINGS";
@@ -21,6 +22,7 @@ export interface Settings {
   weeklyReviewDay: number; // jour de la revue : 0 = dimanche … 6 = samedi
   weeklyReviewTime: string; // heure de la revue, "HH:MM"
   autoEscalate: boolean; // tâches « Planifier » en retard basculées dans « Faire »
+  language: LanguagePreference; // « auto » : langue du téléphone (1.4)
   // Demande d'avis (1.2.1), absents des réglages plus anciens
   firstUseAt?: number; // première utilisation, enregistrée à la première occasion de demander
   reviewAskedAt?: number; // dernière demande d'avis
@@ -42,6 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   weeklyReviewDay: 0, // dimanche
   weeklyReviewTime: "18:00",
   autoEscalate: true,
+  language: "auto",
 };
 
 // Réglages qui changent les notifications programmées (pas les animations ni l'archivage)
@@ -59,6 +62,7 @@ export const notificationSettingsKey = (s: Settings) =>
     s.weeklyReviewDay,
     s.weeklyReviewTime,
     s.autoEscalate, // texte de la notification d'échéance
+    s.language, // textes de toutes les notifications
   ]);
 
 export const sameReminderSettings = (a: Settings, b: Settings) =>
@@ -136,6 +140,8 @@ export function parseSettings(json: string | null): Settings {
     // Absent avant la 1.2 : activé
     autoEscalate:
       typeof s.autoEscalate === "boolean" ? s.autoEscalate : DEFAULT_SETTINGS.autoEscalate,
+    // Absent avant la 1.4, ou langue inconnue : langue du téléphone
+    language: isLanguagePreference(s.language) ? s.language : DEFAULT_SETTINGS.language,
     // Absents avant la 1.2.1, ou invalides : non renseignés
     ...(isPositiveNumber(s.firstUseAt) ? { firstUseAt: s.firstUseAt } : {}),
     ...(isPositiveNumber(s.reviewAskedAt) ? { reviewAskedAt: s.reviewAskedAt } : {}),

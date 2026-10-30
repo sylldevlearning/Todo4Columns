@@ -226,6 +226,8 @@ export const en: Translations = {
     reviewDay: "Day",
     reviewTime: "Time",
     weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    language: "Language",
+    languageAuto: "Automatic (phone language)",
   },
 
   help: {
@@ -352,6 +354,11 @@ export const en: Translations = {
         title: "Celebration animations",
         body: "When you complete a task, confetti and a short message appear. Turn them off if you prefer a calmer app.",
         example: "swipe a task to the right to complete it and see the animation.",
+      },
+      language: {
+        title: "Language",
+        body: "“Automatic” follows your phone's language, or English if DoFirst isn't translated into it. Pick a language to always use it: everything switches right away, notifications included. Your task titles aren't translated.",
+        example: "on a phone set to Swedish, the app shows in English; pick “Français” to keep it in French.",
       },
     },
   },
@@ -635,6 +642,7 @@ export const en: Translations = {
       steps: "In the task sheet, “Steps” breaks a task down: the card shows progress “2/5” and today's step. A step from a past day that isn't done is marked late.",
       split: "“Spread over several days” creates sessions (“Session 1/5 · 1 h”…), one per day, each with a reminder.",
       stepReminder: "In a step reminder, “Done” checks it and “Move to tomorrow” moves it one day later. When the last step is checked, the app offers to complete the task.",
+      language: "Settings › Language: “Automatic” follows your phone's language, or pick one of the 13 languages. Everything switches at once, notifications included.",
       info: "Tap an “i” icon for a quick explanation.",
     },
   },

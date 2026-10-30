@@ -27,8 +27,18 @@ describe("settings", () => {
       weeklyReviewDay: 0,
       weeklyReviewTime: "18:00",
       autoEscalate: true,
+      language: "auto",
     });
     expect(parseSettings(null)).toEqual(DEFAULT_SETTINGS);
+  });
+
+  it("langue : automatique pour les réglages enregistrés avant la 1.4 ou une langue inconnue", () => {
+    const before = JSON.stringify({ schemaVersion: 1, settings: { autoArchive: true } });
+    expect(parseSettings(before).language).toBe("auto");
+    const unknown = JSON.stringify({ schemaVersion: 1, settings: { language: "xx" } });
+    expect(parseSettings(unknown).language).toBe("auto");
+    const chosen = JSON.stringify({ schemaVersion: 1, settings: { language: "en" } });
+    expect(parseSettings(chosen).language).toBe("en");
   });
 
   it("animations de célébration : activées pour les réglages enregistrés avant l'option", () => {

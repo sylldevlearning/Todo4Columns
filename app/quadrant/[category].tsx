@@ -16,7 +16,7 @@ import { offerToFinishAfterStep } from "../../src/finishPrompt";
 import { useNow } from "../../src/hooks/useNow";
 import { useStableCallback } from "../../src/hooks/useStableCallback";
 import { RemovedTask } from "../../src/hooks/useTasks";
-import { t } from "../../src/i18n";
+import { t, useLanguage } from "../../src/i18n";
 import { pickReminderFields } from "../../src/reminders";
 import { sameReminderSettings, Settings } from "../../src/settings";
 import { stepsOf } from "../../src/steps";
@@ -50,6 +50,7 @@ const allSettings = (settings: Settings) => settings;
 
 // Liste des tâches d'un quadrant
 export default function QuadrantScreen() {
+  useLanguage(); // textes mis à jour quand la langue change
   const { category: param } = useLocalSearchParams<{ category: string }>();
   const key = isCategory(param) ? param : null;
   const store = useTaskActions();

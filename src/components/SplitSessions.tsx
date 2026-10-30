@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { t } from "../i18n";
+import { t, translated } from "../i18n";
 import { dayLabel } from "../format";
 import {
   MAX_SESSIONS,
@@ -15,10 +15,10 @@ import { TaskStep } from "../types";
 import IconButton from "./IconButton";
 import OptionPills from "./OptionPills";
 
-const DURATION_OPTIONS = SESSION_MINUTES.map((m) => ({ label: t.steps.durations[m], value: m }));
+const DURATION_OPTIONS = SESSION_MINUTES.map((m) => translated(() => t.steps.durations[m], m));
 const FROM_OPTIONS = [
-  { label: t.steps.fromToday, value: 0 },
-  { label: t.steps.fromTomorrow, value: 1 },
+  translated(() => t.steps.fromToday, 0),
+  translated(() => t.steps.fromTomorrow, 1),
 ];
 
 interface Props {

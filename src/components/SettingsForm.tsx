@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { Platform, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { formatDue } from "../format";
-import { t } from "../i18n";
+import { t, translated } from "../i18n";
 import { PermissionState } from "../notifications/setup";
 import {
   DELEGATE_FOLLOW_UP_OPTIONS,
@@ -14,6 +14,7 @@ import { Settings } from "../settings";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { Task } from "../types";
 import InfoButton, { InfoKey } from "./InfoButton";
+import LanguagePicker from "./LanguagePicker";
 import OptionPills from "./OptionPills";
 import TimeField from "./TimeField";
 
@@ -21,12 +22,9 @@ import TimeField from "./TimeField";
 const DEFAULT_NAG_OPTIONS = DO_NAG_OPTIONS.filter((o) => o.value !== null);
 const MAX_NAGS_OPTIONS: ReminderOption[] = [2, 3, 5].map((n) => ({ label: String(n), value: n }));
 // Jours de la revue, du lundi au dimanche (0 = dimanche)
-const REVIEW_DAY_OPTIONS: ReminderOption[] = [1, 2, 3, 4, 5, 6, 0].map((day) => ({
-  label: t.settings.weekdays[day],
-  value: day,
-}));
-
-const PERMISSION_LABELS: Record<PermissionState, string> = t.settings.permission;
+const REVIEW_DAY_OPTIONS: ReminderOption[] = [1, 2, 3, 4, 5, 6, 0].map((day) =>
+  translated(() => t.settings.weekdays[day], day)
+);
 
 interface Props {
   settings: Settings;
@@ -136,6 +134,10 @@ export default function SettingsForm({
 
   return (
     <View style={styles.container}>
+      <Section title={t.settings.language} info="language">
+        <LanguagePicker value={settings.language} onChange={(v) => set("language", v)} />
+      </Section>
+
       <Section title={t.settings.defaults}>
         <Field label={t.settings.doField} color={doIt.textColor} info="nag">
           <OptionPills
@@ -271,7 +273,7 @@ export default function SettingsForm({
             : t.settings.notificationsOff}
         </Text>
         {permission !== null && permission !== "granted" && (
-          <Text style={styles.hint}>{PERMISSION_LABELS[permission]}</Text>
+          <Text style={styles.hint}>{t.settings.permission[permission]}</Text>
         )}
         {/* Fenêtre système si elle peut s'afficher, sinon les réglages du téléphone */}
         {permission !== null && permission !== "granted" && canAskPermission && (

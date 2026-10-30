@@ -14,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useReduceMotion } from "../celebration/useReduceMotion";
-import { t } from "../i18n";
+import { t, translated } from "../i18n";
 import { addDays, dayKey, dayStart } from "../dates";
 import { dayLabel } from "../format";
 import {
@@ -48,10 +48,10 @@ const TODAY = 1;
 const TOMORROW = 2;
 const DATE = 3;
 const DAY_OPTIONS = [
-  { label: t.steps.dayNone, value: NONE },
-  { label: t.steps.dayToday, value: TODAY },
-  { label: t.steps.dayTomorrow, value: TOMORROW },
-  { label: t.steps.dayDate, value: DATE },
+  translated(() => t.steps.dayNone, NONE),
+  translated(() => t.steps.dayToday, TODAY),
+  translated(() => t.steps.dayTomorrow, TOMORROW),
+  translated(() => t.steps.dayDate, DATE),
 ];
 
 interface Colors {

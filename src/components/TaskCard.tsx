@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { CategoryInfo } from "../constants/categories";
-import { t } from "../i18n";
+import { t, useLanguage } from "../i18n";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import { isWaiting } from "../notifications/status";
 import { isPriority } from "../review";
@@ -55,6 +55,7 @@ export default React.memo(function TaskCard({
   settings,
   now,
 }: Props) {
+  useLanguage(); // carte mémoïsée : re-rendue quand la langue change
   const translateX = useSharedValue(0);
   const waiting = isWaiting(task, now);
   const wrapperRef = useRef<View>(null);

@@ -35,6 +35,11 @@ export async function configureNotifications(): Promise<void> {
     },
   });
 
+  await updateNotificationTexts();
+}
+
+// Nom du canal Android et boutons d'action dans la langue courante (rappelé quand elle change)
+export async function updateNotificationTexts(): Promise<void> {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
       name: t.notifications.channel,

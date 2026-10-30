@@ -15,7 +15,7 @@ import IconButton from "../src/components/IconButton";
 import InfoButton from "../src/components/InfoButton";
 import { CATEGORIES } from "../src/constants/categories";
 import { formatWeekStart } from "../src/format";
-import { t } from "../src/i18n";
+import { t, useLanguage } from "../src/i18n";
 import { selectCompletions, useTasksSelector } from "../src/store/TasksContext";
 import { colors, fonts } from "../src/theme";
 
@@ -75,6 +75,7 @@ function WeekColumns({ weeks }: { weeks: WeekCounts[] }) {
 
 // Écran « Bilan » : la semaine en cours, puis les 4 semaines précédentes
 export default function BalanceScreen() {
+  useLanguage(); // textes mis à jour quand la langue change
   const completed = useTasksSelector(selectCompletions);
   const [current, ...previous] = weeklyHistory(completed, Date.now());
   const total = totalOf(current.counts);

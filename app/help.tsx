@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import IconButton, { IconName } from "../src/components/IconButton";
 import { MatrixIllustration } from "../src/components/OnboardingIllustrations";
 import { CATEGORIES } from "../src/constants/categories";
-import { t } from "../src/i18n";
+import { t, useLanguage } from "../src/i18n";
 import { colors, fonts, withAlpha } from "../src/theme";
 
 type Gesture = keyof typeof t.howTo.gestures;
@@ -39,6 +39,7 @@ const GESTURE_ICONS: Record<Gesture, IconName> = {
   balance: "bar-chart-outline",
   review: "calendar-outline",
   star: "star-outline",
+  language: "language-outline",
   info: "information-circle-outline",
 };
 
@@ -52,6 +53,7 @@ function Heading({ children }: { children: string }) {
 
 // Page « Comment ça marche » : la méthode d'Eisenhower, les 4 cases et les gestes de l'app
 export default function HelpScreen() {
+  useLanguage(); // textes mis à jour quand la langue change
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <View style={styles.header}>

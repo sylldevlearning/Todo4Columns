@@ -1,13 +1,14 @@
 import { getLocales } from "expo-localization";
-import { detectLanguage, language, t } from "../i18n";
+import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../i18n";
 import { en } from "../i18n/en";
 import { fr } from "../i18n/fr";
 
 const mockedGetLocales = getLocales as jest.Mock;
 const locales = (...codes: string[]) => codes.map((languageCode) => ({ languageCode }));
 
-// Forme d'un objet de traductions : clés et types, sans les valeurs
+// Forme d'un objet de traductions : clés, types, longueur des listes et nombre de paramètres
 function shape(value: unknown): unknown {
+  if (typeof value === "function") return `function(${value.length})`;
   if (typeof value !== "object" || value === null) return typeof value;
   return Object.fromEntries(
     Object.entries(value)
@@ -40,14 +41,14 @@ describe("detectLanguage", () => {
 });
 
 describe("fichiers de traduction", () => {
-  it("fr et en ont exactement les mêmes clés", () => {
-    expect(shape(en)).toEqual(shape(fr));
+  it.each(LANGUAGES.filter((l) => l !== "fr"))("%s a exactement les clés de fr.ts", (language) => {
+    expect(shape(TRANSLATIONS[language])).toEqual(shape(fr));
   });
 
-  it("aucun texte vide", () => {
+  it.each(LANGUAGES)("%s : aucun texte vide", (language) => {
     const strings = (o: unknown): string[] =>
       typeof o === "string" ? [o] : typeof o === "object" && o ? Object.values(o).flatMap(strings) : [];
-    for (const text of [...strings(fr), ...strings(en)]) expect(text.trim()).not.toBe("");
+    for (const text of strings(TRANSLATIONS[language])) expect(text.trim()).not.toBe("");
   });
 
   it("pluriels", () => {
@@ -67,8 +68,8 @@ describe("fichiers de traduction", () => {
 
 describe("téléphone en français (par défaut dans les tests)", () => {
   it("utilise le français", () => {
-    expect(language).toBe("fr");
-    expect(t).toBe(fr);
+    expect(currentLanguage()).toBe("fr");
+    expect(t).toEqual(fr);
   });
 
   it("nomme les quadrants Faire / Planifier / Déléguer / Si j'ai le temps", () => {

@@ -1,4 +1,4 @@
-import { t } from "./i18n";
+import { t, translated } from "./i18n";
 import { Settings } from "./settings";
 import { Category, ReminderFields, Task, TaskStep } from "./types";
 
@@ -11,32 +11,34 @@ const DAY = 24 * 60;
 
 // Mode développement uniquement : délai d'une minute pour tester relances et rappels.
 // __DEV__ vaut false dans un build de production : l'option n'y apparaît pas.
-const withDevOption = (options: ReminderOption[], label = t.reminders.min(1)): ReminderOption[] =>
-  __DEV__ ? [{ label, value: 1 }, ...options] : options;
+const withDevOption = (
+  options: ReminderOption[],
+  label = () => t.reminders.min(1)
+): ReminderOption[] => (__DEV__ ? [translated(label, 1), ...options] : options);
 
 // Faire : relancer si pas faite après…
 export const DO_NAG_OPTIONS: ReminderOption[] = withDevOption([
-  { label: t.reminders.min(30), value: 30 },
-  { label: t.reminders.hours(2), value: 120 },
-  { label: t.reminders.oneDay, value: DAY },
-  { label: t.reminders.never, value: null },
+  translated(() => t.reminders.min(30), 30),
+  translated(() => t.reminders.hours(2), 120),
+  translated(() => t.reminders.oneDay, DAY),
+  translated(() => t.reminders.never, null),
 ]);
 
 // Planifier : me rappeler… (minutes avant l'échéance)
 export const PLAN_REMINDER_OPTIONS: ReminderOption[] = withDevOption(
   [
-    { label: t.reminders.onTheDay, value: 0 },
-    { label: t.reminders.oneHourBefore, value: 60 },
-    { label: t.reminders.dayBefore, value: DAY },
+    translated(() => t.reminders.onTheDay, 0),
+    translated(() => t.reminders.oneHourBefore, 60),
+    translated(() => t.reminders.dayBefore, DAY),
   ],
-  t.reminders.oneMinuteBefore
+  () => t.reminders.oneMinuteBefore
 );
 
 // Déléguer : relancer la personne…
 export const DELEGATE_FOLLOW_UP_OPTIONS: ReminderOption[] = withDevOption([
-  { label: t.reminders.tomorrow, value: DAY },
-  { label: t.reminders.inThreeDays, value: 3 * DAY },
-  { label: t.reminders.oneWeek, value: 7 * DAY },
+  translated(() => t.reminders.tomorrow, DAY),
+  translated(() => t.reminders.inThreeDays, 3 * DAY),
+  translated(() => t.reminders.oneWeek, 7 * DAY),
 ]);
 
 export const EMPTY_REMINDER_FIELDS: ReminderFields = {

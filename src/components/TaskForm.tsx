@@ -3,7 +3,7 @@ import React, { ReactNode, useRef, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
 import { offerToFinishAfterStep } from "../finishPrompt";
-import { t } from "../i18n";
+import { t, translated } from "../i18n";
 import {
   DELEGATE_FOLLOW_UP_OPTIONS,
   DO_NAG_OPTIONS,
@@ -51,8 +51,8 @@ interface Props {
 
 // « Répéter » : Jamais, puis chaque règle (valeur = position dans RECURRENCE_FREQS)
 const RECURRENCE_OPTIONS = [
-  { label: t.recurrence.never, value: null },
-  ...RECURRENCE_FREQS.map((freq, i) => ({ label: t.recurrence[freq], value: i })),
+  translated(() => t.recurrence.never, null as number | null),
+  ...RECURRENCE_FREQS.map((freq, i) => translated(() => t.recurrence[freq], i as number | null)),
 ];
 // Jours de la semaine, du lundi au dimanche (0 = dimanche)
 const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0];

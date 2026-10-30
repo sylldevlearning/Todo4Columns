@@ -6,7 +6,7 @@ import IconButton from "../src/components/IconButton";
 import Onboarding from "../src/components/Onboarding";
 import SettingsForm from "../src/components/SettingsForm";
 import { appVersion, openStoreListing, sendFeedback, shareApp } from "../src/community";
-import { t } from "../src/i18n";
+import { t, useLanguage } from "../src/i18n";
 import { useBackup } from "../src/hooks/useBackup";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
@@ -33,6 +33,7 @@ const selectArchived = ({ tasks }: TasksState) =>
 
 // Écran des réglages : rappels par défaut, plage silencieuse, notifications, archives
 export default function SettingsScreen() {
+  useLanguage(); // textes mis à jour quand la langue change
   const store = useTaskActions();
   const settings = useSettings();
   const [permission, refreshPermission, canAskPermission] = usePermissionState();

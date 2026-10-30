@@ -14,44 +14,51 @@ export interface CategoryInfo {
   onColor: string; // texte posé sur la couleur du quadrant
 }
 
+type CategoryStyle = Omit<CategoryInfo, "name" | "subtitle" | "axisLabel" | "description">;
+
+// Quadrant dont les textes sont lus dans la langue courante à chaque accès
+const category = (info: CategoryStyle): CategoryInfo =>
+  Object.defineProperties({ ...info } as CategoryInfo, {
+    name: { get: () => t.categories[info.key].name, enumerable: true },
+    subtitle: { get: () => t.categories[info.key].subtitle, enumerable: true },
+    axisLabel: { get: () => t.categories[info.key].axisLabel, enumerable: true },
+    description: { get: () => t.categories[info.key].description, enumerable: true },
+  });
+
 // Ordre de la grille : ligne « Important » puis « Pas important », colonne « Urgent » puis « Pas urgent »
 export const CATEGORIES: CategoryInfo[] = [
-  {
+  category({
     key: "UI",
-    ...t.categories.UI,
     urgent: true,
     important: true,
     color: "#FF7A59",
     textColor: "#FF9677",
     onColor: "#1A0F0B",
-  },
-  {
+  }),
+  category({
     key: "INU",
-    ...t.categories.INU,
     urgent: false,
     important: true,
     color: "#5B9BFF",
     textColor: "#8BB8FF",
     onColor: "#0B1220",
-  },
-  {
+  }),
+  category({
     key: "UDI",
-    ...t.categories.UDI,
     urgent: true,
     important: false,
     color: "#F2B33D",
     textColor: "#F5C566",
     onColor: "#1C1405",
-  },
-  {
+  }),
+  category({
     key: "NDNI",
-    ...t.categories.NDNI,
     urgent: false,
     important: false,
     color: "#8B92A0",
     textColor: "#B5BAC4",
     onColor: "#111318",
-  },
+  }),
 ];
 
 export const CATEGORY_BY_KEY = Object.fromEntries(

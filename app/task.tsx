@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { useLanguage } from "../src/i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCelebration } from "../src/celebration/CelebrationProvider";
@@ -17,6 +18,7 @@ import { colors } from "../src/theme";
 // Fiche (formSheet) de création ou de modification d'une tâche
 // Paramètres : id (modification) ou category (création depuis un quadrant)
 export default function TaskSheet() {
+  useLanguage(); // textes mis à jour quand la langue change
   const { id, category } = useLocalSearchParams<{ id?: string; category?: string }>();
   const { addTask, updateTask, completeTask, requestNotificationPermission, updateSettings, getSettings } =
     useTaskActions();

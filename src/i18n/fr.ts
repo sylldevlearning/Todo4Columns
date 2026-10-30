@@ -233,6 +233,8 @@ export const fr = {
     reviewDay: "Jour",
     reviewTime: "Heure",
     weekdays: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    language: "Langue",
+    languageAuto: "Automatique (langue du téléphone)",
   },
 
   // Aide : cartes des boutons « i »
@@ -360,6 +362,11 @@ export const fr = {
         title: "Animations de célébration",
         body: "Quand tu termines une tâche, des confettis et un petit mot s'affichent. Désactive-les si tu préfères une app plus sobre.",
         example: "glisse une tâche vers la droite pour la terminer et voir l'animation.",
+      },
+      language: {
+        title: "Langue",
+        body: "« Automatique » suit la langue du téléphone, ou l'anglais si DoFirst n'est pas traduite dans cette langue. Choisis une langue pour l'imposer : tout change tout de suite, notifications comprises. Les titres de tes tâches ne sont pas traduits.",
+        example: "un téléphone en suédois affiche l'app en anglais ; choisis « Français » pour la garder en français.",
       },
     },
   },
@@ -659,6 +666,7 @@ export const fr = {
       steps: "Dans la fiche, « Étapes » découpe une tâche : la carte affiche la progression « 2/5 » et l'étape du jour. Une étape d'un jour passé non faite est marquée en retard.",
       split: "« Répartir sur plusieurs jours » crée des séances (« Séance 1/5 · 1 h »…), une par jour, avec un rappel chacune.",
       stepReminder: "Dans le rappel d'une étape, « Fait » la coche et « Reporter à demain » la décale d'un jour. Quand la dernière étape est cochée, l'app propose de terminer la tâche.",
+      language: "Réglages › Langue : « Automatique » suit la langue du téléphone, ou choisis l'une des 13 langues. Tout change aussitôt, notifications comprises.",
       info: "Touche une icône « i » pour une explication rapide.",
     },
   },

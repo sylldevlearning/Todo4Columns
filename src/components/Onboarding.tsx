@@ -21,10 +21,11 @@ import {
   MatrixIllustration,
 } from "./OnboardingIllustrations";
 
-const PAGES: { text: { title: string; body: string }; Illustration: ComponentType }[] = [
-  { text: t.onboarding.matrix, Illustration: MatrixIllustration },
-  { text: t.onboarding.create, Illustration: CreateIllustration },
-  { text: t.onboarding.gestures, Illustration: GesturesIllustration },
+// Textes lus à l'affichage, dans la langue courante
+const PAGES: { text: () => { title: string; body: string }; Illustration: ComponentType }[] = [
+  { text: () => t.onboarding.matrix, Illustration: MatrixIllustration },
+  { text: () => t.onboarding.create, Illustration: CreateIllustration },
+  { text: () => t.onboarding.gestures, Illustration: GesturesIllustration },
 ];
 
 interface Props {
@@ -75,7 +76,7 @@ export default function Onboarding({ onDone }: Props) {
         >
           {PAGES.map(({ text, Illustration }, i) => (
             <ScrollView
-              key={text.title}
+              key={i}
               style={{ width }}
               contentContainerStyle={styles.page}
               // Seul l'écran affiché est lu par les lecteurs d'écran
@@ -85,9 +86,9 @@ export default function Onboarding({ onDone }: Props) {
               <Illustration />
               <View style={styles.text}>
                 <Text style={styles.title} accessibilityRole="header">
-                  {text.title}
+                  {text().title}
                 </Text>
-                <Text style={styles.body}>{text.body}</Text>
+                <Text style={styles.body}>{text().body}</Text>
               </View>
             </ScrollView>
           ))}
@@ -99,8 +100,8 @@ export default function Onboarding({ onDone }: Props) {
             accessible
             accessibilityLabel={t.onboarding.progress(page + 1, PAGES.length)}
           >
-            {PAGES.map((p, i) => (
-              <View key={p.text.title} style={[styles.dot, i === page && styles.dotActive]} />
+            {PAGES.map((_, i) => (
+              <View key={i} style={[styles.dot, i === page && styles.dotActive]} />
             ))}
           </View>
           <Pressable

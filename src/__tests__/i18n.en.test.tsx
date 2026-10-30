@@ -5,7 +5,7 @@ import { Platform } from "react-native";
 import TaskForm from "../components/TaskForm";
 import { CATEGORIES } from "../constants/categories";
 import { formatDuration, formatToday } from "../format";
-import { language, t } from "../i18n";
+import { currentLanguage, t } from "../i18n";
 import { en } from "../i18n/en";
 import { computeSchedule } from "../notifications/schedule";
 import { configureNotifications } from "../notifications/setup";
@@ -28,8 +28,8 @@ const mock = Notifications as unknown as {
 
 describe("téléphone dans une autre langue que le français", () => {
   it("utilise l'anglais", () => {
-    expect(language).toBe("en");
-    expect(t).toBe(en);
+    expect(currentLanguage()).toBe("en");
+    expect(t).toEqual(en);
   });
 
   it("nomme les quadrants Do / Schedule / Delegate / Someday, sans changer les clés", () => {
