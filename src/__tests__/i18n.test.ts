@@ -3,6 +3,7 @@ import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../
 import { en } from "../i18n/en";
 import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
+import { ru } from "../i18n/ru";
 import { hi } from "../i18n/hi";
 import { tr } from "../i18n/tr";
 import { zhHans } from "../i18n/zh-Hans";
@@ -46,6 +47,7 @@ describe("detectLanguage", () => {
     [["zh"], "zh-Hans"],
     [["tr"], "tr"],
     [["hi"], "hi"],
+    [["ru"], "ru"],
     [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
@@ -94,6 +96,7 @@ describe("fichiers de traduction", () => {
     expect([zhHans.matrix.taskCount(1), zhHans.matrix.taskCount(3)]).toEqual(["1 个任务", "3 个任务"]);
     expect([tr.matrix.taskCount(1), tr.matrix.taskCount(3)]).toEqual(["1 görev", "3 görev"]);
     expect([hi.balance.done(1), hi.balance.done(2)]).toEqual(["1 काम पूरा हुआ", "2 काम पूरे हुए"]);
+    expect([1, 2, 5, 11, 21, 22].map(ru.matrix.taskCount)).toEqual(["1 задача", "2 задачи", "5 задач", "11 задач", "21 задача", "22 задачи"]);
   });
 });
 
