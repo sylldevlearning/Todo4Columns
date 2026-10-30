@@ -49,7 +49,13 @@ function QuadrantCell({
     >
       <View style={styles.cellHeader}>
         <View style={[styles.dot, { backgroundColor: category.color }]} />
-        <Text style={[styles.name, { color: category.textColor }]} numberOfLines={2}>
+        {/* Nom d'un seul mot : réduit plutôt que coupé en plein mot (« Планировать », « Irgendwann ») */}
+        <Text
+          style={[styles.name, { color: category.textColor }]}
+          numberOfLines={nameLines(category.name)}
+          adjustsFontSizeToFit
+          minimumFontScale={0.6}
+        >
           {category.name}
         </Text>
         <View style={[styles.count, { backgroundColor: category.color }]}>
@@ -58,7 +64,7 @@ function QuadrantCell({
           </Text>
         </View>
       </View>
-      <Text style={styles.subtitle} numberOfLines={1}>
+      <Text style={styles.subtitle} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>
         {category.subtitle}
       </Text>
 
@@ -141,6 +147,9 @@ export default function MatrixGrid({ tasks, onOpenQuadrant }: Props) {
 }
 
 const AXIS_WIDTH = 22;
+
+// Lignes du nom d'un quadrant : une seule pour un mot, deux s'il y a des espaces
+export const nameLines = (name: string) => (/\s/.test(name.trim()) ? 2 : 1);
 
 const styles = StyleSheet.create({
   container: {

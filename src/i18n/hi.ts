@@ -33,7 +33,7 @@ export const hi: Translations = {
     },
     UDI: {
       name: "सौंप दो",
-      subtitle: "सौंपो और पूछते रहो",
+      subtitle: "सौंपो, फिर पूछो",
       axisLabel: "ज़रूरी, अहम नहीं",
       description: "ज़रूरी है पर अहम नहीं: किसी को सौंप दो और हाल पूछते रहो।",
     },

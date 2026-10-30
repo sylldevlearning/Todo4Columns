@@ -16,7 +16,12 @@ export default function Chip({ icon, label, color, textColor }: Props) {
   return (
     <View style={[styles.chip, { backgroundColor: withAlpha(color, 0.14) }]}>
       <Ionicons name={icon} size={12} color={textColor} />
-      <Text style={[styles.label, { color: textColor }]} numberOfLines={1}>
+      <Text
+        style={[styles.label, { color: textColor }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
+      >
         {label}
       </Text>
     </View>

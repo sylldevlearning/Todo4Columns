@@ -4,6 +4,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { CATEGORIES, CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { colors, fonts, withAlpha } from "../theme";
+import { nameLines } from "./MatrixGrid";
+
 
 // Illustrations de la présentation, dessinées en composants (aucune image).
 // Décoratives : le texte de chaque écran suffit aux lecteurs d'écran.
@@ -11,6 +13,9 @@ const hidden = {
   accessibilityElementsHidden: true,
   importantForAccessibility: "no-hide-descendants",
 } as const;
+
+// Largeur de l'action révélée par le glissement
+const SWIPE_WIDTH = 110;
 
 // Écran 1 : la grille 2×2 aux couleurs des quadrants
 export function MatrixIllustration() {
@@ -32,10 +37,15 @@ export function MatrixIllustration() {
               ]}
             >
               <View style={[styles.dot, { backgroundColor: c.color }]} />
-              <Text style={[styles.cellName, { color: c.textColor }]} numberOfLines={2}>
+              <Text
+                style={[styles.cellName, { color: c.textColor }]}
+                numberOfLines={nameLines(c.name)}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+              >
                 {c.name}
               </Text>
-              <Text style={styles.cellText} numberOfLines={2}>
+              <Text style={styles.cellText} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>
                 {c.subtitle}
               </Text>
             </View>
@@ -96,7 +106,9 @@ export function GesturesIllustration() {
       <View style={styles.swipe}>
         <View style={[styles.swipeAction, { backgroundColor: colors.success }]}>
           <Ionicons name="checkmark" size={18} color={colors.white} />
-          <Text style={styles.swipeActionText}>{t.onboarding.swipeRight}</Text>
+          <Text style={styles.swipeActionText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+            {t.onboarding.swipeRight}
+          </Text>
         </View>
         <View style={styles.swipedCard}>
           <View style={[styles.circle, { borderColor: doIt.color }]} />
@@ -237,18 +249,20 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
+    width: SWIPE_WIDTH, // le texte réduit sa taille pour tenir à côté de la carte
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 14,
   },
   swipeActionText: {
+    flexShrink: 1,
     fontFamily: fonts.bold,
     fontSize: 13,
     color: colors.white,
   },
   swipedCard: {
-    marginLeft: 110,
+    marginLeft: SWIPE_WIDTH,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,

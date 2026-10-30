@@ -30,7 +30,7 @@ export const es: Translations = {
     },
     UDI: {
       name: "Delegar",
-      subtitle: "Encarga y haz seguimiento",
+      subtitle: "Encarga y pregunta",
       axisLabel: "Urgente, no importante",
       description: "Urgente pero no importante: encárgasela a alguien y haz seguimiento.",
     },
