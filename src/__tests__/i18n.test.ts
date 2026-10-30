@@ -3,6 +3,7 @@ import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../
 import { en } from "../i18n/en";
 import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
+import { hi } from "../i18n/hi";
 import { tr } from "../i18n/tr";
 import { zhHans } from "../i18n/zh-Hans";
 import { ko } from "../i18n/ko";
@@ -44,6 +45,7 @@ describe("detectLanguage", () => {
     [["ko"], "ko"],
     [["zh"], "zh-Hans"],
     [["tr"], "tr"],
+    [["hi"], "hi"],
     [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
@@ -91,6 +93,7 @@ describe("fichiers de traduction", () => {
     expect([ko.matrix.taskCount(1), ko.matrix.taskCount(3)]).toEqual(["할 일 1개", "할 일 3개"]);
     expect([zhHans.matrix.taskCount(1), zhHans.matrix.taskCount(3)]).toEqual(["1 个任务", "3 个任务"]);
     expect([tr.matrix.taskCount(1), tr.matrix.taskCount(3)]).toEqual(["1 görev", "3 görev"]);
+    expect([hi.balance.done(1), hi.balance.done(2)]).toEqual(["1 काम पूरा हुआ", "2 काम पूरे हुए"]);
   });
 });
 
