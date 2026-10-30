@@ -152,6 +152,31 @@ describe("réglage « Langue » dans l'app", () => {
     expect(await screen.findByText(en.matrix.title)).toBeOnTheScreen();
   });
 
+  it("changement à chaud vers une langue non latine (japonais)", async () => {
+    const ja = TRANSLATIONS.ja;
+    await openApp();
+    await waitFor(() => expect(bodies()).toContain(fr.notifications.weeklyReview));
+
+    await fireEvent.press(await screen.findByRole("button", { name: fr.common.settings }));
+    await fireEvent.press(
+      await screen.findByRole("button", { name: `${fr.settings.language}, ${fr.settings.languageAuto}` })
+    );
+    await fireEvent.press(screen.getByRole("radio", { name: "日本語" }));
+
+    expect(await screen.findByRole("header", { name: ja.settings.title })).toBeOnTheScreen();
+    await waitFor(() => expect(bodies()).toEqual([ja.notifications.weeklyReview]));
+    await waitFor(() => expect(mock.__state.channels.reminders.name).toBe(ja.notifications.channel));
+    expect(mock.__state.categories["task-reminder"].map((a) => a.buttonTitle)).toEqual([
+      ja.notifications.actionDone,
+      ja.notifications.actionSnooze,
+      ja.notifications.actionOpen,
+    ]);
+
+    await fireEvent.press(screen.getByRole("button", { name: ja.common.back }));
+    expect(await screen.findByText(ja.matrix.title)).toBeOnTheScreen();
+    expect(screen.getByText(ja.categories.UI.name)).toBeOnTheScreen();
+  });
+
   it("langue enregistrée : appliquée au démarrage, même si le téléphone est dans une autre langue", async () => {
     await openApp({ language: "en" });
     expect(await screen.findByText(en.matrix.title)).toBeOnTheScreen();
