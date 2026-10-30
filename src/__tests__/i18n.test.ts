@@ -3,6 +3,7 @@ import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../
 import { en } from "../i18n/en";
 import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
+import { zhHans } from "../i18n/zh-Hans";
 import { ko } from "../i18n/ko";
 import { ja } from "../i18n/ja";
 import { id } from "../i18n/id";
@@ -40,6 +41,7 @@ describe("detectLanguage", () => {
     [["in"], "id"],
     [["ja"], "ja"],
     [["ko"], "ko"],
+    [["zh"], "zh-Hans"],
     [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
@@ -85,6 +87,7 @@ describe("fichiers de traduction", () => {
     expect([id.matrix.taskCount(1), id.matrix.taskCount(3)]).toEqual(["1 tugas", "3 tugas"]);
     expect([ja.matrix.taskCount(1), ja.matrix.taskCount(3)]).toEqual(["1件のタスク", "3件のタスク"]);
     expect([ko.matrix.taskCount(1), ko.matrix.taskCount(3)]).toEqual(["할 일 1개", "할 일 3개"]);
+    expect([zhHans.matrix.taskCount(1), zhHans.matrix.taskCount(3)]).toEqual(["1 个任务", "3 个任务"]);
   });
 });
 
