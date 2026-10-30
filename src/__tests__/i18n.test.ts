@@ -3,6 +3,7 @@ import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../
 import { en } from "../i18n/en";
 import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
+import { ptBR } from "../i18n/pt-BR";
 
 const mockedGetLocales = getLocales as jest.Mock;
 const locales = (...codes: string[]) => codes.map((languageCode) => ({ languageCode }));
@@ -25,8 +26,9 @@ describe("detectLanguage", () => {
     [["fr"], "fr"],
     [["fr", "en"], "fr"],
     [["en"], "en"],
-    [["de", "fr"], "en"], // seule la langue préférée compte
+    [["sv", "fr"], "en"], // seule la langue préférée compte
     [["es"], "es"],
+    [["pt"], "pt-BR"],
     [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
@@ -66,6 +68,7 @@ describe("fichiers de traduction", () => {
     ]);
     expect(en.undo.deleted(3)).toBe("3 tasks deleted");
     expect([es.matrix.taskCount(1), es.matrix.taskCount(2)]).toEqual(["1 tarea", "2 tareas"]);
+    expect([ptBR.matrix.taskCount(1), ptBR.matrix.taskCount(2)]).toEqual(["1 tarefa", "2 tarefas"]);
   });
 });
 
