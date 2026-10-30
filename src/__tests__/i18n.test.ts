@@ -1,6 +1,7 @@
 import { getLocales } from "expo-localization";
 import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../i18n";
 import { en } from "../i18n/en";
+import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
 
 const mockedGetLocales = getLocales as jest.Mock;
@@ -25,7 +26,8 @@ describe("detectLanguage", () => {
     [["fr", "en"], "fr"],
     [["en"], "en"],
     [["de", "fr"], "en"], // seule la langue préférée compte
-    [["es"], "en"],
+    [["es"], "es"],
+    [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
     mockedGetLocales.mockReturnValue(locales(...codes));
@@ -63,6 +65,7 @@ describe("fichiers de traduction", () => {
       "2 tasks",
     ]);
     expect(en.undo.deleted(3)).toBe("3 tasks deleted");
+    expect([es.matrix.taskCount(1), es.matrix.taskCount(2)]).toEqual(["1 tarea", "2 tareas"]);
   });
 });
 

@@ -1,10 +1,11 @@
 import { getLocales } from "expo-localization";
 import { useSyncExternalStore } from "react";
 import { en } from "./en";
+import { es } from "./es";
 import { fr, Translations } from "./fr";
 
 // Langues disponibles, dans l'ordre du réglage « Langue »
-export const LANGUAGES = ["fr", "en"] as const;
+export const LANGUAGES = ["fr", "en", "es"] as const;
 export type Language = (typeof LANGUAGES)[number];
 
 // Réglage « Langue » : « auto » suit la langue du téléphone
@@ -14,9 +15,10 @@ export type LanguagePreference = Language | "auto";
 export const LANGUAGE_NAMES: Record<Language, string> = {
   fr: "Français",
   en: "English",
+  es: "Español",
 };
 
-export const TRANSLATIONS: Record<Language, Translations> = { fr, en };
+export const TRANSLATIONS: Record<Language, Translations> = { fr, en, es };
 
 export const isLanguagePreference = (value: unknown): value is LanguagePreference =>
   value === "auto" || (LANGUAGES as readonly unknown[]).includes(value);

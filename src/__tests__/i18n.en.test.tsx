@@ -14,9 +14,9 @@ import { DEFAULT_SETTINGS } from "../settings";
 import { makeTask } from "../testing/makeTask";
 import { Task } from "../types";
 
-// Téléphone en espagnol : toute langue autre que le français donne l'anglais
+// Téléphone en suédois : une langue sans traduction donne l'anglais
 jest.mock("expo-localization", () => ({
-  getLocales: () => [{ languageCode: "es", languageTag: "es-ES" }],
+  getLocales: () => [{ languageCode: "sv", languageTag: "sv-SE" }],
 }));
 
 const mock = Notifications as unknown as {
