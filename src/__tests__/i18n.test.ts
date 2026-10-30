@@ -3,6 +3,7 @@ import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../
 import { en } from "../i18n/en";
 import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
+import { itIT } from "../i18n/it";
 import { de } from "../i18n/de";
 import { ptBR } from "../i18n/pt-BR";
 
@@ -31,6 +32,7 @@ describe("detectLanguage", () => {
     [["es"], "es"],
     [["pt"], "pt-BR"],
     [["de"], "de"],
+    [["it"], "it"],
     [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
@@ -72,6 +74,7 @@ describe("fichiers de traduction", () => {
     expect([es.matrix.taskCount(1), es.matrix.taskCount(2)]).toEqual(["1 tarea", "2 tareas"]);
     expect([ptBR.matrix.taskCount(1), ptBR.matrix.taskCount(2)]).toEqual(["1 tarefa", "2 tarefas"]);
     expect([de.matrix.taskCount(1), de.matrix.taskCount(2)]).toEqual(["1 Aufgabe", "2 Aufgaben"]);
+    expect([itIT.balance.done(1), itIT.balance.done(2)]).toEqual(["1 attività completata", "2 attività completate"]);
   });
 });
 
