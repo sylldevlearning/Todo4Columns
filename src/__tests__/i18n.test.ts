@@ -3,6 +3,7 @@ import { currentLanguage, detectLanguage, LANGUAGES, t, TRANSLATIONS } from "../
 import { en } from "../i18n/en";
 import { es } from "../i18n/es";
 import { fr } from "../i18n/fr";
+import { ja } from "../i18n/ja";
 import { id } from "../i18n/id";
 import { itIT } from "../i18n/it";
 import { de } from "../i18n/de";
@@ -36,6 +37,7 @@ describe("detectLanguage", () => {
     [["it"], "it"],
     [["id"], "id"],
     [["in"], "id"],
+    [["ja"], "ja"],
     [["sv"], "en"],
     [[], "en"],
   ])("langues %j → %s", (codes, expected) => {
@@ -79,6 +81,7 @@ describe("fichiers de traduction", () => {
     expect([de.matrix.taskCount(1), de.matrix.taskCount(2)]).toEqual(["1 Aufgabe", "2 Aufgaben"]);
     expect([itIT.balance.done(1), itIT.balance.done(2)]).toEqual(["1 attività completata", "2 attività completate"]);
     expect([id.matrix.taskCount(1), id.matrix.taskCount(3)]).toEqual(["1 tugas", "3 tugas"]);
+    expect([ja.matrix.taskCount(1), ja.matrix.taskCount(3)]).toEqual(["1件のタスク", "3件のタスク"]);
   });
 });
 

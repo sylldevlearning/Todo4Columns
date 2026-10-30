@@ -6,10 +6,11 @@ import { ptBR } from "./pt-BR";
 import { de } from "./de";
 import { itIT } from "./it";
 import { id } from "./id";
+import { ja } from "./ja";
 import { fr, Translations } from "./fr";
 
 // Langues disponibles, dans l'ordre du réglage « Langue »
-export const LANGUAGES = ["fr", "en", "es", "pt-BR", "de", "it", "id"] as const;
+export const LANGUAGES = ["fr", "en", "es", "pt-BR", "de", "it", "id", "ja"] as const;
 export type Language = (typeof LANGUAGES)[number];
 
 // Réglage « Langue » : « auto » suit la langue du téléphone
@@ -24,9 +25,10 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
   de: "Deutsch",
   it: "Italiano",
   id: "Bahasa Indonesia",
+  ja: "日本語",
 };
 
-export const TRANSLATIONS: Record<Language, Translations> = { fr, en, es, "pt-BR": ptBR, de, it: itIT, id };
+export const TRANSLATIONS: Record<Language, Translations> = { fr, en, es, "pt-BR": ptBR, de, it: itIT, id, ja };
 
 export const isLanguagePreference = (value: unknown): value is LanguagePreference =>
   value === "auto" || (LANGUAGES as readonly unknown[]).includes(value);
