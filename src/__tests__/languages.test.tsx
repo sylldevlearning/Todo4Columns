@@ -87,6 +87,7 @@ describe("mise en page des textes longs", () => {
     expect(nameLines("Планировать")).toBe(1);
     expect(nameLines("Irgendwann")).toBe(1);
     expect(nameLines("Si j'ai le temps")).toBe(2);
+    expect(nameLines("Когда-нибудь")).toBe(1);
     expect(nameLines("Если будет время")).toBe(2);
   });
 
@@ -97,7 +98,9 @@ describe("mise en page des textes longs", () => {
     const name = screen.getByText("Планировать");
     expect(name.props.numberOfLines).toBe(1);
     expect(name.props.adjustsFontSizeToFit).toBe(true);
-    expect(screen.getByText("Если будет время").props.numberOfLines).toBe(2);
+    const someday = screen.getByText("Когда-нибудь");
+    expect(someday.props.numberOfLines).toBe(1);
+    expect(someday.props.adjustsFontSizeToFit).toBe(true);
 
     const subtitle = screen.getByText(TRANSLATIONS.ru.categories.UDI.subtitle);
     expect(subtitle.props.numberOfLines).toBe(2);
@@ -292,6 +295,12 @@ describe("Android : textes longs lisibles sur un petit écran", () => {
       ].map((text) => ({ where: "pastille (carte)", text, width: 210, size: 12, font: semibold, floor: 10 })),
     ];
   };
+
+  it("ru : « Когда-нибудь » presque à taille normale dans la grille (« Если будет время » descendait à 12,4 dp)", () => {
+    expect(TRANSLATIONS.ru.categories.NDNI.name).toBe("Когда-нибудь");
+    expect(shownSize("Когда-нибудь", 69, 17, extrabold)).toBeGreaterThanOrEqual(16.5);
+    expect(shownSize("Если будет время", 69, 17, extrabold)).toBeLessThan(13);
+  });
 
   it.each(LANGUAGES)("%s : rien sous la taille plancher", (language) => {
     const tooSmall = cases(language)
