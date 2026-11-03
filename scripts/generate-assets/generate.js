@@ -1,19 +1,17 @@
-// Génère les icônes, l'écran de démarrage et les visuels Play Store de DoFirst.
+// Génère les icônes et l'écran de démarrage de DoFirst (assets de l'app uniquement).
+// Les images de la fiche Play Store (store/listings/<langue>/images) ne sont pas générées :
+// ce sont celles publiées, envoyées telles quelles par scripts/play-listing.mjs.
 // Usage : npm run assets  (ou node scripts/generate-assets/generate.js)
 //
 // Logo : grille 2×2 de carrés arrondis aux couleurs des quadrants,
 // avec une coche blanche dans « Faire » (haut-gauche).
-const fs = require("fs");
 const path = require("path");
-const opentype = require("opentype.js");
 const sharp = require("sharp");
 
 const ROOT = path.resolve(__dirname, "../..");
 const ASSETS = path.join(ROOT, "assets");
-const STORE = path.join(ROOT, "store");
 
 const BG = "#0F1115";
-const MUTED = "#A1A7B3";
 const QUADRANTS = ["#FF7A59", "#5B9BFF", "#F2B33D", "#8B92A0"]; // Faire, Planifier, Déléguer, Éliminer
 
 // ---- Logo (dessiné dans une boîte de 100 × 100) ----
@@ -79,55 +77,7 @@ async function writePng(file, buffer, { opaque = false } = {}) {
   );
 }
 
-// ---- Texte vectorisé en Manrope (aucune police système requise) ----
-const font = (weight) =>
-  opentype.parse(
-    fs.readFileSync(
-      require.resolve(`@expo-google-fonts/manrope/${weight}/Manrope_${weight}.ttf`)
-    ).buffer
-  );
-
-// Chemin SVG d'un texte ; renvoie aussi sa largeur
-function textPath(f, text, x, baseline, size, fill) {
-  const p = f.getPath(text, x, baseline, size);
-  return { svg: `<path d="${p.toPathData(2)}" fill="${fill}"/>`, width: f.getAdvanceWidth(text, size) };
-}
-
-async function featureGraphic(file, slogan) {
-  const W = 1024;
-  const H = 500;
-  const bold = font("700Bold");
-  const medium = font("500Medium");
-
-  const logoSize = 220;
-  const titleSize = 132;
-  const sloganSize = 38;
-  const space = 56; // entre le logo et le texte
-
-  const doWidth = bold.getAdvanceWidth("Do", titleSize);
-  const titleWidth = doWidth + bold.getAdvanceWidth("First", titleSize);
-  const sloganWidth = medium.getAdvanceWidth(slogan, sloganSize);
-  const textWidth = Math.max(titleWidth, sloganWidth);
-
-  // Bloc logo + texte centré horizontalement et verticalement
-  const left = (W - (logoSize + space + textWidth)) / 2;
-  const textX = left + logoSize + space;
-  const titleBaseline = H / 2 + 22;
-  const sloganBaseline = titleBaseline + 72;
-
-  const body = [
-    colorLogo(left, (H - logoSize) / 2, logoSize),
-    textPath(bold, "Do", textX, titleBaseline, titleSize, "#FFFFFF").svg,
-    textPath(bold, "First", textX + doWidth, titleBaseline, titleSize, QUADRANTS[0]).svg,
-    textPath(medium, slogan, textX + 4, sloganBaseline, sloganSize, MUTED).svg,
-  ].join("\n");
-
-  await writePng(file, svg(W, H, body, BG), { opaque: true });
-}
-
 async function main() {
-  fs.mkdirSync(STORE, { recursive: true });
-
   // Icône de l'app : fond plein, logo à 64 % de la largeur
   await writePng(path.join(ASSETS, "icon.png"), svg(1024, 1024, centered(1024, 0.64, colorLogo), BG), {
     opaque: true,
@@ -157,16 +107,6 @@ async function main() {
   await writePng(path.join(ASSETS, "favicon.png"), svg(48, 48, centered(48, 0.8, colorLogo), BG), {
     opaque: true,
   });
-
-  // Play Store : images de chaque fiche (store/listings/<langue>/images, envoyées par scripts/play-listing.mjs)
-  const listingImages = (language) => path.join(STORE, "listings", language, "images");
-  for (const language of ["fr-FR", "en-US"]) {
-    await writePng(path.join(listingImages(language), "icon.png"), svg(512, 512, centered(512, 0.64, colorLogo), BG), {
-      opaque: true,
-    });
-  }
-  await featureGraphic(path.join(listingImages("fr-FR"), "featureGraphic.png"), "Fais d’abord ce qui compte.");
-  await featureGraphic(path.join(listingImages("en-US"), "featureGraphic.png"), "Do what matters first.");
 }
 
 main().catch((e) => {
