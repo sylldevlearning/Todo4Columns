@@ -98,22 +98,20 @@ async function pixels(input) {
   return { data, width: info.width, height: info.height };
 }
 
-// Vrai si l'image en ligne a les mêmes pixels que le fichier local, au réencodage près
-// (mesuré sur l'icône : écart moyen ~1 sur 255 ; une autre image donne ~15 et >10 % de pixels changés)
+// Vrai si l'image en ligne a les mêmes pixels que le fichier local, au réencodage près : moins de
+// 0,1 % des valeurs s'écartent de plus de 32 sur 255. Un réencodage ne produit pas de tels écarts ;
+// changer une seule ligne de texte d'une bannière en donne ~1,4 % (l'écart moyen, lui, reste ~1,6).
 async function sameImage(url, file) {
   if (!sharp) return false;
   const response = await fetch(`${url}=s0`);
   if (!response.ok) return false;
   const [remote, local] = await Promise.all([pixels(Buffer.from(await response.arrayBuffer())), pixels(file)]);
   if (remote.width !== local.width || remote.height !== local.height) return false;
-  let total = 0;
   let changed = 0;
   for (let i = 0; i < local.data.length; i++) {
-    const difference = Math.abs(local.data[i] - remote.data[i]);
-    total += difference;
-    if (difference > 8) changed++;
+    if (Math.abs(local.data[i] - remote.data[i]) > 32) changed++;
   }
-  return total / local.data.length < 2 && changed / local.data.length < 0.05;
+  return changed / local.data.length < 0.001;
 }
 
 async function sameImages(remoteImages, files) {
