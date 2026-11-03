@@ -1,15 +1,3 @@
-# Play Store listing — English (en-US)
-
-## Title (30 characters max)
-
-DoFirst: To-Do List & Planner
-
-## Short description (80 characters max)
-
-To-do list with reminders: the Eisenhower Matrix to manage your priorities.
-
-## Full description (4,000 characters max)
-
 DoFirst is a simple, smart to-do list that helps you organize your tasks and manage your priorities with the Eisenhower Matrix. Task manager, reminders, planner and time management in one app.
 
 TWO QUESTIONS, THAT’S ALL

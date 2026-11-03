@@ -1,15 +1,3 @@
-# Fiche Play Store — français (fr-FR)
-
-## Titre (30 caractères max)
-
-DoFirst : to-do list & rappels
-
-## Description courte (80 caractères max)
-
-To-do list et rappels : la matrice d’Eisenhower pour gérer tes priorités.
-
-## Description complète (4 000 caractères max)
-
 DoFirst est une to-do list simple et intelligente qui t’aide à organiser tes tâches et à gérer tes priorités grâce à la matrice d’Eisenhower. Liste de tâches, rappels, planificateur et gestion du temps réunis dans une seule appli.
 
 DEUX QUESTIONS, C’EST TOUT

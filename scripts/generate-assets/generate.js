@@ -158,12 +158,15 @@ async function main() {
     opaque: true,
   });
 
-  // Play Store
-  await writePng(path.join(STORE, "play-icon-512.png"), svg(512, 512, centered(512, 0.64, colorLogo), BG), {
-    opaque: true,
-  });
-  await featureGraphic(path.join(STORE, "feature-graphic-fr.png"), "Fais d’abord ce qui compte.");
-  await featureGraphic(path.join(STORE, "feature-graphic-en.png"), "Do what matters first.");
+  // Play Store : images de chaque fiche (store/listings/<langue>/images, envoyées par scripts/play-listing.mjs)
+  const listingImages = (language) => path.join(STORE, "listings", language, "images");
+  for (const language of ["fr-FR", "en-US"]) {
+    await writePng(path.join(listingImages(language), "icon.png"), svg(512, 512, centered(512, 0.64, colorLogo), BG), {
+      opaque: true,
+    });
+  }
+  await featureGraphic(path.join(listingImages("fr-FR"), "featureGraphic.png"), "Fais d’abord ce qui compte.");
+  await featureGraphic(path.join(listingImages("en-US"), "featureGraphic.png"), "Do what matters first.");
 }
 
 main().catch((e) => {

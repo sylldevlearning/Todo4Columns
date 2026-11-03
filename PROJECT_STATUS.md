@@ -183,8 +183,8 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
-| Fiche Play Store | `store/listing-fr.md`, `store/listing-en.md` (1.3.0 : titres « DoFirst : to-do list & rappels » 30/30 et « DoFirst: To-Do List & Planner » 29/30) |
-| Notes de version | `store/release-notes-fr.txt`, `store/release-notes-en.txt` (1.3.0 : 274 et 247 caractères) |
+| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (envoi : `npm run listing:check` puis `listing:apply`) (1.3.0 : titres « DoFirst : to-do list & rappels » 30/30 et « DoFirst: To-Do List & Planner » 29/30) |
+| Notes de version | `store/release-notes-fr-FR.txt`, `store/release-notes-en-US.txt`, envoyées par `npm run release:promote` (1.3.0 : 274 et 247 caractères) |
 | Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
 
 **Permissions du manifeste final**
