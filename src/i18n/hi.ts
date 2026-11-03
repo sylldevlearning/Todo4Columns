@@ -5,6 +5,8 @@ import { Translations } from "./fr";
 // seul l'accord du verbe change (पूरा हुआ / पूरे हुए)
 const one = (n: number) => n === 0 || n === 1;
 const pick = (n: number, singular: string, plural: string) => (one(n) ? singular : plural);
+// Durée suivie d'une postposition (से, में) : forme oblique, « 1 घंटा » → « 1 घंटे »
+const oblique = (duration: string) => duration.replace(/^1 घंटा/, "1 घंटे");
 
 export const hi: Translations = {
   locale: "hi-IN",
@@ -90,8 +92,8 @@ export const hi: Translations = {
   },
 
   chips: {
-    waitingSince: (duration) => `${duration} से इंतज़ार`,
-    nextIn: (duration) => `${duration} में रिमाइंडर`,
+    waitingSince: (duration) => `${oblique(duration)} से इंतज़ार`,
+    nextIn: (duration) => `${oblique(duration)} में रिमाइंडर`,
     nagCount: (index, total) => `रिमाइंडर ${index}/${total}`,
     soonUrgent: "जल्द ज़रूरी",
     late: "देर हो गई",
@@ -173,8 +175,8 @@ export const hi: Translations = {
 
   reminders: {
     min: (n) => `${n} मिनट`,
-    hours: (n) => `${n} घंटे`,
-    hoursMinutes: (h, m) => `${h} घंटे ${m} मिनट`,
+    hours: (n) => `${n} ${n === 1 ? "घंटा" : "घंटे"}`,
+    hoursMinutes: (h, m) => `${h} ${h === 1 ? "घंटा" : "घंटे"} ${m} मिनट`,
     days: (n) => `${n} दिन`,
     oneDay: "1 दिन",
     never: "कभी नहीं",

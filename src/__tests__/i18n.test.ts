@@ -96,6 +96,17 @@ describe("fichiers de traduction", () => {
     expect([zhHans.matrix.taskCount(1), zhHans.matrix.taskCount(3)]).toEqual(["1 个任务", "3 个任务"]);
     expect([tr.matrix.taskCount(1), tr.matrix.taskCount(3)]).toEqual(["1 görev", "3 görev"]);
     expect([hi.balance.done(1), hi.balance.done(2)]).toEqual(["1 काम पूरा हुआ", "2 काम पूरे हुए"]);
+    // Hindi : « 1 घंटा » seul, « 1 घंटे » devant से / में (oblique), « 2 घंटे » au pluriel
+    expect([hi.reminders.hours(1), hi.reminders.hours(2), hi.reminders.hoursMinutes(1, "05")]).toEqual([
+      "1 घंटा",
+      "2 घंटे",
+      "1 घंटा 05 मिनट",
+    ]);
+    expect(hi.reminders.nagLabel(hi.reminders.hours(1), false)).toBe("रिमाइंडर 1 घंटा");
+    expect(hi.chips.nextIn(hi.reminders.hours(1))).toBe("1 घंटे में रिमाइंडर");
+    expect(hi.chips.waitingSince(hi.reminders.hoursMinutes(1, "05"))).toBe("1 घंटे 05 मिनट से इंतज़ार");
+    expect(hi.chips.nextIn(hi.reminders.hours(2))).toBe("2 घंटे में रिमाइंडर");
+    expect(hi.steps.session(1, 5, hi.steps.durations[60])).toBe("सत्र 1/5 · 1 घंटा");
     expect([1, 2, 5, 11, 21, 22].map(ru.matrix.taskCount)).toEqual(["1 задача", "2 задачи", "5 задач", "11 задач", "21 задача", "22 задачи"]);
   });
 });
