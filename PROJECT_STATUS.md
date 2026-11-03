@@ -1,11 +1,12 @@
-# DoFirst (Todo4Columns) — État de la version 1.3.0
+# DoFirst (Todo4Columns) — État de la version 1.4.0
 
-> Mis à jour le 27/10/2026, branche `version-1.3.0` (créée depuis `version-1.2.1`). Version **1.3.0** dans `app.json`, finalisée.
-> Vérifié : 540 tests Jest (50 suites, fuseau Europe/Paris), `tsc --noEmit` (aussi sur chaque commit), `expo-doctor` (21/21) et prebuild Android dans une copie du projet.
+> Mis à jour le 03/11/2026, branche `version-1.4.0` (créée depuis `version-1.3.0`). Version **1.4.0** dans `app.json`, finalisée.
+> Vérifié : 650 tests Jest (52 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21) et prebuild Android dans une copie du projet (versionName 1.4.0).
 > **Builds EAS :**
-> - **Production 1.2.0** (versionCode 7, build `fde044da`) : ne contient ni les ajustements des rappels, ni le blocage d'AD_ID, ni la 1.2.1.
+> - **Production 1.2.0** (versionCode 7, build `fde044da`) : ne contient ni la 1.2.1, ni la 1.3.0, ni la 1.4.0.
 > - **APK de test 1.2.1** (profil `preview`, commit `ea7a7db`, versionCode 7 non incrémenté) : build `39ba178d-94ce-4b28-8f2a-8b65fd3d02b9`, installable hors Play Store.
-> - **Aucun build de production 1.2.1 ni 1.3.0.** Le prochain build de production (1.3.0) passera au versionCode 8. Voir la liste de tests à la fin.
+> - **Aucun build de production 1.2.1, 1.3.0 ni 1.4.0.** Le prochain build de production (1.4.0) passera au versionCode 8 (géré par EAS).
+> **Play Console :** aucun envoi fait depuis les scripts. `npm run listing:check` montre 15 changements en attente (12 nouvelles fiches, descriptions complètes fr-FR et en-US, bannière en-US).
 
 ---
 
@@ -20,7 +21,7 @@ DoFirst est une app de tâches fondée sur la **matrice d'Eisenhower**. Chaque t
 | `UDI` | Déléguer | Delegate |
 | `NDNI` | Si j'ai le temps | Someday |
 
-Les données restent sur le téléphone, sans compte. L'app est en français et en anglais (langue du téléphone), avec un thème sombre. Publiée sur Android sous le package `com.saloum.sylla.matriceeisenhower`.
+Les données restent sur le téléphone, sans compte. L'app existe en 13 langues (réglage « Langue », « Automatique » par défaut), avec un thème sombre. Publiée sur Android sous le package `com.saloum.sylla.matriceeisenhower`.
 
 ## 2. Historique
 
@@ -35,7 +36,12 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
   - tâches récurrentes ;
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
-- **1.3.0** (cette branche) : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
+- **1.3.0** : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
+- **1.4.0** (cette branche) :
+  - réglage « Langue » : « Automatique (langue du téléphone) » ou l'une des 13 langues, appliqué tout de suite (écrans, notifications programmées, boutons d'action, canal Android) ; en automatique, langue recalculée au retour dans l'app ;
+  - 11 nouvelles langues : espagnol, portugais du Brésil, allemand, italien, indonésien, japonais, coréen, chinois simplifié, turc, hindi, russe ;
+  - textes longs : sur Android, deux lignes avec césure (noms des quadrants, sous-titres, pastilles) ;
+  - publication Google Play par scripts (fiches, test interne, production) ; fiches Play Store dans 14 langues.
 - **1.2.1** :
   - demande d'avis dans l'app (fenêtre officielle de Google Play) ;
   - Réglages › À propos : noter, partager, suggérer une idée, version ;
@@ -54,6 +60,7 @@ Les données restent sur le téléphone, sans compte. L'app est en français et 
 | Stockage | AsyncStorage |
 | Animations / gestes | Reanimated 4, Worklets, Gesture Handler |
 | Tests | Jest (jest-expo), React Native Testing Library |
+| Publication | `googleapis` (API androidpublisher v3, scripts `scripts/play-*.mjs`), `sharp` (comparaison des images) |
 
 Modules Expo : `expo-notifications`, `expo-localization`, `expo-haptics`, `expo-font`, `expo-splash-screen`, `expo-router`, `expo-linking`, `expo-constants`, `expo-dev-client`, `expo-build-properties`, `expo-file-system`, `expo-sharing`, `expo-store-review` (1.2.1). Plus `@react-native-community/datetimepicker`, `@expo/vector-icons` (Ionicons) et `@expo-google-fonts/manrope`.
 
@@ -82,8 +89,13 @@ src/
   reviewPrompt.ts       Conditions de la demande d'avis ; community.ts  liens « À propos »
   guards.ts             isRecord, CATEGORY_KEYS (recovery.ts garde ses propres copies)
   components/           Cartes, formulaires, InfoButton, présentation…
-  i18n/fr.ts, en.ts     Tous les textes (mêmes clés, vérifié par test)
-store/                  Fiches Play Store, notes de version, règles de confidentialité
+  i18n/                 Textes des 13 langues (fr.ts fait référence ; mêmes clés et mêmes
+                        paramètres vérifiés par test), langue courante (index.ts), pluriel russe
+  components/fitText.ts Textes étroits : deux lignes avec césure sur Android
+scripts/play/, play-listing.mjs, play-release.mjs
+                        Publication Google Play (réutilisables dans un autre projet Expo)
+store/listings/<langue>/  Fiches Play Store : title.txt, short.txt, full.txt, images/
+store/                  Notes de version (release-notes-<langue>.txt), règles de confidentialité
 ```
 
 ## 5. Données enregistrées (AsyncStorage)
@@ -94,7 +106,7 @@ store/                  Fiches Play Store, notes de version, règles de confiden
 | `TASKS_4COLS_BACKUP_V1` … `V6` | Copie du format d'origine, écrite une seule fois avant chaque migration |
 | `TASKS_4COLS_CORRUPT_<date>` | Contenu illisible mis de côté |
 | `TASKS_4COLS_RECOVERY_DONE`, `TASKS_4COLS_RECOVERY_LOG` | Récupération des anciennes tâches |
-| `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis) |
+| `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis ; en 1.4, `language` : `"auto"` par défaut ou une langue) |
 | `COMPLETION_LOG` | Journal `{ date, catégorie }` des tâches terminées, 26 semaines |
 | `WEEKLY_REVIEW_LOG` | Semaines où une revue a été faite |
 | `BACKUP_BEFORE_IMPORT` | Copie des données avant le dernier import |
@@ -167,6 +179,13 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 - Célébrations, archivage, sauvegarde, aide.
 - À propos : « Noter DoFirst » (fiche Play Store), « Partager DoFirst » (partage natif avec le lien), « Suggérer une idée / signaler un problème » (e-mail prérempli avec les versions de l'app et d'Android), numéro de version.
 
+**Langues** (1.4)
+- fr, en, es, pt-BR, de, it, id, ja, ko, zh-Hans, tr, hi, ru, chacune sous son nom natif dans Réglages › Langue (bouton « i »).
+- « Automatique » : langue du téléphone si elle est disponible, sinon anglais ; portugais → brésilien, chinois traditionnel → simplifié, `in` → indonésien. Recalculée au retour dans l'app.
+- Changement sans relancer l'app : écrans, notifications programmées reprogrammées, boutons d'action, nom du canal Android.
+- Pluriels écrits à la main (Hermes n'a pas `Intl.PluralRules` sur Android) ; dates au format de la langue.
+- Manrope couvre le latin, le turc et le cyrillique (vérifié par test) ; japonais, coréen, chinois et hindi utilisent la police système, sans police embarquée.
+
 **Demande d'avis** (1.2.1)
 - Fenêtre officielle de Google Play (`expo-store-review`), sans quitter l'app.
 - Après la fin d'une revue de la semaine, ou une tâche terminée dès la 10e (journal des fins de tâches).
@@ -178,13 +197,14 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 
 | Élément | Valeur |
 |---|---|
-| Version | **1.3.0** (`app.json`, `package.json`) |
+| Version | **1.4.0** (`app.json`, `package.json`) |
 | versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
-| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (envoi : `npm run listing:check` puis `listing:apply`) (1.3.0 : titres « DoFirst : to-do list & rappels » 30/30 et « DoFirst: To-Do List & Planner » 29/30) |
-| Notes de version | `store/release-notes-fr-FR.txt`, `store/release-notes-en-US.txt`, envoyées par `npm run release:promote` (1.3.0 : 274 et 247 caractères) |
+| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (fr-FR et en-US seulement ; les autres langues reprennent les images de la langue par défaut). 14 fiches : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
+| Notes de version | `store/release-notes-<langue>.txt`, 14 fichiers (es-419 et es-ES identiques), 500 caractères maximum (1.4.0 : de 134 à 354) |
+| Envoi Google Play | `npm run listing:check` / `listing:apply` (fiches) ; `eas submit --platform android --latest` (test interne) ; `npm run release:notes` (notes du test interne) ; `npm run release:promote -- --confirm=1.4.0` (production). Clé du compte de service hors du dépôt (`C:/secrets/dofirst-play.json`, chemin dans `eas.json`) |
 | Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
 
 **Permissions du manifeste final**
@@ -199,6 +219,8 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
+- **Traductions à faire relire** (1.4) : hindi en priorité (formes masculines à la première personne, registre « तुम »), russe (noms non déclinés, accords au masculin), turc (tournures évitant les suffixes après un nom), coréen (« (으)로 », « 을(를) »), japonais (politesse) ; messages de félicitations dans toutes les langues ; fiches Play Store des 12 nouvelles langues (mots-clés).
+- **Césure Android :** elle suit le dictionnaire de la langue du téléphone, qui peut différer de celle de l'app.
 - **Adresse de contact :** `sylldevlearning@gmail.com` dans `src/community.ts` et les deux règles de confidentialité.
 - **Acceptés sans correction (revue de la 1.3, étape 1) :**
   - **Demande d'avis sur un APK de test :** installée hors Play Store, l'app enregistre `reviewAskedAt` alors que Google n'affiche rien ; la demande est ensuite bloquée 90 jours. Sans effet en production.
@@ -280,7 +302,7 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - « Noter DoFirst » ouvre la fiche dans l'app Play Store.
     - « Partager DoFirst » : message et lien corrects dans SMS ou WhatsApp.
     - « Suggérer une idée » : Gmail s'ouvre avec l'adresse, l'objet et les versions de l'app et d'Android.
-    - Numéro de version affiché : 1.2.1.
+    - Numéro de version affiché : 1.4.0.
 15. **Étapes** (1.3)
     - Appui long sur la poignée puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher, y compris avec le jour d'une étape ouvert ; le défilement de la fiche reste possible ; un appui long sur le titre sélectionne le texte.
     - TalkBack : la poignée annonce « Déplacer « … » » et propose « Monter » / « Descendre ».
@@ -294,6 +316,11 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - Cocher la dernière étape dans la fiche : « Terminer la tâche ? » puis la fiche se ferme et les confettis partent.
     - Carte : « Aujourd'hui : … » à cocher, puis « Étape cochée » et « Annuler » ; « En retard : … » en rouge ; grille « 2/5 ».
     - Demande d'avis : jamais juste après avoir ouvert l'app depuis une notification, ni par-dessus la fiche, une alerte, la carte d'autorisation ou le message de bascule.
-16. **Poids et batterie**
+16. **Langues** (1.4)
+    - Réglages › Langue : chaque langue s'applique tout de suite (matrice, fiche, réglages) ; une notification déjà programmée arrive dans la nouvelle langue ; nom du canal dans les réglages Android.
+    - « Automatique » : changer la langue du téléphone, revenir dans l'app : nouvelle langue sans relancer.
+    - Japonais, coréen, chinois, hindi : aucun carré vide, hauteur des lignes correcte (hindi surtout) ; caractères chinois et japonais avec la bonne forme selon la langue du téléphone.
+    - Allemand, russe, indonésien sur un petit écran : noms des quadrants sur deux lignes avec trait d'union, jamais coupés ; pastilles et onglets de la présentation lisibles.
+17. **Poids et batterie**
     - Taille de l'AAB comparée à la 1.1.
     - App en arrière-plan : pas de réveils inutiles.
