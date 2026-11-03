@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { CATEGORIES, CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { colors, fonts, withAlpha } from "../theme";
+import { fitText } from "./fitText";
 import { nameLines } from "./MatrixGrid";
 
 
@@ -37,15 +38,10 @@ export function MatrixIllustration() {
               ]}
             >
               <View style={[styles.dot, { backgroundColor: c.color }]} />
-              <Text
-                style={[styles.cellName, { color: c.textColor }]}
-                numberOfLines={nameLines(c.name)}
-                adjustsFontSizeToFit
-                minimumFontScale={0.6}
-              >
+              <Text style={[styles.cellName, { color: c.textColor }]} {...fitText(nameLines(c.name), 0.6)}>
                 {c.name}
               </Text>
-              <Text style={styles.cellText} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>
+              <Text style={styles.cellText} {...fitText(2, 0.85)}>
                 {c.subtitle}
               </Text>
             </View>
@@ -106,7 +102,7 @@ export function GesturesIllustration() {
       <View style={styles.swipe}>
         <View style={[styles.swipeAction, { backgroundColor: colors.success }]}>
           <Ionicons name="checkmark" size={18} color={colors.white} />
-          <Text style={styles.swipeActionText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+          <Text style={styles.swipeActionText} {...fitText(1, 0.7)}>
             {t.onboarding.swipeRight}
           </Text>
         </View>

@@ -7,6 +7,7 @@ import { isPriority } from "../review";
 import { stepProgress, stepsOf } from "../steps";
 import { colors, fonts, withAlpha } from "../theme";
 import { Category, Task } from "../types";
+import { fitText } from "./fitText";
 import TaskChips from "./TaskChips";
 
 const PREVIEW_COUNT = 3;
@@ -49,13 +50,8 @@ function QuadrantCell({
     >
       <View style={styles.cellHeader}>
         <View style={[styles.dot, { backgroundColor: category.color }]} />
-        {/* Nom d'un seul mot : réduit plutôt que coupé en plein mot (« Планировать », « Irgendwann ») */}
-        <Text
-          style={[styles.name, { color: category.textColor }]}
-          numberOfLines={nameLines(category.name)}
-          adjustsFontSizeToFit
-          minimumFontScale={0.6}
-        >
+        {/* Nom d'un seul mot : réduit (iOS) ou coupé avec un trait d'union (Android), jamais tronqué */}
+        <Text style={[styles.name, { color: category.textColor }]} {...fitText(nameLines(category.name), 0.6)}>
           {category.name}
         </Text>
         <View style={[styles.count, { backgroundColor: category.color }]}>
@@ -64,7 +60,7 @@ function QuadrantCell({
           </Text>
         </View>
       </View>
-      <Text style={styles.subtitle} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>
+      <Text style={styles.subtitle} {...fitText(2, 0.85)}>
         {category.subtitle}
       </Text>
 
