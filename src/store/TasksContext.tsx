@@ -148,6 +148,15 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
   // Réglage « Langue » : appliqué avant les effets, donc avant la reprogrammation des notifications
   useLayoutEffect(() => setLanguagePreference(settings.language), [settings.language]);
+  // « Automatique » : la langue du téléphone a pu changer pendant que l'app était en arrière-plan
+  // (Android ne relance pas l'app). Écouteur ajouté dans un effet de mise en page, donc avant
+  // celui de useNotificationSync : la langue est à jour quand les notifications sont reprogrammées.
+  useLayoutEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") setLanguagePreference(settingsStore.get().language);
+    });
+    return () => subscription.remove();
+  }, [settingsStore]);
 
   // Dernières versions des fonctions, appelées par les actions à identité fixe
   const latest = useRef<TaskActions>(null!);

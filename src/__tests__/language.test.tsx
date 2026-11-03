@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLocales } from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { act, fireEvent, renderRouter, screen, waitFor } from "expo-router/testing-library";
-import { Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 import RootLayout from "../../app/_layout";
 import MatrixScreen from "../../app/index";
 import SettingsScreen from "../../app/settings";
@@ -175,6 +175,62 @@ describe("réglage « Langue » dans l'app", () => {
     await fireEvent.press(screen.getByRole("button", { name: ja.common.back }));
     expect(await screen.findByText(ja.matrix.title)).toBeOnTheScreen();
     expect(screen.getByText(ja.categories.UI.name)).toBeOnTheScreen();
+  });
+
+  it("automatique : langue du téléphone changée en arrière-plan, appliquée au retour", async () => {
+    const de = TRANSLATIONS.de;
+    const listeners: ((state: string) => void)[] = [];
+    const spy = jest.spyOn(AppState, "addEventListener").mockImplementation(((
+      _: string,
+      listener: (state: string) => void
+    ) => {
+      listeners.push(listener);
+      return { remove: () => listeners.splice(listeners.indexOf(listener), 1) };
+    }) as never);
+    try {
+      await openApp();
+      expect(await screen.findByText(fr.matrix.title)).toBeOnTheScreen();
+      await waitFor(() => expect(bodies()).toEqual([fr.notifications.weeklyReview]));
+
+      // Langue du téléphone passée à l'allemand pendant que l'app était en arrière-plan
+      await act(async () => listeners.forEach((l) => l("background")));
+      mockedGetLocales.mockReturnValue([{ languageCode: "de", languageTag: "de-DE" }]);
+      await act(async () => [...listeners].forEach((l) => l("active")));
+
+      expect(await screen.findByText(de.matrix.title)).toBeOnTheScreen();
+      expect(screen.getByText(de.categories.UI.name)).toBeOnTheScreen();
+      await waitFor(() => expect(bodies()).toEqual([de.notifications.weeklyReview]));
+      await waitFor(() => expect(mock.__state.channels.reminders.name).toBe(de.notifications.channel));
+      expect(mock.__state.categories["task-reminder"].map((a) => a.buttonTitle)).toEqual([
+        de.notifications.actionDone,
+        de.notifications.actionSnooze,
+        de.notifications.actionOpen,
+      ]);
+    } finally {
+      // AppState.addEventListener est déjà un mock dans Jest : on remet un abonnement neutre
+      spy.mockImplementation((() => ({ remove: jest.fn() })) as never);
+    }
+  });
+
+  it("langue choisie : un changement de langue du téléphone ne la remplace pas", async () => {
+    const listeners: ((state: string) => void)[] = [];
+    const spy = jest.spyOn(AppState, "addEventListener").mockImplementation(((
+      _: string,
+      listener: (state: string) => void
+    ) => {
+      listeners.push(listener);
+      return { remove: () => listeners.splice(listeners.indexOf(listener), 1) };
+    }) as never);
+    try {
+      await openApp({ language: "en" });
+      expect(await screen.findByText(en.matrix.title)).toBeOnTheScreen();
+      mockedGetLocales.mockReturnValue([{ languageCode: "de", languageTag: "de-DE" }]);
+      await act(async () => [...listeners].forEach((l) => l("active")));
+      expect(currentLanguage()).toBe("en");
+      expect(screen.getByText(en.matrix.title)).toBeOnTheScreen();
+    } finally {
+      spy.mockImplementation((() => ({ remove: jest.fn() })) as never);
+    }
   });
 
   it("langue enregistrée : appliquée au démarrage, même si le téléphone est dans une autre langue", async () => {
