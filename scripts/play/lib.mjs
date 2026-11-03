@@ -78,17 +78,26 @@ export async function withEdit(api, packageName, work) {
   }
 }
 
+const AUTOMATIC_REVIEW = /must not be set|sent for review automatically/i;
+
 // Valide la modification. Sans --send-for-review, les changements restent en attente dans la
 // Play Console (« Envoyer les modifications pour examen » à faire à la main).
-export async function commit(api, edit, sendForReview) {
+// automaticIfRequired : sans « Publication gérée », la Play Console refuse de garder les changements
+// en attente ; ils sont alors validés directement (réservé au test interne, jamais à la fiche ni
+// à la production).
+export async function commit(api, edit, sendForReview, { automaticIfRequired = false } = {}) {
+  const ids = { packageName: edit.packageName, editId: edit.editId };
   try {
-    await api.edits.commit({
-      packageName: edit.packageName,
-      editId: edit.editId,
-      ...(sendForReview ? {} : { changesNotSentForReview: true }),
-    });
+    await api.edits.commit({ ...ids, ...(sendForReview ? {} : { changesNotSentForReview: true }) });
   } catch (e) {
-    if (!sendForReview && /must not be set|sent for review automatically/i.test(apiMessage(e))) {
+    const automatic = !sendForReview && AUTOMATIC_REVIEW.test(apiMessage(e));
+    if (automatic && automaticIfRequired) {
+      console.log("  (Publication gérée désactivée : changements validés directement)");
+      await api.edits.commit(ids);
+      edit.committed = true;
+      return;
+    }
+    if (automatic) {
       fail(
         "La Play Console de cette app envoie les modifications à l'examen automatiquement : " +
           "rien n'a été envoyé. Active « Publication gérée » dans la Play Console, ou relance avec --send-for-review."

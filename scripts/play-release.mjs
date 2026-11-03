@@ -112,7 +112,7 @@ async function internalNotes(api, edit) {
       releases: releases.map((r) => (r === release ? { ...r, releaseNotes: notes } : r)),
     },
   });
-  await commit(api, edit, false);
+  await commit(api, edit, false, { automaticIfRequired: true });
   console.log("\n✔ Notes envoyées pour le test interne.");
 }
 
