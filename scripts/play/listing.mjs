@@ -172,7 +172,7 @@ export async function listingChanges(api, edit, listings, { onlyLanguage } = {})
         console.log(`  ${FILES[field]} : « ${before} » → « ${texts[field]} »`);
       }
     }
-    if (changedFields.length > 0) changes.push({ kind: "texts", language, texts });
+    if (changedFields.length > 0) changes.push({ kind: "texts", language, texts, isNew: !current });
 
     for (const [type, files] of Object.entries(images)) {
       const { data } = await api.edits.images.list({ ...edit, language, imageType: type });
@@ -198,7 +198,10 @@ export async function applyListingChanges(api, edit, changes) {
   for (const change of changes) {
     const base = { ...edit, language: change.language };
     if (change.kind === "texts") {
-      await api.edits.listings.patch({ ...base, requestBody: { language: change.language, ...change.texts } });
+      // Nouvelle langue : update crée la fiche (patch renvoie 404). Fiche existante : patch garde
+      // les champs non gérés ici (vidéo).
+      const method = change.isNew ? "update" : "patch";
+      await api.edits.listings[method]({ ...base, requestBody: { language: change.language, ...change.texts } });
     } else {
       await api.edits.images.deleteall({ ...base, imageType: change.type });
       for (const file of change.files) {
