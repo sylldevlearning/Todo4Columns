@@ -17,6 +17,16 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+*.keystore
+
+# Clés de comptes de service (Google Play, Google Cloud) : jamais dans le dépôt
+secrets/
+*service-account*.json
+*service_account*.json
+*serviceaccount*.json
+*-play.json
+play-*.json
+pc-api-*.json
 
 # Metro
 .metro-health-check*

@@ -1,0 +1,5 @@
+• Baru: pilih bahasa aplikasi dari 13 bahasa (Pengaturan › Bahasa)
+• Pecah tugas besar menjadi langkah yang bisa dicentang, masing-masing dengan hari dan pengingat
+• Bagi proyek ke beberapa hari dalam sesi (misalnya 1 jam per hari)
+• Beri nilai DoFirst, bagikan, atau kirim ide lewat Pengaturan › Tentang
+• Peningkatan stabilitas dan performa

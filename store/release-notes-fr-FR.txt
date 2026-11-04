@@ -1,0 +1,5 @@
+• Nouveau : choisis la langue de l'app parmi 13 langues (Réglages › Langue)
+• Découpe tes grosses tâches en étapes à cocher, chacune avec un jour et un rappel
+• Répartis un projet sur plusieurs jours en séances (ex. 1 h par jour)
+• Note DoFirst, partage-la ou envoie une idée depuis Réglages › À propos
+• Améliorations de stabilité et de performance

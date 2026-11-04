@@ -1,0 +1,5 @@
+• New: choose the app language from 13 languages (Settings › Language)
+• Break big tasks into steps to check off, each with a day and a reminder
+• Spread a project over several days in sessions (e.g. 1 hour a day)
+• Rate DoFirst, share it or send an idea from Settings › About
+• Stability and performance improvements

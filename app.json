@@ -1,23 +1,35 @@
 {
   "expo": {
-    "name": "Todo4Columns",
-    "slug": "Todo4Columns",
-    "version": "1.0.5",
+    "name": "DoFirst",
+    "slug": "matrice-eisenhower",
+    "version": "1.4.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.saloum.sylla.Todo4Columns"
+      "package": "com.saloum.sylla.matriceeisenhower",
+      "allowBackup": true,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "com.google.android.gms.permission.AD_ID"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/monochrome-icon.png",
+        "backgroundColor": "#0F1115"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "9c064a91-0d49-4533-91fb-8b1e63760b97"
+        "projectId": "2984d43a-475c-45c9-9ffd-882d4679408f"
       }
     },
     "plugins": [
@@ -26,10 +38,50 @@
         {
           "image": "./assets/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "imageWidth": 200
+          "backgroundColor": "#0F1115",
+          "imageWidth": 180,
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#0F1115"
+          }
+        }
+      ],
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              "./node_modules/@expo-google-fonts/manrope/400Regular/Manrope_400Regular.ttf",
+              "./node_modules/@expo-google-fonts/manrope/500Medium/Manrope_500Medium.ttf",
+              "./node_modules/@expo-google-fonts/manrope/600SemiBold/Manrope_600SemiBold.ttf",
+              "./node_modules/@expo-google-fonts/manrope/700Bold/Manrope_700Bold.ttf",
+              "./node_modules/@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf"
+            ]
+          }
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#FF7A59",
+          "defaultChannel": "reminders"
+        }
+      ],
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "# Librairies sans règles ProGuard propres (les règles de React Native et d'expo-modules-core les couvrent déjà ; gardées par sécurité)\n-keep class com.swmansion.gesturehandler.** { *; }\n-keep class com.reactnativecommunity.asyncstorage.** { *; }\n-keep class expo.modules.localization.** { *; }"
+          }
         }
       ]
-    ]
+    ],
+    "scheme": "todo4columns"
   }
 }
