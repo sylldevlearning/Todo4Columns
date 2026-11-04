@@ -12,7 +12,8 @@
     "listing:check": "node scripts/play-listing.mjs",
     "listing:apply": "node scripts/play-listing.mjs --apply",
     "release:notes": "node scripts/play-release.mjs --internal-notes",
-    "release:promote": "node scripts/play-release.mjs"
+    "release:promote": "node scripts/play-release.mjs",
+    "release:ship": "node scripts/play-ship.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/manrope": "^0.4.2",
