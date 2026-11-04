@@ -1,12 +1,11 @@
 # DoFirst (Todo4Columns) — État de la version 1.4.0
 
-> Mis à jour le 03/11/2026, branche `version-1.4.0` (créée depuis `version-1.3.0`). Version **1.4.0** dans `app.json`, finalisée.
-> Vérifié : 650 tests Jest (52 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21) et prebuild Android dans une copie du projet (versionName 1.4.0).
+> Mis à jour le 04/11/2026. Branche `version-1.4.0` (créée depuis `version-1.3.0`), fusionnée dans `master` (tag `v1.4.0`). Version **1.4.0** dans `app.json`.
+> Vérifié : 650 tests Jest (52 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21) et prebuild Android dans une copie du projet (versionName 1.4.0). Tests sur téléphone faits sur le build 8 (test interne) : tout est OK.
 > **Builds EAS :**
-> - **Production 1.2.0** (versionCode 7, build `fde044da`) : ne contient ni la 1.2.1, ni la 1.3.0, ni la 1.4.0.
-> - **APK de test 1.2.1** (profil `preview`, commit `ea7a7db`, versionCode 7 non incrémenté) : build `39ba178d-94ce-4b28-8f2a-8b65fd3d02b9`, installable hors Play Store.
-> - **Aucun build de production 1.2.1, 1.3.0 ni 1.4.0.** Le prochain build de production (1.4.0) passera au versionCode 8 (géré par EAS).
-> **Play Console :** aucun envoi fait depuis les scripts. `npm run listing:check` montre 15 changements en attente (12 nouvelles fiches, descriptions complètes fr-FR et en-US, bannière en-US).
+> - **Production 1.4.0** (versionCode 8, build `a3e87027-a20c-4a38-8bce-edd546fab421`, commit `aca1108`) : envoyé en test interne par `eas build --auto-submit`, puis promu en production à 100 % le 04/11/2026.
+> - Ancienne production : 1.2.0 (versionCode 7, build `fde044da`). Les 1.2.1 et 1.3.0 n'ont jamais eu de build de production : la 1.4.0 les contient.
+> **Play Console :** fiche (14 langues) et production 1.4.0 (notes dans les 14 langues) soumises ensemble à l'examen le 04/11/2026 par `npm run release:ship -- --confirm=1.4.0`, en une seule modification. Relu via l'API : production 1.4.0 (versionCode 8, 100 %), 14 fiches identiques aux fichiers locaux, `listing:check` sans différence. Publication automatique après l'examen (« Publication gérée » désactivée).
 
 ---
 
@@ -92,8 +91,10 @@ src/
   i18n/                 Textes des 13 langues (fr.ts fait référence ; mêmes clés et mêmes
                         paramètres vérifiés par test), langue courante (index.ts), pluriel russe
   components/fitText.ts Textes étroits : deux lignes avec césure sur Android
-scripts/play/, play-listing.mjs, play-release.mjs
-                        Publication Google Play (réutilisables dans un autre projet Expo)
+scripts/play/          Publication Google Play : lib.mjs (connexion, modifications),
+                        listing.mjs (fiches), release.mjs (promotion)
+scripts/play-listing.mjs, play-release.mjs, play-ship.mjs
+                        Commandes npm (réutilisables dans un autre projet Expo)
 store/listings/<langue>/  Fiches Play Store : title.txt, short.txt, full.txt, images/
 store/                  Notes de version (release-notes-<langue>.txt), règles de confidentialité
 ```
@@ -202,10 +203,19 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
-| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (fr-FR et en-US seulement ; les autres langues reprennent les images de la langue par défaut). 14 fiches : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
+| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (fr-FR et en-US seulement ; les autres langues reprennent les images de la langue par défaut). 14 fiches, en ligne depuis la 1.4.0 : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
 | Notes de version | `store/release-notes-<langue>.txt`, 14 fichiers (es-419 et es-ES identiques), 500 caractères maximum (1.4.0 : de 134 à 354) |
-| Envoi Google Play | `npm run listing:check` / `listing:apply` (fiches) ; `eas submit --platform android --latest` (test interne) ; `npm run release:notes` (notes du test interne) ; `npm run release:promote -- --confirm=1.4.0` (production). Clé du compte de service hors du dépôt (`C:/secrets/dofirst-play.json`, chemin dans `eas.json`) |
+| Envoi Google Play | Voir ci-dessous. Clé du compte de service hors du dépôt (`C:/secrets/dofirst-play.json`, chemin dans `eas.json`) |
 | Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
+
+**Commandes de publication** (prochaine version : remplacer 1.4.0)
+1. `eas build --platform android --profile production --auto-submit --non-interactive --no-wait` : build, puis test interne (suivi : `eas build:list`, `eas submit:list`).
+2. `npm run release:notes`, puis `npm run release:notes -- --apply` : notes de la version du test interne (`eas submit` ne les envoie pas). Vérifier d'abord que la simulation vise le bon versionCode.
+3. Tests sur téléphone.
+4. `npm run listing:check` : différences de fiche (simulation).
+5. `npm run release:ship -- --confirm=<version>` : fiche et production (100 %, notes) dans une seule modification, soumises ensemble à l'examen. Sans `--confirm`, ou avec une autre version, rien n'est envoyé.
+
+Autres commandes : `npm run listing:apply` (fiche seule) et `npm run release:promote -- --confirm=<version>` (production seule). Comme la « Publication gérée » est désactivée, ces deux commandes refusent de garder les changements en attente : il faut leur ajouter `--send-for-review`. `release:notes` valide directement (test interne).
 
 **Permissions du manifeste final**
 - **Attendues :** `INTERNET`, `VIBRATE`, `RECEIVE_BOOT_COMPLETED` et `POST_NOTIFICATIONS` (expo-notifications).
@@ -215,7 +225,7 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 
 ## 8. Points ouverts
 
-- **Tests sur téléphone :** ils restent à faire (liste ci-dessous), en particulier ce que seul un vrai build vérifie : R8, `shrinkResources`, polices intégrées et notifications.
+- **Tests sur téléphone :** faits sur le build 8 de la 1.4.0 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
