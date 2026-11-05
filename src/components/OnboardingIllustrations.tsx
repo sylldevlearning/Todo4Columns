@@ -118,18 +118,35 @@ export function GesturesIllustration() {
         <Text style={[styles.hint, { color: colors.success }]}>{t.onboarding.swipeRight} →</Text>
       </View>
 
-      <View style={styles.notification}>
-        <View style={styles.notificationHeader}>
-          <View style={[styles.appIcon, { backgroundColor: doIt.color }]} />
-          <Text style={styles.appName}>DoFirst</Text>
-        </View>
-        <Text style={styles.cardTitle}>{t.onboarding.sampleTask}</Text>
-        <Text style={styles.notificationBody}>{t.notifications.nag}</Text>
-        <View style={styles.notificationActions}>
-          <Text style={styles.notificationAction}>{t.notifications.actionDone}</Text>
-          <Text style={styles.notificationAction}>{t.notifications.actionSnooze}</Text>
-        </View>
+      <NotificationPreview />
+    </View>
+  );
+}
+
+// Notification DoFirst avec ses boutons, comme sur le téléphone
+function NotificationPreview() {
+  return (
+    <View style={styles.notification}>
+      <View style={styles.notificationHeader}>
+        <View style={[styles.appIcon, { backgroundColor: CATEGORY_BY_KEY.UI.color }]} />
+        <Text style={styles.appName}>DoFirst</Text>
       </View>
+      <Text style={styles.cardTitle}>{t.onboarding.sampleTask}</Text>
+      <Text style={styles.notificationBody}>{t.notifications.nag}</Text>
+      <View style={styles.notificationActions}>
+        <Text style={styles.notificationAction}>{t.notifications.actionDone}</Text>
+        <Text style={styles.notificationAction}>{t.notifications.actionSnooze}</Text>
+      </View>
+    </View>
+  );
+}
+
+// Écran 4 : une cloche et la notification de l'écran 3
+export function RemindersIllustration() {
+  return (
+    <View style={styles.stack} {...hidden}>
+      <Ionicons name="notifications" size={44} color={CATEGORY_BY_KEY.UI.textColor} style={styles.center} />
+      <NotificationPreview />
     </View>
   );
 }
