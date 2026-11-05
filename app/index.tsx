@@ -6,6 +6,7 @@ import BalanceCard from "../src/components/BalanceCard";
 import Fab from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
+import RemindersCard from "../src/components/RemindersCard";
 import SoonUrgentBanner from "../src/components/SoonUrgentBanner";
 import { formatToday } from "../src/format";
 import { t, useLanguage } from "../src/i18n";
@@ -46,6 +47,7 @@ export default function MatrixScreen() {
       </View>
 
       <View style={styles.balance}>
+        <RemindersCard />
         <SoonUrgentBanner />
         <BalanceCard />
       </View>
