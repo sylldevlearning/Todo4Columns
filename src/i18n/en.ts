@@ -381,6 +381,12 @@ export const en: Translations = {
       title: "Reminders and gestures",
       body: "Swipe a task right to complete it, left to delete it. Reminders arrive as notifications: tap “Done” or “Snooze 1 h” and the app opens to take care of it.",
     },
+    reminders: {
+      title: "Never miss a thing",
+      body: "DoFirst reminds you of your tasks at the right time, follows up on what's not done and lets you know when a task becomes urgent.",
+    },
+    enableReminders: "Turn on reminders",
+    remindersOn: "Reminders are on",
     sampleTask: "Send the report",
     swipeRight: "Complete",
     swipeLeft: "Delete",
@@ -456,6 +462,11 @@ export const en: Translations = {
       `This reminder falls in your quiet hours (${start}–${end}): it will arrive at ${arrival}.`,
     edit: "Change quiet hours",
     disable: "Turn off quiet hours",
+  },
+
+  remindersCard: {
+    body: "Turn on reminders so you don't forget anything",
+    enable: "Turn on",
   },
 
   permissionCard: {
@@ -637,7 +648,7 @@ export const en: Translations = {
       send: "In a “Delegate” task, “Send” opens the share sheet with a ready message for the person. You pick the app and the recipient.",
       nudge: "In a handed-off task's reminder, or in step 3 of the review, “Follow up” prepares a short reminder to send.",
       backup: "Settings › Backup: “Export my data” creates a file to keep wherever you like; “Import a backup” puts it back on this phone.",
-      permission: "Notifications turned off: when you turn on a reminder, the app offers to open your phone's settings. The status shows in Settings › Notifications.",
+      permission: "Reminders: the introduction offers to turn them on. If you say no, the app doesn't ask again every time you open it: when you turn on a reminder, it offers to allow notifications or to open your phone's settings. The status shows in Settings › Notifications.",
       quietHours: "Quiet hours (off by default, turn them on in Settings): reminders that would fall inside arrive when they end, and the task sheet lets you know when that happens.",
       steps: "In the task sheet, “Steps” breaks a task down: the card shows progress “2/5” and today's step. A step from a past day that isn't done is marked late.",
       split: "“Spread over several days” creates sessions (“Session 1/5 · 1 h”…), one per day, each with a reminder.",

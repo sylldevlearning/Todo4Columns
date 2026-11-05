@@ -382,6 +382,12 @@ export const de: Translations = {
       title: "Erinnerungen und Gesten",
       body: "Wisch eine Aufgabe nach rechts, um sie zu erledigen, nach links, um sie zu löschen. Erinnerungen kommen als Mitteilungen: Tipp auf „Erledigt“ oder „1 Std. später“, und die App öffnet sich und kümmert sich darum.",
     },
+    reminders: {
+      title: "Nichts mehr verpassen",
+      body: "DoFirst erinnert dich im richtigen Moment an deine Aufgaben, hakt bei Unerledigtem nach und sagt dir Bescheid, wenn eine Aufgabe dringend wird.",
+    },
+    enableReminders: "Erinnerungen einschalten",
+    remindersOn: "Erinnerungen sind eingeschaltet",
     sampleTask: "Bericht verschicken",
     swipeRight: "Erledigen",
     swipeLeft: "Löschen",
@@ -457,6 +463,11 @@ export const de: Translations = {
       `Diese Erinnerung fällt in deine Ruhezeit (${start}–${end}): Sie kommt um ${arrival}.`,
     edit: "Ruhezeit ändern",
     disable: "Ruhezeit ausschalten",
+  },
+
+  remindersCard: {
+    body: "Schalte Erinnerungen ein, damit du nichts vergisst",
+    enable: "Einschalten",
   },
 
   permissionCard: {
@@ -638,7 +649,7 @@ export const de: Translations = {
       send: "In einer „Abgeben“-Aufgabe öffnet „Senden“ das Teilen-Menü mit einer fertigen Nachricht für die Person. Du wählst App und Empfänger.",
       nudge: "In der Erinnerung einer abgegebenen Aufgabe oder in Schritt 3 des Rückblicks bereitet „Nachhaken“ eine kurze Nachricht zum Senden vor.",
       backup: "Einstellungen › Sicherung: „Meine Daten exportieren“ erstellt eine Datei, die du aufbewahren kannst, wo du willst; „Sicherung importieren“ spielt sie auf dieses Handy zurück.",
-      permission: "Mitteilungen ausgeschaltet: Wenn du eine Erinnerung einschaltest, bietet die App an, die Handy-Einstellungen zu öffnen. Der Status steht unter Einstellungen › Mitteilungen.",
+      permission: "Erinnerungen: Die Einführung bietet an, sie einzuschalten. Lehnst du ab, fragt die App nicht bei jedem Start erneut: Wenn du eine Erinnerung einschaltest, bietet sie an, Mitteilungen zu erlauben oder die Handy-Einstellungen zu öffnen. Der Status steht unter Einstellungen › Mitteilungen.",
       quietHours: "Ruhezeit (standardmäßig aus, in den Einstellungen einschalten): Erinnerungen, die hineinfallen würden, kommen, wenn sie endet, und die Aufgabe sagt dir, wenn das passiert.",
       steps: "In der Aufgabe teilt „Schritte“ sie auf: Die Karte zeigt den Fortschritt „2/5“ und den Schritt des Tages. Ein Schritt von einem vergangenen Tag, der nicht erledigt ist, gilt als überfällig.",
       split: "„Auf mehrere Tage verteilen“ legt Einheiten an („Einheit 1/5 · 1 Std.“…), eine pro Tag, jede mit einer Erinnerung.",

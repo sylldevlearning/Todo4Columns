@@ -382,6 +382,12 @@ export const ptBR: Translations = {
       title: "Lembretes e gestos",
       body: "Deslize uma tarefa para a direita para concluir, para a esquerda para excluir. Os lembretes chegam como notificações: toque em “Feito” ou “Adiar 1 h” e o app abre para cuidar disso.",
     },
+    reminders: {
+      title: "Não perca mais nada",
+      body: "O DoFirst lembra você das suas tarefas na hora certa, cobra o que ainda não foi feito e avisa quando uma tarefa fica urgente.",
+    },
+    enableReminders: "Ativar os lembretes",
+    remindersOn: "Os lembretes estão ativados",
     sampleTask: "Enviar o relatório",
     swipeRight: "Concluir",
     swipeLeft: "Excluir",
@@ -457,6 +463,11 @@ export const ptBR: Translations = {
       `Este lembrete cai no seu horário de silêncio (${start}–${end}): ele vai chegar às ${arrival}.`,
     edit: "Mudar o horário de silêncio",
     disable: "Desativar o horário de silêncio",
+  },
+
+  remindersCard: {
+    body: "Ative os lembretes para não esquecer nada",
+    enable: "Ativar",
   },
 
   permissionCard: {
@@ -638,7 +649,7 @@ export const ptBR: Translations = {
       send: "Numa tarefa de “Delegar”, “Enviar” abre o compartilhamento com uma mensagem pronta para a pessoa. Você escolhe o app e o destinatário.",
       nudge: "No lembrete de uma tarefa passada adiante, ou na etapa 3 da revisão, “Cobrar” prepara um lembrete curto para enviar.",
       backup: "Ajustes › Backup: “Exportar meus dados” cria um arquivo para guardar onde quiser; “Importar um backup” coloca de volta neste celular.",
-      permission: "Notificações desativadas: ao ativar um lembrete, o app oferece abrir os ajustes do celular. O status aparece em Ajustes › Notificações.",
+      permission: "Lembretes: a apresentação oferece ativá-los. Se você disser não, o app não pede de novo toda vez que você abre: ao ativar um lembrete, ele oferece permitir as notificações ou abrir os ajustes do celular. O status aparece em Ajustes › Notificações.",
       quietHours: "Horário de silêncio (desativado por padrão, ative nos Ajustes): os lembretes que cairiam nele chegam quando ele termina, e a ficha da tarefa te avisa quando isso acontece.",
       steps: "Na ficha da tarefa, “Etapas” divide uma tarefa: o cartão mostra o progresso “2/5” e a etapa do dia. Uma etapa de um dia que já passou e não foi feita aparece como atrasada.",
       split: "“Dividir em vários dias” cria sessões (“Sessão 1/5 · 1 h”…), uma por dia, cada uma com um lembrete.",

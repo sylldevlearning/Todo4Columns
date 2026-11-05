@@ -391,6 +391,12 @@ export const fr = {
       body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Les rappels arrivent en notification : touche « Fait » ou « Reporter 1 h », l'app s'ouvre et s'en occupe.",
     },
     // Textes des illustrations
+    reminders: {
+      title: "Ne rate plus rien",
+      body: "DoFirst te rappelle tes tâches au bon moment, relance ce qui n'est pas fait et te prévient quand une tâche devient urgente.",
+    },
+    enableReminders: "Activer les rappels",
+    remindersOn: "Les rappels sont activés",
     sampleTask: "Rendre le dossier",
     swipeRight: "Terminer",
     swipeLeft: "Supprimer",
@@ -531,6 +537,11 @@ export const fr = {
   },
 
   // Notifications refusées, fenêtre système plus disponible
+  remindersCard: {
+    body: "Active les rappels pour ne rien oublier",
+    enable: "Activer",
+  },
+
   permissionCard: {
     body: "Les notifications sont désactivées pour DoFirst. Sans elles, tes rappels n'arriveront pas.",
     openSettings: "Ouvrir les réglages",
@@ -661,7 +672,7 @@ export const fr = {
       send: "Dans la fiche d'une tâche « Déléguer », « Envoyer » ouvre le partage avec un message prêt pour la personne. Tu choisis l'appli et le destinataire.",
       nudge: "Dans la relance d'une tâche confiée ou à l'étape 3 de la revue, « Relancer » prépare un petit rappel à envoyer.",
       backup: "Réglages › Sauvegarde : « Exporter mes données » crée un fichier à garder où tu veux, « Importer une sauvegarde » le remet sur ce téléphone.",
-      permission: "Notifications désactivées : quand tu actives un rappel, l'app te propose d'ouvrir les réglages du téléphone. L'état s'affiche dans Réglages › Notifications.",
+      permission: "Rappels : la présentation propose de les activer. Si tu refuses, l'app ne te redemande pas à chaque lancement : quand tu actives un rappel, elle te propose de les autoriser ou d'ouvrir les réglages du téléphone. L'état s'affiche dans Réglages › Notifications.",
       quietHours: "Plage silencieuse (désactivée par défaut, à activer dans les Réglages) : les rappels qui tomberaient dedans arrivent à sa fin, et la fiche te prévient quand c'est le cas.",
       steps: "Dans la fiche, « Étapes » découpe une tâche : la carte affiche la progression « 2/5 » et l'étape du jour. Une étape d'un jour passé non faite est marquée en retard.",
       split: "« Répartir sur plusieurs jours » crée des séances (« Séance 1/5 · 1 h »…), une par jour, avec un rappel chacune.",
