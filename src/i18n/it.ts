@@ -386,6 +386,12 @@ export const itIT: Translations = {
       title: "Promemoria e gesti",
       body: "Scorri un'attività a destra per completarla, a sinistra per eliminarla. I promemoria arrivano come notifiche: tocca «Fatto» o «Rimanda 1 h» e l'app si apre per occuparsene.",
     },
+    reminders: {
+      title: "Non perderti più niente",
+      body: "DoFirst ti ricorda le attività al momento giusto, insiste su quello che non hai fatto e ti avvisa quando un'attività diventa urgente.",
+    },
+    enableReminders: "Attiva i promemoria",
+    remindersOn: "I promemoria sono attivi",
     sampleTask: "Inviare il report",
     swipeRight: "Completa",
     swipeLeft: "Elimina",
@@ -461,6 +467,11 @@ export const itIT: Translations = {
       `Questo promemoria cade nelle tue ore di silenzio (${start}–${end}): arriverà alle ${arrival}.`,
     edit: "Cambia le ore di silenzio",
     disable: "Disattiva le ore di silenzio",
+  },
+
+  remindersCard: {
+    body: "Attiva i promemoria per non dimenticare nulla",
+    enable: "Attiva",
   },
 
   permissionCard: {
@@ -643,7 +654,7 @@ export const itIT: Translations = {
       send: "In un'attività di «Delega», «Invia» apre la condivisione con un messaggio pronto per la persona. Scegli tu l'app e il destinatario.",
       nudge: "Nel promemoria di un'attività affidata, o nel passo 3 della revisione, «Ricorda» prepara un breve messaggio da inviare.",
       backup: "Impostazioni › Backup: «Esporta i miei dati» crea un file da tenere dove vuoi; «Importa un backup» lo rimette su questo telefono.",
-      permission: "Notifiche disattivate: quando attivi un promemoria, l'app propone di aprire le impostazioni del telefono. Lo stato compare in Impostazioni › Notifiche.",
+      permission: "Promemoria: la presentazione ti propone di attivarli. Se rifiuti, l'app non te lo richiede a ogni avvio: quando attivi un promemoria, ti propone di consentire le notifiche o di aprire le impostazioni del telefono. Lo stato compare in Impostazioni › Notifiche.",
       quietHours: "Ore di silenzio (disattivate di default, attivale nelle Impostazioni): i promemoria che cadrebbero dentro arrivano quando finiscono, e la scheda dell'attività te lo segnala.",
       steps: "Nella scheda dell'attività, «Passaggi» la divide: la scheda mostra l'avanzamento «2/5» e il passaggio del giorno. Un passaggio di un giorno passato non fatto è segnato in ritardo.",
       split: "«Dividi su più giorni» crea delle sessioni («Sessione 1/5 · 1 h»…), una al giorno, ognuna con un promemoria.",

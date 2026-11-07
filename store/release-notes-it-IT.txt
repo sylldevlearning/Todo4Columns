@@ -1,5 +1,2 @@
-• Novità: scegli la lingua dell'app tra 13 lingue (Impostazioni › Lingua)
-• Dividi le attività grandi in passaggi da spuntare, ognuno con un giorno e un promemoria
-• Distribuisci un progetto su più giorni in sessioni (es. 1 h al giorno)
-• Valuta DoFirst, condividila o mandaci un'idea da Impostazioni › Info
-• Miglioramenti di stabilità e prestazioni
+• Attiva i promemoria già dalla presentazione, o dalla scheda sulla matrice se aggiorni l'app
+• Piccoli miglioramenti e correzioni

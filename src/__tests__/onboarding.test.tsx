@@ -60,6 +60,8 @@ describe("présentation au premier lancement", () => {
       doNagInterval: 30,
       autoArchive: true,
       onboardingDone: true,
+      // Présentation vue : la carte de la matrice ne proposera pas les rappels
+      remindersPromptDone: true,
     })
     );
 
@@ -84,19 +86,27 @@ describe("présentation au premier lancement", () => {
     expect(screen.queryByText(firstTitle)).toBeNull();
   });
 
-  it("fait défiler les 3 écrans avec « Suivant », puis se termine avec « C'est parti »", async () => {
+  it("fait défiler les 4 écrans avec « Suivant », puis se termine avec « C'est parti »", async () => {
+    // Autorisation déjà accordée (Android 12 et avant) : le dernier écran le dit
     await launch();
-    expect(screen.getByLabelText("Écran 1 sur 3")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Écran 1 sur 4")).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "Suivant" }));
-    expect(screen.getByLabelText("Écran 2 sur 3")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Écran 2 sur 4")).toBeOnTheScreen();
     expect(screen.getByText(fr.onboarding.create.title)).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "Suivant" }));
-    expect(screen.getByLabelText("Écran 3 sur 3")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Écran 3 sur 4")).toBeOnTheScreen();
     expect(screen.getByText(fr.onboarding.gestures.title)).toBeOnTheScreen();
     // « Passer » reste visible jusqu'au dernier écran
     expect(screen.getByRole("button", { name: "Passer" })).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole("button", { name: "Suivant" }));
+    expect(screen.getByLabelText("Écran 4 sur 4")).toBeOnTheScreen();
+    expect(screen.getByRole("header", { name: "Ne rate plus rien" })).toBeOnTheScreen();
+    expect(screen.getByText("Les rappels sont activés")).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Passer" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Plus tard" })).toBeNull();
 
     await fireEvent.press(screen.getByRole("button", { name: "C'est parti" }));
     expect(screen.queryByText(firstTitle)).toBeNull();
@@ -118,8 +128,8 @@ describe("présentation au premier lancement", () => {
     await fireEvent(screen.getByTestId("onboarding-pager"), "momentumScrollEnd", {
       nativeEvent: { contentOffset: { x: width * 2, y: 0 } },
     });
-    expect(screen.getByLabelText("Écran 3 sur 3")).toBeOnTheScreen();
-    expect(screen.getByRole("button", { name: "C'est parti" })).toBeOnTheScreen();
+    expect(screen.getByLabelText("Écran 3 sur 4")).toBeOnTheScreen();
+    expect(screen.getByRole("button", { name: "Suivant" })).toBeOnTheScreen();
   });
 });
 
@@ -133,7 +143,7 @@ describe("« Revoir la présentation » dans les Réglages", () => {
 
     await fireEvent.press(screen.getByRole("button", { name: "Revoir la présentation" }));
     expect(screen.getByText(firstTitle)).toBeOnTheScreen();
-    expect(screen.getByLabelText("Écran 1 sur 3")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Écran 1 sur 4")).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
     expect(screen.queryByText(firstTitle)).toBeNull();
@@ -142,9 +152,14 @@ describe("« Revoir la présentation » dans les Réglages", () => {
 });
 
 describe("textes de la présentation", () => {
-  it("3 écrans avec un titre et un texte, en français et en anglais", () => {
+  it("4 écrans avec un titre et un texte, en français et en anglais", () => {
     for (const lang of [fr, en]) {
-      for (const page of [lang.onboarding.matrix, lang.onboarding.create, lang.onboarding.gestures]) {
+      for (const page of [
+        lang.onboarding.matrix,
+        lang.onboarding.create,
+        lang.onboarding.gestures,
+        lang.onboarding.reminders,
+      ]) {
         expect(page.title.trim()).not.toBe("");
         expect(page.body.trim()).not.toBe("");
       }

@@ -1,3 +1,4 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ComponentType, useRef, useState } from "react";
 import {
   Modal,
@@ -13,12 +14,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
+import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions } from "../store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import {
   CreateIllustration,
   GesturesIllustration,
   MatrixIllustration,
+  RemindersIllustration,
 } from "./OnboardingIllustrations";
 
 // Textes lus à l'affichage, dans la langue courante
@@ -26,25 +29,47 @@ const PAGES: { text: () => { title: string; body: string }; Illustration: Compon
   { text: () => t.onboarding.matrix, Illustration: MatrixIllustration },
   { text: () => t.onboarding.create, Illustration: CreateIllustration },
   { text: () => t.onboarding.gestures, Illustration: GesturesIllustration },
+  { text: () => t.onboarding.reminders, Illustration: RemindersIllustration },
 ];
+const REMINDERS_PAGE = PAGES.length - 1;
 
 interface Props {
-  onDone: () => void; // « Passer », « C'est parti » ou bouton retour
+  onDone: () => void; // « Passer », dernier écran terminé ou bouton retour
 }
 
-// Présentation en 3 écrans à faire défiler, avec « Passer » toujours visible
+// Présentation en 4 écrans à faire défiler, avec « Passer » jusqu'au dernier. Le dernier propose
+// d'activer les rappels : « Activer les rappels » affiche la fenêtre système d'Android, puis la
+// présentation se termine, quelle que soit la réponse ; « Plus tard » la termine sans rien demander.
 export default function Onboarding({ onDone }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const scroll = useRef<ScrollView>(null);
   const [page, setPage] = useState(0);
   const last = page === PAGES.length - 1;
+  const [permission] = usePermissionState();
+  const granted = permission === "granted";
+  const { requestNotificationPermission, updateSettings, getSettings } = useTaskActions();
+  const [asking, setAsking] = useState(false);
+
+  // L'autorisation a été proposée : la carte de la matrice ne la reproposera pas
+  const finish = () => {
+    updateSettings({ ...getSettings(), remindersPromptDone: true });
+    onDone();
+  };
+
+  const enableReminders = async () => {
+    if (asking) return;
+    setAsking(true);
+    // Refusée et fenêtre système plus disponible : la carte « Ouvrir les réglages » s'affiche
+    await requestNotificationPermission().catch(() => {});
+    finish();
+  };
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
     setPage(Math.round(e.nativeEvent.contentOffset.x / width));
 
   const next = () => {
-    if (last) return onDone();
+    if (last) return granted ? finish() : enableReminders();
     scroll.current?.scrollTo({ x: (page + 1) * width, animated: true });
     setPage(page + 1);
   };
@@ -60,9 +85,12 @@ export default function Onboarding({ onDone }: Props) {
     >
       <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + 16 }]}>
         <View style={styles.top}>
-          <Pressable accessibilityRole="button" onPress={onDone} style={styles.skip}>
-            <Text style={styles.skipText}>{t.onboarding.skip}</Text>
-          </Pressable>
+          {/* Dernier écran : « Plus tard » remplace « Passer » */}
+          {!last && (
+            <Pressable accessibilityRole="button" onPress={onDone} style={styles.skip}>
+              <Text style={styles.skipText}>{t.onboarding.skip}</Text>
+            </Pressable>
+          )}
         </View>
 
         <ScrollView
@@ -89,6 +117,12 @@ export default function Onboarding({ onDone }: Props) {
                   {text().title}
                 </Text>
                 <Text style={styles.body}>{text().body}</Text>
+                {i === REMINDERS_PAGE && granted && (
+                  <View style={styles.grantedRow}>
+                    <Ionicons name="checkmark-circle" size={22} color={colors.success} />
+                    <Text style={styles.granted}>{t.onboarding.remindersOn}</Text>
+                  </View>
+                )}
               </View>
             </ScrollView>
           ))}
@@ -109,8 +143,15 @@ export default function Onboarding({ onDone }: Props) {
             onPress={next}
             style={({ pressed }) => [styles.next, pressed && styles.pressed]}
           >
-            <Text style={styles.nextText}>{last ? t.onboarding.start : t.onboarding.next}</Text>
+            <Text style={styles.nextText}>
+              {!last ? t.onboarding.next : granted ? t.onboarding.start : t.onboarding.enableReminders}
+            </Text>
           </Pressable>
+          {last && !granted && (
+            <Pressable accessibilityRole="button" onPress={finish} disabled={asking} style={styles.later}>
+              <Text style={styles.laterText}>{t.permissionCard.later}</Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </Modal>
@@ -124,7 +165,13 @@ export function FirstLaunchOnboarding() {
   const done = useSettingsSelector((s) => s.onboardingDone);
   const { updateSettings, getSettings } = useTaskActions();
   if (!ready || done) return null;
-  return <Onboarding onDone={() => updateSettings({ ...getSettings(), onboardingDone: true })} />;
+  // Nouvelle installation : l'autorisation est proposée au dernier écran, jamais par la carte de la
+  // matrice (même après « Passer »)
+  return (
+    <Onboarding
+      onDone={() => updateSettings({ ...getSettings(), onboardingDone: true, remindersPromptDone: true })}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
@@ -137,6 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 12,
     paddingTop: 4,
+    minHeight: TOUCH_SIZE + 4, // même hauteur sans « Passer » (dernier écran)
   },
   skip: {
     minHeight: TOUCH_SIZE,
@@ -204,6 +252,28 @@ const styles = StyleSheet.create({
     fontFamily: fonts.extrabold,
     fontSize: 16,
     color: CATEGORY_BY_KEY.UI.onColor,
+  },
+  grantedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  granted: {
+    flexShrink: 1,
+    fontFamily: fonts.bold,
+    fontSize: 16,
+    color: colors.success,
+  },
+  later: {
+    minHeight: TOUCH_SIZE,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -12,
+  },
+  laterText: {
+    fontFamily: fonts.semibold,
+    fontSize: 15,
+    color: colors.textMuted,
   },
   pressed: {
     opacity: 0.85,

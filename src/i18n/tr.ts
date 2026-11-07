@@ -381,6 +381,12 @@ export const tr: Translations = {
       title: "Hatırlatmalar ve hareketler",
       body: "Bir görevi tamamlamak için sağa, silmek için sola kaydır. Hatırlatmalar bildirim olarak gelir: “Bitti” ya da “1 sa ertele”ye dokun, uygulama açılıp halleder.",
     },
+    reminders: {
+      title: "Hiçbir şeyi kaçırma",
+      body: "DoFirst görevlerini doğru zamanda hatırlatır, yapılmayanları tekrar hatırlatır ve bir görev acil hale geldiğinde seni uyarır.",
+    },
+    enableReminders: "Hatırlatıcıları aç",
+    remindersOn: "Hatırlatıcılar açık",
     sampleTask: "Raporu gönder",
     swipeRight: "Tamamla",
     swipeLeft: "Sil",
@@ -456,6 +462,11 @@ export const tr: Translations = {
       `Bu hatırlatma sessiz saatlerine denk geliyor (${start}–${end}): şu saatte gelecek: ${arrival}.`,
     edit: "Sessiz saatleri değiştir",
     disable: "Sessiz saatleri kapat",
+  },
+
+  remindersCard: {
+    body: "Hiçbir şeyi unutmamak için hatırlatıcıları aç",
+    enable: "Aç",
   },
 
   permissionCard: {
@@ -637,7 +648,7 @@ export const tr: Translations = {
       send: "Bir “Devret” görevinde “Gönder”, kişi için hazır bir mesajla paylaşım menüsünü açar. Uygulamayı ve alıcıyı sen seçersin.",
       nudge: "Devredilen bir görevin hatırlatmasında ya da değerlendirmenin 3. adımında, “Takip et” gönderilecek kısa bir mesaj hazırlar.",
       backup: "Ayarlar › Yedek: “Verilerimi dışa aktar” istediğin yerde saklayabileceğin bir dosya oluşturur; “Yedeği içe aktar” onu bu telefona geri yükler.",
-      permission: "Bildirimler kapalıysa: bir hatırlatmayı açtığında uygulama telefon ayarlarını açmayı önerir. Durum Ayarlar › Bildirimler'de görünür.",
+      permission: "Hatırlatıcılar: tanıtım ekranı onları açmayı önerir. Reddedersen uygulama her açılışta tekrar sormaz: bir hatırlatıcı açtığında bildirimlere izin vermeyi ya da telefon ayarlarını açmayı önerir. Durum Ayarlar › Bildirimler'de görünür.",
       quietHours: "Sessiz saatler (varsayılan olarak kapalı, Ayarlar'dan aç): bu aralığa düşen hatırlatmalar sessiz saatler bitince gelir, böyle olduğunda görev sayfası seni uyarır.",
       steps: "Görev sayfasında “Adımlar” görevi böler: kart “2/5” ilerlemesini ve günün adımını gösterir. Geçmiş bir güne ait, bitmemiş bir adım gecikmiş olarak işaretlenir.",
       split: "“Birkaç güne yay”, her gün bir tane olmak üzere hatırlatmalı oturumlar (“Oturum 1/5 · 1 sa”…) oluşturur.",

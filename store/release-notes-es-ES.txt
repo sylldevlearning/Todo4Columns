@@ -1,5 +1,2 @@
-• Nuevo: elige el idioma de la app entre 13 idiomas (Ajustes › Idioma)
-• Divide las tareas grandes en pasos para marcar, cada uno con un día y un recordatorio
-• Reparte un proyecto en varios días con sesiones (p. ej., 1 h al día)
-• Valora DoFirst, compártela o envíanos una idea desde Ajustes › Acerca de
-• Mejoras de estabilidad y rendimiento
+• Activa los avisos desde la presentación, o desde la tarjeta de la matriz si actualizas la app
+• Pequeñas mejoras y correcciones

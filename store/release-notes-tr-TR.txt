@@ -1,5 +1,2 @@
-• Yeni: uygulama dilini 13 dil arasından seç (Ayarlar › Dil)
-• Büyük görevleri işaretlenebilir adımlara böl, her adıma bir gün ve hatırlatıcı ver
-• Bir projeyi oturumlarla birkaç güne yay (ör. günde 1 saat)
-• Ayarlar › Hakkında bölümünden DoFirst'e puan ver, paylaş ya da fikir gönder
-• Kararlılık ve performans iyileştirmeleri
+• Hatırlatıcıları tanıtımda hemen aç; uygulamayı güncelliyorsan matristeki karttan aç
+• Küçük iyileştirmeler ve düzeltmeler

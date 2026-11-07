@@ -381,6 +381,12 @@ export const es: Translations = {
       title: "Avisos y gestos",
       body: "Desliza una tarea a la derecha para terminarla, a la izquierda para eliminarla. Los avisos llegan como notificación: toca «Hecho» o «Posponer 1 h» y la app se abre y se encarga.",
     },
+    reminders: {
+      title: "Que no se te pase nada",
+      body: "DoFirst te recuerda tus tareas en el momento justo, insiste con lo que está sin hacer y te avisa cuando una tarea se vuelve urgente.",
+    },
+    enableReminders: "Activar los avisos",
+    remindersOn: "Los avisos están activados",
     sampleTask: "Entregar el informe",
     swipeRight: "Terminar",
     swipeLeft: "Eliminar",
@@ -456,6 +462,11 @@ export const es: Translations = {
       `Este aviso cae en tus horas de silencio (${start}–${end}): llegará a las ${arrival}.`,
     edit: "Cambiar las horas",
     disable: "Desactivar las horas",
+  },
+
+  remindersCard: {
+    body: "Activa los avisos para no olvidar nada",
+    enable: "Activar",
   },
 
   permissionCard: {
@@ -637,7 +648,7 @@ export const es: Translations = {
       send: "En la ficha de una tarea «Delegar», «Enviar» abre el menú de compartir con un mensaje listo para la persona. Tú eliges la app y el destinatario.",
       nudge: "En el aviso de una tarea encargada, o en el paso 3 del repaso, «Preguntar» prepara un recordatorio corto para enviar.",
       backup: "Ajustes › Copia de seguridad: «Exportar mis datos» crea un archivo para guardar donde quieras; «Importar una copia» lo devuelve a este teléfono.",
-      permission: "Notificaciones desactivadas: cuando activas un aviso, la app te ofrece abrir los ajustes del teléfono. El estado aparece en Ajustes › Notificaciones.",
+      permission: "Avisos: la presentación te ofrece activarlos. Si dices que no, la app no vuelve a pedírtelo cada vez que la abres: cuando activas un aviso, te ofrece permitirlos o abrir los ajustes del teléfono. El estado aparece en Ajustes › Notificaciones.",
       quietHours: "Horas de silencio (desactivadas por defecto, actívalas en Ajustes): los avisos que caerían dentro llegan al final, y la ficha de la tarea te lo indica.",
       steps: "En la ficha de la tarea, «Pasos» la divide: la tarjeta muestra el progreso «2/5» y el paso de hoy. Un paso de un día pasado sin hacer se marca con retraso.",
       split: "«Repartir en varios días» crea sesiones («Sesión 1/5 · 1 h»…), una por día, cada una con su aviso.",

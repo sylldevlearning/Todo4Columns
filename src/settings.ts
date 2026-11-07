@@ -26,6 +26,9 @@ export interface Settings {
   // Demande d'avis (1.2.1), absents des réglages plus anciens
   firstUseAt?: number; // première utilisation, enregistrée à la première occasion de demander
   reviewAskedAt?: number; // dernière demande d'avis
+  // Autorisation des notifications déjà proposée (1.4.1) : écran « Ne rate plus rien » de la
+  // présentation, ou carte de la matrice. Absent : jamais proposée par l'app.
+  remindersPromptDone?: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -145,6 +148,8 @@ export function parseSettings(json: string | null): Settings {
     // Absents avant la 1.2.1, ou invalides : non renseignés
     ...(isPositiveNumber(s.firstUseAt) ? { firstUseAt: s.firstUseAt } : {}),
     ...(isPositiveNumber(s.reviewAskedAt) ? { reviewAskedAt: s.reviewAskedAt } : {}),
+    // Absent avant la 1.4.1
+    ...(s.remindersPromptDone === true ? { remindersPromptDone: true } : {}),
   };
 }
 

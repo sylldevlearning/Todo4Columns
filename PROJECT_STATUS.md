@@ -1,11 +1,11 @@
-# DoFirst (Todo4Columns) — État de la version 1.4.0
+# DoFirst (Todo4Columns) — État de la version 1.4.1
 
-> Mis à jour le 04/11/2026. Branche `version-1.4.0` (créée depuis `version-1.3.0`), fusionnée dans `master` (tag `v1.4.0`). Version **1.4.0** dans `app.json`.
-> Vérifié : 650 tests Jest (52 suites, fuseau Europe/Paris), `tsc --noEmit`, `expo-doctor` (21/21) et prebuild Android dans une copie du projet (versionName 1.4.0). Tests sur téléphone faits sur le build 8 (test interne) : tout est OK.
+> Mis à jour le 07/11/2026. Branche `version-1.4.1` (créée depuis `master` après la 1.4.0), fusionnée dans `master` (tag `v1.4.1`). Version **1.4.1** dans `app.json`.
+> Vérifié : 662 tests Jest (53 suites, fuseau Europe/Paris), `tsc --noEmit`. `expo-doctor` : 20/21, seul échec = 8 paquets Expo en retard d'un correctif (voir « Points ouverts »). Tests sur téléphone faits sur le build 9 (test interne) : tout est OK.
 > **Builds EAS :**
-> - **Production 1.4.0** (versionCode 8, build `a3e87027-a20c-4a38-8bce-edd546fab421`, commit `aca1108`) : envoyé en test interne par `eas build --auto-submit`, puis promu en production à 100 % le 04/11/2026.
-> - Ancienne production : 1.2.0 (versionCode 7, build `fde044da`). Les 1.2.1 et 1.3.0 n'ont jamais eu de build de production : la 1.4.0 les contient.
-> **Play Console :** fiche (14 langues) et production 1.4.0 (notes dans les 14 langues) soumises ensemble à l'examen le 04/11/2026 par `npm run release:ship -- --confirm=1.4.0`, en une seule modification. Relu via l'API : production 1.4.0 (versionCode 8, 100 %), 14 fiches identiques aux fichiers locaux, `listing:check` sans différence. Publication automatique après l'examen (« Publication gérée » désactivée).
+> - **Production 1.4.1** (versionCode 9, build `95682b73-4b1f-4482-8e60-82501cad1cd4`, commit `866c669`) : l'envoi automatique de `eas build --auto-submit` a échoué (« The Google Play edit is no longer valid »), car une boucle d'attente lançait `release:notes` en simulation chaque minute et ouvrait des modifications Play concurrentes. Renvoyé par `eas submit --id 95682b73…` le 07/11/2026, sans autre appel à l'API Play pendant l'envoi, puis promu en production à 100 %.
+> - Ancienne production : 1.4.0 (versionCode 8, build `a3e87027`).
+> **Play Console :** production 1.4.1 (notes dans les 14 langues) soumise à l'examen le 07/11/2026 par `npm run release:ship -- --confirm=1.4.1` (fiche : aucun changement). Relu via l'API : production 1.4.1 (versionCode 9, `completed`, 14 notes), test interne 1.4.1 (versionCode 9), `listing:check` sans différence. Publication automatique après l'examen (« Publication gérée » désactivée).
 
 ---
 
@@ -36,7 +36,11 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
 - **1.3.0** : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
-- **1.4.0** (cette branche) :
+- **1.4.1** (cette branche) :
+  - présentation : 4e écran « Ne rate plus rien », qui propose d'activer les rappels (autorisation des notifications) ;
+  - matrice : carte « Active les rappels » pour qui met à jour l'app sans revoir la présentation ; réglage `remindersPromptDone` ;
+  - textes des rappels dans les 13 langues.
+- **1.4.0** :
   - réglage « Langue » : « Automatique (langue du téléphone) » ou l'une des 13 langues, appliqué tout de suite (écrans, notifications programmées, boutons d'action, canal Android) ; en automatique, langue recalculée au retour dans l'app ;
   - 11 nouvelles langues : espagnol, portugais du Brésil, allemand, italien, indonésien, japonais, coréen, chinois simplifié, turc, hindi, russe ;
   - textes longs : sur Android, deux lignes avec césure (noms des quadrants, sous-titres, pastilles) ;
@@ -198,18 +202,18 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 
 | Élément | Valeur |
 |---|---|
-| Version | **1.4.0** (`app.json`, `package.json`) |
+| Version | **1.4.1** (`app.json`, `package.json`) |
 | versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
 | Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (fr-FR et en-US seulement ; les autres langues reprennent les images de la langue par défaut). 14 fiches, en ligne depuis la 1.4.0 : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
-| Notes de version | `store/release-notes-<langue>.txt`, 14 fichiers (es-419 et es-ES identiques), 500 caractères maximum (1.4.0 : de 134 à 354) |
+| Notes de version | `store/release-notes-<langue>.txt`, 14 fichiers (es-419 et es-ES identiques), 500 caractères maximum (1.4.1 : de 44 à 164) |
 | Envoi Google Play | Voir ci-dessous. Clé du compte de service hors du dépôt (`C:/secrets/dofirst-play.json`, chemin dans `eas.json`) |
 | Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
 
-**Commandes de publication** (prochaine version : remplacer 1.4.0)
-1. `eas build --platform android --profile production --auto-submit --non-interactive --no-wait` : build, puis test interne (suivi : `eas build:list`, `eas submit:list`).
+**Commandes de publication** (prochaine version : remplacer 1.4.1)
+1. `eas build --platform android --profile production --auto-submit --non-interactive --no-wait` : build, puis test interne (suivi : `eas build:list` et la page de l'envoi sur expo.dev ; `eas submit:list` n'existe pas). **Aucun appel à l'API Play pendant l'envoi**, même une simulation : Google Play n'accepte qu'une modification ouverte à la fois et l'envoi échoue (« The Google Play edit is no longer valid »). En cas d'échec : `eas submit -p android --profile production --id <build>`.
 2. `npm run release:notes`, puis `npm run release:notes -- --apply` : notes de la version du test interne (`eas submit` ne les envoie pas). Vérifier d'abord que la simulation vise le bon versionCode.
 3. Tests sur téléphone.
 4. `npm run listing:check` : différences de fiche (simulation).
@@ -225,7 +229,10 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 
 ## 8. Points ouverts
 
-- **Tests sur téléphone :** faits sur le build 8 de la 1.4.0 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
+- **Tests sur téléphone :** faits sur le build 9 de la 1.4.1 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
+- **À faire dans une version de maintenance :**
+  - **Paquets Expo :** 8 paquets ont un correctif de retard (`expo` 57.0.32, `expo-build-properties` 57.0.23, `expo-constants` 57.0.23, `expo-dev-client` 57.0.21, `expo-notifications` 57.0.25, `expo-router` 57.0.30, `expo-sharing` 57.0.25, `expo-splash-screen` 57.0.11). `npx expo install --fix` essayé puis annulé pour la 1.4.1 : il ajoute le plugin `expo-sharing` dans `app.json`, et le nouvel arbre de `node_modules` fait échouer 34 suites Jest (`moduleNameMapper` de jest-expo : « Could not locate module expo-asset mapped as …/node_modules/expo/node_modules/$1 »). À refaire avec la config Jest corrigée, puis tests, `expo-doctor` 21/21 et un prebuild.
+  - **Scripts Play en simulation :** `release:notes`, `release:promote`, `release:ship` et `listing:check` ouvrent une modification Play même sans `--apply`/`--confirm`, ce qui invalide une modification en cours (envoi EAS). La simulation ne doit plus ouvrir de modification qui en invaliderait une autre (lecture seule, ou refus si un envoi est en cours).
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
@@ -312,7 +319,7 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - « Noter DoFirst » ouvre la fiche dans l'app Play Store.
     - « Partager DoFirst » : message et lien corrects dans SMS ou WhatsApp.
     - « Suggérer une idée » : Gmail s'ouvre avec l'adresse, l'objet et les versions de l'app et d'Android.
-    - Numéro de version affiché : 1.4.0.
+    - Numéro de version affiché : 1.4.1.
 15. **Étapes** (1.3)
     - Appui long sur la poignée puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher, y compris avec le jour d'une étape ouvert ; le défilement de la fiche reste possible ; un appui long sur le titre sélectionne le texte.
     - TalkBack : la poignée annonce « Déplacer « … » » et propose « Monter » / « Descendre ».

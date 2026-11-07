@@ -380,6 +380,12 @@ export const id: Translations = {
       title: "Pengingat dan gerakan",
       body: "Geser tugas ke kanan untuk menyelesaikannya, ke kiri untuk menghapusnya. Pengingat datang sebagai notifikasi: ketuk “Selesai” atau “Tunda 1 jam” dan aplikasi terbuka untuk mengurusnya.",
     },
+    reminders: {
+      title: "Jangan sampai terlewat",
+      body: "DoFirst mengingatkan tugasmu di waktu yang tepat, menagih yang belum selesai, dan memberi tahu saat ada tugas yang jadi mendesak.",
+    },
+    enableReminders: "Nyalakan pengingat",
+    remindersOn: "Pengingat sudah menyala",
     sampleTask: "Kirim laporan",
     swipeRight: "Selesaikan",
     swipeLeft: "Hapus",
@@ -455,6 +461,11 @@ export const id: Translations = {
       `Pengingat ini jatuh di jam tenangmu (${start}–${end}): pengingat akan datang pukul ${arrival}.`,
     edit: "Ubah jam tenang",
     disable: "Matikan jam tenang",
+  },
+
+  remindersCard: {
+    body: "Nyalakan pengingat supaya tidak ada yang terlupa",
+    enable: "Nyalakan",
   },
 
   permissionCard: {
@@ -636,7 +647,7 @@ export const id: Translations = {
       send: "Di tugas “Delegasikan”, “Kirim” membuka menu berbagi dengan pesan siap untuk orangnya. Kamu pilih aplikasi dan penerimanya.",
       nudge: "Di pengingat tugas yang diserahkan, atau di langkah 3 tinjauan, “Tanyakan” menyiapkan pesan singkat untuk dikirim.",
       backup: "Pengaturan › Cadangan: “Ekspor dataku” membuat file untuk disimpan di mana saja; “Impor cadangan” mengembalikannya ke ponsel ini.",
-      permission: "Notifikasi mati: saat kamu menyalakan pengingat, aplikasi menawarkan untuk membuka pengaturan ponsel. Statusnya ada di Pengaturan › Notifikasi.",
+      permission: "Pengingat: pengenalan aplikasi menawarkan untuk menyalakannya. Kalau kamu menolak, aplikasi tidak bertanya lagi setiap kali dibuka: saat kamu menyalakan pengingat, aplikasi menawarkan untuk mengizinkan notifikasi atau membuka pengaturan ponsel. Statusnya ada di Pengaturan › Notifikasi.",
       quietHours: "Jam tenang (mati secara bawaan, aktifkan di Pengaturan): pengingat yang jatuh di dalamnya datang saat jam tenang berakhir, dan lembar tugas memberitahumu kalau itu terjadi.",
       steps: "Di lembar tugas, “Langkah” memecah tugas: kartu menampilkan kemajuan “2/5” dan langkah hari ini. Langkah dari hari yang sudah lewat dan belum selesai ditandai terlambat.",
       split: "“Bagi ke beberapa hari” membuat sesi (“Sesi 1/5 · 1 jam”…), satu per hari, masing-masing dengan pengingat.",
