@@ -80,6 +80,13 @@
             "extraProguardRules": "# Librairies sans règles ProGuard propres (les règles de React Native et d'expo-modules-core les couvrent déjà ; gardées par sécurité)\n-keep class com.swmansion.gesturehandler.** { *; }\n-keep class com.reactnativecommunity.asyncstorage.** { *; }\n-keep class expo.modules.localization.** { *; }"
           }
         }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "DoFirst uses the microphone to let you dictate task titles.",
+          "speechRecognitionPermission": "DoFirst uses speech recognition to turn your voice into task titles."
+        }
       ]
     ],
     "scheme": "todo4columns"
