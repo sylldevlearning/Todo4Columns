@@ -1,2 +1,4 @@
-• Hatırlatıcıları tanıtımda hemen aç; uygulamayı güncelliyorsan matristeki karttan aç
-• Küçük iyileştirmeler ve düzeltmeler
+• Yeni: son tarihlerini, adımlarını ve tekrarlanan görevlerini gün gün gösteren takvim
+• Görevlerini mikrofonla sesle yaz; "acil" ve "önemli" kelimeleri anahtarları önerir
+• Yeni bir telefonda her şeyi geri almak için Google Drive'a isteğe bağlı yedekleme
+• Hatırlatıcıları tanıtımda hemen aç

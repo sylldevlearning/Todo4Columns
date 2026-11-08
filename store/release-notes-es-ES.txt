@@ -1,2 +1,4 @@
-• Activa los avisos desde la presentación, o desde la tarjeta de la matriz si actualizas la app
-• Pequeñas mejoras y correcciones
+• Nuevo: vista de calendario con tus vencimientos, pasos y tareas recurrentes día a día
+• Dicta tus tareas con el micrófono: «mañana a las 15» se convierte en vencimiento con un toque
+• Copia opcional en tu Google Drive para recuperarlo todo en un móvil nuevo
+• Activa los avisos desde la presentación

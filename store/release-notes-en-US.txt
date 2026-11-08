@@ -1,2 +1,4 @@
-• Turn on reminders right from the intro, or from the card on the matrix if you're updating the app
-• Small improvements and fixes
+• New: calendar view with your due dates, steps and recurring tasks day by day
+• Dictate tasks with the mic: "tomorrow at 3 pm" becomes a due date in one tap
+• Optional backup to your Google Drive, to get everything back on a new phone
+• Turn on reminders right from the intro

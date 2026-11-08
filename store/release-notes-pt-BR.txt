@@ -1,2 +1,4 @@
-• Ative os lembretes já na apresentação, ou pelo cartão na matriz se você estiver atualizando o app
-• Pequenas melhorias e correções
+• Novidade: visão de calendário com prazos, etapas e tarefas recorrentes dia a dia
+• Dite suas tarefas no microfone: “amanhã às 15h” vira prazo com um toque
+• Backup opcional no seu Google Drive para recuperar tudo num celular novo
+• Ative os lembretes já na apresentação

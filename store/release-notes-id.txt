@@ -1,2 +1,4 @@
-• Nyalakan pengingat langsung dari pengenalan, atau dari kartu di matriks jika kamu memperbarui aplikasi
-• Perbaikan dan peningkatan kecil
+• Baru: tampilan kalender dengan tenggat, langkah, dan tugas berulang per hari
+• Dikte tugas lewat mikrofon: "besok jam 15" jadi tenggat dengan sekali ketuk
+• Cadangan opsional ke Google Drive-mu, untuk memulihkan semuanya di HP baru
+• Nyalakan pengingat langsung dari pengenalan

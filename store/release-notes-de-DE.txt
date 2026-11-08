@@ -1,2 +1,4 @@
-• Schalte Erinnerungen direkt in der Einführung ein – oder über die Karte auf der Matrix, wenn du die App aktualisierst
-• Kleine Verbesserungen und Fehlerbehebungen
+• Neu: Kalenderansicht mit Fälligkeiten, Schritten und wiederkehrenden Aufgaben Tag für Tag
+• Diktiere Aufgaben per Mikrofon: „morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit
+• Freiwillige Sicherung in deinem Google Drive, um alles auf einem neuen Handy zurückzuholen
+• Schalte Erinnerungen direkt in der Einführung ein

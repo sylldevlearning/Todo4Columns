@@ -1,2 +1,4 @@
-• Active les rappels dès la présentation, ou depuis la carte sur la matrice si tu mets à jour l'app
-• Petites améliorations et corrections
+• Nouveau : vue calendrier, avec tes échéances, étapes et tâches récurrentes jour par jour
+• Dicte tes tâches au micro : « demain à 15 h » devient une échéance en un appui
+• Sauvegarde facultative sur ton Google Drive, pour tout retrouver sur un nouveau téléphone
+• Active les rappels dès la présentation
