@@ -26,3 +26,24 @@ jest.mock("expo-store-review", () => ({
 // Reanimated et Worklets : mocks officiels (pas de thread UI dans Jest)
 jest.mock("react-native-worklets", () => require("react-native-worklets/src/mock"));
 jest.mock("react-native-reanimated", () => require("react-native-reanimated/mock"));
+
+// Connexion Google (sauvegarde Drive) : aucun module natif dans Jest. Les tests de la sauvegarde
+// Drive remplacent ce mock par le leur (src/drive/googleAccount).
+jest.mock("@react-native-google-signin/google-signin", () => ({
+  GoogleSignin: {
+    configure: jest.fn(),
+    hasPlayServices: jest.fn(async () => true),
+    signIn: jest.fn(async () => ({ type: "cancelled", data: null })),
+    signInSilently: jest.fn(async () => ({ type: "noSavedCredentialFound", data: null })),
+    signOut: jest.fn(async () => null),
+    getCurrentUser: jest.fn(() => null),
+    getTokens: jest.fn(async () => {
+      throw new Error("Non connecté");
+    }),
+    clearCachedAccessToken: jest.fn(async () => null),
+  },
+  statusCodes: { SIGN_IN_CANCELLED: "SIGN_IN_CANCELLED", IN_PROGRESS: "IN_PROGRESS", SIGN_IN_REQUIRED: "SIGN_IN_REQUIRED" },
+  isCancelledResponse: (r) => r?.type === "cancelled",
+  isNoSavedCredentialFoundResponse: (r) => r?.type === "noSavedCredentialFound",
+  isErrorWithCode: (e) => typeof e?.code === "string",
+}));
