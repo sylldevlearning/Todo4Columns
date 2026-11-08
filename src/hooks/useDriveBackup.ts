@@ -21,7 +21,7 @@ import { t } from "../i18n";
 import { useTaskActions } from "../store/TasksContext";
 import { collectBackupContent } from "./useBackup";
 
-type ApplyBackup = (backup: BackupContent) => Promise<boolean>;
+type ApplyBackup = (backup: BackupContent, options?: { quiet?: boolean }) => Promise<boolean>;
 
 // État de la sauvegarde Drive, partagé avec la sauvegarde automatique
 export function useDriveState() {
@@ -64,29 +64,31 @@ export function useDriveBackup(applyBackup: ApplyBackup) {
       ? t.drive.previewDate(formatShortDate(remote.createdAt))
       : t.backup.preview(remote.tasks, formatShortDate(remote.createdAt));
 
-  // Télécharge, vérifie, puis remplace les données (copie de secours, notifications reprogrammées)
-  const restoreRemote = (remote: RemoteBackup) =>
-    run(async () => {
-      let parsed;
-      try {
-        parsed = await readRemoteBackup(remote.id);
-      } catch (e) {
-        if (await handleSignedOut(e)) return;
-        console.warn("Lecture de la sauvegarde Drive impossible :", errorLabel(e));
-        showAlert(t.drive.restoreErrorTitle, t.drive.restoreErrorBody);
-        return;
-      }
-      if (!parsed.ok) {
-        if (parsed.reason === "newer") showAlert(t.backup.newerTitle, t.backup.newerBody);
-        else showAlert(t.backup.invalidTitle, t.backup.invalidBody);
-        return;
-      }
-      const { backup } = parsed;
-      if (await applyBackup(backup)) {
-        // Données identiques à la sauvegarde : pas de nouvel envoi automatique tant qu'elles ne changent pas
-        await updateDriveState({ lastHash: backupHash(buildBackup(backup, backup.createdAt)) });
-      }
-    });
+  // Télécharge, vérifie, puis remplace les données (copie de secours, notifications reprogrammées).
+  // automatic : restauration sans question (app vide), avec son propre message
+  const restoreNow = async (remote: RemoteBackup, automatic = false) => {
+    let parsed;
+    try {
+      parsed = await readRemoteBackup(remote.id);
+    } catch (e) {
+      if (await handleSignedOut(e)) return;
+      console.warn("Lecture de la sauvegarde Drive impossible :", errorLabel(e));
+      showAlert(t.drive.restoreErrorTitle, t.drive.restoreErrorBody);
+      return;
+    }
+    if (!parsed.ok) {
+      if (parsed.reason === "newer") showAlert(t.backup.newerTitle, t.backup.newerBody);
+      else showAlert(t.backup.invalidTitle, t.backup.invalidBody);
+      return;
+    }
+    const { backup } = parsed;
+    if (await applyBackup(backup, { quiet: automatic })) {
+      // Données identiques à la sauvegarde : pas de nouvel envoi automatique tant qu'elles ne changent pas
+      await updateDriveState({ lastHash: backupHash(buildBackup(backup, backup.createdAt)) });
+      if (automatic) showAlert(t.driveRestore.title, t.driveRestore.body(formatShortDate(backup.createdAt)));
+    }
+  };
+  const restoreRemote = (remote: RemoteBackup) => run(() => restoreNow(remote));
 
   const confirmRestore = (remote: RemoteBackup, title: string, cancel: string) =>
     showAlert(title, `${preview(remote)}\n\n${t.backup.confirmBody}`, [
@@ -94,8 +96,12 @@ export function useDriveBackup(applyBackup: ApplyBackup) {
       { text: t.drive.restoreAction, style: "destructive", onPress: () => void restoreRemote(remote) },
     ]);
 
-  const connect = () =>
-    run(async () => {
+  // Connexion (Réglages, présentation, carte de la matrice) ; vrai si un compte est connecté.
+  // Une sauvegarde existe déjà dans ce Drive (téléphone neuf ou réinstallé) : restaurée d'office
+  // si l'app n'a aucune tâche, sinon proposée avec son aperçu (jamais d'écrasement silencieux).
+  const connect = async (): Promise<boolean> => {
+    let connected = false;
+    await run(async () => {
       let account: string | null;
       try {
         account = await signIn();
@@ -105,16 +111,21 @@ export function useDriveBackup(applyBackup: ApplyBackup) {
         return;
       }
       if (account === null) return; // annulé
+      connected = true;
       // Première sauvegarde automatique au plus tôt dans 15 min : le temps de proposer la restauration
       await updateDriveState({ ...DEFAULT_DRIVE_STATE, account, autoBackup: true, lastAttemptAt: Date.now() });
-      // Téléphone neuf ou réinstallé : une sauvegarde existe déjà dans ce Drive, la proposer
+      let remote: RemoteBackup | null = null;
       try {
-        const remote = await latestRemoteBackup();
-        if (remote) confirmRestore(remote, t.drive.foundTitle, t.drive.later);
+        remote = await latestRemoteBackup();
       } catch (e) {
         console.warn("Liste des sauvegardes Drive impossible :", errorLabel(e));
       }
+      if (!remote) return;
+      if (actions.getTasksState().tasks.length === 0) await restoreNow(remote, true);
+      else confirmRestore(remote, t.drive.foundTitle, t.drive.later);
     });
+    return connected;
+  };
 
   const backupManually = () =>
     run(async () => {

@@ -58,7 +58,8 @@ export function useBackup() {
 
   // Copie de secours, écriture, puis remplacement en mémoire (notifications reprogrammées).
   // Vrai si les données ont été remplacées. Utilisé aussi par la restauration Google Drive.
-  const apply = async (backup: BackupContent): Promise<boolean> => {
+  // quiet : pas de message « Sauvegarde importée » (la restauration automatique a le sien)
+  const apply = async (backup: BackupContent, { quiet = false }: { quiet?: boolean } = {}): Promise<boolean> => {
     let copied = false;
     try {
       await savePreImportCopy(Date.now());
@@ -73,7 +74,7 @@ export function useBackup() {
     }
     replaceInMemory(backup);
     setLastImport(Date.now());
-    showAlert(t.backup.doneTitle, t.backup.doneBody(backup.tasks.length));
+    if (!quiet) showAlert(t.backup.doneTitle, t.backup.doneBody(backup.tasks.length));
     return true;
   };
 

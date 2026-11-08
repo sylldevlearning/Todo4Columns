@@ -267,6 +267,27 @@ describe("connexion", () => {
     expect(alerts.at(-1)!.title).toBe("Sauvegarde importée");
   });
 
+  it("app vide : la sauvegarde trouvée est restaurée d'office, avec un message daté", async () => {
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([]));
+    putRemoteBackup(new Date(2026, 10, 2, 9, 0).getTime());
+    await renderSettings();
+    await press("Sauvegarder sur Google Drive");
+    await waitFor(() => expect(tasksState.tasks.map((t) => t.id).sort()).toEqual(["a", "b"]));
+    // Pas de question, pas de « Sauvegarde importée » : un seul message
+    expect(alerts.map((a) => a.title)).toEqual(["Tâches restaurées"]);
+    expect(alerts[0].message).toBe("Tes tâches ont été restaurées (sauvegarde du 2 nov.).");
+    // Copie de secours quand même (données d'avant : aucune tâche)
+    expect(await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY)).not.toBeNull();
+  });
+
+  it("app avec des tâches : jamais d'écrasement silencieux, la restauration est demandée", async () => {
+    putRemoteBackup(Date.now() - HOUR);
+    await renderSettings();
+    await press("Sauvegarder sur Google Drive");
+    expect(alerts.at(-1)!.title).toBe("Sauvegarde trouvée");
+    expect(tasksState.tasks.map((t) => t.id)).toEqual(["local"]);
+  });
+
   it("« Plus tard » : les données du téléphone restent", async () => {
     putRemoteBackup(Date.now() - HOUR);
     await renderSettings();
