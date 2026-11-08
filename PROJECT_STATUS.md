@@ -1,9 +1,9 @@
 # DoFirst (Todo4Columns) — État de la version 1.5.0
 
-> Mis à jour le 08/11/2026. Branche `version-1.5.0` (créée depuis `master` après la 1.4.1), **non fusionnée**, sans build. Version **1.5.0** dans `app.json`.
+> Mis à jour le 09/11/2026. Branche `version-1.5.0` fusionnée dans `master`, tag `v1.5.0` (branches de version gardées). Version **1.5.0** dans `app.json`.
 > Vérifié (10/11/2026) : 776 tests Jest (60 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
-> **En production :** 1.4.1 (versionCode 9, build `95682b73`), publiée après examen (`RELEASE_LIFECYCLE_STATE_PUBLISHED` relu le 08/11/2026).
-> **Google Cloud (projet `matrice-deisenhower`, compte csgonesse@gmail.com) :** API Google Drive activée ; écran de consentement « DoFirst » (scope `drive.appdata` seul, classé non sensible), règles https://sylldevlearning-legal.vercel.app/dofirst/privacy, domaine autorisé `sylldevlearning-legal.vercel.app` ; deux clients OAuth Android pour `com.saloum.sylla.matriceeisenhower` : clé d'importation EAS (`BD:20:F7:8A…`, client existant « Client Android 1 ») et clé de signature Play (`D7:7B:86:3C…`, « DoFirst Android (clé de signature Play) »). Pas de client Web (la librairie n'en a pas besoin pour un jeton d'accès). **Application OAuth encore en « Test »** : voir « Points ouverts ».
+> **En production :** 1.5.0 (versionCode 11) soumise à l'examen le 09/11/2026 par `release:ship` (production 100 %, 14 fiches avec 7 captures chacune, Sécurité des données) ; relu par l'API : production `1.5.0 [11] completed`, 14 fiches, 7 captures par langue. Précédente : 1.4.1 (versionCode 9).
+> **Google Cloud (projet `matrice-deisenhower`, compte csgonesse@gmail.com) :** API Google Drive activée ; écran de consentement « DoFirst » (scope `drive.appdata` seul, classé non sensible), règles https://sylldevlearning-legal.vercel.app/dofirst/privacy, domaine autorisé `sylldevlearning-legal.vercel.app` ; deux clients OAuth Android pour `com.saloum.sylla.matriceeisenhower` : clé d'importation EAS (`BD:20:F7:8A…`, client existant « Client Android 1 ») et clé de signature Play (`D7:7B:86:3C…`, « DoFirst Android (clé de signature Play) »). Pas de client Web (la librairie n'en a pas besoin pour un jeton d'accès). **Application OAuth publiée (« En production ») le 09/11/2026** : aucune validation requise pour l'accès aux données (pas de scope sensible) ; le Centre de validation indique que le branding (nom « DoFirst ») n'est pas affiché aux utilisateurs tant qu'il n'est pas validé (facultatif, voir « Points ouverts »).
 
 ---
 
@@ -34,7 +34,7 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
 - **1.3.0** : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
-- **1.5.0** (cette branche) :
+- **1.5.0** (soumise à l'examen le 09/11/2026) :
   - sauvegarde Google Drive facultative (Réglages › Google Drive) : connexion Google, dossier caché `appDataFolder` (scope `drive.appdata`), sauvegarde manuelle et automatique (au plus une par jour, au passage en arrière-plan, si les données ont changé), 5 dernières gardées, restauration avec aperçu et copie de secours, proposée après connexion si une sauvegarde existe, déconnexion, suppression de la sauvegarde en ligne ; textes dans les 13 langues ;
   - vue calendrier (icône à chiffres sur la matrice) : mois, points par quadrant et nombre de tâches, échéances, étapes prévues, occurrences futures des tâches récurrentes (« Prévue », non modifiables), panneau du jour avec répartition et frise horaire, « Sans heure » ;
   - dictée du titre (micro dans la fiche, appui long sur « + ») avec la reconnaissance vocale du téléphone, autorisation au premier appui ;
@@ -220,16 +220,16 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 
 | Élément | Valeur |
 |---|---|
-| Version | **1.4.1** (`app.json`, `package.json`) |
+| Version | **1.5.0** (`app.json`, `package.json`) |
 | versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
-| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (fr-FR et en-US seulement ; les autres langues reprennent les images de la langue par défaut). 14 fiches, en ligne depuis la 1.4.0 : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
+| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/phoneScreenshots/` : 7 captures 1080×1920 par langue, générées par `npm run screenshots` (`scripts/store-screenshots/`, Playwright sur l'export web, données d'exemple hors de l'app). 14 fiches, en ligne depuis la 1.4.0 : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
 | Notes de version | `store/release-notes-<langue>.txt`, 14 fichiers (es-419 et es-ES identiques), 500 caractères maximum (1.4.1 : de 44 à 164) |
 | Envoi Google Play | Voir ci-dessous. Clé du compte de service hors du dépôt (`C:/secrets/dofirst-play.json`, chemin dans `eas.json`) |
 | Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md`, publiées (projet Vercel `sylldevlearning-legal`, `vercel --prod`) sur https://sylldevlearning-legal.vercel.app/dofirst/confidentialite et /dofirst/privacy (mises à jour le 08/11/2026 pour Google Drive) |
-| Sécurité des données | `store/data-safety-1.5.0.md` : réponses à saisir dans la Play Console (pas d'API) |
+| Sécurité des données | `store/data-safety-1.5.0.md`, saisie dans la Play Console le 09/11/2026 (pas d'API) : collecte facultative, non partagée, chiffrée, « Autre contenu généré par l'utilisateur » et « Autres actions » pour le fonctionnement de l'appli ; audio non déclaré ; pas de création de compte |
 
 **Commandes de publication** (prochaine version : remplacer 1.5.0)
 1. `eas build --platform android --profile production --auto-submit --non-interactive --no-wait` : build, puis test interne (suivi : `eas build:list` et la page de l'envoi sur expo.dev ; `eas submit:list` n'existe pas). **Aucun appel à l'API Play pendant l'envoi**, même une simulation : Google Play n'accepte qu'une modification ouverte à la fois et l'envoi échoue (« The Google Play edit is no longer valid »). En cas d'échec : `eas submit -p android --profile production --id <build>`.
@@ -251,16 +251,10 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 ## 8. Points ouverts
 
 - **Tests sur téléphone :** faits sur le build 9 de la 1.4.1 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
-- **1.5.0, reste à faire (côté développeur) :**
-  - **Publier l'application OAuth** (Google Auth Platform › Audience › « Publier l'application ») : en « Test », seuls les utilisateurs tests (aujourd'hui csgonesse@gmail.com) peuvent se connecter. Branding complet depuis le 08/11/2026 (page d'accueil https://sylldevlearning-legal.vercel.app/dofirst). `drive.appdata` est non sensible : pas de validation des scopes, mais Google peut demander une validation de la marque (nom, logo, domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console).
-  - **Adresse d'assistance de l'écran de consentement :** encore csgonesse@gmail.com. sylldevlearning@gmail.com est propriétaire du projet (IAM, Owner) depuis le 08/11/2026 : une fois l'invitation acceptée, la choisir dans Branding.
-  - **Utilisateur test :** csgonesse@gmail.com, le compte du téléphone de test (rien à ajouter).
+- **1.5.0 :** soumise à l'examen le 09/11/2026 (production, fiches, captures, Sécurité des données). Suivre l'examen dans la Play Console.
+  - **Branding OAuth (facultatif) :** pour afficher « DoFirst » sur l'écran de connexion Google, valider le branding (Google Auth Platform › Centre de validation ; domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console). Sans cela, la connexion fonctionne.
+  - **Adresse d'assistance de l'écran de consentement :** encore csgonesse@gmail.com ; sylldevlearning@gmail.com (Owner IAM) peut la remplacer dans Branding.
   - **Contacts développeur :** sylldevlearning@gmail.com et contact@sylldevlearning.fr.
-  - **Sécurité des données** à mettre à jour dans la Play Console (`store/data-safety-1.5.0.md`).
-  - **Fiches** (Google Drive ajouté dans les 14 langues) à envoyer avec la version : `listing:check` puis `release:ship`.
-  - **Notes de version 1.5.0** à écrire, build, tests sur téléphone (connexion, sauvegarde, restauration sur un 2e téléphone, hors ligne, suppression, déconnexion).
-  - **Permissions :** `RECORD_AUDIO` (dictée) s'ajoute ; règles de confidentialité et `store/data-safety-1.5.0.md` (section Audio) à jour.
-  - **Tests sur téléphone :** dictée (premier appui, refus, « Ouvrir les réglages », silence, langue de l'app, hors ligne), appui long sur +, suggestions, calendrier (glissement, frise, beaucoup de tâches).
   - **iOS :** section Google Drive masquée (pas de client OAuth iOS ni de plugin `iosUrlScheme`).
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
