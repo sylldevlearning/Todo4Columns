@@ -31,11 +31,14 @@ import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
 import StepsEditor from "./StepsEditor";
 import TitleField from "./TitleField";
+import ProgressBar from "./ProgressBar";
+import { PROGRESS_VALUES, taskProgress } from "../progress";
 
 export interface TaskFormValues extends ReminderFields {
   title: string;
   category: Category;
   steps: TaskStep[];
+  progress: number | null; // avancement réglé à la main (sans étapes)
 }
 
 interface Props {
@@ -156,6 +159,9 @@ export default function TaskForm({
   );
 
   const [steps, setSteps] = useState<TaskStep[]>(task ? stepsOf(task) : []);
+  const [progress, setProgress] = useState<number | null>(task?.progress ?? null);
+  // Étapes avec un titre : l'avancement est calculé d'après elles
+  const namedSteps = steps.filter((s) => s.title.trim() !== "");
   // Étapes à l'ouverture : une coche ou un jour changés ailleurs entre-temps ne sont pas écrasés
   const initialSteps = useRef(steps);
 
@@ -247,6 +253,7 @@ export default function TaskForm({
     title: title.trim(),
     category: category.key,
     ...reminderFields(),
+    progress,
     // Étape sans titre : retirée
     steps: keepStoredChanges(
       nextSteps.filter((s) => s.title.trim() !== "").map((s) => ({ ...s, title: s.title.trim() })),
@@ -484,6 +491,27 @@ export default function TaskForm({
         />
       </Field>
 
+      <Field label={t.progress.label} info="progress">
+        {namedSteps.length > 0 ? (
+          <View style={styles.progress}>
+            <View style={styles.progressRow}>
+              <Text style={styles.note}>{t.progress.auto}</Text>
+              <Text style={[styles.progressValue, { color: category.textColor }]}>
+                {t.progress.value(taskProgress({ steps: namedSteps, progress }) ?? 0)}
+              </Text>
+            </View>
+            <ProgressBar percent={taskProgress({ steps: namedSteps, progress }) ?? 0} color={category.color} height={6} />
+          </View>
+        ) : (
+          <OptionPills
+            options={PROGRESS_VALUES.map((value) => ({ label: t.progress.value(value), value }))}
+            value={progress ?? 0}
+            onChange={(value) => setProgress(value ?? 0)}
+            {...pillColors}
+          />
+        )}
+      </Field>
+
       {/* Rappel dans la plage silencieuse : simple information, rien n'est bloqué */}
       {quietNotice && (
         <View style={styles.quiet} accessibilityLiveRegion="polite">
@@ -538,6 +566,19 @@ export default function TaskForm({
 }
 
 const styles = StyleSheet.create({
+  progress: {
+    gap: 8,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  progressValue: {
+    fontFamily: fonts.extrabold,
+    fontSize: 16,
+  },
   container: {
     gap: 16,
   },

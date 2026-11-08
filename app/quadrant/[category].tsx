@@ -11,6 +11,7 @@ import TaskCard from "../../src/components/TaskCard";
 import TaskMenu from "../../src/components/TaskMenu";
 import TimerModal from "../../src/components/TimerModal";
 import UndoBanner from "../../src/components/UndoBanner";
+import TaskQuickPanel from "../../src/components/TaskQuickPanel";
 import { CATEGORY_BY_KEY, isCategory } from "../../src/constants/categories";
 import { offerToFinishAfterStep } from "../../src/finishPrompt";
 import { useNow } from "../../src/hooks/useNow";
@@ -119,6 +120,25 @@ export default function QuadrantScreen() {
     });
   });
 
+  // Panneau rapide (appui long) : une étape cochée passe par le même chemin que depuis la carte ;
+  // décochée, simple « Annuler »
+  const [quickTaskId, setQuickTaskId] = useState<string | null>(null);
+  const handleQuickStep = useStableCallback((taskId: string, stepId: string) => {
+    const task = tasks.find((t) => t.id === taskId);
+    const step = task && stepsOf(task).find((s) => s.id === stepId);
+    if (!task || !step) return;
+    if (!step.done) return handleCheckStep(taskId, stepId);
+    store.toggleStep(taskId, stepId);
+    offerUndo(t.progress.stepUnchecked, () => store.toggleStep(taskId, stepId));
+  });
+  const handleSetProgress = useStableCallback((taskId: string, percent: number) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task || (task.progress ?? 0) === percent) return;
+    const previous = task.progress ?? null;
+    store.updateTask(taskId, { progress: percent });
+    offerUndo(t.progress.changed(percent), () => store.updateTask(taskId, { progress: previous }));
+  });
+
   const handleDelete = useStableCallback((id: string) => {
     offerUndo(t.undo.deleted(1), restoreLater(store.removeTask(id)));
   });
@@ -167,6 +187,7 @@ export default function QuadrantScreen() {
     onSnooze: handleSnooze,
     onMoveToDo: handleMoveToDo,
     onCheckStep: handleCheckStep,
+    onLongPress: setQuickTaskId,
     settings,
     now,
   };
@@ -235,7 +256,7 @@ export default function QuadrantScreen() {
         removeClippedSubviews={false}
       />
 
-      {undo && (
+      {undo && quickTaskId === null && (
         <UndoBanner
           message={undo.message}
           onUndo={() => {
@@ -251,6 +272,23 @@ export default function QuadrantScreen() {
         iconColor={category.onColor}
         onPress={() =>
           router.push({ pathname: "/task", params: { category: category.key } })
+        }
+      />
+
+      <TaskQuickPanel
+        task={tasks.find((t) => t.id === quickTaskId) ?? null}
+        category={category}
+        onToggleStep={handleQuickStep}
+        onSetProgress={handleSetProgress}
+        onClose={() => setQuickTaskId(null)}
+        undo={
+          undo && {
+            message: undo.message,
+            onUndo: () => {
+              undo.run();
+              setUndo(null);
+            },
+          }
         }
       />
 
