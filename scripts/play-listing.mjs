@@ -2,6 +2,7 @@
 //   title.txt (30 caractères), short.txt (80), full.txt (4000)
 //   images/icon.png, images/featureGraphic.png, images/promoGraphic.png, images/tvBanner.png
 //   images/phoneScreenshots/*.png (et sevenInch-, tenInch-, tv-, wearScreenshots), dans l'ordre des noms
+//   Dossier absent : images en ligne laissées telles quelles ; dossier vide (.gitkeep) : supprimées
 //
 // node scripts/play-listing.mjs            simulation : vérifie et affiche les différences, n'envoie rien
 // node scripts/play-listing.mjs --apply    envoie, sans soumettre à l'examen

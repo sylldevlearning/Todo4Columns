@@ -272,6 +272,10 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
   - **Demande d'avis sur un APK de test :** installée hors Play Store, l'app enregistre `reviewAskedAt` alors que Google n'affiche rien ; la demande est ensuite bloquée 90 jours. Sans effet en production.
   - **Étape au titre vidé :** elle disparaît à l'enregistrement de la fiche, sans avertissement.
 
+- **À faire dans une version de maintenance :**
+  - **Message d'erreur de quota (scripts Play) :** une erreur 403 « Listing releases quota exceeded » (quota de `applications.tracks.releases.list`, appelé par la garde `scripts/play/guard.mjs`) s'affiche comme « Accès refusé : l'accès du compte de service n'est pas encore actif… », ce qui est faux. `explain()` (`scripts/play/lib.mjs`) doit reconnaître les erreurs de quota (`quota`, `rateLimitExceeded`, 429) et dire de réessayer plus tard ; la garde doit alors indiquer que la vérification des envois EAS n'a pas pu se faire (`eas status`, puis `--skip-upload-check` si aucun envoi n'est en cours).
+  - **Avertissement Node DEP0190** : `spawnSync` avec `shell: true` et des arguments (garde, appel à `eas build:list`).
+
 ### Dette technique
 
 - **Réglée en 1.2.1 :** `useTasks` découpé en hooks dédiés ; `isRecord`, `CATEGORY_KEYS`, `selectCompletions`, `isForeground` et `METRICS` (tests) mis en commun ; `Escalation.at` supprimé.
