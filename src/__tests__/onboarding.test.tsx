@@ -84,9 +84,10 @@ describe("présentation au premier lancement", () => {
         doNagInterval: 30,
         autoArchive: true,
         onboardingDone: true,
-        // Présentation vue : les cartes de la matrice ne proposeront ni les rappels ni Google Drive
+        // Présentation vue : la carte des rappels ne les reproposera pas ; passée avant l'écran
+        // Google Drive, la sauvegarde sera proposée plus tard par la carte de la matrice
         remindersPromptDone: true,
-        drivePromptDone: true,
+        driveDeferred: true,
       })
     );
 
@@ -145,6 +146,30 @@ describe("présentation au premier lancement", () => {
     await fireEvent.press(screen.getByRole("button", { name: "C'est parti" }));
     expect(screen.queryByText(firstTitle)).toBeNull();
     await waitFor(async () => expect(await loadSettings()).toMatchObject({ onboardingDone: true, drivePromptDone: true }));
+  });
+
+  it("« Passer » avant l'écran Google Drive : proposé plus tard ; sur l'écran Google Drive : non", async () => {
+    const app = await launch();
+    await next();
+    await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
+    await waitFor(async () => expect(await loadSettings()).toMatchObject({ onboardingDone: true, driveDeferred: true }));
+    expect((await loadSettings()).drivePromptDone).toBeUndefined();
+    await app.unmount();
+
+    await AsyncStorage.clear();
+    await launch();
+    for (let i = 0; i < 5; i++) await next();
+    await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
+    await waitFor(async () => expect(await loadSettings()).toMatchObject({ onboardingDone: true, drivePromptDone: true }));
+    expect((await loadSettings()).driveDeferred).toBeUndefined();
+  });
+
+  it("sans Google Drive (iOS), « Passer » ne laisse rien en attente", async () => {
+    mockDrive.available = false;
+    await launch();
+    await fireEvent.press(screen.getByRole("button", { name: "Passer" }));
+    await waitFor(async () => expect(await loadSettings()).toMatchObject({ onboardingDone: true, drivePromptDone: true }));
+    expect((await loadSettings()).driveDeferred).toBeUndefined();
   });
 
   it("Google Drive : « Plus tard » termine sans connexion", async () => {

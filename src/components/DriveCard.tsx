@@ -8,7 +8,10 @@ import { useBackup } from "../hooks/useBackup";
 import { useDriveBackup } from "../hooks/useDriveBackup";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
-import { useSettingsReady, useSettingsSelector, useTaskActions } from "../store/TasksContext";
+import { useSettingsReady, useSettingsSelector, useTaskActions, useTasksSelector } from "../store/TasksContext";
+
+// Présentation passée avant l'écran Google Drive : carte proposée à partir de ce nombre de tâches
+export const DEFERRED_DRIVE_MIN_TASKS = 10;
 import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 
 // Carte discrète de la matrice pour qui a vu la présentation avant la 1.5 : propose une seule fois
@@ -18,6 +21,11 @@ import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
 export default function DriveCard() {
   const ready = useSettingsReady();
   const eligible = useSettingsSelector((s) => s.onboardingDone && !s.drivePromptDone);
+  const deferred = useSettingsSelector((s) => s.driveDeferred === true);
+  // Assez de tâches (non archivées) pour une carte différée
+  const enoughTasks = useTasksSelector(
+    ({ tasks }) => tasks.filter((t) => t.archivedAt === null).length >= DEFERRED_DRIVE_MIN_TASKS
+  );
   // Mêmes conditions que la carte des rappels (lues avant qu'elle les modifie)
   const remindersPending = useSettingsSelector((s) => s.onboardingDone && !s.remindersPromptDone);
   const [permission] = usePermissionState();
@@ -33,16 +41,18 @@ export default function DriveCard() {
     // Réglages pas encore à jour juste après leur lecture : pas de décision tant que la carte ne
     // semble pas concernée
     if (!eligible || !isDriveAvailable()) return;
+    // Différée : décision quand l'utilisateur aura assez de tâches (peut-être plus tard dans la session)
+    if (deferred && !enoughTasks) return;
     decided.current = true;
     // La carte des rappels passe d'abord
     if (remindersPending && permission === "undetermined") return;
     // État de la connexion lu avant de décider
     loadDriveState().then((state) => {
-      updateSettings({ ...getSettings(), drivePromptDone: true });
+      updateSettings({ ...getSettings(), drivePromptDone: true, driveDeferred: undefined });
       // Déjà connecté (depuis les Réglages) : rien à proposer
       if (state.account === null) setVisible(true);
     }, () => {});
-  }, [ready, permission, eligible, remindersPending]);
+  }, [ready, permission, eligible, remindersPending, deferred, enoughTasks]);
 
   if (!visible || drive.account !== null) return null;
   const plan = CATEGORY_BY_KEY.INU;

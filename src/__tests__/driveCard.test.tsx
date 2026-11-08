@@ -8,7 +8,10 @@ import DriveCard from "../components/DriveCard";
 import RemindersCard from "../components/RemindersCard";
 import { DRIVE_STATE_KEY, getDriveState, resetDriveStateForTests } from "../drive/driveBackup";
 import * as account from "../drive/googleAccount";
+import { serializeTasks } from "../migrations";
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY } from "../settings";
+import { STORAGE_KEY } from "../storage";
+import { makeTask } from "../testing/makeTask";
 import { TasksProvider } from "../store/TasksContext";
 import { METRICS } from "../testing/metrics";
 
@@ -90,6 +93,45 @@ describe("carte Google Drive de la matrice (mise à jour)", () => {
     await app.unmount();
     await launch();
     expect(remindersCard()).toBeNull();
+    expect(driveCard()).toBeOnTheScreen();
+  });
+
+  it("présentation passée avant Google Drive : carte une seule fois, à partir de 10 tâches", async () => {
+    const tasks = (n: number) => Array.from({ length: n }, (_, i) => makeTask({ id: `t${i}`, title: `Tâche ${i}` }));
+    await saveRaw({ ...DEFAULT_SETTINGS, onboardingDone: true, remindersPromptDone: true, driveDeferred: true });
+    // 9 tâches (et une archivée, qui ne compte pas) : pas encore
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks([...tasks(9), makeTask({ id: "arch", title: "Archivée", archivedAt: 1 })]));
+    let app = await launch();
+    expect(driveCard()).toBeNull();
+    expect((await loadSettings()).drivePromptDone).toBeUndefined();
+    await app.unmount();
+
+    // 10 tâches : la carte s'affiche, notée comme proposée
+    await AsyncStorage.setItem(STORAGE_KEY, serializeTasks(tasks(10)));
+    app = await launch();
+    expect(driveCard()).toBeOnTheScreen();
+    await waitFor(async () => expect(await loadSettings()).toMatchObject({ drivePromptDone: true }));
+    expect((await loadSettings()).driveDeferred).toBeUndefined();
+    await app.unmount();
+
+    // Plus jamais ensuite
+    await launch();
+    expect(driveCard()).toBeNull();
+  });
+
+  it("différée et 10 tâches, mais carte des rappels à afficher : elle passe d'abord", async () => {
+    notifications.__state.permission = "undetermined";
+    await saveRaw({ ...DEFAULT_SETTINGS, onboardingDone: true, driveDeferred: true });
+    await AsyncStorage.setItem(
+      STORAGE_KEY,
+      serializeTasks(Array.from({ length: 12 }, (_, i) => makeTask({ id: `t${i}`, title: `Tâche ${i}` })))
+    );
+    const app = await launch();
+    expect(remindersCard()).toBeOnTheScreen();
+    expect(driveCard()).toBeNull();
+    await waitFor(async () => expect((await loadSettings()).remindersPromptDone).toBe(true));
+    await app.unmount();
+    await launch();
     expect(driveCard()).toBeOnTheScreen();
   });
 

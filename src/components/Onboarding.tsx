@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { ComponentType, useRef, useState } from "react";
+import React, { ComponentType, useEffect, useRef, useState } from "react";
+import { Settings } from "../settings";
 import {
   Modal,
   NativeScrollEvent,
@@ -44,6 +45,9 @@ const ALL_PAGES: { id: PageId; text: () => { title: string; body: string }; Illu
 
 interface Props {
   onDone: () => void; // « Passer », dernier écran terminé ou bouton retour
+  // Réglages écrits en même temps à la fin (présentation du premier lancement : onboardingDone).
+  // Une seule écriture : deux à la suite s'écraseraient (getSettings est lu au rendu suivant).
+  extraSettings?: Partial<Settings>;
 }
 
 // Présentation à faire défiler, avec « Passer » sur chaque écran.
@@ -52,7 +56,7 @@ interface Props {
 // - « Sauvegarde Google Drive » (facultative, dernier écran) : « Se connecter » ouvre la connexion
 //   Google (sauvegarde automatique activée, restauration d'une sauvegarde existante) ;
 //   « Plus tard » termine sans connexion.
-export default function Onboarding({ onDone }: Props) {
+export default function Onboarding({ onDone, extraSettings }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const scroll = useRef<ScrollView>(null);
@@ -68,9 +72,23 @@ export default function Onboarding({ onDone }: Props) {
   const drive = useDriveBackup(backup.applyBackup);
   const connected = drive.account !== null;
 
-  // Rappels et sauvegarde proposés : les cartes de la matrice ne les reproposeront pas
+  // Écran Google Drive affiché au moins une fois
+  const sawDrive = useRef(false);
+  useEffect(() => {
+    if (current === "drive") sawDrive.current = true;
+  }, [current]);
+
+  // Rappels et sauvegarde proposés : les cartes de la matrice ne les reproposeront pas. Passée
+  // avant l'écran Google Drive (« Passer », bouton retour), la sauvegarde n'a pas été vue : la
+  // carte de la matrice la proposera une fois, plus tard (10 tâches).
   const finish = () => {
-    updateSettings({ ...getSettings(), remindersPromptDone: true, drivePromptDone: true });
+    const settings = getSettings();
+    const driveSkipped = PAGES.some((p) => p.id === "drive") && !sawDrive.current && current !== "drive";
+    const drive =
+      driveSkipped && !settings.drivePromptDone
+        ? { driveDeferred: true }
+        : { drivePromptDone: true, driveDeferred: undefined };
+    updateSettings({ ...settings, remindersPromptDone: true, ...drive, ...extraSettings });
     onDone();
   };
 
@@ -114,7 +132,7 @@ export default function Onboarding({ onDone }: Props) {
       animationType="fade"
       statusBarTranslucent
       navigationBarTranslucent
-      onRequestClose={onDone}
+      onRequestClose={finish}
       testID="onboarding"
     >
       <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + 16 }]}>
@@ -201,15 +219,9 @@ export function FirstLaunchOnboarding() {
   const done = useSettingsSelector((s) => s.onboardingDone);
   const { updateSettings, getSettings } = useTaskActions();
   if (!ready || done) return null;
-  // Nouvelle installation : rappels et sauvegarde sont proposés dans la présentation, jamais par
-  // les cartes de la matrice (même après « Passer »)
-  return (
-    <Onboarding
-      onDone={() =>
-        updateSettings({ ...getSettings(), onboardingDone: true, remindersPromptDone: true, drivePromptDone: true })
-      }
-    />
-  );
+  // Nouvelle installation : rappels et sauvegarde sont proposés dans la présentation, pas par les
+  // cartes de la matrice ; seule exception : présentation passée avant l'écran Google Drive
+  return <Onboarding extraSettings={{ onboardingDone: true }} onDone={() => {}} />;
 }
 
 const styles = StyleSheet.create({

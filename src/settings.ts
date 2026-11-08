@@ -31,6 +31,9 @@ export interface Settings {
   remindersPromptDone?: boolean;
   // Sauvegarde Google Drive déjà proposée (1.5) : écran de la présentation, ou carte de la matrice
   drivePromptDone?: boolean;
+  // Présentation passée avant l'écran Google Drive (1.5) : la carte de la matrice le proposera une
+  // fois, quand il y aura au moins 10 tâches
+  driveDeferred?: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -154,6 +157,7 @@ export function parseSettings(json: string | null): Settings {
     ...(s.remindersPromptDone === true ? { remindersPromptDone: true } : {}),
     // Absent avant la 1.5
     ...(s.drivePromptDone === true ? { drivePromptDone: true } : {}),
+    ...(s.driveDeferred === true ? { driveDeferred: true } : {}),
   };
 }
 
