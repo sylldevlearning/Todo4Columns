@@ -19,6 +19,8 @@ const RUNNING = new Set(["NEW", "IN_QUEUE", "IN_PROGRESS", "PENDING_CANCEL"]);
 // Builds de production qui peuvent avoir un envoi en cours (fonction pure, testée)
 export function pendingUploads(builds, knownCodes, now = Date.now(), windowMs = UPLOAD_WINDOW_MS) {
   const pending = [];
+  // Un build plus ancien que la version la plus récente des canaux a été remplacé, pas en cours
+  const highest = Math.max(0, ...[...knownCodes].map(Number).filter(Number.isFinite));
   for (const build of builds) {
     if (build.platform && build.platform !== "ANDROID") continue;
     if (build.distribution && build.distribution !== "STORE") continue;
@@ -27,7 +29,7 @@ export function pendingUploads(builds, knownCodes, now = Date.now(), windowMs = 
       pending.push({ id: build.id, versionCode: code, reason: "build en cours (l'envoi automatique peut suivre)" });
       continue;
     }
-    if (build.status !== "FINISHED" || !code || knownCodes.has(code)) continue;
+    if (build.status !== "FINISHED" || !code || knownCodes.has(code) || Number(code) < highest) continue;
     const finished = Date.parse(build.completedAt ?? "");
     if (Number.isFinite(finished) && now - finished < windowMs) {
       pending.push({ id: build.id, versionCode: code, reason: "build terminé, versionCode absent des canaux" });

@@ -33,6 +33,10 @@ test("build terminé depuis plus longtemps que la fenêtre : rien en cours", () 
   assert.deepEqual(pendingUploads([build({ completedAt: old })], new Set(), NOW), []);
 });
 
+test("build remplacé par une version plus récente sur un canal : rien en cours", () => {
+  assert.deepEqual(pendingUploads([build({ appBuildVersion: "10" })], new Set(["9", "11"]), NOW), []);
+});
+
 test("builds en échec, annulés, iOS ou hors store : ignorés", () => {
   const builds = [
     build({ status: "ERRORED" }),
