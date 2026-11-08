@@ -1,18 +1,18 @@
 # DoFirst Privacy Policy
 
-Last updated: October 25, 2026
+Last updated: November 8, 2026
 
-DoFirst is an Android task manager based on the Eisenhower matrix. This policy explains what the app does with your data. In short: **DoFirst collects no data and sends nothing to anyone.**
+DoFirst is an Android task manager based on the Eisenhower matrix. This policy explains what the app does with your data. In short: **DoFirst collects no data. Your data stays on your phone and, only if you turn on Google Drive backup, in your own Google Drive.**
 
 ## No data collected or sent
 
-- DoFirst does not collect, transmit, sell or share any personal data.
+- DoFirst does not collect, sell or share any personal data. Nothing is sent to the developer.
 - The app contains no analytics, usage statistics, advertising tracking or crash reporting tools.
 - No DoFirst server receives your tasks or settings: there isn't one.
 
 ## No account
 
-DoFirst works without an account, sign-up, email address or phone number.
+DoFirst works without an account, sign-up, email address or phone number. Signing in with a Google account is only used for Google Drive backup, which is optional.
 
 ## No ads
 
@@ -28,6 +28,19 @@ You can delete everything at any time by clearing DoFirst's data in Android sett
 
 If you have turned on your phone's backup (Android settings, Google account), Android may include DoFirst's data in that backup, as it does for other apps. This backup is managed by Google according to your settings and Google's own privacy policy; DoFirst has no access to it. You can turn it off in Android settings.
 
+## Google Drive backup (optional)
+
+In Settings › Google Drive, you can connect your Google account to back up your data to your own Google Drive. Without this connection, nothing is sent anywhere. The app never asks you to sign in at launch.
+
+DoFirst requests a single permission: drive.appdata. It only gives access to a hidden folder in your Google Drive reserved for DoFirst. DoFirst cannot see your Drive files or folders, and this hidden folder does not appear among them.
+
+- Content: the same file as the export (tasks, settings, completed-task log, review history). The last 5 backups are kept.
+- Transfer: directly from your phone to Google Drive, over an encrypted connection (HTTPS). No DoFirst server is involved and the developer has no access to these backups.
+- Automatic backup (can be turned off): at most once a day, when you leave the app and your data has changed.
+- Account: the email address of the connected account is shown in the app and kept on your phone only. Sign-in is handled by Google Sign-In; DoFirst does not store your access tokens.
+- Control: "Sign out" stops backups; "Delete my online backup" erases all DoFirst backups from your Drive. You can also remove DoFirst's access at any time at myaccount.google.com/permissions.
+
+Backups are stored by Google under Google's privacy policy. DoFirst's use and transfer to any other app of information received from Google APIs will adhere to the Google API Services User Data Policy, including the Limited Use requirements.
 ## Export files, only when you ask
 
 When you tap "Export my data", DoFirst creates a backup file and opens the Android share sheet: you choose where to send it (Drive, email…). The temporary file is deleted the next time the app starts. Nothing is exported without your action.
