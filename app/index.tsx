@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "../src/components/BalanceCard";
-import Fab from "../src/components/Fab";
+import Fab, { MicFab } from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
 import RemindersCard from "../src/components/RemindersCard";
@@ -64,6 +64,7 @@ export default function MatrixScreen() {
         />
       </View>
 
+      <MicFab label={t.quick.dictate} onPress={() => router.push({ pathname: "/task", params: { voice: "1" } })} />
       <Fab
         label={t.matrix.newTask}
         onPress={() => router.push("/task")}
