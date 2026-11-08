@@ -4,6 +4,15 @@
 // Titres : [ligne 1, ligne 2 en couleur, sous-titre], dans l'ordre des 7 écrans
 // matrice, dictée, calendrier, avancement, bilan, revue, sauvegarde
 export const TITLES = {
+  fr: [
+    ["Fais d’abord", "ce qui compte", "Tes tâches rangées en 4 cases, en un coup d’œil"],
+    ["Dicte ta tâche,", "l’app la range", "Un micro, deux questions, et c’est classé"],
+    ["Ta journée", "en un coup d’œil", "Calendrier et frise horaire de chaque jour"],
+    ["Avance", "pas à pas", "Étapes, séances et % d’avancement"],
+    ["Moins d’urgences,", "plus d’anticipation", "Ton équilibre, semaine après semaine"],
+    ["Ta revue", "de la semaine", "5 minutes pour choisir tes priorités"],
+    ["Tes tâches", "en sécurité", "Sauvegarde Google Drive facultative"],
+  ],
   en: [
     ["Do first", "what matters", "Your tasks sorted into 4 boxes, at a glance"],
     ["Say your task,", "the app sorts it", "A mic, two questions, and it's filed"],
@@ -120,27 +129,36 @@ export const THEMES = ["red", "blue", "blue", "red", "blue", "gold", "gold"];
 // Tâches d'exemple : Faire ×3, Planifier ×3 (dont un projet en 5 étapes), Déléguer ×2,
 // Si j'ai le temps ×2 ; titre dicté ; personne à qui on délègue
 export const SAMPLES = {
+  fr: {
+    do: ["Appeler le plombier", "Payer la facture d’eau", "Rendre le dossier"],
+    plan: ["Préparer l’exposé", "Réviser le permis", "Faire du sport"],
+    steps: ["Réunir les sources", "Faire le plan", "Créer les diapos", "Répéter", "Envoyer à l’équipe"],
+    delegate: ["Réserver la salle", "Relancer le devis"],
+    someday: ["Trier les photos", "Ranger le garage"],
+    person: "Marie",
+    dictated: "Rendre le dossier client",
+  },
   en: {
     do: ["Call the plumber", "Pay the water bill", "Send the client file"],
-    plan: ["Prepare the presentation", "Study for the driving test", "Go for a run"],
+    plan: ["Prepare the talk", "Study for the test", "Go for a run"],
     steps: ["Gather sources", "Write the outline", "Make the slides", "Rehearse", "Send to the team"],
-    delegate: ["Book the meeting room", "Follow up on the quote"],
+    delegate: ["Book the room", "Chase the quote"],
     someday: ["Sort the photos", "Tidy the garage"],
     person: "Sarah",
     dictated: "Send the client file",
   },
   es: {
-    do: ["Llamar al fontanero", "Pagar la factura del agua", "Entregar el informe del cliente"],
-    plan: ["Preparar la presentación", "Estudiar para el carné", "Salir a correr"],
+    do: ["Llamar al fontanero", "Pagar el agua", "Entregar el informe"],
+    plan: ["Preparar la charla", "Estudiar el carné", "Salir a correr"],
     steps: ["Reunir fuentes", "Hacer el esquema", "Crear las diapositivas", "Ensayar", "Enviar al equipo"],
-    delegate: ["Reservar la sala", "Reclamar el presupuesto"],
+    delegate: ["Reservar la sala", "Pedir presupuesto"],
     someday: ["Ordenar las fotos", "Ordenar el garaje"],
     person: "Lucía",
     dictated: "Entregar el informe del cliente",
   },
   "pt-BR": {
-    do: ["Ligar para o encanador", "Pagar a conta de água", "Entregar o relatório do cliente"],
-    plan: ["Preparar a apresentação", "Estudar para a autoescola", "Correr no parque"],
+    do: ["Ligar pro encanador", "Pagar a conta de água", "Entregar o relatório"],
+    plan: ["Preparar palestra", "Aula de direção", "Correr no parque"],
     steps: ["Juntar as fontes", "Fazer o roteiro", "Montar os slides", "Ensaiar", "Enviar para a equipe"],
     delegate: ["Reservar a sala", "Cobrar o orçamento"],
     someday: ["Organizar as fotos", "Arrumar a garagem"],
@@ -148,19 +166,19 @@ export const SAMPLES = {
     dictated: "Entregar o relatório do cliente",
   },
   de: {
-    do: ["Klempner anrufen", "Wasserrechnung bezahlen", "Kundenunterlagen abgeben"],
-    plan: ["Präsentation vorbereiten", "Für die Fahrprüfung lernen", "Joggen gehen"],
+    do: ["Klempner anrufen", "Rechnung bezahlen", "Akte abgeben"],
+    plan: ["Vortrag planen", "Für Prüfung lernen", "Joggen gehen"],
     steps: ["Quellen sammeln", "Gliederung schreiben", "Folien erstellen", "Proben", "An das Team schicken"],
-    delegate: ["Besprechungsraum buchen", "Angebot nachfragen"],
+    delegate: ["Raum buchen", "Angebot nachfragen"],
     someday: ["Fotos sortieren", "Garage aufräumen"],
     person: "Anna",
-    dictated: "Kundenunterlagen abgeben",
+    dictated: "Kundenakte abgeben",
   },
   it: {
-    do: ["Chiamare l'idraulico", "Pagare la bolletta dell'acqua", "Consegnare la pratica del cliente"],
-    plan: ["Preparare la presentazione", "Studiare per la patente", "Andare a correre"],
+    do: ["Chiamare l'idraulico", "Pagare la bolletta", "Consegnare il file"],
+    plan: ["Preparare il talk", "Ripassare la patente", "Andare a correre"],
     steps: ["Raccogliere le fonti", "Scrivere la scaletta", "Preparare le slide", "Provare", "Inviare al team"],
-    delegate: ["Prenotare la sala", "Sollecitare il preventivo"],
+    delegate: ["Prenotare la sala", "Chiedere preventivo"],
     someday: ["Ordinare le foto", "Sistemare il garage"],
     person: "Giulia",
     dictated: "Consegnare la pratica del cliente",
@@ -169,7 +187,7 @@ export const SAMPLES = {
     do: ["Telepon tukang ledeng", "Bayar tagihan air", "Kirim berkas klien"],
     plan: ["Siapkan presentasi", "Belajar ujian SIM", "Lari pagi"],
     steps: ["Kumpulkan sumber", "Buat kerangka", "Buat slide", "Latihan", "Kirim ke tim"],
-    delegate: ["Pesan ruang rapat", "Tanyakan penawaran harga"],
+    delegate: ["Pesan ruang rapat", "Minta penawaran"],
     someday: ["Rapikan foto", "Bereskan garasi"],
     person: "Sari",
     dictated: "Kirim berkas klien",
@@ -202,7 +220,7 @@ export const SAMPLES = {
     dictated: "提交客户资料",
   },
   tr: {
-    do: ["Tesisatçıyı ara", "Su faturasını öde", "Müşteri dosyasını teslim et"],
+    do: ["Tesisatçıyı ara", "Su faturasını öde", "Dosyayı teslim et"],
     plan: ["Sunumu hazırla", "Ehliyet sınavına çalış", "Koşuya çık"],
     steps: ["Kaynakları topla", "Taslağı yaz", "Slaytları hazırla", "Prova yap", "Ekibe gönder"],
     delegate: ["Toplantı odasını ayırt", "Teklifi takip et"],
@@ -220,11 +238,11 @@ export const SAMPLES = {
     dictated: "क्लाइंट की फ़ाइल जमा करो",
   },
   ru: {
-    do: ["Позвонить сантехнику", "Оплатить счёт за воду", "Сдать документы клиента"],
-    plan: ["Подготовить презентацию", "Готовиться к экзамену на права", "Пробежка"],
+    do: ["Позвонить сантехнику", "Оплатить счёт за воду", "Сдать документы"],
+    plan: ["Сделать доклад", "Учить ПДД", "Пробежка"],
     steps: ["Собрать источники", "Составить план", "Сделать слайды", "Отрепетировать", "Отправить команде"],
-    delegate: ["Забронировать переговорную", "Напомнить про смету"],
-    someday: ["Разобрать фотографии", "Убраться в гараже"],
+    delegate: ["Забронировать зал", "Напомнить про смету"],
+    someday: ["Разобрать фото", "Убраться в гараже"],
     person: "Анна",
     dictated: "Сдать документы клиента",
   },
@@ -232,6 +250,7 @@ export const SAMPLES = {
 
 // Fiches et langue de l'app correspondante (es-ES et es-419 partagent les captures)
 export const LISTINGS = {
+  "fr-FR": "fr",
   "en-US": "en",
   "es-ES": "es",
   "es-419": "es",

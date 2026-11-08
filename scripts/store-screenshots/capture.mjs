@@ -82,6 +82,53 @@ const FIX_SWITCH_THUMBS = () => {
   }
 };
 
+// Texte qui dépasse de sa boîte, au demi-pixel près (le navigateur met « … » dès le moindre
+// dépassement) : largeur réelle du texte mesurée avec un Range
+const OVERFLOWS = `(el) => {
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const text = range.getBoundingClientRect();
+  const box = el.getBoundingClientRect();
+  const cs = getComputedStyle(el);
+  const inner = box.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  return text.width > inner + 0.5 || el.scrollHeight > el.clientHeight + 1;
+}`;
+const isClamped = `(cs) => cs.textOverflow === "ellipsis" || (cs.webkitLineClamp && cs.webkitLineClamp !== "none")`;
+
+// Textes coupés par « … » (une ligne ou nombre de lignes limité) : relevés pour les éviter
+const FIND_TRUNCATED = ([overflowsSrc, clampedSrc]) => {
+  const overflows = eval(overflowsSrc);
+  const clamped = eval(clampedSrc);
+  const cut = [];
+  for (const el of document.querySelectorAll("div, span")) {
+    if (!clamped(getComputedStyle(el)) || !el.textContent) continue;
+    if (overflows(el)) cut.push(el.textContent.trim());
+  }
+  return [...new Set(cut)];
+};
+export const truncated = [];
+
+// Réduit la police d'un texte coupé jusqu'à ce qu'il tienne (75 % au plus), sauf les titres de
+// tâches (données d'exemple, à raccourcir plutôt)
+const SHRINK_APP_TEXTS = ([taskTitles, overflowsSrc, clampedSrc]) => {
+  const overflows = eval(overflowsSrc);
+  const clamped = eval(clampedSrc);
+  const titles = new Set(taskTitles);
+  for (const el of document.querySelectorAll("div, span")) {
+    const cs = getComputedStyle(el);
+    if (!clamped(cs)) continue;
+    const text = el.textContent?.trim();
+    if (!text || titles.has(text)) continue;
+    const start = parseFloat(cs.fontSize);
+    let size = start;
+    const over = () => overflows(el);
+    while (over() && size > start * 0.75) {
+      size -= 0.5;
+      el.style.fontSize = `${size}px`;
+    }
+  }
+};
+
 async function settle(page, ms = 900) {
   await page.waitForLoadState("networkidle").catch(() => {});
   await page.waitForTimeout(ms);
@@ -118,8 +165,11 @@ async function captureLanguage(browser, language, base) {
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  const taskTitles = Object.values(SAMPLES[language]).flat().filter((v) => typeof v === "string");
   const shot = async (i, target = page) => {
     await target.evaluate(FIX_SWITCH_THUMBS);
+    await target.evaluate(SHRINK_APP_TEXTS, [taskTitles, OVERFLOWS, isClamped]);
+    for (const text of await target.evaluate(FIND_TRUNCATED, [OVERFLOWS, isClamped])) truncated.push(`${language} · ${SCREENS[i]} : ${text}`);
     await target.screenshot({ path: path.join(dir, `${i + 1}-${SCREENS[i]}.png`) });
   };
 
@@ -279,3 +329,7 @@ try {
   await browser.close();
   server.close();
 }
+if (truncated.length) {
+  console.warn(`\n⚠ Textes coupés par « … » (à raccourcir dans data.mjs) :\n  ${truncated.join("\n  ")}`);
+  process.exitCode = 2;
+} else console.log("\n✔ Aucun texte coupé par « … »");
