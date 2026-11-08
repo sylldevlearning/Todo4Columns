@@ -14,7 +14,8 @@
     "listing:apply": "node scripts/play-listing.mjs --apply",
     "release:notes": "node scripts/play-release.mjs --internal-notes",
     "release:promote": "node scripts/play-release.mjs",
-    "release:ship": "node scripts/play-ship.mjs"
+    "release:ship": "node scripts/play-ship.mjs",
+    "screenshots": "npm --prefix scripts/store-screenshots install --no-audit --no-fund && npx --prefix scripts/store-screenshots playwright install chromium && node scripts/store-screenshots/capture.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/manrope": "^0.4.2",
