@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
+import DriveAutoBackup from "../src/components/DriveAutoBackup";
 import EscalationNotice from "../src/components/EscalationNotice";
 import LoadErrorGate from "../src/components/LoadErrorGate";
 import PermissionCard from "../src/components/PermissionCard";
@@ -139,6 +140,7 @@ export default function RootLayout() {
             <EscalationNotice />
             <PermissionCard />
             <ReviewPrompter />
+            <DriveAutoBackup />
           </Celebrations>
         </TasksProvider>
       </SafeAreaProvider>
