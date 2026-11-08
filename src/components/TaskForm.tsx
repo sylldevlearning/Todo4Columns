@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode, useRef, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { DateSuggestion } from "../smartInput";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
 import { offerToFinishAfterStep } from "../finishPrompt";
 import { t, translated } from "../i18n";
@@ -29,6 +30,7 @@ import DueDateField from "./DueDateField";
 import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
 import StepsEditor from "./StepsEditor";
+import TitleField from "./TitleField";
 
 export interface TaskFormValues extends ReminderFields {
   title: string;
@@ -39,6 +41,7 @@ export interface TaskFormValues extends ReminderFields {
 interface Props {
   task?: Task; // modification
   initialCategory?: Category; // création depuis un quadrant
+  autoStartVoice?: boolean; // appui long sur « + » : la dictée démarre à l'ouverture
   settings: Settings;
   notificationsDenied?: boolean; // autorisation refusée : les rappels ne s'afficheront pas
   onOpenSettings?: () => void;
@@ -117,6 +120,7 @@ function LinkButton({ label, onPress }: { label: string; onPress: () => void }) 
 export default function TaskForm({
   task,
   initialCategory,
+  autoStartVoice = false,
   settings,
   notificationsDenied = false,
   onOpenSettings,
@@ -162,6 +166,14 @@ export default function TaskForm({
   const changeDue = (value: number | null) => {
     setPlanDue(value);
     if (value === null) setRecurrence(null);
+  };
+
+  // Suggestion « Échéance : … » appliquée : titre sans l'expression et échéance. « Si j'ai le
+  // temps » n'a pas d'échéance : la tâche passe en « Planifier » pour la garder.
+  const applyDate = (date: DateSuggestion) => {
+    setTitle(date.title);
+    setPlanDue(date.due);
+    if (!urgent && !important) setImportant(true);
   };
 
   // Choix de la répétition ; sans échéance, la prochaine occurrence à 9 h est proposée
@@ -269,16 +281,18 @@ export default function TaskForm({
         {task ? t.form.editTitle : t.form.newTitle}
       </Text>
 
-      <TextInput
-        style={styles.titleInput}
-        placeholder={t.form.titlePlaceholder}
-        placeholderTextColor={colors.textMuted}
+      <TitleField
         value={title}
         onChangeText={setTitle}
-        autoFocus={!task}
-        returnKeyType="done"
         onSubmitEditing={submit}
-        accessibilityLabel={t.form.titleLabel}
+        autoFocus={!task}
+        autoStartVoice={autoStartVoice}
+        urgent={urgent}
+        important={important}
+        accent={category.textColor}
+        onApplyDate={applyDate}
+        onTurnOnUrgent={() => setUrgent(true)}
+        onTurnOnImportant={() => setImportant(true)}
       />
 
       <View style={styles.card}>
@@ -530,17 +544,6 @@ const styles = StyleSheet.create({
   heading: {
     fontFamily: fonts.extrabold,
     fontSize: 22,
-    color: colors.text,
-  },
-  titleInput: {
-    minHeight: 52,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    fontFamily: fonts.semibold,
-    fontSize: 17,
     color: colors.text,
   },
   card: {
