@@ -1,6 +1,6 @@
 # DoFirst Privacy Policy
 
-Last updated: November 8, 2026
+Last updated: November 9, 2026
 
 DoFirst is an Android task manager based on the Eisenhower matrix. This policy explains what the app does with your data. In short: **DoFirst collects no data. Your data stays on your phone and, only if you turn on Google Drive backup, in your own Google Drive.**
 
@@ -47,9 +47,18 @@ When you tap "Export my data", DoFirst creates a backup file and opens the Andro
 
 When you import a backup, you pick the file yourself in the Android file picker; DoFirst reads only that file.
 
+## Microphone and dictation (optional)
+
+The mic button in the title lets you dictate a task. Microphone permission is only requested the first time you tap this button; you can refuse it or remove it in Android settings, and the rest of the app works without it.
+
+- Your voice is turned into text by your phone's speech recognition service (usually Google's), on the device itself when an offline model is installed. Otherwise, that service may process the audio online under its own privacy policy.
+- DoFirst does not record or keep the audio and does not send it to any DoFirst server or to the developer: it only receives the recognized text, placed in the title.
+- Listening only starts when you tap the mic (or press and hold +) and stops after a pause.
+
+Smart input: looking for a date ("tomorrow at 3 pm") or the words "urgent" and "important" in the title happens entirely on your phone, with no artificial intelligence and no server. Nothing is applied without your approval.
 ## No storage permission
 
-DoFirst does not ask for access to your photos, files or storage. Storage permissions are removed from the app.
+DoFirst does not ask for access to your photos, files or storage. Storage permissions are removed from the app. The only permissions requested are notifications (reminders) and, if you use dictation, the microphone.
 
 ## Local notifications only
 

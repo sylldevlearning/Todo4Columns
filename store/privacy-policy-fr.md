@@ -1,6 +1,6 @@
 # Règles de confidentialité de DoFirst
 
-Dernière mise à jour : 8 novembre 2026
+Dernière mise à jour : 9 novembre 2026
 
 DoFirst est une application Android de gestion des tâches fondée sur la matrice d'Eisenhower. Ces règles expliquent ce que l'application fait de tes données. En résumé : **DoFirst ne collecte aucune donnée. Tes données restent sur ton téléphone et, seulement si tu actives la sauvegarde Google Drive, dans ton propre Google Drive.**
 
@@ -47,9 +47,18 @@ Quand tu touches « Exporter mes données », DoFirst crée un fichier de sauveg
 
 Quand tu importes une sauvegarde, tu choisis toi-même le fichier dans le sélecteur d'Android ; DoFirst ne lit que ce fichier.
 
+## Micro et dictée (facultatif)
+
+Le bouton micro du titre permet de dicter une tâche. L'autorisation du micro n'est demandée qu'au premier appui sur ce bouton ; tu peux la refuser ou la retirer dans les paramètres d'Android, le reste de l'application fonctionne sans.
+
+- La voix est transformée en texte par le service de reconnaissance vocale de ton téléphone (en général celui de Google), sur l'appareil lui-même quand un modèle hors ligne est installé. Sinon, ce service peut traiter l'audio en ligne selon ses propres règles de confidentialité.
+- DoFirst n'enregistre pas l'audio, ne le conserve pas et ne l'envoie à aucun serveur DoFirst ni au développeur : il ne reçoit que le texte reconnu, placé dans le titre.
+- L'écoute ne commence que quand tu touches le micro (ou gardes le doigt sur +) et s'arrête après un silence.
+
+Saisie intelligente : la recherche d'une date (« demain à 15 h ») ou des mots « urgent » et « important » dans le titre se fait entièrement sur ton téléphone, sans intelligence artificielle ni serveur. Rien n'est appliqué sans ton accord.
 ## Aucune autorisation de stockage
 
-DoFirst ne demande pas l'accès à tes photos, à tes fichiers ni à ta mémoire de stockage. Les autorisations de stockage sont retirées de l'application.
+DoFirst ne demande pas l'accès à tes photos, à tes fichiers ni à ta mémoire de stockage. Les autorisations de stockage sont retirées de l'application. Les seules autorisations demandées sont les notifications (rappels) et, si tu utilises la dictée, le micro.
 
 ## Notifications locales uniquement
 

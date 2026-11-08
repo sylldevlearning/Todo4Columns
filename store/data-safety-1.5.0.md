@@ -50,6 +50,30 @@ finalité **Fonctionnement de l'application**.
 - **Connexion Google** : faite par Google Play services (Google Sign-In) ; les échanges
   d'authentification relèvent de Google, comme la sauvegarde Android déjà décrite.
 
+## Audio : micro et dictée (1.5.0)
+
+Nouvelle autorisation `RECORD_AUDIO`, demandée seulement au premier appui sur le micro du titre.
+L'audio est traité par le service de reconnaissance vocale du téléphone (Android
+`SpeechRecognizer`, en général Google), sur l'appareil quand un modèle hors ligne est installé.
+DoFirst ne reçoit que le texte reconnu ; il n'enregistre pas l'audio, ne le conserve pas et ne
+l'envoie à aucun serveur DoFirst.
+
+**Réponse recommandée : Audio › Enregistrements vocaux ou sonores, non déclaré.** DoFirst ne
+transmet jamais l'audio lui-même : c'est le service système qui le traite, comme le clavier vocal.
+
+**Si la Play Console ou un examen le demande** (le service de Google peut envoyer l'audio en ligne
+sans modèle hors ligne), déclarer plutôt :
+
+| Question | Réponse |
+|---|---|
+| Collectées | **Oui** |
+| Partagées | **Non** |
+| Traitées de façon éphémère | **Oui** (rien n'est conservé) |
+| Collecte obligatoire ou facultative | **Facultative** (seulement si l'utilisateur touche le micro) |
+| Finalités | **Fonctionnement de l'application** (dictée du titre) |
+
+La saisie intelligente (date, « urgent », « important ») est faite sur le téléphone : rien à déclarer.
+
 ## À vérifier au moment de la saisie
 
 - Si la Play Console range les réglages ou le journal autrement, garder la règle : facultatif,
