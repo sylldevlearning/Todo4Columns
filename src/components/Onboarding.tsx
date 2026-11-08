@@ -13,66 +13,100 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CATEGORY_BY_KEY } from "../constants/categories";
+import { isDriveAvailable } from "../drive/googleAccount";
+import { useBackup } from "../hooks/useBackup";
+import { useDriveBackup } from "../hooks/useDriveBackup";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions } from "../store/TasksContext";
 import { colors, fonts, TOUCH_SIZE } from "../theme";
 import {
+  CalendarVoiceIllustration,
   CreateIllustration,
+  DriveIllustration,
   GesturesIllustration,
   MatrixIllustration,
   RemindersIllustration,
 } from "./OnboardingIllustrations";
 
-// Textes lus à l'affichage, dans la langue courante
-const PAGES: { text: () => { title: string; body: string }; Illustration: ComponentType }[] = [
-  { text: () => t.onboarding.matrix, Illustration: MatrixIllustration },
-  { text: () => t.onboarding.create, Illustration: CreateIllustration },
-  { text: () => t.onboarding.gestures, Illustration: GesturesIllustration },
-  { text: () => t.onboarding.reminders, Illustration: RemindersIllustration },
+type PageId = "matrix" | "create" | "gestures" | "calendar" | "reminders" | "drive";
+
+// Textes lus à l'affichage, dans la langue courante. 6 écrans au plus ; « Sauvegarde Google
+// Drive » seulement là où elle existe (Android).
+const ALL_PAGES: { id: PageId; text: () => { title: string; body: string }; Illustration: ComponentType }[] = [
+  { id: "matrix", text: () => t.onboarding.matrix, Illustration: MatrixIllustration },
+  { id: "create", text: () => t.onboarding.create, Illustration: CreateIllustration },
+  { id: "gestures", text: () => t.onboarding.gestures, Illustration: GesturesIllustration },
+  { id: "calendar", text: () => t.onboarding.calendar, Illustration: CalendarVoiceIllustration },
+  { id: "reminders", text: () => t.onboarding.reminders, Illustration: RemindersIllustration },
+  { id: "drive", text: () => t.onboarding.drive, Illustration: DriveIllustration },
 ];
-const REMINDERS_PAGE = PAGES.length - 1;
 
 interface Props {
   onDone: () => void; // « Passer », dernier écran terminé ou bouton retour
 }
 
-// Présentation en 4 écrans à faire défiler, avec « Passer » jusqu'au dernier. Le dernier propose
-// d'activer les rappels : « Activer les rappels » affiche la fenêtre système d'Android, puis la
-// présentation se termine, quelle que soit la réponse ; « Plus tard » la termine sans rien demander.
+// Présentation à faire défiler, avec « Passer » sur chaque écran.
+// - « Ne rate plus rien » : « Activer les rappels » affiche la fenêtre système d'Android puis
+//   passe à l'écran suivant, quelle que soit la réponse ; « Plus tard » passe sans rien demander.
+// - « Sauvegarde Google Drive » (facultative, dernier écran) : « Se connecter » ouvre la connexion
+//   Google (sauvegarde automatique activée, restauration d'une sauvegarde existante) ;
+//   « Plus tard » termine sans connexion.
 export default function Onboarding({ onDone }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const scroll = useRef<ScrollView>(null);
+  const [PAGES] = useState(() => ALL_PAGES.filter((p) => p.id !== "drive" || isDriveAvailable()));
   const [page, setPage] = useState(0);
+  const current = PAGES[page].id;
   const last = page === PAGES.length - 1;
   const [permission] = usePermissionState();
   const granted = permission === "granted";
   const { requestNotificationPermission, updateSettings, getSettings } = useTaskActions();
   const [asking, setAsking] = useState(false);
+  const backup = useBackup();
+  const drive = useDriveBackup(backup.applyBackup);
+  const connected = drive.account !== null;
 
-  // L'autorisation a été proposée : la carte de la matrice ne la reproposera pas
+  // Rappels et sauvegarde proposés : les cartes de la matrice ne les reproposeront pas
   const finish = () => {
-    updateSettings({ ...getSettings(), remindersPromptDone: true });
+    updateSettings({ ...getSettings(), remindersPromptDone: true, drivePromptDone: true });
     onDone();
   };
+
+  const goTo = (target: number) => {
+    scroll.current?.scrollTo({ x: target * width, animated: true });
+    setPage(target);
+  };
+  const advance = () => (last ? finish() : goTo(page + 1));
 
   const enableReminders = async () => {
     if (asking) return;
     setAsking(true);
     // Refusée et fenêtre système plus disponible : la carte « Ouvrir les réglages » s'affiche
     await requestNotificationPermission().catch(() => {});
-    finish();
+    setAsking(false);
+    advance();
+  };
+
+  const connectDrive = async () => {
+    if (asking) return;
+    setAsking(true);
+    await drive.connect();
+    setAsking(false);
   };
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) =>
     setPage(Math.round(e.nativeEvent.contentOffset.x / width));
 
-  const next = () => {
-    if (last) return granted ? finish() : enableReminders();
-    scroll.current?.scrollTo({ x: (page + 1) * width, animated: true });
-    setPage(page + 1);
-  };
+  // Bouton principal et bouton secondaire (« Plus tard ») de chaque écran
+  const primary =
+    current === "reminders" && !granted
+      ? { label: t.onboarding.enableReminders, onPress: enableReminders }
+      : current === "drive" && !connected
+      ? { label: t.onboarding.connect, onPress: connectDrive }
+      : { label: last ? t.onboarding.start : t.onboarding.next, onPress: advance };
+  const secondary = (current === "reminders" && !granted) || (current === "drive" && !connected);
 
   return (
     <Modal
@@ -85,12 +119,9 @@ export default function Onboarding({ onDone }: Props) {
     >
       <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom + 16 }]}>
         <View style={styles.top}>
-          {/* Dernier écran : « Plus tard » remplace « Passer » */}
-          {!last && (
-            <Pressable accessibilityRole="button" onPress={onDone} style={styles.skip}>
-              <Text style={styles.skipText}>{t.onboarding.skip}</Text>
-            </Pressable>
-          )}
+          <Pressable accessibilityRole="button" onPress={finish} style={styles.skip}>
+            <Text style={styles.skipText}>{t.onboarding.skip}</Text>
+          </Pressable>
         </View>
 
         <ScrollView
@@ -102,7 +133,7 @@ export default function Onboarding({ onDone }: Props) {
           style={styles.pager}
           testID="onboarding-pager"
         >
-          {PAGES.map(({ text, Illustration }, i) => (
+          {PAGES.map(({ id, text, Illustration }, i) => (
             <ScrollView
               key={i}
               style={{ width }}
@@ -117,10 +148,16 @@ export default function Onboarding({ onDone }: Props) {
                   {text().title}
                 </Text>
                 <Text style={styles.body}>{text().body}</Text>
-                {i === REMINDERS_PAGE && granted && (
+                {id === "reminders" && granted && (
                   <View style={styles.grantedRow}>
                     <Ionicons name="checkmark-circle" size={22} color={colors.success} />
                     <Text style={styles.granted}>{t.onboarding.remindersOn}</Text>
+                  </View>
+                )}
+                {id === "drive" && connected && (
+                  <View style={styles.grantedRow}>
+                    <Ionicons name="checkmark-circle" size={22} color={colors.success} />
+                    <Text style={styles.granted}>{t.onboarding.driveOn}</Text>
                   </View>
                 )}
               </View>
@@ -140,15 +177,14 @@ export default function Onboarding({ onDone }: Props) {
           </View>
           <Pressable
             accessibilityRole="button"
-            onPress={next}
+            onPress={primary.onPress}
+            disabled={asking}
             style={({ pressed }) => [styles.next, pressed && styles.pressed]}
           >
-            <Text style={styles.nextText}>
-              {!last ? t.onboarding.next : granted ? t.onboarding.start : t.onboarding.enableReminders}
-            </Text>
+            <Text style={styles.nextText}>{primary.label}</Text>
           </Pressable>
-          {last && !granted && (
-            <Pressable accessibilityRole="button" onPress={finish} disabled={asking} style={styles.later}>
+          {secondary && (
+            <Pressable accessibilityRole="button" onPress={advance} disabled={asking} style={styles.later}>
               <Text style={styles.laterText}>{t.permissionCard.later}</Text>
             </Pressable>
           )}
@@ -165,11 +201,13 @@ export function FirstLaunchOnboarding() {
   const done = useSettingsSelector((s) => s.onboardingDone);
   const { updateSettings, getSettings } = useTaskActions();
   if (!ready || done) return null;
-  // Nouvelle installation : l'autorisation est proposée au dernier écran, jamais par la carte de la
-  // matrice (même après « Passer »)
+  // Nouvelle installation : rappels et sauvegarde sont proposés dans la présentation, jamais par
+  // les cartes de la matrice (même après « Passer »)
   return (
     <Onboarding
-      onDone={() => updateSettings({ ...getSettings(), onboardingDone: true, remindersPromptDone: true })}
+      onDone={() =>
+        updateSettings({ ...getSettings(), onboardingDone: true, remindersPromptDone: true, drivePromptDone: true })
+      }
     />
   );
 }
@@ -184,7 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 12,
     paddingTop: 4,
-    minHeight: TOUCH_SIZE + 4, // même hauteur sans « Passer » (dernier écran)
+    minHeight: TOUCH_SIZE + 4,
   },
   skip: {
     minHeight: TOUCH_SIZE,

@@ -29,6 +29,8 @@ export interface Settings {
   // Autorisation des notifications déjà proposée (1.4.1) : écran « Ne rate plus rien » de la
   // présentation, ou carte de la matrice. Absent : jamais proposée par l'app.
   remindersPromptDone?: boolean;
+  // Sauvegarde Google Drive déjà proposée (1.5) : écran de la présentation, ou carte de la matrice
+  drivePromptDone?: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -150,6 +152,8 @@ export function parseSettings(json: string | null): Settings {
     ...(isPositiveNumber(s.reviewAskedAt) ? { reviewAskedAt: s.reviewAskedAt } : {}),
     // Absent avant la 1.4.1
     ...(s.remindersPromptDone === true ? { remindersPromptDone: true } : {}),
+    // Absent avant la 1.5
+    ...(s.drivePromptDone === true ? { drivePromptDone: true } : {}),
   };
 }
 

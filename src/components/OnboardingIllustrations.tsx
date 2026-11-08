@@ -5,6 +5,8 @@ import { CATEGORIES, CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { colors, fonts, withAlpha } from "../theme";
 import { fitText } from "./fitText";
+import { formatDue } from "../format";
+import ProgressBar from "./ProgressBar";
 import { nameLines } from "./MatrixGrid";
 
 
@@ -94,7 +96,7 @@ export function CreateIllustration() {
   );
 }
 
-// Écran 3 : une carte qu'on glisse, et une notification avec ses boutons
+// Écran 3 : une carte qu'on glisse, puis une tâche découpée en étapes avec son avancement
 export function GesturesIllustration() {
   const doIt = CATEGORY_BY_KEY.UI;
   return (
@@ -118,7 +120,87 @@ export function GesturesIllustration() {
         <Text style={[styles.hint, { color: colors.success }]}>{t.onboarding.swipeRight} →</Text>
       </View>
 
-      <NotificationPreview />
+      <StepsPreview />
+    </View>
+  );
+}
+
+// Carte avec deux séances, la première cochée : avancement 50 %
+function StepsPreview() {
+  const plan = CATEGORY_BY_KEY.INU;
+  const steps = [1, 2].map((i) => t.steps.session(i, 2, t.steps.durations[60]));
+  return (
+    <View style={styles.notification}>
+      <Text style={styles.cardTitle}>{t.onboarding.sampleTask}</Text>
+      {steps.map((title, i) => (
+        <View key={title} style={styles.stepRow}>
+          <View style={[styles.stepBox, { borderColor: plan.color }, i === 0 && { backgroundColor: plan.color }]}>
+            {i === 0 && <Ionicons name="checkmark" size={12} color={plan.onColor} />}
+          </View>
+          <Text style={[styles.stepText, i === 0 && styles.stepDone]} numberOfLines={1}>
+            {title}
+          </Text>
+        </View>
+      ))}
+      <View style={styles.progressRow}>
+        <View style={styles.progressBar}>
+          <ProgressBar percent={50} color={plan.color} />
+        </View>
+        <Text style={[styles.progressText, { color: plan.textColor }]}>{t.progress.value(50)}</Text>
+      </View>
+    </View>
+  );
+}
+
+// Écran 4 : une semaine du calendrier avec ses points, et une suggestion tirée de la dictée
+export function CalendarVoiceIllustration() {
+  const colorsOfDays: (keyof typeof CATEGORY_BY_KEY)[][] = [["UI"], [], ["INU", "UDI"], ["INU"], [], ["UI", "NDNI"], []];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(15, 0, 0, 0);
+  return (
+    <View style={styles.stack} {...hidden}>
+      <View style={styles.week}>
+        {colorsOfDays.map((cats, i) => (
+          <View key={i} style={[styles.weekCell, i === 2 && styles.weekCellSelected]}>
+            <Text style={styles.weekNumber}>{12 + i}</Text>
+            <View style={styles.weekDots}>
+              {cats.map((c) => (
+                <View key={c} style={[styles.weekDot, { backgroundColor: CATEGORY_BY_KEY[c].color }]} />
+              ))}
+            </View>
+          </View>
+        ))}
+      </View>
+      <View style={styles.voiceRow}>
+        <View style={[styles.mic, { backgroundColor: withAlpha(CATEGORY_BY_KEY.INU.color, 0.2), borderColor: CATEGORY_BY_KEY.INU.color }]}>
+          <Ionicons name="mic" size={26} color={CATEGORY_BY_KEY.INU.textColor} />
+        </View>
+        <View style={styles.suggestion}>
+          <Ionicons name="sparkles-outline" size={14} color={colors.textMuted} />
+          <Text style={styles.suggestionText} {...fitText(2, 0.8)}>
+            {t.smart.due(formatDue(tomorrow.getTime()))}
+          </Text>
+          <Text style={[styles.suggestionAction, { color: CATEGORY_BY_KEY.INU.textColor }]}>{t.smart.apply}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+// Écran 6 : un nuage et la dernière sauvegarde
+export function DriveIllustration() {
+  return (
+    <View style={styles.stack} {...hidden}>
+      <Ionicons name="cloud-done" size={56} color={CATEGORY_BY_KEY.INU.textColor} style={styles.center} />
+      <View style={styles.notification}>
+        <View style={styles.notificationHeader}>
+          <Ionicons name="logo-google" size={14} color={colors.textMuted} />
+          <Text style={styles.appName}>{t.drive.section}</Text>
+        </View>
+        <Text style={styles.cardTitle}>{t.drive.auto}</Text>
+        <Text style={styles.notificationBody}>{t.drive.lastBackup(formatDue(Date.now()))}</Text>
+      </View>
     </View>
   );
 }
@@ -152,6 +234,108 @@ export function RemindersIllustration() {
 }
 
 const styles = StyleSheet.create({
+  stepRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  stepBox: {
+    width: 18,
+    height: 18,
+    borderRadius: 5,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stepText: {
+    flex: 1,
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    color: colors.text,
+  },
+  stepDone: {
+    color: colors.textMuted,
+    textDecorationLine: "line-through",
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 4,
+  },
+  progressBar: {
+    flex: 1,
+  },
+  progressText: {
+    fontFamily: fonts.extrabold,
+    fontSize: 13,
+  },
+  week: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  weekCell: {
+    flex: 1,
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  weekCellSelected: {
+    borderColor: colors.text,
+  },
+  weekNumber: {
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    color: colors.text,
+  },
+  weekDots: {
+    flexDirection: "row",
+    gap: 3,
+    height: 6,
+  },
+  weekDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  voiceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  mic: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  suggestion: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    padding: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  suggestionText: {
+    flex: 1,
+    fontFamily: fonts.semibold,
+    fontSize: 13,
+    color: colors.text,
+  },
+  suggestionAction: {
+    fontFamily: fonts.bold,
+    fontSize: 13,
+  },
   matrix: {
     gap: 8,
   },
