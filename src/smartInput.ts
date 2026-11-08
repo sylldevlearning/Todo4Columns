@@ -1,4 +1,16 @@
-import * as chrono from "chrono-node";
+// Une importation par langue utilisée : les autres langues de chrono-node (arabe, finnois,
+// néerlandais, suédois, ukrainien, vietnamien, chinois traditionnel) restent hors du bundle.
+import type { Chrono, ParsedResult } from "chrono-node";
+import * as de from "chrono-node/de";
+import * as en from "chrono-node/en";
+import * as es from "chrono-node/es";
+import * as fr from "chrono-node/fr";
+import * as id from "chrono-node/id";
+import * as it from "chrono-node/it";
+import * as ja from "chrono-node/ja";
+import * as pt from "chrono-node/pt";
+import * as ru from "chrono-node/ru";
+import * as zhHans from "chrono-node/zh/hans";
 import { Language } from "./i18n";
 
 // Saisie intelligente, entièrement locale (sans IA ni serveur) : dans le titre tapé ou dicté,
@@ -7,17 +19,17 @@ import { Language } from "./i18n";
 
 // Analyseurs de chrono-node par langue de l'app ; les autres langues (coréen, turc, hindi) n'en
 // ont pas : aucune date n'est proposée.
-const PARSERS: Partial<Record<Language, chrono.Chrono>> = {
-  en: chrono.en.casual,
-  fr: chrono.fr.casual,
-  es: chrono.es.casual,
-  "pt-BR": chrono.pt.casual,
-  de: chrono.de.casual,
-  it: chrono.it.casual,
-  ja: chrono.ja.casual,
-  "zh-Hans": chrono.zh.hans.casual,
-  ru: chrono.ru.casual,
-  id: chrono.id.casual,
+const PARSERS: Partial<Record<Language, Chrono>> = {
+  en: en.casual,
+  fr: fr.casual,
+  es: es.casual,
+  "pt-BR": pt.casual,
+  de: de.casual,
+  it: it.casual,
+  ja: ja.casual,
+  "zh-Hans": zhHans.casual,
+  ru: ru.casual,
+  id: id.casual,
 };
 export const supportsDates = (language: Language) => PARSERS[language] !== undefined;
 
@@ -105,7 +117,7 @@ export function detectDate(rawTitle: string, language: Language, now: number): D
   const parser = PARSERS[language];
   if (!parser || rawTitle.trim() === "") return null;
   const title = normalize(rawTitle, language);
-  let results: chrono.ParsedResult[];
+  let results: ParsedResult[];
   try {
     results = parser.parse(title, new Date(now), { forwardDate: true });
   } catch {

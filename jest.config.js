@@ -17,6 +17,9 @@ module.exports = {
     "^expo-asset/(.*)$": `${expoAsset}/$1`,
     "^expo-keep-awake$": expoKeepAwake,
     "^expo-keep-awake/(.*)$": `${expoKeepAwake}/$1`,
+    // Langues de chrono-node importées une à une (champ « exports » du paquet, lu par Metro mais
+    // pas par le résolveur de jest-expo)
+    "^chrono-node/(.+)$": "<rootDir>/node_modules/chrono-node/dist/cjs/locales/$1/index.js",
   },
   globalSetup: "./jest/global-setup.js",
   setupFilesAfterEnv: ["./jest.setup.js"],
