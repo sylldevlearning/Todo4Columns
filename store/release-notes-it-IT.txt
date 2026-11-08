@@ -1,2 +1,6 @@
-• Attiva i promemoria già dalla presentazione, o dalla scheda sulla matrice se aggiorni l'app
-• Piccoli miglioramenti e correzioni
+• Novità: calendario con scadenze, passaggi e attività ricorrenti
+• Microfono sulla matrice: detta un'attività, «domani alle 15» diventa una scadenza
+• Avanzamento in %: tieni premuta un'attività per spuntare i passaggi o regolarlo
+• Distribuisci un progetto su giorni scelti: lun/mer/ven o date precise
+• Backup facoltativo su Google Drive, ripristinato in automatico su un nuovo telefono
+• Presentazione rinnovata, con promemoria e backup

@@ -29,6 +29,7 @@ export interface TaskInput extends Partial<ReminderFields> {
   title: string;
   category: Category;
   steps?: TaskStep[]; // étapes de la fiche
+  progress?: number | null; // avancement réglé à la main (sans étapes)
 }
 
 // Tâche retirée de la liste, avec sa position pour pouvoir l'annuler
@@ -160,6 +161,7 @@ export function useTasks(
       nextOccurrenceId: null,
       ...fields,
       steps: input.steps ?? [],
+      progress: input.progress ?? null,
     };
     setTasks((prev) => [...prev, newTask]);
   };
@@ -184,6 +186,7 @@ export function useTasks(
           ...defined(patch),
         }),
         ...(patch.steps ? { steps: patch.steps } : {}),
+        ...(patch.progress !== undefined ? { progress: patch.progress } : {}),
       });
     });
   };

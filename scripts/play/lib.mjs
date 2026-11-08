@@ -4,6 +4,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { google } from "googleapis";
+import { assertNoPendingUpload } from "./guard.mjs";
 
 export const ROOT = process.cwd();
 export const STORE = path.join(ROOT, "store");
@@ -67,7 +68,11 @@ export function client(args) {
 }
 
 // Ouvre une modification (edit) ; elle est abandonnée si elle n'a pas été validée
-export async function withEdit(api, packageName, work) {
+// Google Play n'accepte qu'une modification ouverte à la fois : on vérifie d'abord qu'aucun envoi EAS
+// n'est en cours (scripts/play/guard.mjs). Les simulations qui ne lisent que les versions n'en
+// ouvrent pas (releaseSummaries).
+export async function withEdit(api, packageName, args, work) {
+  await assertNoPendingUpload(api, packageName, args, { root: ROOT, fail });
   const { data } = await api.edits.insert({ packageName });
   // « committed » non énumérable : { ...edit } ne transmet à l'API que packageName et editId
   const edit = Object.defineProperty({ packageName, editId: data.id }, "committed", { value: false, writable: true });
@@ -75,6 +80,22 @@ export async function withEdit(api, packageName, work) {
     return await work(edit);
   } finally {
     if (!edit.committed) await api.edits.delete({ packageName, editId: edit.editId }).catch(() => {});
+  }
+}
+
+// Versions d'un canal, sans ouvrir de modification (applications.tracks.releases.list), au format
+// des versions d'une modification : { name, versionCodes, status } (« completed » = publiée)
+export async function releaseSummaries(api, packageName, track) {
+  try {
+    const { data } = await api.applications.tracks.releases.list({ parent: `applications/${packageName}/tracks/${track}` });
+    return (data.releases ?? []).map((r) => ({
+      name: r.releaseName ?? null,
+      versionCodes: (r.activeArtifacts ?? []).map((a) => String(a.versionCode)),
+      status: r.releaseLifecycleState === "RELEASE_LIFECYCLE_STATE_PUBLISHED" ? "completed" : r.releaseLifecycleState,
+    }));
+  } catch (e) {
+    if ((e?.response?.status ?? e?.code) === 404) return [];
+    throw e;
   }
 }
 

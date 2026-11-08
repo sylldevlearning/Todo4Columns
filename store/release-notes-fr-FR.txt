@@ -1,2 +1,6 @@
-• Active les rappels dès la présentation, ou depuis la carte sur la matrice si tu mets à jour l'app
-• Petites améliorations et corrections
+• Nouveau : vue calendrier de tes échéances, étapes et tâches récurrentes
+• Micro sur la matrice : dicte une tâche, « demain à 15 h » devient une échéance
+• Avancement en % : garde le doigt sur une tâche pour cocher ses étapes ou le régler
+• Répartis un projet sur des jours choisis : lun/mer/ven ou dates précises
+• Sauvegarde facultative sur Google Drive, restaurée automatiquement sur un nouveau téléphone
+• Présentation refaite, avec les rappels et la sauvegarde

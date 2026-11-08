@@ -81,6 +81,7 @@ describe("TaskForm", () => {
       delegatedTo: null,
       recurrence: null,
       steps: [],
+      progress: null,
     });
   });
 

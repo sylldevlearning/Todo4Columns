@@ -7,10 +7,20 @@ Para cada tarefa, responda "É urgente?" e "É importante?". O DoFirst coloca a 
 • Delegar: urgente, mas não para você, passe para alguém
 • Se der tempo: nem urgente nem importante, sem pressão
 
-DIVIDA AS TAREFAS GRANDES
-• Divida uma tarefa em etapas para marcar e acompanhe seu progresso
-• Dê um dia para cada etapa: hoje, amanhã ou a data que quiser
-• Distribua um projeto em sessões, por exemplo 1 h por dia durante 5 dias
+DITE SUAS TAREFAS
+• Toque no microfone e fale: sua lista de tarefas se preenche sem digitar
+• “Amanhã às 15h” vira prazo com um toque
+• As palavras “urgente” e “importante” sugerem o quadrante certo
+
+SEU DIA NUM PISCAR DE OLHOS
+• Calendário do mês com pontos na cor de cada quadrante
+• Linha do tempo de cada dia: prazos, etapas e tarefas recorrentes
+
+AVANCE PASSO A PASSO
+• Divida uma tarefa em etapas para marcar, com o % de progresso
+• Sem etapas, ajuste o progresso você mesmo de 0 a 100%
+• Distribua um projeto em sessões nos dias que escolher: dias seguidos, segunda-quarta-sexta ou datas específicas
+• Mantenha uma tarefa pressionada para marcar as etapas num gesto
 
 LEMBRETES QUE NÃO DEIXAM VOCÊ ESQUECER
 • Notificações e cobranças enquanto uma tarefa urgente não for feita
@@ -26,6 +36,9 @@ ORGANIZE SUA SEMANA
 DELEGUE SEM ESQUECER
 Mande a tarefa por WhatsApp ou SMS com um toque e cobre a pessoa na hora certa.
 
+QUANDO É DIFÍCIL COMEÇAR
+Se você tem dificuldade para se organizar ou para começar, inclusive com TDAH, o DoFirst deixa tudo simples: uma pergunta de cada vez, etapas pequenas, lembretes e uma lista de tarefas que mostra primeiro o que importa.
+
 SIMPLES E MOTIVADOR
 • Deslize para a direita para concluir e para a esquerda para excluir
 • Uma pequena comemoração a cada tarefa concluída
@@ -33,6 +46,6 @@ SIMPLES E MOTIVADOR
 • Disponível em 13 idiomas
 
 SEUS DADOS SÃO SEUS
-Sem conta e sem anúncios. Suas tarefas ficam no seu celular, e você pode exportá-las para um arquivo de backup quando quiser.
+Sem conta e sem anúncios. Suas tarefas ficam no seu celular, e você pode exportá-las para um arquivo de backup quando quiser. Se quiser, faça também backup no seu Google Drive, numa pasta privada reservada ao DoFirst, e recupere tudo num celular novo.
 
 No trabalho, nos estudos ou em casa, o DoFirst substitui sua lista de afazeres, seu bloco de notas e seu checklist do dia a dia. Ganhe produtividade e tranquilidade: faça primeiro o que importa.

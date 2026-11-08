@@ -5,9 +5,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../theme";
 
 export const FAB_SIZE = 60;
+export const MIC_FAB_SIZE = 52;
 
 interface Props {
   onPress: () => void;
+  onLongPress?: () => void;
+  longPressHint?: string; // lu par les lecteurs d'écran (« appui long : … »)
   label: string;
   color?: string; // fond
   iconColor?: string;
@@ -16,6 +19,8 @@ interface Props {
 // Bouton flottant « + » en bas à droite
 export default function Fab({
   onPress,
+  onLongPress,
+  longPressHint,
   label,
   color = colors.white,
   iconColor = colors.bg,
@@ -25,7 +30,11 @@ export default function Fab({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityHint={longPressHint}
+      accessibilityActions={onLongPress ? [{ name: "longpress" }] : undefined}
+      onAccessibilityAction={(e) => e.nativeEvent.actionName === "longpress" && onLongPress?.()}
       onPress={onPress}
+      onLongPress={onLongPress}
       style={({ pressed }) => [
         styles.fab,
         { backgroundColor: color, bottom: insets.bottom + 20 },
@@ -55,4 +64,34 @@ const styles = StyleSheet.create({
   pressed: {
     transform: [{ scale: 0.96 }],
   },
+  mic: {
+    width: MIC_FAB_SIZE,
+    height: MIC_FAB_SIZE,
+    borderRadius: MIC_FAB_SIZE / 2,
+    backgroundColor: colors.surfaceRaised,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
 });
+
+
+// Bouton micro, à gauche du « + » : ouvre la fiche et lance la dictée
+export function MicFab({ onPress, label }: { onPress: () => void; label: string }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.fab,
+        styles.mic,
+        { right: 20 + FAB_SIZE + 12, bottom: insets.bottom + 20 + (FAB_SIZE - MIC_FAB_SIZE) / 2 },
+        pressed && styles.pressed,
+      ]}
+      testID="mic-fab"
+    >
+      <Ionicons name="mic" size={26} color={colors.text} />
+    </Pressable>
+  );
+}

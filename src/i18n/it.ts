@@ -335,15 +335,35 @@ export const itIT: Translations = {
         body: "Dividi una grande attività in piccoli passaggi da spuntare, nell'ordine che vuoi (tieni premuto un passaggio, poi trascinalo). Dai un giorno a un passaggio per ricevere un promemoria quel giorno, alle 9:00 o all'ora che scegli, con «Fatto» e «Sposta a domani». L'attività è completata solo quando la spunti.",
         example: "«Preparare la presentazione»: cercare le fonti, fare la scaletta, scrivere l'introduzione, provare.",
       },
+      progress: {
+        title: "Avanzamento",
+        body: "Con i passaggi, l'avanzamento segue quelli spuntati. Senza passaggi, lo regoli tu da 0 a 100%. Compare come una barra sottile sulla scheda.",
+        example: "tieni premuta un'attività e tocca «50%»: la scheda mostra una barra a metà.",
+      },
       splitSessions: {
-        title: "Dividi su più giorni",
-        body: "Crea più sessioni di lavoro in una volta, una al giorno, ognuna con il suo promemoria. Scegli quante sessioni, la durata, il primo giorno e se saltare il fine settimana. Un'anteprima compare prima di confermare.",
-        example: "5 sessioni da 1 h a partire da un giovedì, solo feriali: giovedì, venerdì, lunedì, martedì e mercoledì.",
+        title: "Distribuisci su più giorni",
+        body: "Crea in una volta più sessioni di lavoro, ognuna con il suo promemoria: giorni consecutivi, alcuni giorni della settimana (lun, mer, ven…) o date precise scelte su un mini calendario. Prima di confermare compare un'anteprima.",
+        example: "lunedì, mercoledì e venerdì, 1 h: 3 sessioni questa settimana, da estendere con + se vuoi.",
       },
       backup: {
         title: "Backup",
         body: "«Esporta» crea un file non cifrato con tutti i tuoi dati: tienilo al sicuro (Drive, email, file). «Importa» sostituisce i dati di questo telefono con quelli di un file, dopo una copia di sicurezza. Su Android, anche il backup automatico di Google conserva i tuoi dati, se è attivo sul telefono.",
         example: "prima di cambiare telefono, esporta i dati su Drive, poi importa il file su quello nuovo.",
+      },
+      drive: {
+        title: "Backup su Google Drive",
+        body: "Facoltativo: i tuoi dati vengono copiati in una cartella nascosta del tuo Google Drive riservata a DoFirst: non compare tra i tuoi file e nessun altro può accedervi, nemmeno lo sviluppatore. Vengono conservati gli ultimi 5 backup. «Ripristina» sostituisce i dati di questo telefono, dopo una copia di sicurezza.",
+        example: "su un nuovo telefono, accedi con lo stesso account: DoFirst ti propone di ripristinare l'ultimo backup.",
+      },
+      calendar: {
+        title: "Calendario",
+        body: "Ogni giorno mostra punti con i colori dei quadranti e il numero di attività: scadenze, passaggi previsti e prossime ripetizioni delle attività ricorrenti (tratteggiate, «Prevista»). Tocca un giorno per vedere la sua linea oraria e poi un'attività per aprirla.",
+        example: "scorri verso sinistra per passare al mese successivo; «Oggi» ti riporta al giorno corrente.",
+      },
+      voice: {
+        title: "Dettatura",
+        body: "Tocca il microfono per dettare il titolo: il testo compare mentre parli e l'ascolto si ferma dopo una pausa. Lo fa il riconoscimento vocale del telefono, sul dispositivo quando possibile; non viene registrato nulla. DoFirst riconosce anche una data («domani alle 15») o le parole «urgente» e «importante» e ti propone di applicarle.",
+        example: "di' «Chiamare l'officina venerdì» e tocca «Applica»: la scadenza diventa venerdì alle 9.",
       },
       autoEscalate: {
         title: "Attività scadute",
@@ -383,13 +403,23 @@ export const itIT: Translations = {
       body: "Quando crei un'attività, rispondi a «È urgente?» ed «È importante?». L'app la mette nel riquadro giusto per te.",
     },
     gestures: {
-      title: "Promemoria e gesti",
-      body: "Scorri un'attività a destra per completarla, a sinistra per eliminarla. I promemoria arrivano come notifiche: tocca «Fatto» o «Rimanda 1 h» e l'app si apre per occuparsene.",
+      title: "Gesti e passaggi",
+      body: "Scorri un'attività verso destra per completarla, verso sinistra per eliminarla. Tienila premuta per spuntare i passaggi o regolare l'avanzamento.",
     },
     reminders: {
       title: "Non perderti più niente",
       body: "DoFirst ti ricorda le attività al momento giusto, insiste su quello che non hai fatto e ti avvisa quando un'attività diventa urgente.",
     },
+    calendar: {
+      title: "Calendario e dettatura",
+      body: "Il calendario mostra le attività giorno per giorno. Tocca il microfono per dettare un'attività: «domani alle 15» diventa una scadenza con un tocco.",
+    },
+    drive: {
+      title: "Backup su Google Drive",
+      body: "Facoltativo: collega il tuo account Google per tenere una copia delle attività in una cartella privata del tuo Drive e ritrovarle su un nuovo telefono. Puoi farlo più tardi nelle Impostazioni.",
+    },
+    connect: "Accedi",
+    driveOn: "Connesso: backup automatico attivo",
     enableReminders: "Attiva i promemoria",
     remindersOn: "I promemoria sono attivi",
     sampleTask: "Inviare il report",
@@ -582,6 +612,122 @@ export const itIT: Translations = {
     undoErrorBody: "Non è stato possibile leggere la copia di sicurezza. Non è stato cambiato niente.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Apri il calendario",
+    title: "Calendario",
+    today: "Oggi",
+    previous: "Mese precedente",
+    next: "Mese successivo",
+    empty: "Niente in programma questo giorno.",
+    noTime: "Senza orario",
+    planned: "Prevista",
+    step: (title: string) => `Passaggio: ${title}`,
+    plannedHint: "Ripetizione prevista di un'attività ricorrente, non modificabile",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Detta il titolo",
+    stop: "Interrompi la dettatura",
+    listening: "In ascolto… parla ora",
+    deniedTitle: "Microfono non consentito",
+    deniedBody: "Per dettare le tue attività, consenti il microfono a DoFirst nelle impostazioni del telefono.",
+    unavailableTitle: "Dettatura non disponibile",
+    unavailableBody: "Il riconoscimento vocale non è disponibile su questo telefono.",
+    errorTitle: "Dettatura interrotta",
+    errorBody: "Il riconoscimento vocale non è riuscito ad avviarsi. Riprova tra un attimo.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Scadenza: ${date}`,
+    apply: "Applica",
+    dismiss: "Ignora",
+    urgent: "Il titolo dice «urgente»",
+    important: "Il titolo dice «importante»",
+    turnOn: "Attiva",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Avanzamento",
+    value: (n: number) => `${n}%`,
+    auto: "Calcolato dai passaggi spuntati",
+    manual: "Regola l'avanzamento a mano",
+    hint: "Pressione lunga: passaggi e avanzamento",
+    steps: "Passaggi",
+    close: "Chiudi",
+    changed: (n: number) => `Avanzamento: ${n}%`,
+    stepUnchecked: "Passaggio non più spuntato",
+  },
+
+  splitModes: {
+    label: "Distribuzione",
+    consecutive: "Giorni consecutivi",
+    weekdays: "Alcuni giorni della settimana",
+    dates: "Date precise",
+    datesHint: "Tocca i giorni che vuoi (da 2 a 14).",
+    tooFew: "Scegli almeno 2 giorni.",
+    previousMonth: "Mese precedente",
+    nextMonth: "Mese successivo",
+  },
+
+  quick: {
+    dictate: "Detta una nuova attività",
+  },
+
+  driveCard: {
+    body: "Salva le tue attività sul tuo Google Drive (facoltativo)",
+    connect: "Accedi",
+  },
+
+  driveRestore: {
+    title: "Attività ripristinate",
+    body: (date: string) => `Le tue attività sono state ripristinate (backup del ${date}).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "Facoltativo: tieni una copia dei tuoi dati nel tuo Google Drive, in una cartella nascosta riservata a DoFirst.",
+    connect: "Salva su Google Drive",
+    account: (email: string) => `Account: ${email}`,
+    lastBackup: (date: string) => `Ultimo backup: ${date}`,
+    never: "Ancora nessun backup",
+    working: "In corso…",
+    backupNow: "Salva ora",
+    restore: "Ripristina da Google Drive",
+    restoreAction: "Ripristina",
+    auto: "Backup automatico",
+    autoHint: "Al massimo una volta al giorno, quando esci dall'app e se i tuoi dati sono cambiati.",
+    signOut: "Esci",
+    delete: "Elimina il mio backup online",
+    previewDate: (date: string) => `Backup del ${date}`,
+    foundTitle: "Backup trovato",
+    later: "Più tardi",
+    connectErrorTitle: "Accesso non riuscito",
+    connectErrorBody: "L'accesso a Google non è andato a buon fine. Controlla la connessione a internet e riprova.",
+    backupDoneTitle: "Backup completato",
+    backupDoneBody: "I tuoi dati sono nel tuo Google Drive.",
+    backupErrorTitle: "Backup non riuscito",
+    backupErrorBody: "Google Drive non risponde. Controlla la connessione a internet e riprova. I tuoi dati restano su questo telefono.",
+    restoreErrorTitle: "Ripristino non riuscito",
+    restoreErrorBody: "Non è stato possibile leggere il backup. Controlla la connessione a internet e riprova. Non è stato modificato nulla.",
+    noBackupTitle: "Nessun backup",
+    noBackupBody: "In questo Google Drive non c'è ancora nessun backup di DoFirst.",
+    signOutTitle: "Uscire da Google Drive?",
+    signOutBody: "Il backup automatico si ferma. Il tuo backup online resta: potrai ripristinarlo accedendo di nuovo.",
+    deleteTitle: "Eliminare il tuo backup online?",
+    deleteBody: "Tutti i backup di DoFirst nel tuo Google Drive verranno eliminati e il backup automatico verrà disattivato. I dati di questo telefono non cambiano.",
+    deleteErrorTitle: "Eliminazione non riuscita",
+    deleteErrorBody: "Google Drive non risponde. Controlla la connessione a internet e riprova.",
+    deletedTitle: "Backup online eliminato",
+    deletedBody: "Nel tuo Google Drive non c'è più nessun backup di DoFirst.",
+    signedOutTitle: "Accedi di nuovo",
+    signedOutBody: "L'accesso a Google Drive è scaduto o è stato revocato. Accedi di nuovo per salvare.",
+  },
+
   howTo: {
     title: "Come funziona",
     methodTitle: "Il metodo Eisenhower",
@@ -654,6 +800,10 @@ export const itIT: Translations = {
       send: "In un'attività di «Delega», «Invia» apre la condivisione con un messaggio pronto per la persona. Scegli tu l'app e il destinatario.",
       nudge: "Nel promemoria di un'attività affidata, o nel passo 3 della revisione, «Ricorda» prepara un breve messaggio da inviare.",
       backup: "Impostazioni › Backup: «Esporta i miei dati» crea un file da tenere dove vuoi; «Importa un backup» lo rimette su questo telefono.",
+      drive: "Impostazioni › Google Drive: collega il tuo account Google per salvare i tuoi dati online, a mano o in automatico, e ripristinarli su un altro telefono.",
+      calendar: "Tocca l'icona del calendario con i numeri nella matrice per vedere le attività mese per mese; tocca un giorno per la sua linea oraria.",
+      voice: "Tocca il microfono accanto a + (o tieni premuto +) per dettare un'attività; nella scheda, il microfono del titolo fa lo stesso.",
+      longPress: "Tieni premuta un'attività per spuntare i passaggi o regolare l'avanzamento.",
       permission: "Promemoria: la presentazione ti propone di attivarli. Se rifiuti, l'app non te lo richiede a ogni avvio: quando attivi un promemoria, ti propone di consentire le notifiche o di aprire le impostazioni del telefono. Lo stato compare in Impostazioni › Notifiche.",
       quietHours: "Ore di silenzio (disattivate di default, attivale nelle Impostazioni): i promemoria che cadrebbero dentro arrivano quando finiscono, e la scheda dell'attività te lo segnala.",
       steps: "Nella scheda dell'attività, «Passaggi» la divide: la scheda mostra l'avanzamento «2/5» e il passaggio del giorno. Un passaggio di un giorno passato non fatto è segnato in ritardo.",

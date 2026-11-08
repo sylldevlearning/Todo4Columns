@@ -1,0 +1,9 @@
+{
+  "name": "dofirst-store-screenshots",
+  "private": true,
+  "description": "Captures du Play Store (outil de développement, jamais inclus dans l'app)",
+  "type": "module",
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}

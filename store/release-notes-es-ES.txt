@@ -1,2 +1,6 @@
-• Activa los avisos desde la presentación, o desde la tarjeta de la matriz si actualizas la app
-• Pequeñas mejoras y correcciones
+• Nuevo: vista de calendario con vencimientos, pasos y tareas recurrentes
+• Micrófono en la matriz: dicta una tarea, «mañana a las 15» se convierte en vencimiento
+• Progreso en %: mantén pulsada una tarea para marcar sus pasos o ajustarlo
+• Reparte un proyecto en días elegidos: lun/mié/vie o fechas concretas
+• Copia opcional en Google Drive, restaurada automáticamente en un móvil nuevo
+• Presentación renovada, con avisos y copia

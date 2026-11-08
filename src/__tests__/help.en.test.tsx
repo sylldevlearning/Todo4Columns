@@ -27,7 +27,7 @@ describe("aide en anglais", () => {
     await act(async () => {});
     await act(async () => {});
     expect(screen.getByRole("header", { name: "Urgent or important?" })).toBeOnTheScreen();
-    expect(screen.getByLabelText("Screen 1 of 4")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Screen 1 of 5")).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByText("Two questions, that's all")).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole("button", { name: "Skip" }));

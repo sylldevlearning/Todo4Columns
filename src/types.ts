@@ -54,4 +54,7 @@ export interface Task extends ReminderFields {
   escalationSkippedFor?: number | null; // bascule en Faire annulée pour cette échéance
   // Absent des tâches importées par la récupération : aucune étape
   steps?: TaskStep[];
+  // Avancement réglé à la main, 0 à 100 par pas de 10 (1.5, schéma v8) ; null ou absent : jamais
+  // réglé. Avec des étapes, l'avancement affiché est calculé (src/progress.ts).
+  progress?: number | null;
 }

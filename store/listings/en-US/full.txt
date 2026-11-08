@@ -1,4 +1,4 @@
-DoFirst is a simple, smart to-do list that helps you organize your tasks and manage your priorities with the Eisenhower Matrix. Task manager, reminders, planner and time management in one app.
+DoFirst is a simple, smart to-do list that helps you organize your tasks and manage your priorities with the Eisenhower Matrix. Task manager, reminders, calendar and time management in one app.
 
 TWO QUESTIONS, THAT’S ALL
 For each task, answer “Is it urgent?” and “Is it important?”. DoFirst puts it in the right box:
@@ -7,10 +7,20 @@ For each task, answer “Is it urgent?” and “Is it important?”. DoFirst pu
 • Delegate: urgent but not for you, hand it off
 • Someday: neither urgent nor important, no pressure
 
-BREAK DOWN BIG TASKS
-• Split a task into steps to check off and track your progress
-• Give each step a day: today, tomorrow or any date
-• Spread a project over sessions, like 1 hour a day for 5 days
+DICTATE YOUR TASKS
+• Tap the mic and speak: your to-do list fills up without typing
+• “Tomorrow at 3 pm” becomes a due date in one tap
+• The words “urgent” and “important” suggest the right box
+
+YOUR DAY AT A GLANCE
+• Monthly calendar with dots in each box’s color
+• A timeline for every day: due dates, steps and recurring tasks
+
+MAKE PROGRESS STEP BY STEP
+• Break a task into steps to check off, with a progress %
+• No steps? Set the progress yourself from 0 to 100%
+• Spread a project over sessions on the days you choose: consecutive days, Monday-Wednesday-Friday or specific dates
+• Press and hold a task to check its steps in one gesture
 
 REMINDERS THAT FOLLOW UP
 • Notifications and follow-ups until an urgent task is done
@@ -19,12 +29,15 @@ REMINDERS THAT FOLLOW UP
 • Tap “Done” or “Snooze 1 h” right in the notification
 
 PLAN YOUR WEEK
-• “Your week”: see how much of your work you planned ahead
+• “Your week” and the summary: see how much of your work you planned ahead
 • Weekly review: 5 minutes to sort things out and pick 3 priorities
 • Recurring tasks: daily, weekly, monthly…
 
 DELEGATE WITHOUT FORGETTING
 Send the task by SMS or WhatsApp in one tap, and follow up at the right time.
+
+WHEN GETTING STARTED IS HARD
+If you find it hard to get organized or to get going, including with ADHD, DoFirst keeps things simple: one question at a time, small steps, reminders and a to-do list that shows what matters first.
 
 SIMPLE AND MOTIVATING
 • Swipe right to complete, left to delete
@@ -33,6 +46,6 @@ SIMPLE AND MOTIVATING
 • Available in 13 languages
 
 YOUR DATA IS YOURS
-No account, no ads. Your tasks stay on your phone, and you can export them to a backup file at any time.
+No account, no ads. Your tasks stay on your phone, and you can export them to a backup file at any time. If you like, back them up to your Google Drive too, in a private folder only DoFirst can use, and get them back automatically on a new phone.
 
-For work, school or home, DoFirst replaces your daily checklist, notes and to-do app. Boost your productivity and stay focused: do what matters first.
+For work, school or home, DoFirst replaces your to-do list app, notes and daily checklist. Boost your productivity and stay focused: do what matters first.

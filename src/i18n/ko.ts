@@ -329,15 +329,35 @@ export const ko: Translations = {
         body: "큰 할 일을 체크할 수 있는 작은 단계로 나눠요. 순서는 마음대로 바꿀 수 있어요(단계를 길게 누른 뒤 끌기). 단계에 날짜를 정하면 그날 오전 9:00 또는 내가 정한 시간에 “완료”와 “내일로 미루기”가 있는 알림이 와요. 할 일은 내가 체크해야 완료돼요.",
         example: "“발표 준비”: 자료 찾기, 개요 짜기, 도입부 쓰기, 연습하기.",
       },
+      progress: {
+        title: "진행률",
+        body: "단계가 있으면 체크한 단계에 따라 진행률이 정해져요. 단계가 없으면 0~100%로 직접 정해요. 카드에 얇은 막대로 표시돼요.",
+        example: "할 일을 길게 누르고 '50%'를 누르면 카드에 절반 찬 막대가 보여요.",
+      },
       splitSessions: {
-        title: "며칠에 나누기",
-        body: "작업 세션을 한 번에 여러 개 만들어요. 하루에 하나씩, 각각 알림이 있어요. 세션 수, 시간, 시작일, 주말을 건너뛸지 고를 수 있어요. 확인하기 전에 미리 보기가 나와요.",
-        example: "목요일부터 1시간 세션 5개, 평일만: 목, 금, 월, 화, 수.",
+        title: "여러 날에 나누기",
+        body: "작업 세션을 한 번에 여러 개 만들고 각각 알림을 정해요. 연속된 날, 특정 요일(월, 수, 금…) 또는 미니 캘린더에서 고른 날짜 중에서 골라요. 확인하기 전에 미리 보기가 나와요.",
+        example: "월·수·금 1시간: 이번 주 3번, 원하면 +로 늘릴 수 있어요.",
       },
       backup: {
         title: "백업",
         body: "“내보내기”는 모든 데이터가 담긴 암호화되지 않은 파일을 만들어요. 안전한 곳(Drive, 이메일, 파일)에 보관하세요. “가져오기”는 안전 사본을 만든 뒤 이 휴대폰의 데이터를 파일 내용으로 바꿔요. Android에서는 휴대폰에서 켜져 있다면 Google 자동 백업에도 데이터가 저장돼요.",
         example: "휴대폰을 바꾸기 전에 데이터를 Drive로 내보내고, 새 휴대폰에서 그 파일을 가져오기.",
+      },
+      drive: {
+        title: "Google 드라이브 백업",
+        body: "선택 기능으로, 데이터는 Google 드라이브 안의 DoFirst 전용 숨김 폴더에 복사되며 내 파일에는 보이지 않고 개발자를 포함해 다른 누구도 볼 수 없어요. 최근 백업 5개가 보관돼요. '복원'을 누르면 안전 사본을 만든 뒤 이 휴대폰의 데이터를 바꿔요.",
+        example: "새 휴대폰에서 같은 계정으로 로그인하면 DoFirst가 최근 백업을 복원할지 물어봐요.",
+      },
+      calendar: {
+        title: "캘린더",
+        body: "날마다 사분면 색의 점과 할 일 수가 표시돼요. 마감일, 예정된 단계, 반복하는 할 일의 다음 일정(점선, '예정')이 들어가요. 날짜를 누르면 그날의 시간표가 열리고, 할 일을 누르면 자세히 볼 수 있어요.",
+        example: "왼쪽으로 밀면 다음 달로 가고, '오늘'을 누르면 오늘로 돌아와요.",
+      },
+      voice: {
+        title: "음성 입력",
+        body: "마이크를 누르면 제목을 말로 입력할 수 있어요. 말하는 동안 글자가 나타나고, 말을 멈추면 듣기가 끝나요. 휴대폰의 음성 인식이 처리하고, 가능하면 기기 안에서 처리해요. 녹음은 저장되지 않아요. '긴급', '중요' 같은 단어도 찾아서 켤지 물어봐요.",
+        example: "\"긴급 보고서 보내기\"라고 말하면 '긴급함' 스위치를 켤지 물어봐요.",
       },
       autoEscalate: {
         title: "기한이 지난 할 일",
@@ -377,13 +397,23 @@ export const ko: Translations = {
       body: "할 일을 만들 때 “긴급한가요?”와 “중요한가요?”에 답하세요. 앱이 알맞은 칸에 넣어 줘요.",
     },
     gestures: {
-      title: "알림과 제스처",
-      body: "할 일을 오른쪽으로 밀면 완료, 왼쪽으로 밀면 삭제예요. 알림은 푸시로 와요: “완료”나 “1시간 뒤”를 누르면 앱이 열려 처리해요.",
+      title: "동작과 단계",
+      body: "할 일을 오른쪽으로 밀면 완료, 왼쪽으로 밀면 삭제돼요. 길게 누르면 단계를 체크하거나 진행률을 정할 수 있어요.",
     },
     reminders: {
       title: "이제 놓치지 마세요",
       body: "DoFirst가 알맞은 때에 할 일을 알려 주고, 안 끝난 일은 다시 알려 주며, 할 일이 긴급해지면 미리 알려 줘요.",
     },
+    calendar: {
+      title: "캘린더와 음성 입력",
+      body: "캘린더에서 할 일을 날짜별로 볼 수 있어요. 마이크를 눌러 할 일을 말로 입력하고, '긴급'이나 '중요' 같은 단어로 스위치 추천도 받아요.",
+    },
+    drive: {
+      title: "Google 드라이브 백업",
+      body: "선택 사항이에요. Google 계정을 연결하면 할 일 사본을 드라이브의 비공개 폴더에 보관하고 새 휴대폰에서 복원할 수 있어요. 나중에 설정에서 해도 돼요.",
+    },
+    connect: "로그인",
+    driveOn: "연결됨: 자동 백업이 켜졌어요",
     enableReminders: "알림 켜기",
     remindersOn: "알림이 켜져 있어요",
     sampleTask: "보고서 보내기",
@@ -575,6 +605,122 @@ export const ko: Translations = {
     undoErrorBody: "안전 사본을 읽지 못했어요. 아무것도 바뀌지 않았어요.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "캘린더 열기",
+    title: "캘린더",
+    today: "오늘",
+    previous: "이전 달",
+    next: "다음 달",
+    empty: "이날은 예정된 일이 없어요.",
+    noTime: "시간 없음",
+    planned: "예정",
+    step: (title: string) => `단계: ${title}`,
+    plannedHint: "반복하는 할 일의 예정된 일정이라 바꿀 수 없어요",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "제목 음성 입력",
+    stop: "음성 입력 멈추기",
+    listening: "듣고 있어요… 말해 주세요",
+    deniedTitle: "마이크 권한이 없어요",
+    deniedBody: "할 일을 말로 입력하려면 휴대폰 설정에서 DoFirst의 마이크를 허용해 주세요.",
+    unavailableTitle: "음성 입력을 쓸 수 없어요",
+    unavailableBody: "이 휴대폰에서는 음성 인식을 쓸 수 없어요.",
+    errorTitle: "음성 입력이 멈췄어요",
+    errorBody: "음성 인식을 시작하지 못했어요. 잠시 후 다시 해 주세요.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `마감: ${date}`,
+    apply: "적용",
+    dismiss: "무시",
+    urgent: "제목에 '긴급'이 있어요",
+    important: "제목에 '중요'가 있어요",
+    turnOn: "켜기",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "진행률",
+    value: (n: number) => `${n}%`,
+    auto: "체크한 단계로 계산해요",
+    manual: "진행률을 직접 정해요",
+    hint: "길게 누르기: 단계와 진행률",
+    steps: "단계",
+    close: "닫기",
+    changed: (n: number) => `진행률: ${n}%`,
+    stepUnchecked: "단계 체크를 해제했어요",
+  },
+
+  splitModes: {
+    label: "나누는 방식",
+    consecutive: "연속된 날",
+    weekdays: "특정 요일",
+    dates: "날짜 지정",
+    datesHint: "원하는 날짜를 눌러요 (2~14일).",
+    tooFew: "최소 2일을 골라 주세요.",
+    previousMonth: "이전 달",
+    nextMonth: "다음 달",
+  },
+
+  quick: {
+    dictate: "새 할 일 말로 입력",
+  },
+
+  driveCard: {
+    body: "할 일을 Google 드라이브에 백업해요 (선택)",
+    connect: "로그인",
+  },
+
+  driveRestore: {
+    title: "할 일을 복원했어요",
+    body: (date: string) => `할 일을 복원했어요 (${date} 백업).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google 드라이브",
+    intro: "선택 사항: 데이터 사본을 Google 드라이브 안의 DoFirst 전용 숨김 폴더에 보관해요.",
+    connect: "Google 드라이브에 백업",
+    account: (email: string) => `계정: ${email}`,
+    lastBackup: (date: string) => `마지막 백업: ${date}`,
+    never: "아직 백업이 없어요",
+    working: "진행 중…",
+    backupNow: "지금 백업",
+    restore: "Google 드라이브에서 복원",
+    restoreAction: "복원",
+    auto: "자동 백업",
+    autoHint: "앱을 나갈 때 데이터가 바뀌었으면 하루에 한 번까지 백업해요.",
+    signOut: "로그아웃",
+    delete: "온라인 백업 삭제",
+    previewDate: (date: string) => `${date} 백업`,
+    foundTitle: "백업을 찾았어요",
+    later: "나중에",
+    connectErrorTitle: "로그인할 수 없어요",
+    connectErrorBody: "Google 로그인에 실패했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.",
+    backupDoneTitle: "백업했어요",
+    backupDoneBody: "데이터가 Google 드라이브에 있어요.",
+    backupErrorTitle: "백업할 수 없어요",
+    backupErrorBody: "Google 드라이브가 응답하지 않아요. 인터넷 연결을 확인하고 다시 시도해 주세요. 데이터는 이 휴대폰에 그대로 있어요.",
+    restoreErrorTitle: "복원할 수 없어요",
+    restoreErrorBody: "백업을 읽지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요. 바뀐 것은 없어요.",
+    noBackupTitle: "백업이 없어요",
+    noBackupBody: "이 Google 드라이브에는 아직 DoFirst 백업이 없어요.",
+    signOutTitle: "Google 드라이브에서 로그아웃할까요?",
+    signOutBody: "자동 백업이 멈춰요. 온라인 백업은 남아 있어서 다시 로그인하면 복원할 수 있어요.",
+    deleteTitle: "온라인 백업을 삭제할까요?",
+    deleteBody: "Google 드라이브에 있는 DoFirst 백업이 모두 삭제되고 자동 백업이 꺼져요. 이 휴대폰의 데이터는 바뀌지 않아요.",
+    deleteErrorTitle: "삭제할 수 없어요",
+    deleteErrorBody: "Google 드라이브가 응답하지 않아요. 인터넷 연결을 확인하고 다시 시도해 주세요.",
+    deletedTitle: "온라인 백업을 삭제했어요",
+    deletedBody: "이제 Google 드라이브에 DoFirst 백업이 없어요.",
+    signedOutTitle: "다시 로그인해 주세요",
+    signedOutBody: "Google 드라이브 접근 권한이 만료되었거나 취소되었어요. 백업하려면 다시 로그인해 주세요.",
+  },
+
   howTo: {
     title: "사용 방법",
     methodTitle: "아이젠하워 방법",
@@ -647,6 +793,10 @@ export const ko: Translations = {
       send: "“맡기기” 할 일에서 “보내기”를 누르면 상대에게 보낼 메시지와 함께 공유 메뉴가 열려요. 앱과 받는 사람은 직접 골라요.",
       nudge: "맡긴 할 일의 알림이나 돌아보기 3단계에서 “확인하기”를 누르면 보낼 짧은 메시지를 준비해 줘요.",
       backup: "설정 › 백업: “내 데이터 내보내기”는 원하는 곳에 보관할 파일을 만들고, “백업 가져오기”는 그 파일을 이 휴대폰에 되돌려요.",
+      drive: "설정 › Google 드라이브: Google 계정을 연결하면 데이터를 직접 또는 자동으로 온라인에 백업하고, 다른 휴대폰에서 복원할 수 있어요.",
+      calendar: "매트릭스의 숫자 달력 아이콘을 누르면 할 일을 달별로 볼 수 있어요. 날짜를 누르면 시간표가 열려요.",
+      voice: "+ 옆의 마이크를 누르거나 +를 길게 눌러 할 일을 말로 입력해요. 입력 화면에서는 제목의 마이크도 같은 역할을 해요.",
+      longPress: "할 일을 길게 누르면 단계를 체크하거나 진행률을 정할 수 있어요.",
       permission: "알림: 소개 화면에서 켤 수 있어요. 허용하지 않아도 앱을 열 때마다 다시 묻지 않아요. 알림을 설정할 때 알림을 허용하거나 휴대폰 설정을 열도록 안내해요. 상태는 설정 › 알림에서 볼 수 있어요.",
       quietHours: "방해 금지 시간(기본은 꺼짐, 설정에서 켜기): 그 사이 알림은 끝날 때 오고, 그럴 때는 할 일 화면에서 알려 줘요.",
       steps: "할 일 화면의 “단계”로 할 일을 나눠요: 카드에 진행 상황 “2/5”와 오늘의 단계가 보여요. 지난 날짜인데 끝내지 않은 단계는 밀린 것으로 표시돼요.",

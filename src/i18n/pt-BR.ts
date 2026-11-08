@@ -331,15 +331,35 @@ export const ptBR: Translations = {
         body: "Divida uma tarefa grande em pequenas etapas para marcar, na ordem que quiser (toque e segure uma etapa e depois arraste). Dê um dia para uma etapa para receber um lembrete nesse dia, às 9:00 ou na hora que você escolher, com “Feito” e “Passar para amanhã”. A tarefa só é concluída quando você marcar.",
         example: "“Preparar a apresentação”: buscar fontes, fazer o roteiro, escrever a introdução, ensaiar.",
       },
+      progress: {
+        title: "Progresso",
+        body: "Com etapas, o progresso acompanha as etapas marcadas. Sem etapas, ajuste você mesmo de 0 a 100%. Ele aparece como uma barra fina no cartão.",
+        example: "mantenha uma tarefa pressionada e toque em “50%”: o cartão mostra uma barra pela metade.",
+      },
       splitSessions: {
-        title: "Dividir em vários dias",
-        body: "Cria várias sessões de trabalho de uma vez, uma por dia, cada uma com seu lembrete. Você escolhe quantas sessões, a duração, o primeiro dia e se pula o fim de semana. Uma prévia aparece antes de confirmar.",
-        example: "5 sessões de 1 h a partir de uma quinta, só em dias úteis: quinta, sexta, segunda, terça e quarta.",
+        title: "Distribuir em vários dias",
+        body: "Cria de uma vez várias sessões de trabalho, cada uma com seu lembrete: dias seguidos, alguns dias da semana (seg, qua, sex…) ou datas específicas escolhidas num minicalendário. Uma prévia aparece antes de confirmar.",
+        example: "segunda, quarta e sexta, 1 h: 3 sessões nesta semana, dá para estender com + se quiser.",
       },
       backup: {
         title: "Backup",
         body: "“Exportar” cria um arquivo não criptografado com todos os seus dados: guarde num lugar seguro (Drive, e-mail, arquivos). “Importar” substitui os dados deste celular pelos do arquivo, depois de uma cópia de segurança. No Android, o backup automático do Google também guarda seus dados, se estiver ativado no celular.",
         example: "antes de trocar de celular, exporte seus dados para o Drive e depois importe o arquivo no novo.",
+      },
+      drive: {
+        title: "Backup no Google Drive",
+        body: "Opcional: seus dados são copiados para uma pasta oculta do seu Google Drive, reservada ao DoFirst: ela não aparece nos seus arquivos e ninguém mais tem acesso, nem o desenvolvedor. Os 5 últimos backups ficam guardados. “Restaurar” substitui os dados deste celular, depois de uma cópia de segurança.",
+        example: "num celular novo, entre com a mesma conta: o DoFirst oferece restaurar seu último backup.",
+      },
+      calendar: {
+        title: "Calendário",
+        body: "Cada dia mostra pontos nas cores dos quadrantes e o número de tarefas: prazos, etapas previstas e próximas ocorrências das tarefas recorrentes (tracejadas, “Prevista”). Toque em um dia para ver a linha do tempo e depois em uma tarefa para abri-la.",
+        example: "deslize para a esquerda para ir ao mês seguinte; “Hoje” volta para o dia de hoje.",
+      },
+      voice: {
+        title: "Ditado",
+        body: "Toque no microfone para ditar o título: o texto aparece enquanto você fala e a escuta para depois de um silêncio. Quem faz o trabalho é o reconhecimento de voz do celular, no próprio aparelho quando possível; nada é gravado. O DoFirst também identifica uma data (“amanhã às 15h”) ou as palavras “urgente” e “importante” e sugere aplicá-las.",
+        example: "diga “Ligar para a oficina sexta” e toque em “Aplicar”: o prazo fica para sexta às 9h.",
       },
       autoEscalate: {
         title: "Tarefas atrasadas",
@@ -379,13 +399,23 @@ export const ptBR: Translations = {
       body: "Ao criar uma tarefa, responda “É urgente?” e “É importante?”. O app coloca no quadro certo para você.",
     },
     gestures: {
-      title: "Lembretes e gestos",
-      body: "Deslize uma tarefa para a direita para concluir, para a esquerda para excluir. Os lembretes chegam como notificações: toque em “Feito” ou “Adiar 1 h” e o app abre para cuidar disso.",
+      title: "Gestos e etapas",
+      body: "Deslize uma tarefa para a direita para concluí-la e para a esquerda para apagá-la. Mantenha pressionada para marcar as etapas ou ajustar o progresso.",
     },
     reminders: {
       title: "Não perca mais nada",
       body: "O DoFirst lembra você das suas tarefas na hora certa, cobra o que ainda não foi feito e avisa quando uma tarefa fica urgente.",
     },
+    calendar: {
+      title: "Calendário e ditado",
+      body: "O calendário mostra suas tarefas dia a dia. Toque no microfone para ditar uma tarefa: “amanhã às 15h” vira prazo com um toque.",
+    },
+    drive: {
+      title: "Backup no Google Drive",
+      body: "Opcional: conecte sua conta Google para guardar uma cópia das tarefas numa pasta privada do seu Drive e recuperá-las num celular novo. Dá para fazer depois nos Ajustes.",
+    },
+    connect: "Entrar",
+    driveOn: "Conectado: backup automático ativado",
     enableReminders: "Ativar os lembretes",
     remindersOn: "Os lembretes estão ativados",
     sampleTask: "Enviar o relatório",
@@ -577,6 +607,122 @@ export const ptBR: Translations = {
     undoErrorBody: "Não deu para ler a cópia de segurança. Nada foi alterado.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Abrir o calendário",
+    title: "Calendário",
+    today: "Hoje",
+    previous: "Mês anterior",
+    next: "Próximo mês",
+    empty: "Nada previsto neste dia.",
+    noTime: "Sem horário",
+    planned: "Prevista",
+    step: (title: string) => `Etapa: ${title}`,
+    plannedHint: "Ocorrência prevista de uma tarefa recorrente, não pode ser alterada",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Ditar o título",
+    stop: "Parar o ditado",
+    listening: "Ouvindo… pode falar",
+    deniedTitle: "Microfone não permitido",
+    deniedBody: "Para ditar suas tarefas, permita o microfone para o DoFirst nos ajustes do celular.",
+    unavailableTitle: "Ditado indisponível",
+    unavailableBody: "O reconhecimento de voz não está disponível neste celular.",
+    errorTitle: "Ditado interrompido",
+    errorBody: "O reconhecimento de voz não conseguiu começar. Tente de novo daqui a pouco.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Prazo: ${date}`,
+    apply: "Aplicar",
+    dismiss: "Ignorar",
+    urgent: "O título diz “urgente”",
+    important: "O título diz “importante”",
+    turnOn: "Ativar",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Progresso",
+    value: (n: number) => `${n}%`,
+    auto: "Calculado pelas etapas marcadas",
+    manual: "Ajuste o progresso à mão",
+    hint: "Toque longo: etapas e progresso",
+    steps: "Etapas",
+    close: "Fechar",
+    changed: (n: number) => `Progresso: ${n}%`,
+    stepUnchecked: "Etapa desmarcada",
+  },
+
+  splitModes: {
+    label: "Distribuição",
+    consecutive: "Dias seguidos",
+    weekdays: "Alguns dias da semana",
+    dates: "Datas específicas",
+    datesHint: "Toque nos dias que quiser (de 2 a 14).",
+    tooFew: "Escolha pelo menos 2 dias.",
+    previousMonth: "Mês anterior",
+    nextMonth: "Próximo mês",
+  },
+
+  quick: {
+    dictate: "Ditar uma nova tarefa",
+  },
+
+  driveCard: {
+    body: "Faça backup das suas tarefas no seu Google Drive (opcional)",
+    connect: "Entrar",
+  },
+
+  driveRestore: {
+    title: "Tarefas restauradas",
+    body: (date: string) => `Suas tarefas foram restauradas (backup de ${date}).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "Opcional: guarde uma cópia dos seus dados no seu Google Drive, numa pasta oculta reservada ao DoFirst.",
+    connect: "Fazer backup no Google Drive",
+    account: (email: string) => `Conta: ${email}`,
+    lastBackup: (date: string) => `Último backup: ${date}`,
+    never: "Nenhum backup ainda",
+    working: "Em andamento…",
+    backupNow: "Fazer backup agora",
+    restore: "Restaurar do Google Drive",
+    restoreAction: "Restaurar",
+    auto: "Backup automático",
+    autoHint: "No máximo uma vez por dia, quando você sai do app e se seus dados mudaram.",
+    signOut: "Sair",
+    delete: "Apagar meu backup on-line",
+    previewDate: (date: string) => `Backup de ${date}`,
+    foundTitle: "Backup encontrado",
+    later: "Depois",
+    connectErrorTitle: "Não foi possível entrar",
+    connectErrorBody: "A conexão com o Google não deu certo. Verifique sua internet e tente de novo.",
+    backupDoneTitle: "Backup concluído",
+    backupDoneBody: "Seus dados estão no seu Google Drive.",
+    backupErrorTitle: "Não foi possível fazer o backup",
+    backupErrorBody: "O Google Drive não está respondendo. Verifique sua internet e tente de novo. Seus dados continuam neste celular.",
+    restoreErrorTitle: "Não foi possível restaurar",
+    restoreErrorBody: "O backup não pôde ser lido. Verifique sua internet e tente de novo. Nada foi alterado.",
+    noBackupTitle: "Nenhum backup",
+    noBackupBody: "Ainda não há nenhum backup do DoFirst neste Google Drive.",
+    signOutTitle: "Sair do Google Drive?",
+    signOutBody: "O backup automático para. Seu backup on-line fica guardado: você pode restaurá-lo entrando de novo.",
+    deleteTitle: "Apagar seu backup on-line?",
+    deleteBody: "Todos os backups do DoFirst no seu Google Drive serão apagados e o backup automático será desativado. Os dados deste celular não mudam.",
+    deleteErrorTitle: "Não foi possível apagar",
+    deleteErrorBody: "O Google Drive não está respondendo. Verifique sua internet e tente de novo.",
+    deletedTitle: "Backup on-line apagado",
+    deletedBody: "Não há mais nenhum backup do DoFirst no seu Google Drive.",
+    signedOutTitle: "Entre de novo",
+    signedOutBody: "O acesso ao Google Drive expirou ou foi removido. Entre de novo para fazer backup.",
+  },
+
   howTo: {
     title: "Como funciona",
     methodTitle: "O método Eisenhower",
@@ -649,6 +795,10 @@ export const ptBR: Translations = {
       send: "Numa tarefa de “Delegar”, “Enviar” abre o compartilhamento com uma mensagem pronta para a pessoa. Você escolhe o app e o destinatário.",
       nudge: "No lembrete de uma tarefa passada adiante, ou na etapa 3 da revisão, “Cobrar” prepara um lembrete curto para enviar.",
       backup: "Ajustes › Backup: “Exportar meus dados” cria um arquivo para guardar onde quiser; “Importar um backup” coloca de volta neste celular.",
+      drive: "Ajustes › Google Drive: conecte sua conta Google para fazer backup dos seus dados on-line, manualmente ou automaticamente, e restaurá-los em outro celular.",
+      calendar: "Toque no ícone de calendário com números da matriz para ver suas tarefas mês a mês; toque em um dia para ver a linha do tempo.",
+      voice: "Toque no microfone ao lado do + (ou mantenha o + pressionado) para ditar uma tarefa; na ficha, o microfone do título faz o mesmo.",
+      longPress: "Mantenha uma tarefa pressionada para marcar as etapas ou ajustar o progresso.",
       permission: "Lembretes: a apresentação oferece ativá-los. Se você disser não, o app não pede de novo toda vez que você abre: ao ativar um lembrete, ele oferece permitir as notificações ou abrir os ajustes do celular. O status aparece em Ajustes › Notificações.",
       quietHours: "Horário de silêncio (desativado por padrão, ative nos Ajustes): os lembretes que cairiam nele chegam quando ele termina, e a ficha da tarefa te avisa quando isso acontece.",
       steps: "Na ficha da tarefa, “Etapas” divide uma tarefa: o cartão mostra o progresso “2/5” e a etapa do dia. Uma etapa de um dia que já passou e não foi feita aparece como atrasada.",

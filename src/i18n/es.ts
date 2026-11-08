@@ -330,15 +330,35 @@ export const es: Translations = {
         body: "Divide una tarea grande en pasos pequeños para marcar, en el orden que quieras (mantén pulsado un paso y arrástralo). Dale un día a un paso para recibir un aviso ese día, a las 9:00 o a la hora que elijas, con «Hecho» y «Pasar a mañana». La tarea solo se termina cuando la marcas.",
         example: "«Preparar la presentación»: buscar fuentes, hacer el esquema, escribir la intro, ensayar.",
       },
+      progress: {
+        title: "Progreso",
+        body: "Con pasos, el progreso sigue los pasos marcados. Sin pasos, ajústalo tú de 0 a 100 %. Se muestra como una barra fina en la tarjeta.",
+        example: "mantén pulsada una tarea y toca «50 %»: la tarjeta muestra una barra a medias.",
+      },
       splitSessions: {
         title: "Repartir en varios días",
-        body: "Crea de golpe varias sesiones de trabajo, una por día, cada una con su aviso. Eliges cuántas sesiones, cuánto duran, el primer día y si te saltas los fines de semana. Verás una vista previa antes de confirmar.",
-        example: "5 sesiones de 1 h a partir de un jueves, solo entre semana: jueves, viernes, lunes, martes y miércoles.",
+        body: "Crea de una vez varias sesiones de trabajo, cada una con su aviso: días seguidos, algunos días de la semana (lun, mié, vie…) o fechas concretas elegidas en un minicalendario. Verás una vista previa antes de confirmar.",
+        example: "lunes, miércoles y viernes, 1 h: 3 sesiones esta semana, amplíalas con + si quieres.",
       },
       backup: {
         title: "Copia de seguridad",
         body: "«Exportar» crea un archivo sin cifrar con todos tus datos: guárdalo en un lugar seguro (Drive, correo, archivos). «Importar» sustituye los datos de este teléfono por los de un archivo, tras una copia de seguridad previa. En Android, la copia automática de Google también guarda tus datos, si está activada en el teléfono.",
         example: "antes de cambiar de teléfono, exporta tus datos a Drive y luego importa el archivo en el nuevo.",
+      },
+      drive: {
+        title: "Copia en Google Drive",
+        body: "Opcional: tus datos se copian en una carpeta oculta de tu Google Drive reservada a DoFirst: no aparece entre tus archivos y nadie más puede acceder, ni siquiera el desarrollador. Se guardan las 5 últimas copias. «Restaurar» sustituye los datos de este teléfono, después de una copia de seguridad.",
+        example: "en un teléfono nuevo, conéctate con la misma cuenta: DoFirst te propone restaurar tu última copia.",
+      },
+      calendar: {
+        title: "Calendario",
+        body: "Cada día muestra puntos con los colores de los cuadrantes y el número de tareas: vencimientos, pasos previstos y próximas repeticiones de las tareas recurrentes (con borde discontinuo, «Prevista»). Toca un día para ver su franja horaria y luego una tarea para abrirla.",
+        example: "desliza hacia la izquierda para pasar al mes siguiente; «Hoy» te devuelve al día de hoy.",
+      },
+      voice: {
+        title: "Dictado",
+        body: "Toca el micrófono para dictar el título: el texto aparece mientras hablas y la escucha se detiene tras un silencio. Lo hace el reconocimiento de voz del teléfono, en el propio dispositivo cuando es posible; no se graba nada. DoFirst también detecta una fecha («mañana a las 15») o las palabras «urgente» e «importante», y te propone aplicarlas.",
+        example: "di «Llamar al taller el viernes» y toca «Aplicar»: el vencimiento queda el viernes a las 9.",
       },
       autoEscalate: {
         title: "Tareas con retraso",
@@ -378,13 +398,23 @@ export const es: Translations = {
       body: "Al crear una tarea, responde «¿Es urgente?» y «¿Es importante?». La app la coloca sola en la casilla correcta.",
     },
     gestures: {
-      title: "Avisos y gestos",
-      body: "Desliza una tarea a la derecha para terminarla, a la izquierda para eliminarla. Los avisos llegan como notificación: toca «Hecho» o «Posponer 1 h» y la app se abre y se encarga.",
+      title: "Gestos y pasos",
+      body: "Desliza una tarea a la derecha para terminarla y a la izquierda para eliminarla. Mantenla pulsada para marcar sus pasos o ajustar su progreso.",
     },
     reminders: {
       title: "Que no se te pase nada",
       body: "DoFirst te recuerda tus tareas en el momento justo, insiste con lo que está sin hacer y te avisa cuando una tarea se vuelve urgente.",
     },
+    calendar: {
+      title: "Calendario y dictado",
+      body: "El calendario muestra tus tareas día a día. Toca el micrófono para dictar una tarea: «mañana a las 15» se convierte en vencimiento con un toque.",
+    },
+    drive: {
+      title: "Copia en Google Drive",
+      body: "Opcional: conecta tu cuenta de Google para guardar una copia de tus tareas en una carpeta privada de tu Drive y recuperarlas en un teléfono nuevo. Puedes hacerlo más tarde en Ajustes.",
+    },
+    connect: "Conectarse",
+    driveOn: "Conectado: copia automática activada",
     enableReminders: "Activar los avisos",
     remindersOn: "Los avisos están activados",
     sampleTask: "Entregar el informe",
@@ -576,6 +606,122 @@ export const es: Translations = {
     undoErrorBody: "No se pudo leer la copia de seguridad. No se ha cambiado nada.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Abrir el calendario",
+    title: "Calendario",
+    today: "Hoy",
+    previous: "Mes anterior",
+    next: "Mes siguiente",
+    empty: "Nada previsto este día.",
+    noTime: "Sin hora",
+    planned: "Prevista",
+    step: (title: string) => `Paso: ${title}`,
+    plannedHint: "Repetición prevista de una tarea recurrente, no se puede modificar",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dictar el título",
+    stop: "Detener el dictado",
+    listening: "Escuchando… habla ahora",
+    deniedTitle: "Micrófono no permitido",
+    deniedBody: "Para dictar tus tareas, permite el micrófono para DoFirst en los ajustes del teléfono.",
+    unavailableTitle: "Dictado no disponible",
+    unavailableBody: "El reconocimiento de voz no está disponible en este teléfono.",
+    errorTitle: "Dictado interrumpido",
+    errorBody: "El reconocimiento de voz no pudo iniciarse. Vuelve a intentarlo en un momento.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Vencimiento: ${date}`,
+    apply: "Aplicar",
+    dismiss: "Ignorar",
+    urgent: "El título dice «urgente»",
+    important: "El título dice «importante»",
+    turnOn: "Activar",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Progreso",
+    value: (n: number) => `${n} %`,
+    auto: "Según los pasos marcados",
+    manual: "Ajusta el progreso a mano",
+    hint: "Pulsación larga: pasos y progreso",
+    steps: "Pasos",
+    close: "Cerrar",
+    changed: (n: number) => `Progreso: ${n} %`,
+    stepUnchecked: "Paso desmarcado",
+  },
+
+  splitModes: {
+    label: "Reparto",
+    consecutive: "Días seguidos",
+    weekdays: "Algunos días de la semana",
+    dates: "Fechas concretas",
+    datesHint: "Toca los días que quieras (de 2 a 14).",
+    tooFew: "Elige al menos 2 días.",
+    previousMonth: "Mes anterior",
+    nextMonth: "Mes siguiente",
+  },
+
+  quick: {
+    dictate: "Dictar una tarea nueva",
+  },
+
+  driveCard: {
+    body: "Guarda tus tareas en tu Google Drive (opcional)",
+    connect: "Conectarse",
+  },
+
+  driveRestore: {
+    title: "Tareas restauradas",
+    body: (date: string) => `Tus tareas se han restaurado (copia del ${date}).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "Opcional: guarda una copia de tus datos en tu Google Drive, en una carpeta oculta reservada a DoFirst.",
+    connect: "Guardar en Google Drive",
+    account: (email: string) => `Cuenta: ${email}`,
+    lastBackup: (date: string) => `Última copia: ${date}`,
+    never: "Todavía no hay ninguna copia",
+    working: "En curso…",
+    backupNow: "Guardar ahora",
+    restore: "Restaurar desde Google Drive",
+    restoreAction: "Restaurar",
+    auto: "Copia automática",
+    autoHint: "Como mucho una vez al día, cuando sales de la app y si tus datos han cambiado.",
+    signOut: "Cerrar sesión",
+    delete: "Eliminar mi copia en línea",
+    previewDate: (date: string) => `Copia del ${date}`,
+    foundTitle: "Copia encontrada",
+    later: "Más tarde",
+    connectErrorTitle: "No se pudo conectar",
+    connectErrorBody: "La conexión con Google no se completó. Revisa tu conexión a internet y vuelve a intentarlo.",
+    backupDoneTitle: "Copia guardada",
+    backupDoneBody: "Tus datos están en tu Google Drive.",
+    backupErrorTitle: "No se pudo guardar",
+    backupErrorBody: "Google Drive no responde. Revisa tu conexión a internet y vuelve a intentarlo. Tus datos siguen en este teléfono.",
+    restoreErrorTitle: "No se pudo restaurar",
+    restoreErrorBody: "No se pudo leer la copia. Revisa tu conexión a internet y vuelve a intentarlo. No se ha cambiado nada.",
+    noBackupTitle: "Ninguna copia",
+    noBackupBody: "Todavía no hay ninguna copia de DoFirst en este Google Drive.",
+    signOutTitle: "¿Cerrar sesión en Google Drive?",
+    signOutBody: "La copia automática se detiene. Tu copia en línea se conserva: podrás restaurarla al volver a conectarte.",
+    deleteTitle: "¿Eliminar tu copia en línea?",
+    deleteBody: "Se eliminarán todas las copias de DoFirst de tu Google Drive y se desactivará la copia automática. Los datos de este teléfono no cambian.",
+    deleteErrorTitle: "No se pudo eliminar",
+    deleteErrorBody: "Google Drive no responde. Revisa tu conexión a internet y vuelve a intentarlo.",
+    deletedTitle: "Copia en línea eliminada",
+    deletedBody: "Ya no hay ninguna copia de DoFirst en tu Google Drive.",
+    signedOutTitle: "Vuelve a conectarte",
+    signedOutBody: "El acceso a Google Drive ha caducado o se ha retirado. Vuelve a conectarte para guardar.",
+  },
+
   howTo: {
     title: "Cómo funciona",
     methodTitle: "El método Eisenhower",
@@ -648,6 +794,10 @@ export const es: Translations = {
       send: "En la ficha de una tarea «Delegar», «Enviar» abre el menú de compartir con un mensaje listo para la persona. Tú eliges la app y el destinatario.",
       nudge: "En el aviso de una tarea encargada, o en el paso 3 del repaso, «Preguntar» prepara un recordatorio corto para enviar.",
       backup: "Ajustes › Copia de seguridad: «Exportar mis datos» crea un archivo para guardar donde quieras; «Importar una copia» lo devuelve a este teléfono.",
+      drive: "Ajustes › Google Drive: conecta tu cuenta de Google para guardar tus datos en línea, a mano o automáticamente, y restaurarlos en otro teléfono.",
+      calendar: "Toca el icono de calendario con números en la matriz para ver tus tareas mes a mes; toca un día para ver su franja horaria.",
+      voice: "Toca el micrófono junto al + (o mantén pulsado +) para dictar una tarea; en la ficha, el micrófono del título hace lo mismo.",
+      longPress: "Mantén pulsada una tarea para marcar sus pasos o ajustar su progreso.",
       permission: "Avisos: la presentación te ofrece activarlos. Si dices que no, la app no vuelve a pedírtelo cada vez que la abres: cuando activas un aviso, te ofrece permitirlos o abrir los ajustes del teléfono. El estado aparece en Ajustes › Notificaciones.",
       quietHours: "Horas de silencio (desactivadas por defecto, actívalas en Ajustes): los avisos que caerían dentro llegan al final, y la ficha de la tarea te lo indica.",
       steps: "En la ficha de la tarea, «Pasos» la divide: la tarjeta muestra el progreso «2/5» y el paso de hoy. Un paso de un día pasado sin hacer se marca con retraso.",

@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode, useRef, useState } from "react";
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { DateSuggestion } from "../smartInput";
 import { CATEGORY_BY_KEY, categoryFromFlags } from "../constants/categories";
 import { offerToFinishAfterStep } from "../finishPrompt";
 import { t, translated } from "../i18n";
@@ -29,16 +30,21 @@ import DueDateField from "./DueDateField";
 import InfoButton, { InfoKey } from "./InfoButton";
 import OptionPills from "./OptionPills";
 import StepsEditor from "./StepsEditor";
+import TitleField from "./TitleField";
+import ProgressBar from "./ProgressBar";
+import { PROGRESS_VALUES, taskProgress } from "../progress";
 
 export interface TaskFormValues extends ReminderFields {
   title: string;
   category: Category;
   steps: TaskStep[];
+  progress: number | null; // avancement réglé à la main (sans étapes)
 }
 
 interface Props {
   task?: Task; // modification
   initialCategory?: Category; // création depuis un quadrant
+  autoStartVoice?: boolean; // appui long sur « + » : la dictée démarre à l'ouverture
   settings: Settings;
   notificationsDenied?: boolean; // autorisation refusée : les rappels ne s'afficheront pas
   onOpenSettings?: () => void;
@@ -117,6 +123,7 @@ function LinkButton({ label, onPress }: { label: string; onPress: () => void }) 
 export default function TaskForm({
   task,
   initialCategory,
+  autoStartVoice = false,
   settings,
   notificationsDenied = false,
   onOpenSettings,
@@ -152,6 +159,9 @@ export default function TaskForm({
   );
 
   const [steps, setSteps] = useState<TaskStep[]>(task ? stepsOf(task) : []);
+  const [progress, setProgress] = useState<number | null>(task?.progress ?? null);
+  // Étapes avec un titre : l'avancement est calculé d'après elles
+  const namedSteps = steps.filter((s) => s.title.trim() !== "");
   // Étapes à l'ouverture : une coche ou un jour changés ailleurs entre-temps ne sont pas écrasés
   const initialSteps = useRef(steps);
 
@@ -162,6 +172,14 @@ export default function TaskForm({
   const changeDue = (value: number | null) => {
     setPlanDue(value);
     if (value === null) setRecurrence(null);
+  };
+
+  // Suggestion « Échéance : … » appliquée : titre sans l'expression et échéance. « Si j'ai le
+  // temps » n'a pas d'échéance : la tâche passe en « Planifier » pour la garder.
+  const applyDate = (date: DateSuggestion) => {
+    setTitle(date.title);
+    setPlanDue(date.due);
+    if (!urgent && !important) setImportant(true);
   };
 
   // Choix de la répétition ; sans échéance, la prochaine occurrence à 9 h est proposée
@@ -235,6 +253,7 @@ export default function TaskForm({
     title: title.trim(),
     category: category.key,
     ...reminderFields(),
+    progress,
     // Étape sans titre : retirée
     steps: keepStoredChanges(
       nextSteps.filter((s) => s.title.trim() !== "").map((s) => ({ ...s, title: s.title.trim() })),
@@ -269,16 +288,18 @@ export default function TaskForm({
         {task ? t.form.editTitle : t.form.newTitle}
       </Text>
 
-      <TextInput
-        style={styles.titleInput}
-        placeholder={t.form.titlePlaceholder}
-        placeholderTextColor={colors.textMuted}
+      <TitleField
         value={title}
         onChangeText={setTitle}
-        autoFocus={!task}
-        returnKeyType="done"
         onSubmitEditing={submit}
-        accessibilityLabel={t.form.titleLabel}
+        autoFocus={!task}
+        autoStartVoice={autoStartVoice}
+        urgent={urgent}
+        important={important}
+        accent={category.textColor}
+        onApplyDate={applyDate}
+        onTurnOnUrgent={() => setUrgent(true)}
+        onTurnOnImportant={() => setImportant(true)}
       />
 
       <View style={styles.card}>
@@ -470,6 +491,27 @@ export default function TaskForm({
         />
       </Field>
 
+      <Field label={t.progress.label} info="progress">
+        {namedSteps.length > 0 ? (
+          <View style={styles.progress}>
+            <View style={styles.progressRow}>
+              <Text style={styles.note}>{t.progress.auto}</Text>
+              <Text style={[styles.progressValue, { color: category.textColor }]}>
+                {t.progress.value(taskProgress({ steps: namedSteps, progress }) ?? 0)}
+              </Text>
+            </View>
+            <ProgressBar percent={taskProgress({ steps: namedSteps, progress }) ?? 0} color={category.color} height={6} />
+          </View>
+        ) : (
+          <OptionPills
+            options={PROGRESS_VALUES.map((value) => ({ label: t.progress.value(value), value }))}
+            value={progress ?? 0}
+            onChange={(value) => setProgress(value ?? 0)}
+            {...pillColors}
+          />
+        )}
+      </Field>
+
       {/* Rappel dans la plage silencieuse : simple information, rien n'est bloqué */}
       {quietNotice && (
         <View style={styles.quiet} accessibilityLiveRegion="polite">
@@ -524,23 +566,25 @@ export default function TaskForm({
 }
 
 const styles = StyleSheet.create({
+  progress: {
+    gap: 8,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  progressValue: {
+    fontFamily: fonts.extrabold,
+    fontSize: 16,
+  },
   container: {
     gap: 16,
   },
   heading: {
     fontFamily: fonts.extrabold,
     fontSize: 22,
-    color: colors.text,
-  },
-  titleInput: {
-    minHeight: 52,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    fontFamily: fonts.semibold,
-    fontSize: 17,
     color: colors.text,
   },
   card: {

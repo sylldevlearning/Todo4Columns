@@ -1,0 +1,14 @@
+// TEMPORAIRE, captures du Play Store seulement : copié dans src/drive/googleAccount.web.ts par
+// scripts/store-screenshots/capture.mjs le temps de l'export web, puis supprimé. Jamais commité.
+// En web, la section Google Drive s'affiche, sans connexion réelle.
+export const DRIVE_APPDATA_SCOPE = "https://www.googleapis.com/auth/drive.appdata";
+export const isDriveAvailable = () => true;
+export class NotSignedInError extends Error {}
+export async function signIn(): Promise<string | null> {
+  return null;
+}
+export async function accessToken(): Promise<string> {
+  throw new NotSignedInError("web");
+}
+export async function discardToken(_token: string): Promise<void> {}
+export async function signOut(): Promise<void> {}

@@ -43,12 +43,27 @@ interface Props {
   onImport?: () => void; // « Importer une sauvegarde »
   onUndoImport?: () => void; // « Annuler le dernier import » (seulement après un import)
   onQuietHoursLayout?: (y: number) => void; // position de la section, pour y faire défiler
+  drive?: DriveProps; // sauvegarde Google Drive (absente : section masquée)
   about?: {
     version: string; // version de l'app
     onRate: () => void; // « Noter DoFirst »
     onShare: () => void; // « Partager DoFirst »
     onFeedback: () => void; // « Suggérer une idée / signaler un problème »
   };
+}
+
+// Sauvegarde Google Drive, facultative
+export interface DriveProps {
+  account: string | null; // e-mail du compte connecté, null = non connecté
+  autoBackup: boolean;
+  lastBackupAt: number | null;
+  busy: boolean; // opération en cours : boutons désactivés
+  onConnect: () => void;
+  onBackupNow: () => void;
+  onRestore: () => void;
+  onAutoBackupChange: (value: boolean) => void;
+  onSignOut: () => void;
+  onDelete: () => void;
 }
 
 function Section({
@@ -97,11 +112,73 @@ function Field({
   );
 }
 
-function TextButton({ label, onPress, color = colors.text }: { label: string; onPress: () => void; color?: string }) {
+function TextButton({
+  label,
+  onPress,
+  color = colors.text,
+  disabled = false,
+}: {
+  label: string;
+  onPress: () => void;
+  color?: string;
+  disabled?: boolean;
+}) {
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={styles.textButton}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={[styles.textButton, disabled && styles.disabled]}
+    >
       <Text style={[styles.textButtonLabel, { color }]}>{label}</Text>
     </Pressable>
+  );
+}
+
+function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
+  const { account, busy } = drive;
+  return (
+    <Section title={t.drive.section} info="drive">
+      {account === null ? (
+        <>
+          <Text style={styles.hint}>{t.drive.intro}</Text>
+          <TextButton label={t.drive.connect} onPress={drive.onConnect} disabled={busy} />
+        </>
+      ) : (
+        <>
+          <View style={styles.archived}>
+            <Text style={styles.status}>{t.drive.account(account)}</Text>
+            <Text style={styles.hint} accessibilityLiveRegion="polite">
+              {busy
+                ? t.drive.working
+                : drive.lastBackupAt === null
+                ? t.drive.never
+                : t.drive.lastBackup(formatDue(drive.lastBackupAt))}
+            </Text>
+          </View>
+          <TextButton label={t.drive.backupNow} onPress={drive.onBackupNow} disabled={busy} />
+          <TextButton label={t.drive.restore} onPress={drive.onRestore} disabled={busy} />
+          <View style={styles.separator} />
+          <View style={styles.switchRow}>
+            <View style={styles.switchText}>
+              <Text style={styles.switchLabel}>{t.drive.auto}</Text>
+              <Text style={styles.hint}>{t.drive.autoHint}</Text>
+            </View>
+            <Switch
+              accessibilityLabel={t.drive.auto}
+              value={drive.autoBackup}
+              onValueChange={drive.onAutoBackupChange}
+              trackColor={{ false: colors.border, true: color }}
+              thumbColor={colors.white}
+            />
+          </View>
+          <View style={styles.separator} />
+          <TextButton label={t.drive.signOut} onPress={drive.onSignOut} disabled={busy} />
+          <TextButton label={t.drive.delete} onPress={drive.onDelete} color={colors.danger} disabled={busy} />
+        </>
+      )}
+    </Section>
   );
 }
 
@@ -123,6 +200,7 @@ export default function SettingsForm({
   onImport,
   onUndoImport,
   onQuietHoursLayout,
+  drive,
   about,
 }: Props) {
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
@@ -342,6 +420,8 @@ export default function SettingsForm({
         </Section>
       )}
 
+      {drive && <DriveSection drive={drive} color={doIt.color} />}
+
       {(onOpenHowTo || onShowOnboarding) && (
         <Section title={t.settings.help}>
           {onOpenHowTo && <TextButton label={t.howTo.title} onPress={onOpenHowTo} />}
@@ -437,6 +517,9 @@ const styles = StyleSheet.create({
   textButton: {
     minHeight: TOUCH_SIZE,
     justifyContent: "center",
+  },
+  disabled: {
+    opacity: 0.4,
   },
   textButtonLabel: {
     fontFamily: fonts.bold,

@@ -1,2 +1,6 @@
-• Turn on reminders right from the intro, or from the card on the matrix if you're updating the app
-• Small improvements and fixes
+• New: calendar view of your due dates, steps and recurring tasks
+• Mic on the matrix: dictate a task, "tomorrow at 3 pm" becomes a due date
+• Progress in %: press and hold a task to check its steps or set it
+• Spread a project over chosen days: Mon/Wed/Fri or specific dates
+• Optional Google Drive backup, restored automatically on a new phone
+• Redesigned introduction, with reminders and backup

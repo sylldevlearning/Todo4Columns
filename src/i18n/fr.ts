@@ -338,15 +338,35 @@ export const fr = {
         body: "Découpe une grosse tâche en petites étapes à cocher, dans l'ordre que tu veux (appui long sur une étape puis glisser). Donne un jour à une étape pour recevoir un rappel ce jour-là, à 9:00 ou à l'heure choisie, avec « Fait » et « Reporter à demain ». La tâche n'est terminée que quand tu la coches.",
         example: "« Préparer l'exposé » : chercher les sources, faire le plan, rédiger l'intro, répéter.",
       },
+      progress: {
+        title: "Avancement",
+        body: "Avec des étapes, l'avancement suit les étapes cochées. Sans étapes, règle-le toi-même de 0 à 100 %. Il s'affiche en barre fine sur la carte.",
+        example: "garde le doigt sur une tâche, puis touche « 50 % » : la carte montre une barre à moitié pleine.",
+      },
       splitSessions: {
         title: "Répartir sur plusieurs jours",
-        body: "Crée d'un coup plusieurs séances de travail, une par jour, chacune avec son rappel. Tu choisis le nombre de séances, leur durée, le premier jour et si les week-ends sont sautés. Un aperçu s'affiche avant de valider.",
-        example: "5 séances d'1 h à partir d'un jeudi, en semaine seulement : jeudi, vendredi, lundi, mardi et mercredi.",
+        body: "Crée d'un coup plusieurs séances de travail, chacune avec son rappel : des jours d'affilée, certains jours de la semaine (lun, mer, ven…) ou des dates précises choisies sur un mini-calendrier. Un aperçu s'affiche avant de valider.",
+        example: "lundi, mercredi et vendredi, 1 h : 3 séances cette semaine, à prolonger avec + si tu veux.",
       },
       backup: {
         title: "Sauvegarde",
         body: "« Exporter » crée un fichier non chiffré avec toutes tes données : garde-le en lieu sûr (Drive, mail, fichiers). « Importer » remplace les données de ce téléphone par celles d'un fichier, après une copie de secours. Sur Android, la sauvegarde automatique de Google garde aussi tes données, si elle est activée sur le téléphone.",
         example: "avant de changer de téléphone, exporte tes données dans Drive, puis importe le fichier sur le nouveau.",
+      },
+      drive: {
+        title: "Sauvegarde Google Drive",
+        body: "Facultative : tes données sont copiées dans un dossier caché de ton Google Drive, réservé à DoFirst : il n'apparaît pas dans tes fichiers et personne d'autre n'y a accès, pas même le développeur. Les 5 dernières sauvegardes sont gardées. « Restaurer » remplace les données de ce téléphone, après une copie de secours.",
+        example: "sur un nouveau téléphone, connecte-toi avec le même compte : DoFirst propose de restaurer ta dernière sauvegarde.",
+      },
+      calendar: {
+        title: "Calendrier",
+        body: "Chaque jour montre des points aux couleurs des quadrants et le nombre de tâches : échéances, étapes prévues et prochaines occurrences des tâches récurrentes (en pointillés, « Prévue »). Touche un jour pour voir sa frise horaire, puis une tâche pour ouvrir sa fiche.",
+        example: "glisse vers la gauche pour passer au mois suivant ; « Aujourd'hui » te ramène au jour même.",
+      },
+      voice: {
+        title: "Dictée",
+        body: "Touche le micro pour dicter le titre : le texte s'affiche pendant que tu parles et l'écoute s'arrête après un silence. La reconnaissance vocale du téléphone fait le travail, sur l'appareil quand il le permet ; rien n'est enregistré. DoFirst repère aussi une date (« demain à 15 h ») ou les mots « urgent » et « important », et te propose de les appliquer.",
+        example: "dis « Appeler le garage vendredi » puis touche « Appliquer » : l'échéance est réglée sur vendredi 9 h.",
       },
       autoEscalate: {
         title: "Tâches en retard",
@@ -387,14 +407,24 @@ export const fr = {
       body: "Quand tu crées une tâche, réponds à « C'est urgent ? » et « C'est important ? ». L'app la range toute seule dans la bonne case.",
     },
     gestures: {
-      title: "Rappels et gestes",
-      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Les rappels arrivent en notification : touche « Fait » ou « Reporter 1 h », l'app s'ouvre et s'en occupe.",
+      title: "Gestes et étapes",
+      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Garde le doigt dessus pour cocher ses étapes ou régler son avancement.",
     },
     // Textes des illustrations
     reminders: {
       title: "Ne rate plus rien",
       body: "DoFirst te rappelle tes tâches au bon moment, relance ce qui n'est pas fait et te prévient quand une tâche devient urgente.",
     },
+    calendar: {
+      title: "Calendrier et dictée",
+      body: "Le calendrier montre tes tâches jour par jour. Touche le micro pour dicter une tâche : « demain à 15 h » devient une échéance en un appui.",
+    },
+    drive: {
+      title: "Sauvegarde Google Drive",
+      body: "Facultatif : connecte ton compte Google pour garder une copie de tes tâches dans un dossier privé de ton Drive, et les retrouver sur un nouveau téléphone. Tu peux le faire plus tard dans les Réglages.",
+    },
+    connect: "Se connecter",
+    driveOn: "Connecté : sauvegarde automatique activée",
     enableReminders: "Activer les rappels",
     remindersOn: "Les rappels sont activés",
     sampleTask: "Rendre le dossier",
@@ -599,6 +629,122 @@ export const fr = {
     undoErrorBody: "La copie de secours n'a pas pu être relue. Rien n'a été modifié.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Ouvrir le calendrier",
+    title: "Calendrier",
+    today: "Aujourd'hui",
+    previous: "Mois précédent",
+    next: "Mois suivant",
+    empty: "Rien de prévu ce jour.",
+    noTime: "Sans heure",
+    planned: "Prévue",
+    step: (title: string) => `Étape : ${title}`,
+    plannedHint: "Occurrence prévue d'une tâche récurrente, non modifiable",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dicter le titre",
+    stop: "Arrêter la dictée",
+    listening: "À l'écoute… parle maintenant",
+    deniedTitle: "Micro non autorisé",
+    deniedBody: "Pour dicter tes tâches, autorise le micro pour DoFirst dans les réglages du téléphone.",
+    unavailableTitle: "Dictée indisponible",
+    unavailableBody: "La reconnaissance vocale n'est pas disponible sur ce téléphone.",
+    errorTitle: "Dictée interrompue",
+    errorBody: "La reconnaissance vocale n'a pas pu démarrer. Réessaie dans un instant.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Échéance : ${date}`,
+    apply: "Appliquer",
+    dismiss: "Ignorer",
+    urgent: "Le titre dit « urgent »",
+    important: "Le titre dit « important »",
+    turnOn: "Activer",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Avancement",
+    value: (n: number) => `${n} %`,
+    auto: "Calculé d'après les étapes cochées",
+    manual: "Règle l'avancement à la main",
+    hint: "Appui long : étapes et avancement",
+    steps: "Étapes",
+    close: "Fermer",
+    changed: (n: number) => `Avancement : ${n} %`,
+    stepUnchecked: "Étape décochée",
+  },
+
+  splitModes: {
+    label: "Répartition",
+    consecutive: "Jours d'affilée",
+    weekdays: "Certains jours de la semaine",
+    dates: "Dates précises",
+    datesHint: "Touche les jours voulus (2 à 14).",
+    tooFew: "Choisis au moins 2 jours.",
+    previousMonth: "Mois précédent",
+    nextMonth: "Mois suivant",
+  },
+
+  quick: {
+    dictate: "Dicter une nouvelle tâche",
+  },
+
+  driveCard: {
+    body: "Sauvegarde tes tâches sur ton Google Drive (facultatif)",
+    connect: "Se connecter",
+  },
+
+  driveRestore: {
+    title: "Tâches restaurées",
+    body: (date: string) => `Tes tâches ont été restaurées (sauvegarde du ${date}).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "Facultatif : garde une copie de tes données dans ton Google Drive, dans un dossier caché réservé à DoFirst.",
+    connect: "Sauvegarder sur Google Drive",
+    account: (email: string) => `Compte : ${email}`,
+    lastBackup: (date: string) => `Dernière sauvegarde : ${date}`,
+    never: "Aucune sauvegarde pour l'instant",
+    working: "Opération en cours…",
+    backupNow: "Sauvegarder maintenant",
+    restore: "Restaurer depuis Google Drive",
+    restoreAction: "Restaurer",
+    auto: "Sauvegarde automatique",
+    autoHint: "Une fois par jour au plus, quand tu quittes l'app et si tes données ont changé.",
+    signOut: "Se déconnecter",
+    delete: "Supprimer ma sauvegarde en ligne",
+    previewDate: (date: string) => `Sauvegarde du ${date}`,
+    foundTitle: "Sauvegarde trouvée",
+    later: "Plus tard",
+    connectErrorTitle: "Connexion impossible",
+    connectErrorBody: "La connexion à Google n'a pas abouti. Vérifie ta connexion internet et réessaie.",
+    backupDoneTitle: "Sauvegarde terminée",
+    backupDoneBody: "Tes données sont dans ton Google Drive.",
+    backupErrorTitle: "Sauvegarde impossible",
+    backupErrorBody: "Google Drive ne répond pas. Vérifie ta connexion internet et réessaie. Tes données restent sur ce téléphone.",
+    restoreErrorTitle: "Restauration impossible",
+    restoreErrorBody: "La sauvegarde n'a pas pu être lue. Vérifie ta connexion internet et réessaie. Rien n'a été modifié.",
+    noBackupTitle: "Aucune sauvegarde",
+    noBackupBody: "Il n'y a pas encore de sauvegarde DoFirst dans ce Google Drive.",
+    signOutTitle: "Se déconnecter de Google Drive ?",
+    signOutBody: "La sauvegarde automatique s'arrête. Ta sauvegarde en ligne est gardée : tu pourras la restaurer en te reconnectant.",
+    deleteTitle: "Supprimer ta sauvegarde en ligne ?",
+    deleteBody: "Toutes les sauvegardes DoFirst de ton Google Drive seront supprimées et la sauvegarde automatique sera désactivée. Les données de ce téléphone ne changent pas.",
+    deleteErrorTitle: "Suppression impossible",
+    deleteErrorBody: "Google Drive ne répond pas. Vérifie ta connexion internet et réessaie.",
+    deletedTitle: "Sauvegarde en ligne supprimée",
+    deletedBody: "Il n'y a plus de sauvegarde DoFirst dans ton Google Drive.",
+    signedOutTitle: "Reconnexion nécessaire",
+    signedOutBody: "L'accès à Google Drive a expiré ou a été retiré. Reconnecte-toi pour sauvegarder.",
+  },
+
   // Page « Comment ça marche »
   howTo: {
     title: "Comment ça marche",
@@ -672,6 +818,10 @@ export const fr = {
       send: "Dans la fiche d'une tâche « Déléguer », « Envoyer » ouvre le partage avec un message prêt pour la personne. Tu choisis l'appli et le destinataire.",
       nudge: "Dans la relance d'une tâche confiée ou à l'étape 3 de la revue, « Relancer » prépare un petit rappel à envoyer.",
       backup: "Réglages › Sauvegarde : « Exporter mes données » crée un fichier à garder où tu veux, « Importer une sauvegarde » le remet sur ce téléphone.",
+      drive: "Réglages › Google Drive : connecte ton compte Google pour sauvegarder tes données en ligne, à la main ou automatiquement, et les restaurer sur un autre téléphone.",
+      calendar: "Touche l'icône calendrier à chiffres de la matrice pour voir tes tâches mois par mois ; touche un jour pour sa frise horaire.",
+      voice: "Touche le micro à côté du + (ou garde le doigt sur +) pour dicter une tâche ; dans la fiche, le micro du titre fait de même.",
+      longPress: "Garde le doigt sur une tâche pour cocher ses étapes ou régler son avancement.",
       permission: "Rappels : la présentation propose de les activer. Si tu refuses, l'app ne te redemande pas à chaque lancement : quand tu actives un rappel, elle te propose de les autoriser ou d'ouvrir les réglages du téléphone. L'état s'affiche dans Réglages › Notifications.",
       quietHours: "Plage silencieuse (désactivée par défaut, à activer dans les Réglages) : les rappels qui tomberaient dedans arrivent à sa fin, et la fiche te prévient quand c'est le cas.",
       steps: "Dans la fiche, « Étapes » découpe une tâche : la carte affiche la progression « 2/5 » et l'étape du jour. Une étape d'un jour passé non faite est marquée en retard.",

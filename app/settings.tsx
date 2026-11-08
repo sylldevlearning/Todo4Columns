@@ -8,6 +8,8 @@ import SettingsForm from "../src/components/SettingsForm";
 import { appVersion, openStoreListing, sendFeedback, shareApp } from "../src/community";
 import { t, useLanguage } from "../src/i18n";
 import { useBackup } from "../src/hooks/useBackup";
+import { useDriveBackup } from "../src/hooks/useDriveBackup";
+import { isDriveAvailable } from "../src/drive/googleAccount";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
 import { sameItems } from "../src/store/selectableStore";
@@ -46,6 +48,7 @@ export default function SettingsScreen() {
     if (section === "quietHours") scroll.current?.scrollTo({ y, animated: false });
   };
   const backup = useBackup();
+  const drive = useDriveBackup(backup.applyBackup);
 
   const deleteForever = (id: string) => {
     const task = archived.find((t) => t.id === id);
@@ -87,6 +90,22 @@ export default function SettingsScreen() {
           onImport={backup.importData}
           onUndoImport={backup.canUndoImport ? backup.undoImport : undefined}
           onQuietHoursLayout={scrollToQuietHours}
+          drive={
+            isDriveAvailable()
+              ? {
+                  account: drive.account,
+                  autoBackup: drive.autoBackup,
+                  lastBackupAt: drive.lastBackupAt,
+                  busy: drive.busy,
+                  onConnect: drive.connect,
+                  onBackupNow: drive.backupNow,
+                  onRestore: drive.restore,
+                  onAutoBackupChange: drive.setAutoBackup,
+                  onSignOut: drive.disconnect,
+                  onDelete: drive.deleteRemote,
+                }
+              : undefined
+          }
           about={ABOUT}
         />
       </ScrollView>

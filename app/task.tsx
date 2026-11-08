@@ -19,7 +19,8 @@ import { colors } from "../src/theme";
 // Paramètres : id (modification) ou category (création depuis un quadrant)
 export default function TaskSheet() {
   useLanguage(); // textes mis à jour quand la langue change
-  const { id, category } = useLocalSearchParams<{ id?: string; category?: string }>();
+  // voice : appui long sur « + » de la matrice, la dictée démarre à l'ouverture
+  const { id, category, voice } = useLocalSearchParams<{ id?: string; category?: string; voice?: string }>();
   const { addTask, updateTask, completeTask, requestNotificationPermission, updateSettings, getSettings } =
     useTaskActions();
   const { celebrate } = useCelebration();
@@ -74,6 +75,7 @@ export default function TaskSheet() {
           <TaskForm
             task={task}
             initialCategory={isCategory(category) ? category : undefined}
+            autoStartVoice={!id && voice === "1"}
             settings={settings}
             notificationsDenied={permission === "denied"}
             onOpenSettings={openSystemSettings}

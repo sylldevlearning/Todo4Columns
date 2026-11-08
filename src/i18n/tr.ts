@@ -330,15 +330,35 @@ export const tr: Translations = {
         body: "Büyük bir görevi işaretlenecek küçük adımlara böl, istediğin sırayla (bir adıma uzun bas, sonra sürükle). Bir adıma gün verirsen o gün 09:00'da ya da seçtiğin saatte “Bitti” ve “Yarına al” seçenekli bir hatırlatma alırsın. Görev, ancak sen işaretlediğinde tamamlanır.",
         example: "“Sunumu hazırla”: kaynak bul, taslak çıkar, girişi yaz, prova yap.",
       },
+      progress: {
+        title: "İlerleme",
+        body: "Adımlar varsa ilerleme işaretlenen adımlara göre belirlenir. Adım yoksa %0 ile %100 arasında kendin ayarlarsın. Kartta ince bir çubuk olarak görünür.",
+        example: "bir göreve uzun bas ve \"%50\"ye dokun: kartta yarısı dolu bir çubuk görünür.",
+      },
       splitSessions: {
         title: "Birkaç güne yay",
-        body: "Tek seferde birkaç çalışma oturumu oluşturur, her gün bir tane, her birinin kendi hatırlatmasıyla. Oturum sayısını, süreyi, ilk günü ve hafta sonunun atlanıp atlanmayacağını sen seçersin. Onaylamadan önce bir önizleme görünür.",
-        example: "bir perşembeden başlayarak 1 saatlik 5 oturum, sadece hafta içi: perşembe, cuma, pazartesi, salı ve çarşamba.",
+        body: "Her biri hatırlatıcılı birden çok çalışma oturumunu tek seferde oluşturur: art arda günler, haftanın belirli günleri (Pzt, Çar, Cum…) ya da mini takvimden seçilen tarihler. Onaylamadan önce bir önizleme görünür.",
+        example: "Pazartesi, çarşamba ve cuma, 1 saat: bu hafta 3 oturum, istersen + ile artır.",
       },
       backup: {
         title: "Yedek",
         body: "“Dışa aktar”, tüm verilerini içeren şifresiz bir dosya oluşturur: güvenli bir yerde sakla (Drive, e-posta, dosyalar). “İçe aktar”, bir güvenlik kopyası aldıktan sonra bu telefondaki verileri dosyadakilerle değiştirir. Android'de, telefonda açıksa Google'ın otomatik yedeklemesi de verilerini saklar.",
         example: "telefon değiştirmeden önce verilerini Drive'a aktar, sonra dosyayı yeni telefonda içe aktar.",
+      },
+      drive: {
+        title: "Google Drive yedeği",
+        body: "İsteğe bağlı: verilerin, Google Drive'ında yalnızca DoFirst'e ayrılmış gizli bir klasöre kopyalanır: dosyaların arasında görünmez ve geliştirici dahil kimse erişemez. Son 5 yedek saklanır. \"Geri yükle\", önce bir güvenlik kopyası alır, sonra bu telefondaki verileri değiştirir.",
+        example: "yeni bir telefonda aynı hesapla giriş yap: DoFirst son yedeğini geri yüklemeyi önerir.",
+      },
+      calendar: {
+        title: "Takvim",
+        body: "Her gün, bölge renklerinde noktalar ve görev sayısını gösterir: son tarihler, planlanan adımlar ve tekrarlanan görevlerin sonraki tekrarları (kesikli çizgili, \"Planlandı\"). Zaman çizelgesini görmek için bir güne, açmak için bir göreve dokun.",
+        example: "sonraki aya geçmek için sola kaydır; \"Bugün\" seni bugüne geri getirir.",
+      },
+      voice: {
+        title: "Sesle yazma",
+        body: "Başlığı sesle yazmak için mikrofona dokun: sen konuşurken metin görünür, kısa bir sessizlikten sonra dinleme durur. İşi telefonun ses tanıma özelliği yapar, mümkünse cihazın üzerinde; hiçbir şey kaydedilmez. DoFirst \"acil\" ve \"önemli\" kelimelerini de fark edip uygulamayı önerir.",
+        example: "\"Acil faturayı öde\" de: DoFirst \"Acil mi?\" anahtarını açmayı önerir.",
       },
       autoEscalate: {
         title: "Süresi geçen görevler",
@@ -378,13 +398,23 @@ export const tr: Translations = {
       body: "Bir görev oluştururken “Acil mi?” ve “Önemli mi?” sorularını yanıtla. Uygulama onu senin için doğru kutuya koyar.",
     },
     gestures: {
-      title: "Hatırlatmalar ve hareketler",
-      body: "Bir görevi tamamlamak için sağa, silmek için sola kaydır. Hatırlatmalar bildirim olarak gelir: “Bitti” ya da “1 sa ertele”ye dokun, uygulama açılıp halleder.",
+      title: "Hareketler ve adımlar",
+      body: "Bir görevi tamamlamak için sağa, silmek için sola kaydır. Adımlarını işaretlemek ya da ilerlemesini ayarlamak için üzerine uzun bas.",
     },
     reminders: {
       title: "Hiçbir şeyi kaçırma",
       body: "DoFirst görevlerini doğru zamanda hatırlatır, yapılmayanları tekrar hatırlatır ve bir görev acil hale geldiğinde seni uyarır.",
     },
+    calendar: {
+      title: "Takvim ve sesle yazma",
+      body: "Takvim görevlerini gün gün gösterir. Bir görevi sesle yazmak için mikrofona dokun; \"acil\" ve \"önemli\" kelimeleri anahtarları önerir.",
+    },
+    drive: {
+      title: "Google Drive yedeği",
+      body: "İsteğe bağlı: Görevlerinin bir kopyasını Drive'ındaki özel bir klasörde tutmak ve yeni bir telefonda geri almak için Google hesabını bağla. Bunu daha sonra Ayarlar'dan da yapabilirsin.",
+    },
+    connect: "Giriş yap",
+    driveOn: "Bağlandı: otomatik yedekleme açık",
     enableReminders: "Hatırlatıcıları aç",
     remindersOn: "Hatırlatıcılar açık",
     sampleTask: "Raporu gönder",
@@ -576,6 +606,122 @@ export const tr: Translations = {
     undoErrorBody: "Güvenlik kopyası okunamadı. Hiçbir şey değişmedi.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Takvimi aç",
+    title: "Takvim",
+    today: "Bugün",
+    previous: "Önceki ay",
+    next: "Sonraki ay",
+    empty: "Bu gün için plan yok.",
+    noTime: "Saatsiz",
+    planned: "Planlandı",
+    step: (title: string) => `Adım: ${title}`,
+    plannedHint: "Tekrarlanan bir görevin planlanmış tekrarı, değiştirilemez",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Başlığı sesle yaz",
+    stop: "Sesle yazmayı durdur",
+    listening: "Dinliyorum… şimdi konuş",
+    deniedTitle: "Mikrofon izni yok",
+    deniedBody: "Görevlerini sesle yazmak için telefon ayarlarından DoFirst'e mikrofon izni ver.",
+    unavailableTitle: "Sesle yazma kullanılamıyor",
+    unavailableBody: "Bu telefonda ses tanıma kullanılamıyor.",
+    errorTitle: "Sesle yazma durdu",
+    errorBody: "Ses tanıma başlatılamadı. Biraz sonra tekrar dene.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Son tarih: ${date}`,
+    apply: "Uygula",
+    dismiss: "Yoksay",
+    urgent: "Başlıkta \"acil\" geçiyor",
+    important: "Başlıkta \"önemli\" geçiyor",
+    turnOn: "Aç",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "İlerleme",
+    value: (n: number) => `%${n}`,
+    auto: "İşaretlenen adımlardan hesaplanır",
+    manual: "İlerlemeyi elle ayarla",
+    hint: "Uzun bas: adımlar ve ilerleme",
+    steps: "Adımlar",
+    close: "Kapat",
+    changed: (n: number) => `İlerleme: %${n}`,
+    stepUnchecked: "Adımın işareti kaldırıldı",
+  },
+
+  splitModes: {
+    label: "Dağıtım",
+    consecutive: "Art arda günler",
+    weekdays: "Haftanın belirli günleri",
+    dates: "Belirli tarihler",
+    datesHint: "İstediğin günlere dokun (2 ile 14 arası).",
+    tooFew: "En az 2 gün seç.",
+    previousMonth: "Önceki ay",
+    nextMonth: "Sonraki ay",
+  },
+
+  quick: {
+    dictate: "Yeni görevi sesle yaz",
+  },
+
+  driveCard: {
+    body: "Görevlerini Google Drive'ına yedekle (isteğe bağlı)",
+    connect: "Giriş yap",
+  },
+
+  driveRestore: {
+    title: "Görevler geri yüklendi",
+    body: (date: string) => `Görevlerin geri yüklendi (${date} tarihli yedek).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "İsteğe bağlı: verilerinin bir kopyasını Google Drive'ında, yalnızca DoFirst'e ayrılmış gizli bir klasörde sakla.",
+    connect: "Google Drive'a yedekle",
+    account: (email: string) => `Hesap: ${email}`,
+    lastBackup: (date: string) => `Son yedek: ${date}`,
+    never: "Henüz yedek yok",
+    working: "İşlem sürüyor…",
+    backupNow: "Şimdi yedekle",
+    restore: "Google Drive'dan geri yükle",
+    restoreAction: "Geri yükle",
+    auto: "Otomatik yedekleme",
+    autoHint: "Uygulamadan çıktığında, verilerin değiştiyse günde en fazla bir kez.",
+    signOut: "Çıkış yap",
+    delete: "Çevrimiçi yedeğimi sil",
+    previewDate: (date: string) => `Yedek tarihi: ${date}`,
+    foundTitle: "Yedek bulundu",
+    later: "Sonra",
+    connectErrorTitle: "Giriş yapılamadı",
+    connectErrorBody: "Google'a giriş yapılamadı. İnternet bağlantını kontrol edip tekrar dene.",
+    backupDoneTitle: "Yedekleme tamamlandı",
+    backupDoneBody: "Verilerin Google Drive'ında.",
+    backupErrorTitle: "Yedeklenemedi",
+    backupErrorBody: "Google Drive yanıt vermiyor. İnternet bağlantını kontrol edip tekrar dene. Verilerin bu telefonda duruyor.",
+    restoreErrorTitle: "Geri yüklenemedi",
+    restoreErrorBody: "Yedek okunamadı. İnternet bağlantını kontrol edip tekrar dene. Hiçbir şey değişmedi.",
+    noBackupTitle: "Yedek yok",
+    noBackupBody: "Bu Google Drive'da henüz DoFirst yedeği yok.",
+    signOutTitle: "Google Drive'dan çıkış yapılsın mı?",
+    signOutBody: "Otomatik yedekleme durur. Çevrimiçi yedeğin saklanır: tekrar giriş yaparak geri yükleyebilirsin.",
+    deleteTitle: "Çevrimiçi yedeğin silinsin mi?",
+    deleteBody: "Google Drive'ındaki tüm DoFirst yedekleri silinir ve otomatik yedekleme kapanır. Bu telefondaki veriler değişmez.",
+    deleteErrorTitle: "Silinemedi",
+    deleteErrorBody: "Google Drive yanıt vermiyor. İnternet bağlantını kontrol edip tekrar dene.",
+    deletedTitle: "Çevrimiçi yedek silindi",
+    deletedBody: "Google Drive'ında artık DoFirst yedeği yok.",
+    signedOutTitle: "Tekrar giriş yapmalısın",
+    signedOutBody: "Google Drive erişiminin süresi doldu ya da erişim kaldırıldı. Yedeklemek için tekrar giriş yap.",
+  },
+
   howTo: {
     title: "Nasıl çalışır",
     methodTitle: "Eisenhower yöntemi",
@@ -648,6 +794,10 @@ export const tr: Translations = {
       send: "Bir “Devret” görevinde “Gönder”, kişi için hazır bir mesajla paylaşım menüsünü açar. Uygulamayı ve alıcıyı sen seçersin.",
       nudge: "Devredilen bir görevin hatırlatmasında ya da değerlendirmenin 3. adımında, “Takip et” gönderilecek kısa bir mesaj hazırlar.",
       backup: "Ayarlar › Yedek: “Verilerimi dışa aktar” istediğin yerde saklayabileceğin bir dosya oluşturur; “Yedeği içe aktar” onu bu telefona geri yükler.",
+      drive: "Ayarlar › Google Drive: Google hesabını bağla; verilerini elle ya da otomatik olarak çevrimiçi yedekle ve başka bir telefonda geri yükle.",
+      calendar: "Görevlerini ay ay görmek için matristeki numaralı takvim simgesine dokun; zaman çizelgesi için bir güne dokun.",
+      voice: "Bir görevi sesle yazmak için +'nın yanındaki mikrofona dokun (ya da +'ya uzun bas); formda başlıktaki mikrofon da aynısını yapar.",
+      longPress: "Adımlarını işaretlemek ya da ilerlemesini ayarlamak için bir göreve uzun bas.",
       permission: "Hatırlatıcılar: tanıtım ekranı onları açmayı önerir. Reddedersen uygulama her açılışta tekrar sormaz: bir hatırlatıcı açtığında bildirimlere izin vermeyi ya da telefon ayarlarını açmayı önerir. Durum Ayarlar › Bildirimler'de görünür.",
       quietHours: "Sessiz saatler (varsayılan olarak kapalı, Ayarlar'dan aç): bu aralığa düşen hatırlatmalar sessiz saatler bitince gelir, böyle olduğunda görev sayfası seni uyarır.",
       steps: "Görev sayfasında “Adımlar” görevi böler: kart “2/5” ilerlemesini ve günün adımını gösterir. Geçmiş bir güne ait, bitmemiş bir adım gecikmiş olarak işaretlenir.",

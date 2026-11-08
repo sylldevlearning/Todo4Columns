@@ -1,5 +1,6 @@
 import { isWeekKey } from "./balance";
 import { CATEGORY_KEYS, isRecord } from "./guards";
+import { parseProgress } from "./progress";
 import { parseRecurrence } from "./recurrence";
 import { parseSteps } from "./steps";
 import { Category, Task } from "./types";
@@ -12,7 +13,8 @@ import { Category, Task } from "./types";
 // v5 : ajout de completedAt et priorityWeek
 // v6 : ajout de recurrence, nextOccurrenceId et escalationSkippedFor
 // v7 : ajout de steps (étapes, vide par défaut)
-export const TASKS_SCHEMA_VERSION = 7;
+// v8 : ajout de progress (avancement réglé à la main, null par défaut)
+export const TASKS_SCHEMA_VERSION = 8;
 
 export interface StoredTasks {
   schemaVersion: typeof TASKS_SCHEMA_VERSION;
@@ -97,6 +99,8 @@ export function normalizeTask(
     escalationSkippedFor: overdueAtUpdate ? dueAt : numberOrNull(raw.escalationSkippedFor),
     // Absentes avant la v7 : aucune étape
     steps: parseSteps(raw.steps),
+    // Absent avant la v8 : jamais réglé
+    progress: parseProgress(raw.progress),
   };
 }
 

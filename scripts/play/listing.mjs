@@ -58,7 +58,9 @@ function readImages(dir, language, errors) {
     if (!existsSync(setDir)) continue;
     const files = readdirSync(setDir).filter((f) => IMAGE_FILE.test(f)).sort();
     if (files.length > 8) errors.push(`${language}/images/${type} : ${files.length} images, 8 maximum`);
-    if (files.length > 0) images[type] = files.map((f) => path.join(setDir, f));
+    // Dossier présent mais vide (un .gitkeep pour git) : aucune image propre à cette langue ; celles
+    // en ligne sont supprimées et la langue reprend celles de la langue par défaut
+    images[type] = files.map((f) => path.join(setDir, f));
   }
   for (const f of entries) {
     const name = path.parse(f).name;

@@ -330,15 +330,35 @@ export const en: Translations = {
         body: "Break a big task into small steps to check off, in the order you like (long press a step, then drag it). Give a step a day to get a reminder that day, at 9:00 or at the time you choose, with “Done” and “Move to tomorrow”. The task is only complete when you check it.",
         example: "“Prepare the talk”: find sources, outline, write the intro, rehearse.",
       },
+      progress: {
+        title: "Progress",
+        body: "With steps, progress follows the checked steps. Without steps, set it yourself from 0 to 100%. It shows as a thin bar on the card.",
+        example: "press and hold a task, then tap \"50%\": the card shows a half-full bar.",
+      },
       splitSessions: {
         title: "Spread over several days",
-        body: "Creates several work sessions at once, one per day, each with its reminder. You choose how many sessions, how long, the first day and whether weekends are skipped. A preview shows before you confirm.",
-        example: "5 one-hour sessions starting on a Thursday, weekdays only: Thursday, Friday, Monday, Tuesday and Wednesday.",
+        body: "Creates several work sessions at once, each with its reminder: consecutive days, certain weekdays (Mon, Wed, Fri…) or specific dates picked on a mini calendar. A preview appears before you confirm.",
+        example: "Monday, Wednesday and Friday, 1 hour: 3 sessions this week, extend with + if you like.",
       },
       backup: {
         title: "Backup",
         body: "“Export” creates an unencrypted file with all your data: keep it somewhere safe (Drive, email, files). “Import” replaces the data on this phone with a file's, after a safety copy. On Android, Google's automatic backup also keeps your data, if it's turned on on the phone.",
         example: "before switching phones, export your data to Drive, then import the file on the new one.",
+      },
+      drive: {
+        title: "Google Drive backup",
+        body: "Optional: your data is copied to a hidden folder in your Google Drive that only DoFirst can use: it doesn't show up in your files and nobody else can access it, not even the developer. The last 5 backups are kept. “Restore” replaces the data on this phone, after a safety copy.",
+        example: "on a new phone, sign in with the same account: DoFirst offers to restore your latest backup.",
+      },
+      calendar: {
+        title: "Calendar",
+        body: "Each day shows dots in the quadrant colors and the number of tasks: due dates, planned steps and upcoming occurrences of recurring tasks (dashed, \"Planned\"). Tap a day to see its timeline, then a task to open it.",
+        example: "swipe left to go to the next month; \"Today\" brings you back to today.",
+      },
+      voice: {
+        title: "Dictation",
+        body: "Tap the mic to dictate the title: the text appears as you speak and listening stops after a pause. Your phone's speech recognition does the work, on the device when it can; nothing is recorded. DoFirst also spots a date (\"tomorrow at 3 pm\") or the words \"urgent\" and \"important\" and offers to apply them.",
+        example: "say \"Call the garage Friday\" then tap \"Apply\": the due date is set to Friday 9 AM.",
       },
       autoEscalate: {
         title: "Overdue tasks",
@@ -378,13 +398,23 @@ export const en: Translations = {
       body: "When you create a task, answer “Is it urgent?” and “Is it important?”. The app puts it in the right box for you.",
     },
     gestures: {
-      title: "Reminders and gestures",
-      body: "Swipe a task right to complete it, left to delete it. Reminders arrive as notifications: tap “Done” or “Snooze 1 h” and the app opens to take care of it.",
+      title: "Gestures and steps",
+      body: "Swipe a task right to complete it, left to delete it. Press and hold it to check its steps or set its progress.",
     },
     reminders: {
       title: "Never miss a thing",
       body: "DoFirst reminds you of your tasks at the right time, follows up on what's not done and lets you know when a task becomes urgent.",
     },
+    calendar: {
+      title: "Calendar and dictation",
+      body: "The calendar shows your tasks day by day. Tap the mic to dictate a task: \"tomorrow at 3 pm\" becomes a due date in one tap.",
+    },
+    drive: {
+      title: "Google Drive backup",
+      body: "Optional: connect your Google account to keep a copy of your tasks in a private folder of your Drive and get them back on a new phone. You can do it later in Settings.",
+    },
+    connect: "Sign in",
+    driveOn: "Signed in: automatic backup is on",
     enableReminders: "Turn on reminders",
     remindersOn: "Reminders are on",
     sampleTask: "Send the report",
@@ -576,6 +606,122 @@ export const en: Translations = {
     undoErrorBody: "The safety copy couldn't be read. Nothing was changed.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Open the calendar",
+    title: "Calendar",
+    today: "Today",
+    previous: "Previous month",
+    next: "Next month",
+    empty: "Nothing planned this day.",
+    noTime: "No time",
+    planned: "Planned",
+    step: (title: string) => `Step: ${title}`,
+    plannedHint: "Planned occurrence of a recurring task, can't be edited",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dictate the title",
+    stop: "Stop dictation",
+    listening: "Listening… speak now",
+    deniedTitle: "Microphone not allowed",
+    deniedBody: "To dictate your tasks, allow the microphone for DoFirst in your phone settings.",
+    unavailableTitle: "Dictation unavailable",
+    unavailableBody: "Speech recognition isn't available on this phone.",
+    errorTitle: "Dictation stopped",
+    errorBody: "Speech recognition couldn't start. Try again in a moment.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Due: ${date}`,
+    apply: "Apply",
+    dismiss: "Ignore",
+    urgent: "The title says \"urgent\"",
+    important: "The title says \"important\"",
+    turnOn: "Turn on",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Progress",
+    value: (n: number) => `${n}%`,
+    auto: "Based on checked steps",
+    manual: "Set progress by hand",
+    hint: "Long press: steps and progress",
+    steps: "Steps",
+    close: "Close",
+    changed: (n: number) => `Progress: ${n}%`,
+    stepUnchecked: "Step unchecked",
+  },
+
+  splitModes: {
+    label: "Schedule",
+    consecutive: "Consecutive days",
+    weekdays: "Certain weekdays",
+    dates: "Specific dates",
+    datesHint: "Tap the days you want (2 to 14).",
+    tooFew: "Pick at least 2 days.",
+    previousMonth: "Previous month",
+    nextMonth: "Next month",
+  },
+
+  quick: {
+    dictate: "Dictate a new task",
+  },
+
+  driveCard: {
+    body: "Back up your tasks to your Google Drive (optional)",
+    connect: "Sign in",
+  },
+
+  driveRestore: {
+    title: "Tasks restored",
+    body: (date: string) => `Your tasks have been restored (backup from ${date}).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "Optional: keep a copy of your data in your Google Drive, in a hidden folder only DoFirst can use.",
+    connect: "Back up to Google Drive",
+    account: (email: string) => `Account: ${email}`,
+    lastBackup: (date: string) => `Last backup: ${date}`,
+    never: "No backup yet",
+    working: "Working…",
+    backupNow: "Back up now",
+    restore: "Restore from Google Drive",
+    restoreAction: "Restore",
+    auto: "Automatic backup",
+    autoHint: "At most once a day, when you leave the app and your data has changed.",
+    signOut: "Sign out",
+    delete: "Delete my online backup",
+    previewDate: (date: string) => `Backup from ${date}`,
+    foundTitle: "Backup found",
+    later: "Later",
+    connectErrorTitle: "Couldn't sign in",
+    connectErrorBody: "Signing in to Google didn't work. Check your internet connection and try again.",
+    backupDoneTitle: "Backup complete",
+    backupDoneBody: "Your data is in your Google Drive.",
+    backupErrorTitle: "Couldn't back up",
+    backupErrorBody: "Google Drive isn't responding. Check your internet connection and try again. Your data stays on this phone.",
+    restoreErrorTitle: "Couldn't restore",
+    restoreErrorBody: "The backup couldn't be read. Check your internet connection and try again. Nothing was changed.",
+    noBackupTitle: "No backup",
+    noBackupBody: "There's no DoFirst backup in this Google Drive yet.",
+    signOutTitle: "Sign out of Google Drive?",
+    signOutBody: "Automatic backup stops. Your online backup is kept: you can restore it by signing in again.",
+    deleteTitle: "Delete your online backup?",
+    deleteBody: "All DoFirst backups in your Google Drive will be deleted and automatic backup will be turned off. The data on this phone doesn't change.",
+    deleteErrorTitle: "Couldn't delete",
+    deleteErrorBody: "Google Drive isn't responding. Check your internet connection and try again.",
+    deletedTitle: "Online backup deleted",
+    deletedBody: "There's no DoFirst backup left in your Google Drive.",
+    signedOutTitle: "Sign in again",
+    signedOutBody: "Access to Google Drive expired or was removed. Sign in again to back up.",
+  },
+
   howTo: {
     title: "How it works",
     methodTitle: "The Eisenhower method",
@@ -648,6 +794,10 @@ export const en: Translations = {
       send: "In a “Delegate” task, “Send” opens the share sheet with a ready message for the person. You pick the app and the recipient.",
       nudge: "In a handed-off task's reminder, or in step 3 of the review, “Follow up” prepares a short reminder to send.",
       backup: "Settings › Backup: “Export my data” creates a file to keep wherever you like; “Import a backup” puts it back on this phone.",
+      drive: "Settings › Google Drive: connect your Google account to back up your data online, by hand or automatically, and restore it on another phone.",
+      calendar: "Tap the numbered calendar icon on the matrix to see your tasks month by month; tap a day for its timeline.",
+      voice: "Tap the mic next to + (or press and hold +) to dictate a task; in the form, the mic in the title does the same.",
+      longPress: "Press and hold a task to check its steps or set its progress.",
       permission: "Reminders: the introduction offers to turn them on. If you say no, the app doesn't ask again every time you open it: when you turn on a reminder, it offers to allow notifications or to open your phone's settings. The status shows in Settings › Notifications.",
       quietHours: "Quiet hours (off by default, turn them on in Settings): reminders that would fall inside arrive when they end, and the task sheet lets you know when that happens.",
       steps: "In the task sheet, “Steps” breaks a task down: the card shows progress “2/5” and today's step. A step from a past day that isn't done is marked late.",

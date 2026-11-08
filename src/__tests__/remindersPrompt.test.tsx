@@ -40,7 +40,7 @@ const saveRaw = (settings: object) =>
 
 // Dernier écran de la présentation : « Ne rate plus rien »
 const goToRemindersPage = async () => {
-  for (let i = 0; i < 3; i++) await fireEvent.press(screen.getByRole("button", { name: fr.onboarding.next }));
+  for (let i = 0; i < 4; i++) await fireEvent.press(screen.getByRole("button", { name: fr.onboarding.next }));
   expect(screen.getByRole("header", { name: fr.onboarding.reminders.title })).toBeOnTheScreen();
 };
 
@@ -60,7 +60,8 @@ describe("présentation : écran « Ne rate plus rien »", () => {
     await launch();
     await goToRemindersPage();
     expect(screen.getByText(fr.onboarding.reminders.body)).toBeOnTheScreen();
-    expect(screen.queryByRole("button", { name: fr.onboarding.skip })).toBeNull();
+    // « Passer » sur chaque écran, celui-ci compris
+    expect(screen.getByRole("button", { name: fr.onboarding.skip })).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "Activer les rappels" }));
     expect(request).toHaveBeenCalledTimes(1);

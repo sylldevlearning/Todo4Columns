@@ -21,6 +21,9 @@ import TaskAlerts from "./TaskAlerts";
 import IconButton from "./IconButton";
 import StepSummary from "./StepSummary";
 import TaskChips from "./TaskChips";
+import ProgressBar from "./ProgressBar";
+import { taskProgress } from "../progress";
+import { stepsOf } from "../steps";
 
 // Distance de glissement qui déclenche l'action
 const SWIPE_THRESHOLD = 96;
@@ -36,6 +39,7 @@ interface Props {
   onSnooze: (id: string) => void; // « Reporter 1 h » d'une tâche en attente
   onMoveToDo: (id: string) => void; // « Passer en Faire » à échéance passée
   onCheckStep: (taskId: string, stepId: string) => void; // étape du jour ou en retard cochée
+  onLongPress?: (id: string) => void; // appui long : panneau rapide (étapes, avancement)
   settings: Settings; // réglages des rappels (puces)
   now: number;
 }
@@ -52,6 +56,7 @@ export default React.memo(function TaskCard({
   onSnooze,
   onMoveToDo,
   onCheckStep,
+  onLongPress,
   settings,
   now,
 }: Props) {
@@ -75,6 +80,7 @@ export default React.memo(function TaskCard({
   };
 
   const pan = Gesture.Pan()
+    .withTestId(`card-swipe-${task.id}`)
     // Glissement horizontal uniquement : le défilement vertical reste possible
     .activeOffsetX([-12, 12])
     .failOffsetY([-10, 10])
@@ -98,6 +104,9 @@ export default React.memo(function TaskCard({
   }));
 
   const priority = isPriority(task, now);
+  // Barre d'avancement : avec des étapes, ou avancement réglé au-dessus de 0
+  const percent = taskProgress(task);
+  const showProgress = !task.isDone && percent !== null && (stepsOf(task).length > 0 || percent > 0);
   const checkLabel = task.isDone ? t.card.markTodo(task.title) : t.card.markDone(task.title);
   const completeLabel = task.isDone ? t.card.reopen : t.card.complete;
 
@@ -119,17 +128,30 @@ export default React.memo(function TaskCard({
             accessibilityLabel={
               priority ? `${t.card.edit(task.title)}, ${t.review.priority}` : t.card.edit(task.title)
             }
+            accessibilityHint={onLongPress ? t.progress.hint : undefined}
             accessibilityActions={[
               { name: "activate" },
               { name: "complete", label: completeLabel },
               { name: "delete", label: t.common.delete },
+              ...(onLongPress ? [{ name: "longpress", label: t.progress.label }] : []),
             ]}
             onAccessibilityAction={(e) => {
               if (e.nativeEvent.actionName === "complete") toggle();
               else if (e.nativeEvent.actionName === "delete") onDelete(task.id);
+              else if (e.nativeEvent.actionName === "longpress") onLongPress?.(task.id);
               else onPress(task.id);
             }}
             onPress={() => onPress(task.id)}
+            // Appui long sans bouger : un glissement (12 px) active le geste de la carte et annule l'appui
+            onLongPress={
+              onLongPress &&
+              (() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                onLongPress(task.id);
+              })
+            }
+            delayLongPress={400}
+            testID={`task-card-${task.id}`}
             style={[styles.card, waiting && styles.cardWaiting]}
           >
             <Pressable
@@ -178,6 +200,7 @@ export default React.memo(function TaskCard({
                     onMove={onOpenMenu}
                     onMoveToDo={onMoveToDo}
                   />
+                  {showProgress && <ProgressBar percent={percent} color={category.color} />}
                 </>
               )}
             </View>

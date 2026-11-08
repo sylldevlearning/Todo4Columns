@@ -3,7 +3,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "../src/components/BalanceCard";
-import Fab from "../src/components/Fab";
+import DriveCard from "../src/components/DriveCard";
+import Fab, { MicFab } from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
 import RemindersCard from "../src/components/RemindersCard";
@@ -35,6 +36,11 @@ export default function MatrixScreen() {
           <Text style={styles.summary}>{t.matrix.taskCount(openCount)}</Text>
         </View>
         <IconButton
+          icon="calendar-number-outline"
+          label={t.calendar.open}
+          onPress={() => router.push("/calendar")}
+        />
+        <IconButton
           icon="calendar-outline"
           label={t.review.open}
           onPress={() => router.push("/review")}
@@ -48,6 +54,7 @@ export default function MatrixScreen() {
 
       <View style={styles.balance}>
         <RemindersCard />
+        <DriveCard />
         <SoonUrgentBanner />
         <BalanceCard />
       </View>
@@ -59,7 +66,13 @@ export default function MatrixScreen() {
         />
       </View>
 
-      <Fab label={t.matrix.newTask} onPress={() => router.push("/task")} />
+      <MicFab label={t.quick.dictate} onPress={() => router.push({ pathname: "/task", params: { voice: "1" } })} />
+      <Fab
+        label={t.matrix.newTask}
+        onPress={() => router.push("/task")}
+        onLongPress={() => router.push({ pathname: "/task", params: { voice: "1" } })}
+        longPressHint={t.voice.start}
+      />
     </SafeAreaView>
   );
 }

@@ -15,7 +15,7 @@ import {
 import { ACTION_DONE, ACTION_POSTPONE, configureNotifications, handleNotificationResponse } from "../notifications/setup";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { addDays, dayKey } from "../dates";
-import { sessionDays, splitSessions } from "../sessions";
+import { sessionDays, splitSessions, chosenDates } from "../sessions";
 import {
   isStepLate,
   makeStep,
@@ -90,7 +90,7 @@ describe("migration v7", () => {
   it("enregistrées en v7, relues à l'identique", () => {
     const tasks = [makeTask({ steps: [step({ day: TODAY, time: "18:00" })] })];
     const json = serializeTasks(tasks);
-    expect(JSON.parse(json).schemaVersion).toBe(7);
+    expect(JSON.parse(json).schemaVersion).toBe(8);
     expect(parseStoredTasks(json, NOW).tasks[0].steps).toEqual(tasks[0].steps);
   });
 });
@@ -196,22 +196,40 @@ describe("répartir sur plusieurs jours", () => {
     expect(en.steps.session(1, 5, en.steps.durations[60])).toBe("Session 1/5 · 1 h");
   });
 
-  it("exemple du « i » : 5 séances à partir d'un jeudi, en semaine seulement", () => {
+  it("exemple du « i » : lundi, mercredi et vendredi, 3 séances cette semaine", () => {
     const { fr } = require("../i18n/fr");
     expect(fr.help.info.splitSessions.example).toBe(
-      "5 séances d'1 h à partir d'un jeudi, en semaine seulement : jeudi, vendredi, lundi, mardi et mercredi."
+      "lundi, mercredi et vendredi, 1 h : 3 séances cette semaine, à prolonger avec + si tu veux."
     );
-    expect(en.help.info.splitSessions.example).toBe(
-      "5 one-hour sessions starting on a Thursday, weekdays only: Thursday, Friday, Monday, Tuesday and Wednesday."
-    );
-    // L'exemple correspond au calcul : jeudi 22, vendredi 23, lundi 26, mardi 27, mercredi 28
-    expect(sessionDays({ count: 5, minutes: 60, from: "today", weekdaysOnly: true }, NOW)).toEqual([
-      "2026-10-22",
-      "2026-10-23",
+    // Lundi 26 octobre : lundi 26, mercredi 28, vendredi 30
+    expect(sessionDays({ mode: "weekdays", weekDays: [1, 3, 5], count: 3, minutes: 60, from: "today", weekdaysOnly: false }, at(26, 8))).toEqual([
       "2026-10-26",
-      "2026-10-27",
       "2026-10-28",
+      "2026-10-30",
     ]);
+  });
+
+  it("certains jours de la semaine : séances sur ces jours seulement, prolongées sur les semaines suivantes", () => {
+    const options = { mode: "weekdays" as const, weekDays: [2, 4], count: 5, minutes: 30, from: "tomorrow" as const, weekdaysOnly: false };
+    // Jeudi 22 octobre, à partir de demain : mardi 27, jeudi 29, mardi 3, jeudi 5, mardi 10
+    expect(sessionDays(options, NOW)).toEqual(["2026-10-27", "2026-10-29", "2026-11-03", "2026-11-05", "2026-11-10"]);
+    const sessions = splitSessions(options, NOW);
+    expect(sessions.map((s) => s.title)).toEqual([1, 2, 3, 4, 5].map((i) => `Séance ${i}/5 · 30 min`));
+    // Aucun jour choisi : aucune séance
+    expect(splitSessions({ ...options, weekDays: [] }, NOW)).toEqual([]);
+  });
+
+  it("dates précises : une séance par date, dans l'ordre, sans date passée ni doublon, 14 au plus", () => {
+    const options = { mode: "dates" as const, dates: ["2026-11-02", "2026-10-21", "2026-10-25", "2026-11-02"], count: 5, minutes: 60, from: "today" as const, weekdaysOnly: false };
+    const sessions = splitSessions(options, NOW);
+    expect(sessions.map((s) => [s.title, s.day])).toEqual([
+      ["Séance 1/2 · 1 h", "2026-10-25"],
+      ["Séance 2/2 · 1 h", "2026-11-02"],
+    ]);
+    // Une seule date : pas assez
+    expect(splitSessions({ ...options, dates: ["2026-10-25"] }, NOW)).toEqual([]);
+    const many = Array.from({ length: 20 }, (_, i) => addDays("2026-10-23", i));
+    expect(chosenDates(many, NOW)).toHaveLength(14);
   });
 });
 
@@ -380,7 +398,7 @@ describe("sauvegarde et import", () => {
       { tasks: [makeTask({ steps })], settings: DEFAULT_SETTINGS, completions: [], reviewWeeks: [] },
       NOW
     ) as unknown as { tasks: { schemaVersion: number; tasks: Record<string, unknown>[] } };
-    expect(file.tasks.schemaVersion).toBe(7);
+    expect(file.tasks.schemaVersion).toBe(8);
     const parsed = parseBackup(JSON.stringify(file), NOW);
     expect(parsed.ok && parsed.backup.tasks[0].steps).toEqual(steps);
 

@@ -45,3 +45,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Captures du Play Store : fichiers de travail (export web, captures brutes, exemples)
+scripts/store-screenshots/.out/

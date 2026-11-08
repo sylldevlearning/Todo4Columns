@@ -36,6 +36,7 @@ export function useRecurrence(
     notificationIds: [],
     // Mêmes étapes, décochées et sans jour prévu
     steps: resetSteps(stepsOf(task)),
+    progress: null, // occurrence suivante : rien n'est encore fait
   });
 
   // Termine une tâche (date de fin pour le bilan). Récurrente : crée l'occurrence suivante.

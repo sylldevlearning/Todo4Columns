@@ -1,11 +1,9 @@
-# DoFirst (Todo4Columns) — État de la version 1.4.1
+# DoFirst (Todo4Columns) — État de la version 1.5.0
 
-> Mis à jour le 07/11/2026. Branche `version-1.4.1` (créée depuis `master` après la 1.4.0), fusionnée dans `master` (tag `v1.4.1`). Version **1.4.1** dans `app.json`.
-> Vérifié : 662 tests Jest (53 suites, fuseau Europe/Paris), `tsc --noEmit`. `expo-doctor` : 20/21, seul échec = 8 paquets Expo en retard d'un correctif (voir « Points ouverts »). Tests sur téléphone faits sur le build 9 (test interne) : tout est OK.
-> **Builds EAS :**
-> - **Production 1.4.1** (versionCode 9, build `95682b73-4b1f-4482-8e60-82501cad1cd4`, commit `866c669`) : l'envoi automatique de `eas build --auto-submit` a échoué (« The Google Play edit is no longer valid »), car une boucle d'attente lançait `release:notes` en simulation chaque minute et ouvrait des modifications Play concurrentes. Renvoyé par `eas submit --id 95682b73…` le 07/11/2026, sans autre appel à l'API Play pendant l'envoi, puis promu en production à 100 %.
-> - Ancienne production : 1.4.0 (versionCode 8, build `a3e87027`).
-> **Play Console :** production 1.4.1 (notes dans les 14 langues) soumise à l'examen le 07/11/2026 par `npm run release:ship -- --confirm=1.4.1` (fiche : aucun changement). Relu via l'API : production 1.4.1 (versionCode 9, `completed`, 14 notes), test interne 1.4.1 (versionCode 9), `listing:check` sans différence. Publication automatique après l'examen (« Publication gérée » désactivée).
+> Mis à jour le 09/11/2026. Branche `version-1.5.0` fusionnée dans `master`, tag `v1.5.0` (branches de version gardées). Version **1.5.0** dans `app.json`.
+> Vérifié (10/11/2026) : 776 tests Jest (60 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
+> **En production :** 1.5.0 (versionCode 11) soumise à l'examen le 09/11/2026 par `release:ship` (production 100 %, 14 fiches avec 7 captures chacune, Sécurité des données) ; relu par l'API : production `1.5.0 [11] completed`, 14 fiches, 7 captures par langue. Précédente : 1.4.1 (versionCode 9).
+> **Google Cloud (projet `matrice-deisenhower`, compte csgonesse@gmail.com) :** API Google Drive activée ; écran de consentement « DoFirst » (scope `drive.appdata` seul, classé non sensible), règles https://sylldevlearning-legal.vercel.app/dofirst/privacy, domaine autorisé `sylldevlearning-legal.vercel.app` ; deux clients OAuth Android pour `com.saloum.sylla.matriceeisenhower` : clé d'importation EAS (`BD:20:F7:8A…`, client existant « Client Android 1 ») et clé de signature Play (`D7:7B:86:3C…`, « DoFirst Android (clé de signature Play) »). Pas de client Web (la librairie n'en a pas besoin pour un jeton d'accès). **Application OAuth publiée (« En production ») le 09/11/2026** : aucune validation requise pour l'accès aux données (pas de scope sensible) ; le Centre de validation indique que le branding (nom « DoFirst ») n'est pas affiché aux utilisateurs tant qu'il n'est pas validé (facultatif, voir « Points ouverts »).
 
 ---
 
@@ -36,7 +34,14 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
 - **1.3.0** : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
-- **1.4.1** (cette branche) :
+- **1.5.0** (soumise à l'examen le 09/11/2026) :
+  - sauvegarde Google Drive facultative (Réglages › Google Drive) : connexion Google, dossier caché `appDataFolder` (scope `drive.appdata`), sauvegarde manuelle et automatique (au plus une par jour, au passage en arrière-plan, si les données ont changé), 5 dernières gardées, restauration avec aperçu et copie de secours, proposée après connexion si une sauvegarde existe, déconnexion, suppression de la sauvegarde en ligne ; textes dans les 13 langues ;
+  - vue calendrier (icône à chiffres sur la matrice) : mois, points par quadrant et nombre de tâches, échéances, étapes prévues, occurrences futures des tâches récurrentes (« Prévue », non modifiables), panneau du jour avec répartition et frise horaire, « Sans heure » ;
+  - dictée du titre (micro dans la fiche, appui long sur « + ») avec la reconnaissance vocale du téléphone, autorisation au premier appui ;
+  - retours de tests : bouton micro sur la matrice ; « Répartir sur plusieurs jours » en trois modes (jours d'affilée, certains jours de la semaine, dates précises sur un mini-calendrier) ; appui long sur une tâche : panneau rapide (étapes à cocher, avancement calculé ou réglé de 0 à 100 %, barre fine sur la carte et dans la fiche) ; restauration Drive automatique si l'app est vide, demandée sinon ; présentation en 6 écrans (dont Google Drive) et carte Drive unique pour qui met à jour ;
+  - saisie intelligente locale : échéance proposée depuis le titre (chrono-node, 10 langues : pas de coréen, turc ni hindi), « urgent » / « important » suggérés dans les 13 langues ;
+  - maintenance : 8 paquets Expo à jour (correctifs du SDK 57), config Jest dans `jest.config.js` (`expo-asset` résolu depuis `expo`), scripts Play : les simulations n'ouvrent plus de modification concurrente.
+- **1.4.1** :
   - présentation : 4e écran « Ne rate plus rien », qui propose d'activer les rappels (autorisation des notifications) ;
   - matrice : carte « Active les rappels » pour qui met à jour l'app sans revoir la présentation ; réglage `remindersPromptDone` ;
   - textes des rappels dans les 13 langues.
@@ -63,6 +68,9 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
 | Stockage | AsyncStorage |
 | Animations / gestes | Reanimated 4, Worklets, Gesture Handler |
 | Tests | Jest (jest-expo), React Native Testing Library |
+| Dictée | `expo-speech-recognition` 57.1.1 (MIT, `SpeechRecognizer` d'Android, `EXTRA_PREFER_OFFLINE`) |
+| Dates en langage naturel | `chrono-node` 2.10.3 (MIT), langues importées une à une (`chrono-node/fr`… ; correspondance dans `jest.config.js`) |
+| Connexion Google | `@react-native-google-signin/google-signin` 16.1.5 (version gratuite, MIT), Android seulement ; API REST Drive v3 par `fetch` |
 | Publication | `googleapis` (API androidpublisher v3, scripts `scripts/play-*.mjs`), `sharp` (comparaison des images) |
 
 Modules Expo : `expo-notifications`, `expo-localization`, `expo-haptics`, `expo-font`, `expo-splash-screen`, `expo-router`, `expo-linking`, `expo-constants`, `expo-dev-client`, `expo-build-properties`, `expo-file-system`, `expo-sharing`, `expo-store-review` (1.2.1). Plus `@react-native-community/datetimepicker`, `@expo/vector-icons` (Ionicons) et `@expo-google-fonts/manrope`.
@@ -90,13 +98,22 @@ src/
   recovery.ts           Récupération des tâches de l'ancienne app (à ne pas modifier)
   balance.ts, completionLog.ts, review.ts, recurrence.ts, backup.ts, delegation.ts
   reviewPrompt.ts       Conditions de la demande d'avis ; community.ts  liens « À propos »
+  drive/                Sauvegarde Google Drive : googleAccount.ts (connexion, scope drive.appdata),
+                        driveApi.ts (API REST, appDataFolder), driveBackup.ts (état, rotation,
+                        règle de la sauvegarde automatique) ; hooks/useDriveBackup.ts (Réglages),
+                        components/DriveAutoBackup.tsx (passage en arrière-plan)
+  calendar.ts           Vue calendrier : grille, contenu des jours, frise (app/calendar.tsx,
+                        components/CalendarDayPanel.tsx)
+  smartInput.ts         Dates et mots « urgent » / « important » tirés du titre ;
+                        hooks/useVoiceInput.ts (dictée), components/TitleField.tsx
   guards.ts             isRecord, CATEGORY_KEYS (recovery.ts garde ses propres copies)
   components/           Cartes, formulaires, InfoButton, présentation…
   i18n/                 Textes des 13 langues (fr.ts fait référence ; mêmes clés et mêmes
                         paramètres vérifiés par test), langue courante (index.ts), pluriel russe
   components/fitText.ts Textes étroits : deux lignes avec césure sur Android
 scripts/play/          Publication Google Play : lib.mjs (connexion, modifications),
-                        listing.mjs (fiches), release.mjs (promotion)
+                        listing.mjs (fiches), release.mjs (promotion), guard.mjs (pas de
+                        modification pendant un envoi EAS ; tests : npm run test:scripts)
 scripts/play-listing.mjs, play-release.mjs, play-ship.mjs
                         Commandes npm (réutilisables dans un autre projet Expo)
 store/listings/<langue>/  Fiches Play Store : title.txt, short.txt, full.txt, images/
@@ -107,13 +124,14 @@ store/                  Notes de version (release-notes-<langue>.txt), règles d
 
 | Clé | Contenu |
 |---|---|
-| `TASKS_4COLS` | Tâches, schéma **v7** (`{ schemaVersion, tasks }`) |
-| `TASKS_4COLS_BACKUP_V1` … `V6` | Copie du format d'origine, écrite une seule fois avant chaque migration |
+| `TASKS_4COLS` | Tâches, schéma **v8** (`{ schemaVersion, tasks }` ; v8 : `progress`, avancement réglé à la main) |
+| `TASKS_4COLS_BACKUP_V1` … `V7` | Copie du format d'origine, écrite une seule fois avant chaque migration |
 | `TASKS_4COLS_CORRUPT_<date>` | Contenu illisible mis de côté |
 | `TASKS_4COLS_RECOVERY_DONE`, `TASKS_4COLS_RECOVERY_LOG` | Récupération des anciennes tâches |
 | `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis ; en 1.4, `language` : `"auto"` par défaut ou une langue) |
 | `COMPLETION_LOG` | Journal `{ date, catégorie }` des tâches terminées, 26 semaines |
 | `WEEKLY_REVIEW_LOG` | Semaines où une revue a été faite |
+| `DRIVE_BACKUP` | Sauvegarde Google Drive (1.5) : compte connecté, sauvegarde automatique, dernière sauvegarde réussie, empreinte des données, dernier essai. À part des réglages : une restauration ne l'écrase pas |
 | `BACKUP_BEFORE_IMPORT` | Copie des données avant le dernier import |
 | `LAST_HANDLED_NOTIFICATION_RESPONSE` | Dernière réponse de notification appliquée |
 
@@ -202,24 +220,27 @@ Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) 
 
 | Élément | Valeur |
 |---|---|
-| Version | **1.4.1** (`app.json`, `package.json`) |
+| Version | **1.5.0** (`app.json`, `package.json`) |
 | versionCode | Géré par EAS (`appVersionSource: remote`, `autoIncrement`), absent d'`app.json` |
 | Package Android | `com.saloum.sylla.matriceeisenhower` |
 | R8 / shrinkResources | Activés (`expo-build-properties`), règles keep pour gesture-handler, AsyncStorage, expo-localization |
 | Polices | Manrope (5 graisses) intégrées au build Android |
-| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/` (fr-FR et en-US seulement ; les autres langues reprennent les images de la langue par défaut). 14 fiches, en ligne depuis la 1.4.0 : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
+| Fiche Play Store | `store/listings/<langue>/` : `title.txt`, `short.txt`, `full.txt`, `images/phoneScreenshots/` : 7 captures 1080×1920 par langue, générées par `npm run screenshots` (`scripts/store-screenshots/`, Playwright sur l'export web, données d'exemple hors de l'app). 14 fiches, en ligne depuis la 1.4.0 : fr-FR, en-US, es-419, es-ES, pt-BR, de-DE, it-IT, id, ja-JP, ko-KR, zh-CN, tr-TR, hi-IN, ru-RU |
 | Notes de version | `store/release-notes-<langue>.txt`, 14 fichiers (es-419 et es-ES identiques), 500 caractères maximum (1.4.1 : de 44 à 164) |
 | Envoi Google Play | Voir ci-dessous. Clé du compte de service hors du dépôt (`C:/secrets/dofirst-play.json`, chemin dans `eas.json`) |
-| Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md` (à publier à une adresse publique pour la Play Console) |
+| Règles de confidentialité | `store/privacy-policy-fr.md`, `store/privacy-policy-en.md`, publiées (projet Vercel `sylldevlearning-legal`, `vercel --prod`) sur https://sylldevlearning-legal.vercel.app/dofirst/confidentialite et /dofirst/privacy (mises à jour le 08/11/2026 pour Google Drive) |
+| Sécurité des données | `store/data-safety-1.5.0.md`, saisie dans la Play Console le 09/11/2026 (pas d'API) : collecte facultative, non partagée, chiffrée, « Autre contenu généré par l'utilisateur » et « Autres actions » pour le fonctionnement de l'appli ; audio non déclaré ; pas de création de compte |
 
-**Commandes de publication** (prochaine version : remplacer 1.4.1)
+**Commandes de publication** (prochaine version : remplacer 1.5.0)
 1. `eas build --platform android --profile production --auto-submit --non-interactive --no-wait` : build, puis test interne (suivi : `eas build:list` et la page de l'envoi sur expo.dev ; `eas submit:list` n'existe pas). **Aucun appel à l'API Play pendant l'envoi**, même une simulation : Google Play n'accepte qu'une modification ouverte à la fois et l'envoi échoue (« The Google Play edit is no longer valid »). En cas d'échec : `eas submit -p android --profile production --id <build>`.
 2. `npm run release:notes`, puis `npm run release:notes -- --apply` : notes de la version du test interne (`eas submit` ne les envoie pas). Vérifier d'abord que la simulation vise le bon versionCode.
 3. Tests sur téléphone.
-4. `npm run listing:check` : différences de fiche (simulation).
+4. `npm run listing:check` : différences de fiche (simulation ; elle ouvre une modification, refusée si un envoi EAS peut être en cours).
 5. `npm run release:ship -- --confirm=<version>` : fiche et production (100 %, notes) dans une seule modification, soumises ensemble à l'examen. Sans `--confirm`, ou avec une autre version, rien n'est envoyé.
 
 Autres commandes : `npm run listing:apply` (fiche seule) et `npm run release:promote -- --confirm=<version>` (production seule). Comme la « Publication gérée » est désactivée, ces deux commandes refusent de garder les changements en attente : il faut leur ajouter `--send-for-review`. `release:notes` valide directement (test interne).
+
+Simulations sans modification Play : `release:notes` et `release:promote` sans `--apply`/`--confirm` lisent les versions par `applications.tracks.releases.list`. Toute ouverture de modification (fiche, envoi) passe d'abord par `scripts/play/guard.mjs` : refus si un build de production est en cours, ou terminé depuis moins de 3 h avec un versionCode absent des canaux ; `--skip-upload-check` si l'envoi a échoué.
 
 **Permissions du manifeste final**
 - **Attendues :** `INTERNET`, `VIBRATE`, `RECEIVE_BOOT_COMPLETED` et `POST_NOTIFICATIONS` (expo-notifications).
@@ -230,9 +251,11 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 ## 8. Points ouverts
 
 - **Tests sur téléphone :** faits sur le build 9 de la 1.4.1 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
-- **À faire dans une version de maintenance :**
-  - **Paquets Expo :** 8 paquets ont un correctif de retard (`expo` 57.0.32, `expo-build-properties` 57.0.23, `expo-constants` 57.0.23, `expo-dev-client` 57.0.21, `expo-notifications` 57.0.25, `expo-router` 57.0.30, `expo-sharing` 57.0.25, `expo-splash-screen` 57.0.11). `npx expo install --fix` essayé puis annulé pour la 1.4.1 : il ajoute le plugin `expo-sharing` dans `app.json`, et le nouvel arbre de `node_modules` fait échouer 34 suites Jest (`moduleNameMapper` de jest-expo : « Could not locate module expo-asset mapped as …/node_modules/expo/node_modules/$1 »). À refaire avec la config Jest corrigée, puis tests, `expo-doctor` 21/21 et un prebuild.
-  - **Scripts Play en simulation :** `release:notes`, `release:promote`, `release:ship` et `listing:check` ouvrent une modification Play même sans `--apply`/`--confirm`, ce qui invalide une modification en cours (envoi EAS). La simulation ne doit plus ouvrir de modification qui en invaliderait une autre (lecture seule, ou refus si un envoi est en cours).
+- **1.5.0 :** soumise à l'examen le 09/11/2026 (production, fiches, captures, Sécurité des données). Suivre l'examen dans la Play Console.
+  - **Branding OAuth (facultatif) :** pour afficher « DoFirst » sur l'écran de connexion Google, valider le branding (Google Auth Platform › Centre de validation ; domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console). Sans cela, la connexion fonctionne.
+  - **Adresse d'assistance de l'écran de consentement :** encore csgonesse@gmail.com ; sylldevlearning@gmail.com (Owner IAM) peut la remplacer dans Branding.
+  - **Contacts développeur :** sylldevlearning@gmail.com et contact@sylldevlearning.fr.
+  - **iOS :** section Google Drive masquée (pas de client OAuth iOS ni de plugin `iosUrlScheme`).
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
 - **Copie de secours d'import :** une seule, celle du dernier import.
@@ -242,6 +265,10 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **Acceptés sans correction (revue de la 1.3, étape 1) :**
   - **Demande d'avis sur un APK de test :** installée hors Play Store, l'app enregistre `reviewAskedAt` alors que Google n'affiche rien ; la demande est ensuite bloquée 90 jours. Sans effet en production.
   - **Étape au titre vidé :** elle disparaît à l'enregistrement de la fiche, sans avertissement.
+
+- **À faire dans une version de maintenance :**
+  - **Message d'erreur de quota (scripts Play) :** une erreur 403 « Listing releases quota exceeded » (quota de `applications.tracks.releases.list`, appelé par la garde `scripts/play/guard.mjs`) s'affiche comme « Accès refusé : l'accès du compte de service n'est pas encore actif… », ce qui est faux. `explain()` (`scripts/play/lib.mjs`) doit reconnaître les erreurs de quota (`quota`, `rateLimitExceeded`, 429) et dire de réessayer plus tard ; la garde doit alors indiquer que la vérification des envois EAS n'a pas pu se faire (`eas status`, puis `--skip-upload-check` si aucun envoi n'est en cours).
+  - **Avertissement Node DEP0190** : `spawnSync` avec `shell: true` et des arguments (garde, appel à `eas build:list`).
 
 ### Dette technique
 
@@ -319,7 +346,7 @@ Avec le build de production (R8 actif), installé **par-dessus** la version publ
     - « Noter DoFirst » ouvre la fiche dans l'app Play Store.
     - « Partager DoFirst » : message et lien corrects dans SMS ou WhatsApp.
     - « Suggérer une idée » : Gmail s'ouvre avec l'adresse, l'objet et les versions de l'app et d'Android.
-    - Numéro de version affiché : 1.4.1.
+    - Numéro de version affiché : 1.5.0.
 15. **Étapes** (1.3)
     - Appui long sur la poignée puis glisser une étape dans la fiche (feuille native) : la ligne suit le doigt et prend sa place au lâcher, y compris avec le jour d'une étape ouvert ; le défilement de la fiche reste possible ; un appui long sur le titre sélectionne le texte.
     - TalkBack : la poignée annonce « Déplacer « … » » et propose « Monter » / « Descendre ».

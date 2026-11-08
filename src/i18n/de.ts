@@ -331,15 +331,35 @@ export const de: Translations = {
         body: "Teil eine große Aufgabe in kleine Schritte zum Abhaken auf, in der Reihenfolge, die du willst (Schritt lange drücken und ziehen). Gib einem Schritt einen Tag, um an diesem Tag erinnert zu werden, um 9:00 oder zur Uhrzeit deiner Wahl, mit „Erledigt“ und „Auf morgen“. Die Aufgabe ist erst erledigt, wenn du sie abhakst.",
         example: "„Vortrag vorbereiten“: Quellen suchen, Gliederung, Einleitung schreiben, üben.",
       },
+      progress: {
+        title: "Fortschritt",
+        body: "Mit Schritten folgt der Fortschritt den abgehakten Schritten. Ohne Schritte stellst du ihn selbst von 0 bis 100 % ein. Er erscheint als dünner Balken auf der Karte.",
+        example: "halte eine Aufgabe gedrückt und tippe auf „50 %“: Die Karte zeigt einen halb gefüllten Balken.",
+      },
       splitSessions: {
         title: "Auf mehrere Tage verteilen",
-        body: "Legt mehrere Arbeitseinheiten auf einmal an, eine pro Tag, jede mit ihrer Erinnerung. Du wählst Anzahl, Dauer, ersten Tag und ob das Wochenende übersprungen wird. Vor dem Bestätigen siehst du eine Vorschau.",
-        example: "5 Einheiten à 1 Std. ab einem Donnerstag, nur werktags: Donnerstag, Freitag, Montag, Dienstag und Mittwoch.",
+        body: "Legt auf einmal mehrere Arbeitseinheiten an, jede mit Erinnerung: aufeinanderfolgende Tage, bestimmte Wochentage (Mo, Mi, Fr …) oder bestimmte Daten aus einem Mini-Kalender. Vor dem Bestätigen erscheint eine Vorschau.",
+        example: "Montag, Mittwoch und Freitag, 1 Std.: 3 Einheiten diese Woche, mit + verlängerbar.",
       },
       backup: {
         title: "Sicherung",
         body: "„Exportieren“ erstellt eine unverschlüsselte Datei mit all deinen Daten: Bewahr sie sicher auf (Drive, E-Mail, Dateien). „Importieren“ ersetzt die Daten auf diesem Handy durch die einer Datei, nach einer Sicherheitskopie. Auf Android bewahrt auch die automatische Google-Sicherung deine Daten, wenn sie auf dem Handy aktiviert ist.",
         example: "vor einem Handywechsel deine Daten nach Drive exportieren und die Datei auf dem neuen importieren.",
+      },
+      drive: {
+        title: "Sicherung in Google Drive",
+        body: "Freiwillig: Deine Daten werden in einen versteckten Ordner deines Google Drive kopiert, der nur DoFirst gehört: Er erscheint nicht bei deinen Dateien, und niemand sonst hat Zugriff, auch nicht der Entwickler. Die letzten 5 Sicherungen bleiben erhalten. „Wiederherstellen“ ersetzt die Daten auf diesem Handy, nach einer Sicherheitskopie.",
+        example: "Melde dich auf einem neuen Handy mit demselben Konto an: DoFirst bietet an, deine letzte Sicherung wiederherzustellen.",
+      },
+      calendar: {
+        title: "Kalender",
+        body: "Jeder Tag zeigt Punkte in den Quadrantenfarben und die Zahl der Aufgaben: Fälligkeiten, geplante Schritte und kommende Termine wiederkehrender Aufgaben (gestrichelt, „Geplant“). Tippe auf einen Tag für seine Zeitleiste und dann auf eine Aufgabe, um sie zu öffnen.",
+        example: "wische nach links zum nächsten Monat; „Heute“ bringt dich zum heutigen Tag zurück.",
+      },
+      voice: {
+        title: "Diktat",
+        body: "Tippe auf das Mikrofon, um den Titel zu diktieren: Der Text erscheint, während du sprichst, und das Zuhören endet nach einer Pause. Die Spracherkennung des Handys erledigt das, wenn möglich direkt auf dem Gerät; nichts wird aufgenommen. DoFirst erkennt auch ein Datum („morgen um 15 Uhr“) oder die Wörter „dringend“ und „wichtig“ und schlägt vor, sie zu übernehmen.",
+        example: "sag „Werkstatt am Freitag anrufen“ und tippe auf „Übernehmen“: Die Fälligkeit ist Freitag 9 Uhr.",
       },
       autoEscalate: {
         title: "Überfällige Aufgaben",
@@ -379,13 +399,23 @@ export const de: Translations = {
       body: "Wenn du eine Aufgabe anlegst, beantworte „Ist es dringend?“ und „Ist es wichtig?“. Die App legt sie für dich ins richtige Feld.",
     },
     gestures: {
-      title: "Erinnerungen und Gesten",
-      body: "Wisch eine Aufgabe nach rechts, um sie zu erledigen, nach links, um sie zu löschen. Erinnerungen kommen als Mitteilungen: Tipp auf „Erledigt“ oder „1 Std. später“, und die App öffnet sich und kümmert sich darum.",
+      title: "Gesten und Schritte",
+      body: "Wische eine Aufgabe nach rechts, um sie zu erledigen, nach links, um sie zu löschen. Halte sie gedrückt, um ihre Schritte abzuhaken oder den Fortschritt einzustellen.",
     },
     reminders: {
       title: "Nichts mehr verpassen",
       body: "DoFirst erinnert dich im richtigen Moment an deine Aufgaben, hakt bei Unerledigtem nach und sagt dir Bescheid, wenn eine Aufgabe dringend wird.",
     },
+    calendar: {
+      title: "Kalender und Diktat",
+      body: "Der Kalender zeigt deine Aufgaben Tag für Tag. Tippe auf das Mikrofon, um eine Aufgabe zu diktieren: „morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit.",
+    },
+    drive: {
+      title: "Sicherung in Google Drive",
+      body: "Freiwillig: Verbinde dein Google-Konto, um eine Kopie deiner Aufgaben in einem privaten Ordner deines Drive zu behalten und sie auf einem neuen Handy zurückzuholen. Das geht auch später in den Einstellungen.",
+    },
+    connect: "Anmelden",
+    driveOn: "Angemeldet: automatische Sicherung ist an",
     enableReminders: "Erinnerungen einschalten",
     remindersOn: "Erinnerungen sind eingeschaltet",
     sampleTask: "Bericht verschicken",
@@ -577,6 +607,122 @@ export const de: Translations = {
     undoErrorBody: "Die Sicherheitskopie konnte nicht gelesen werden. Es wurde nichts geändert.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Kalender öffnen",
+    title: "Kalender",
+    today: "Heute",
+    previous: "Vorheriger Monat",
+    next: "Nächster Monat",
+    empty: "Für diesen Tag ist nichts geplant.",
+    noTime: "Ohne Uhrzeit",
+    planned: "Geplant",
+    step: (title: string) => `Schritt: ${title}`,
+    plannedHint: "Geplanter Termin einer wiederkehrenden Aufgabe, nicht änderbar",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Titel diktieren",
+    stop: "Diktat beenden",
+    listening: "Ich höre zu … sprich jetzt",
+    deniedTitle: "Mikrofon nicht erlaubt",
+    deniedBody: "Um deine Aufgaben zu diktieren, erlaube DoFirst das Mikrofon in den Handy-Einstellungen.",
+    unavailableTitle: "Diktat nicht verfügbar",
+    unavailableBody: "Auf diesem Handy ist keine Spracherkennung verfügbar.",
+    errorTitle: "Diktat unterbrochen",
+    errorBody: "Die Spracherkennung konnte nicht starten. Versuch es gleich noch einmal.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Fällig: ${date}`,
+    apply: "Übernehmen",
+    dismiss: "Ignorieren",
+    urgent: "Im Titel steht „dringend“",
+    important: "Im Titel steht „wichtig“",
+    turnOn: "Einschalten",
+  },
+
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Fortschritt",
+    value: (n: number) => `${n} %`,
+    auto: "Aus den abgehakten Schritten berechnet",
+    manual: "Fortschritt von Hand einstellen",
+    hint: "Lange drücken: Schritte und Fortschritt",
+    steps: "Schritte",
+    close: "Schließen",
+    changed: (n: number) => `Fortschritt: ${n} %`,
+    stepUnchecked: "Schritt nicht mehr abgehakt",
+  },
+
+  splitModes: {
+    label: "Verteilung",
+    consecutive: "Aufeinanderfolgende Tage",
+    weekdays: "Bestimmte Wochentage",
+    dates: "Bestimmte Daten",
+    datesHint: "Tippe auf die gewünschten Tage (2 bis 14).",
+    tooFew: "Wähle mindestens 2 Tage.",
+    previousMonth: "Vorheriger Monat",
+    nextMonth: "Nächster Monat",
+  },
+
+  quick: {
+    dictate: "Neue Aufgabe diktieren",
+  },
+
+  driveCard: {
+    body: "Sichere deine Aufgaben in deinem Google Drive (freiwillig)",
+    connect: "Anmelden",
+  },
+
+  driveRestore: {
+    title: "Aufgaben wiederhergestellt",
+    body: (date: string) => `Deine Aufgaben wurden wiederhergestellt (Sicherung vom ${date}).`,
+  },
+
+  // Sauvegarde Google Drive (facultative)
+  drive: {
+    section: "Google Drive",
+    intro: "Freiwillig: Bewahre eine Kopie deiner Daten in deinem Google Drive auf, in einem versteckten Ordner nur für DoFirst.",
+    connect: "In Google Drive sichern",
+    account: (email: string) => `Konto: ${email}`,
+    lastBackup: (date: string) => `Letzte Sicherung: ${date}`,
+    never: "Noch keine Sicherung",
+    working: "Läuft …",
+    backupNow: "Jetzt sichern",
+    restore: "Aus Google Drive wiederherstellen",
+    restoreAction: "Wiederherstellen",
+    auto: "Automatische Sicherung",
+    autoHint: "Höchstens einmal am Tag, wenn du die App verlässt und sich deine Daten geändert haben.",
+    signOut: "Abmelden",
+    delete: "Meine Online-Sicherung löschen",
+    previewDate: (date: string) => `Sicherung vom ${date}`,
+    foundTitle: "Sicherung gefunden",
+    later: "Später",
+    connectErrorTitle: "Anmeldung nicht möglich",
+    connectErrorBody: "Die Anmeldung bei Google hat nicht geklappt. Prüfe deine Internetverbindung und versuch es noch einmal.",
+    backupDoneTitle: "Sicherung abgeschlossen",
+    backupDoneBody: "Deine Daten sind in deinem Google Drive.",
+    backupErrorTitle: "Sicherung nicht möglich",
+    backupErrorBody: "Google Drive antwortet nicht. Prüfe deine Internetverbindung und versuch es noch einmal. Deine Daten bleiben auf diesem Handy.",
+    restoreErrorTitle: "Wiederherstellung nicht möglich",
+    restoreErrorBody: "Die Sicherung konnte nicht gelesen werden. Prüfe deine Internetverbindung und versuch es noch einmal. Es wurde nichts geändert.",
+    noBackupTitle: "Keine Sicherung",
+    noBackupBody: "In diesem Google Drive gibt es noch keine DoFirst-Sicherung.",
+    signOutTitle: "Von Google Drive abmelden?",
+    signOutBody: "Die automatische Sicherung stoppt. Deine Online-Sicherung bleibt erhalten: Du kannst sie nach einer neuen Anmeldung wiederherstellen.",
+    deleteTitle: "Deine Online-Sicherung löschen?",
+    deleteBody: "Alle DoFirst-Sicherungen in deinem Google Drive werden gelöscht und die automatische Sicherung wird ausgeschaltet. Die Daten auf diesem Handy ändern sich nicht.",
+    deleteErrorTitle: "Löschen nicht möglich",
+    deleteErrorBody: "Google Drive antwortet nicht. Prüfe deine Internetverbindung und versuch es noch einmal.",
+    deletedTitle: "Online-Sicherung gelöscht",
+    deletedBody: "In deinem Google Drive gibt es keine DoFirst-Sicherung mehr.",
+    signedOutTitle: "Neue Anmeldung nötig",
+    signedOutBody: "Der Zugriff auf Google Drive ist abgelaufen oder wurde entzogen. Melde dich neu an, um zu sichern.",
+  },
+
   howTo: {
     title: "So funktioniert's",
     methodTitle: "Die Eisenhower-Methode",
@@ -649,6 +795,10 @@ export const de: Translations = {
       send: "In einer „Abgeben“-Aufgabe öffnet „Senden“ das Teilen-Menü mit einer fertigen Nachricht für die Person. Du wählst App und Empfänger.",
       nudge: "In der Erinnerung einer abgegebenen Aufgabe oder in Schritt 3 des Rückblicks bereitet „Nachhaken“ eine kurze Nachricht zum Senden vor.",
       backup: "Einstellungen › Sicherung: „Meine Daten exportieren“ erstellt eine Datei, die du aufbewahren kannst, wo du willst; „Sicherung importieren“ spielt sie auf dieses Handy zurück.",
+      drive: "Einstellungen › Google Drive: Verbinde dein Google-Konto, um deine Daten online zu sichern – von Hand oder automatisch – und auf einem anderen Handy wiederherzustellen.",
+      calendar: "Tippe auf das Kalendersymbol mit Zahlen in der Matrix, um deine Aufgaben Monat für Monat zu sehen; tippe auf einen Tag für seine Zeitleiste.",
+      voice: "Tippe auf das Mikrofon neben + (oder halte + gedrückt), um eine Aufgabe zu diktieren; im Formular macht das Mikrofon im Titel dasselbe.",
+      longPress: "Halte eine Aufgabe gedrückt, um ihre Schritte abzuhaken oder den Fortschritt einzustellen.",
       permission: "Erinnerungen: Die Einführung bietet an, sie einzuschalten. Lehnst du ab, fragt die App nicht bei jedem Start erneut: Wenn du eine Erinnerung einschaltest, bietet sie an, Mitteilungen zu erlauben oder die Handy-Einstellungen zu öffnen. Der Status steht unter Einstellungen › Mitteilungen.",
       quietHours: "Ruhezeit (standardmäßig aus, in den Einstellungen einschalten): Erinnerungen, die hineinfallen würden, kommen, wenn sie endet, und die Aufgabe sagt dir, wenn das passiert.",
       steps: "In der Aufgabe teilt „Schritte“ sie auf: Die Karte zeigt den Fortschritt „2/5“ und den Schritt des Tages. Ein Schritt von einem vergangenen Tag, der nicht erledigt ist, gilt als überfällig.",
