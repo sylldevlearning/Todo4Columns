@@ -90,7 +90,7 @@ describe("migration v7", () => {
   it("enregistrées en v7, relues à l'identique", () => {
     const tasks = [makeTask({ steps: [step({ day: TODAY, time: "18:00" })] })];
     const json = serializeTasks(tasks);
-    expect(JSON.parse(json).schemaVersion).toBe(7);
+    expect(JSON.parse(json).schemaVersion).toBe(8);
     expect(parseStoredTasks(json, NOW).tasks[0].steps).toEqual(tasks[0].steps);
   });
 });
@@ -380,7 +380,7 @@ describe("sauvegarde et import", () => {
       { tasks: [makeTask({ steps })], settings: DEFAULT_SETTINGS, completions: [], reviewWeeks: [] },
       NOW
     ) as unknown as { tasks: { schemaVersion: number; tasks: Record<string, unknown>[] } };
-    expect(file.tasks.schemaVersion).toBe(7);
+    expect(file.tasks.schemaVersion).toBe(8);
     const parsed = parseBackup(JSON.stringify(file), NOW);
     expect(parsed.ok && parsed.backup.tasks[0].steps).toEqual(steps);
 

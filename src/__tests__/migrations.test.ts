@@ -51,6 +51,7 @@ describe("parseStoredTasks", () => {
       nextOccurrenceId: null,
       escalationSkippedFor: null,
       steps: [],
+      progress: null,
     });
   });
 
@@ -199,7 +200,7 @@ describe("parseStoredTasks", () => {
     ]);
   });
 
-  it("relit à l'identique le format courant (v7)", () => {
+  it("relit à l'identique le format courant (v8)", () => {
     const { tasks } = parseStoredTasks(JSON.stringify(v1Tasks), NOW);
     tasks[0].delegatedTo = "Marie";
     tasks[1].completedAt = 1234;
@@ -207,10 +208,18 @@ describe("parseStoredTasks", () => {
     tasks[1].dueAt = 99;
     tasks[1].recurrence = { freq: "yearly", month: 1, monthDay: 29 };
     tasks[1].nextOccurrenceId = "suivante";
+    tasks[0].progress = 40;
     const json = serializeTasks(tasks);
 
-    expect(JSON.parse(json).schemaVersion).toBe(7);
-    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 7 });
+    expect(JSON.parse(json).schemaVersion).toBe(8);
+    expect(parseStoredTasks(json, NOW)).toEqual({ tasks, fromVersion: 8 });
+  });
+
+  it("v7 → v8 : avancement absent, null ; valeurs lues ramenées au pas de 10 entre 0 et 100", () => {
+    const v7 = { schemaVersion: 7, tasks: [{ ...v1Tasks[0] }, { ...v1Tasks[1], progress: 43 }, { ...v1Tasks[2], progress: 250 }, { ...v1Tasks[3], progress: "50" }] };
+    const { tasks, fromVersion } = parseStoredTasks(JSON.stringify(v7), NOW);
+    expect(fromVersion).toBe(7);
+    expect(tasks.map((t) => t.progress)).toEqual([null, 40, 100, null]);
   });
 
   it("lève une erreur sur un contenu illisible", () => {

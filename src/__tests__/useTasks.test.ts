@@ -183,7 +183,7 @@ describe("useTasks", () => {
 
     await waitFor(async () => {
       const data = await stored();
-      expect(data.schemaVersion).toBe(7);
+      expect(data.schemaVersion).toBe(8);
       expect(data.tasks).toHaveLength(1);
     });
     await first.unmount();
@@ -212,7 +212,7 @@ describe("useTasks", () => {
       createdAt: 1717000000000,
       delegatedTo: null,
     });
-    await waitFor(async () => expect((await stored()).schemaVersion).toBe(7));
+    await waitFor(async () => expect((await stored()).schemaVersion).toBe(8));
   });
 
   it("ne sauvegarde rien si la lecture échoue", async () => {

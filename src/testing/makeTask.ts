@@ -25,6 +25,7 @@ export function makeTask(overrides: Partial<Task> = {}): Task {
     nextOccurrenceId: null,
     escalationSkippedFor: null,
     steps: [],
+    progress: null,
     ...overrides,
   };
 }
