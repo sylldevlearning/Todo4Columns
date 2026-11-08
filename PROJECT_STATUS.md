@@ -1,7 +1,7 @@
 # DoFirst (Todo4Columns) — État de la version 1.5.0
 
 > Mis à jour le 08/11/2026. Branche `version-1.5.0` (créée depuis `master` après la 1.4.1), **non fusionnée**, sans build. Version **1.5.0** dans `app.json`.
-> Vérifié (09/11/2026) : 747 tests Jest (56 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
+> Vérifié (10/11/2026) : 776 tests Jest (60 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
 > **En production :** 1.4.1 (versionCode 9, build `95682b73`), publiée après examen (`RELEASE_LIFECYCLE_STATE_PUBLISHED` relu le 08/11/2026).
 > **Google Cloud (projet `matrice-deisenhower`, compte csgonesse@gmail.com) :** API Google Drive activée ; écran de consentement « DoFirst » (scope `drive.appdata` seul, classé non sensible), règles https://sylldevlearning-legal.vercel.app/dofirst/privacy, domaine autorisé `sylldevlearning-legal.vercel.app` ; deux clients OAuth Android pour `com.saloum.sylla.matriceeisenhower` : clé d'importation EAS (`BD:20:F7:8A…`, client existant « Client Android 1 ») et clé de signature Play (`D7:7B:86:3C…`, « DoFirst Android (clé de signature Play) »). Pas de client Web (la librairie n'en a pas besoin pour un jeton d'accès). **Application OAuth encore en « Test »** : voir « Points ouverts ».
 
@@ -38,6 +38,7 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
   - sauvegarde Google Drive facultative (Réglages › Google Drive) : connexion Google, dossier caché `appDataFolder` (scope `drive.appdata`), sauvegarde manuelle et automatique (au plus une par jour, au passage en arrière-plan, si les données ont changé), 5 dernières gardées, restauration avec aperçu et copie de secours, proposée après connexion si une sauvegarde existe, déconnexion, suppression de la sauvegarde en ligne ; textes dans les 13 langues ;
   - vue calendrier (icône à chiffres sur la matrice) : mois, points par quadrant et nombre de tâches, échéances, étapes prévues, occurrences futures des tâches récurrentes (« Prévue », non modifiables), panneau du jour avec répartition et frise horaire, « Sans heure » ;
   - dictée du titre (micro dans la fiche, appui long sur « + ») avec la reconnaissance vocale du téléphone, autorisation au premier appui ;
+  - retours de tests : bouton micro sur la matrice ; « Répartir sur plusieurs jours » en trois modes (jours d'affilée, certains jours de la semaine, dates précises sur un mini-calendrier) ; appui long sur une tâche : panneau rapide (étapes à cocher, avancement calculé ou réglé de 0 à 100 %, barre fine sur la carte et dans la fiche) ; restauration Drive automatique si l'app est vide, demandée sinon ; présentation en 6 écrans (dont Google Drive) et carte Drive unique pour qui met à jour ;
   - saisie intelligente locale : échéance proposée depuis le titre (chrono-node, 10 langues : pas de coréen, turc ni hindi), « urgent » / « important » suggérés dans les 13 langues ;
   - maintenance : 8 paquets Expo à jour (correctifs du SDK 57), config Jest dans `jest.config.js` (`expo-asset` résolu depuis `expo`), scripts Play : les simulations n'ouvrent plus de modification concurrente.
 - **1.4.1** :
@@ -123,8 +124,8 @@ store/                  Notes de version (release-notes-<langue>.txt), règles d
 
 | Clé | Contenu |
 |---|---|
-| `TASKS_4COLS` | Tâches, schéma **v7** (`{ schemaVersion, tasks }`) |
-| `TASKS_4COLS_BACKUP_V1` … `V6` | Copie du format d'origine, écrite une seule fois avant chaque migration |
+| `TASKS_4COLS` | Tâches, schéma **v8** (`{ schemaVersion, tasks }` ; v8 : `progress`, avancement réglé à la main) |
+| `TASKS_4COLS_BACKUP_V1` … `V7` | Copie du format d'origine, écrite une seule fois avant chaque migration |
 | `TASKS_4COLS_CORRUPT_<date>` | Contenu illisible mis de côté |
 | `TASKS_4COLS_RECOVERY_DONE`, `TASKS_4COLS_RECOVERY_LOG` | Récupération des anciennes tâches |
 | `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis ; en 1.4, `language` : `"auto"` par défaut ou une langue) |
