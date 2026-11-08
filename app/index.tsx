@@ -35,6 +35,11 @@ export default function MatrixScreen() {
           <Text style={styles.summary}>{t.matrix.taskCount(openCount)}</Text>
         </View>
         <IconButton
+          icon="calendar-number-outline"
+          label={t.calendar.open}
+          onPress={() => router.push("/calendar")}
+        />
+        <IconButton
           icon="calendar-outline"
           label={t.review.open}
           onPress={() => router.push("/review")}
@@ -59,7 +64,12 @@ export default function MatrixScreen() {
         />
       </View>
 
-      <Fab label={t.matrix.newTask} onPress={() => router.push("/task")} />
+      <Fab
+        label={t.matrix.newTask}
+        onPress={() => router.push("/task")}
+        onLongPress={() => router.push({ pathname: "/task", params: { voice: "1" } })}
+        longPressHint={t.voice.start}
+      />
     </SafeAreaView>
   );
 }

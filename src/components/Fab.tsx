@@ -8,6 +8,8 @@ export const FAB_SIZE = 60;
 
 interface Props {
   onPress: () => void;
+  onLongPress?: () => void;
+  longPressHint?: string; // lu par les lecteurs d'écran (« appui long : … »)
   label: string;
   color?: string; // fond
   iconColor?: string;
@@ -16,6 +18,8 @@ interface Props {
 // Bouton flottant « + » en bas à droite
 export default function Fab({
   onPress,
+  onLongPress,
+  longPressHint,
   label,
   color = colors.white,
   iconColor = colors.bg,
@@ -25,7 +29,11 @@ export default function Fab({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityHint={longPressHint}
+      accessibilityActions={onLongPress ? [{ name: "longpress" }] : undefined}
+      onAccessibilityAction={(e) => e.nativeEvent.actionName === "longpress" && onLongPress?.()}
       onPress={onPress}
+      onLongPress={onLongPress}
       style={({ pressed }) => [
         styles.fab,
         { backgroundColor: color, bottom: insets.bottom + 20 },
