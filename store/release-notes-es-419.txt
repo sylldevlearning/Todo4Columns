@@ -1,4 +1,6 @@
-• Nuevo: vista de calendario con tus vencimientos, pasos y tareas recurrentes día a día
-• Dicta tus tareas con el micrófono: «mañana a las 15» se convierte en vencimiento con un toque
-• Respaldo opcional en tu Google Drive para recuperarlo todo en un celular nuevo
-• Activa los avisos desde la presentación
+• Nuevo: vista de calendario con vencimientos, pasos y tareas recurrentes
+• Micrófono en la matriz: dicta una tarea, «mañana a las 15» se convierte en vencimiento
+• Progreso en %: mantén presionada una tarea para marcar sus pasos o ajustarlo
+• Reparte un proyecto en días elegidos: lun/mié/vie o fechas concretas
+• Respaldo opcional en Google Drive, restaurado automáticamente en un celular nuevo
+• Presentación renovada, con avisos y respaldo

@@ -1,4 +1,6 @@
-• Novidade: visão de calendário com prazos, etapas e tarefas recorrentes dia a dia
-• Dite suas tarefas no microfone: “amanhã às 15h” vira prazo com um toque
-• Backup opcional no seu Google Drive para recuperar tudo num celular novo
-• Ative os lembretes já na apresentação
+• Novidade: calendário com prazos, etapas e tarefas recorrentes
+• Microfone na matriz: dite uma tarefa, “amanhã às 15h” vira prazo
+• Progresso em %: mantenha uma tarefa pressionada para marcar as etapas ou ajustá-lo
+• Distribua um projeto em dias escolhidos: seg/qua/sex ou datas específicas
+• Backup opcional no Google Drive, restaurado automaticamente num celular novo
+• Apresentação renovada, com lembretes e backup

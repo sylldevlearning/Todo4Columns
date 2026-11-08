@@ -1,4 +1,6 @@
-• Novità: vista calendario con scadenze, passaggi e attività ricorrenti giorno per giorno
-• Detta le attività al microfono: «domani alle 15» diventa una scadenza con un tocco
-• Backup facoltativo sul tuo Google Drive per ritrovare tutto su un nuovo telefono
-• Attiva i promemoria già dalla presentazione
+• Novità: calendario con scadenze, passaggi e attività ricorrenti
+• Microfono sulla matrice: detta un'attività, «domani alle 15» diventa una scadenza
+• Avanzamento in %: tieni premuta un'attività per spuntare i passaggi o regolarlo
+• Distribuisci un progetto su giorni scelti: lun/mer/ven o date precise
+• Backup facoltativo su Google Drive, ripristinato in automatico su un nuovo telefono
+• Presentazione rinnovata, con promemoria e backup

@@ -1,4 +1,6 @@
-• Baru: tampilan kalender dengan tenggat, langkah, dan tugas berulang per hari
-• Dikte tugas lewat mikrofon: "besok jam 15" jadi tenggat dengan sekali ketuk
-• Cadangan opsional ke Google Drive-mu, untuk memulihkan semuanya di HP baru
-• Nyalakan pengingat langsung dari pengenalan
+• Baru: kalender berisi tenggat, langkah, dan tugas berulang
+• Mikrofon di matriks: dikte tugas, "besok jam 15" jadi tenggat
+• Kemajuan dalam %: tekan lama tugas untuk mencentang langkah atau mengaturnya
+• Bagi proyek ke hari pilihan: Sen/Rab/Jum atau tanggal tertentu
+• Cadangan opsional ke Google Drive, dipulihkan otomatis di HP baru
+• Pengenalan baru, dengan pengingat dan cadangan

@@ -1,4 +1,6 @@
-• Neu: Kalenderansicht mit Fälligkeiten, Schritten und wiederkehrenden Aufgaben Tag für Tag
-• Diktiere Aufgaben per Mikrofon: „morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit
-• Freiwillige Sicherung in deinem Google Drive, um alles auf einem neuen Handy zurückzuholen
-• Schalte Erinnerungen direkt in der Einführung ein
+• Neu: Kalenderansicht mit Fälligkeiten, Schritten und wiederkehrenden Aufgaben
+• Mikrofon auf der Matrix: Aufgabe diktieren, „morgen um 15 Uhr“ wird zur Fälligkeit
+• Fortschritt in %: Aufgabe gedrückt halten, um Schritte abzuhaken oder ihn einzustellen
+• Projekt auf gewählte Tage verteilen: Mo/Mi/Fr oder bestimmte Daten
+• Freiwillige Sicherung in Google Drive, auf einem neuen Handy automatisch wiederhergestellt
+• Neue Einführung, mit Erinnerungen und Sicherung
