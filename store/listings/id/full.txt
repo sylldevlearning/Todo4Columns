@@ -7,10 +7,20 @@ Untuk setiap tugas, jawab "Mendesak?" dan "Penting?". DoFirst langsung memasukka
 • Delegasikan: mendesak tapi bukan untukmu, serahkan ke orang lain
 • Kalau sempat: tidak mendesak dan tidak penting, tanpa tekanan
 
-PECAH TUGAS BESAR
-• Pecah tugas menjadi langkah yang bisa dicentang dan pantau progresmu
-• Beri hari untuk setiap langkah: hari ini, besok, atau tanggal pilihanmu
-• Bagi proyek menjadi beberapa sesi, misalnya 1 jam per hari selama 5 hari
+DIKTE TUGASMU
+• Ketuk mikrofon dan bicara: to do list-mu terisi tanpa mengetik
+• "Besok jam 15" jadi tenggat dengan sekali ketuk
+• Kata "mendesak" dan "penting" menyarankan kotak yang tepat
+
+HARIMU SEKILAS PANDANG
+• Kalender bulanan dengan titik berwarna sesuai kotaknya
+• Lini waktu setiap hari: tenggat, langkah, dan tugas berulang
+
+MAJU SELANGKAH DEMI SELANGKAH
+• Pecah tugas menjadi langkah yang bisa dicentang, dengan % kemajuan
+• Tanpa langkah, atur sendiri kemajuannya dari 0 sampai 100%
+• Bagi proyek ke beberapa sesi di hari pilihanmu: hari berturut-turut, Senin-Rabu-Jumat, atau tanggal tertentu
+• Tekan lama sebuah tugas untuk mencentang langkahnya sekali gerak
 
 PENGINGAT YANG TIDAK MELEPASKANMU
 • Notifikasi dan pengingat ulang sampai tugas mendesak selesai
@@ -25,6 +35,9 @@ ATUR MINGGUMU
 
 DELEGASIKAN TANPA LUPA
 Kirim tugas lewat WhatsApp atau SMS dengan sekali ketuk, lalu ingatkan orangnya di waktu yang tepat.
+
+SAAT SULIT MEMULAI
+Kalau kamu sulit mengatur diri atau mulai bergerak, termasuk dengan ADHD, DoFirst membuatnya tetap simpel: satu pertanyaan setiap kali, langkah kecil, pengingat, dan to do list yang menampilkan hal terpenting lebih dulu.
 
 SIMPEL DAN MEMOTIVASI
 • Geser ke kanan untuk menyelesaikan, ke kiri untuk menghapus

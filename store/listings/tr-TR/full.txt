@@ -7,10 +7,20 @@ Her görev için "Acil mi?" ve "Önemli mi?" sorularını yanıtla. DoFirst onu 
 • Devret: acil ama senlik değil, başkasına bırak
 • Vakit olursa: ne acil ne önemli, baskı yok
 
-BÜYÜK GÖREVLERİ BÖL
-• Bir görevi işaretlenebilir adımlara böl ve ilerlemeni takip et
-• Her adıma bir gün ver: bugün, yarın ya da istediğin bir tarih
-• Bir projeyi oturumlara yay, örneğin 5 gün boyunca günde 1 saat
+GÖREVLERİNİ SESLE YAZ
+• Mikrofona dokun ve konuş: yapılacaklar listen yazmadan dolsun
+• "Acil" ve "önemli" kelimeleri doğru kutuyu önerir
+• Hızlıca, klavyesiz not al
+
+GÜNÜN BİR BAKIŞTA
+• Kutuların renginde noktalarla aylık takvim
+• Her günün zaman çizelgesi: son tarihler, adımlar ve tekrarlanan görevler
+
+ADIM ADIM İLERLE
+• Bir görevi işaretlenebilir adımlara böl, ilerlemeyi % olarak gör
+• Adım yoksa ilerlemeyi %0 ile %100 arasında kendin ayarla
+• Bir projeyi seçtiğin günlere oturumlarla yay: art arda günler, pazartesi-çarşamba-cuma ya da belirli tarihler
+• Adımlarını tek hareketle işaretlemek için göreve uzun bas
 
 SENİ BIRAKMAYAN HATIRLATICILAR
 • Acil bir görev bitene kadar bildirimler ve tekrar hatırlatmalar
@@ -25,6 +35,9 @@ HAFTANI DÜZENLE
 
 DEVRET, UNUTMA
 Görevi tek dokunuşla WhatsApp ya da SMS ile gönder, doğru zamanda kişiye hatırlat.
+
+BAŞLAMAK ZOR GELDİĞİNDE
+Düzen kurmakta ya da harekete geçmekte zorlanıyorsan, DEHB ile de, DoFirst işleri basit tutar: her seferinde tek soru, küçük adımlar, hatırlatıcılar ve önce önemli olanı gösteren bir yapılacaklar listesi.
 
 BASİT VE MOTİVE EDİCİ
 • Bitirmek için sağa, silmek için sola kaydır

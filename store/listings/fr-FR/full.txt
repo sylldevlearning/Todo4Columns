@@ -1,4 +1,4 @@
-DoFirst est une to-do list simple et intelligente qui t’aide à organiser tes tâches et à gérer tes priorités grâce à la matrice d’Eisenhower. Liste de tâches, rappels, planificateur et gestion du temps réunis dans une seule appli.
+DoFirst est une to-do list simple et intelligente qui t’aide à organiser tes tâches et à gérer tes priorités grâce à la matrice d’Eisenhower. Liste de tâches, rappels, calendrier et gestion du temps réunis dans une seule appli.
 
 DEUX QUESTIONS, C’EST TOUT
 Pour chaque tâche, réponds à « C’est urgent ? » et « C’est important ? ». DoFirst la range toute seule dans la bonne case :
@@ -7,10 +7,20 @@ Pour chaque tâche, réponds à « C’est urgent ? » et « C’est important ?
 • Déléguer : urgent mais pas pour toi, à confier
 • Si j’ai le temps : ni urgent ni important, sans pression
 
-DÉCOUPE LES GROSSES TÂCHES
-• Divise une tâche en étapes à cocher et suis ta progression
-• Donne un jour à chaque étape : aujourd’hui, demain ou une date
-• Répartis un projet en séances, par exemple 1 h par jour pendant 5 jours
+DICTE TES TÂCHES
+• Touche le micro et parle : ta to-do list se remplit sans taper
+• « Demain à 15 h » devient une échéance en un appui
+• Les mots « urgent » et « important » te proposent la bonne case
+
+TA JOURNÉE EN UN COUP D’ŒIL
+• Calendrier du mois avec des points aux couleurs de chaque case
+• Frise horaire de chaque jour : échéances, étapes et tâches récurrentes
+
+AVANCE PAS À PAS
+• Découpe une tâche en étapes à cocher, avec le % d’avancement
+• Sans étapes, règle l’avancement toi-même de 0 à 100 %
+• Répartis un projet en séances sur des jours choisis : jours d’affilée, lundi-mercredi-vendredi ou dates précises
+• Garde le doigt sur une tâche pour cocher ses étapes en un geste
 
 DES RAPPELS QUI NE TE LÂCHENT PAS
 • Notifications et relances tant qu’une tâche urgente n’est pas faite
@@ -19,12 +29,15 @@ DES RAPPELS QUI NE TE LÂCHENT PAS
 • Touche « Fait » ou « Reporter 1 h » directement dans la notification
 
 ORGANISE TA SEMAINE
-• « Ta semaine » : vois quelle part de tes tâches tu as anticipée
+• « Ta semaine » et le bilan : vois quelle part de tes tâches tu as anticipée
 • Revue de la semaine : 5 minutes pour faire le tri et choisir 3 priorités
 • Tâches récurrentes : chaque jour, chaque semaine, chaque mois…
 
 DÉLÈGUE SANS OUBLIER
 Envoie la tâche par SMS ou WhatsApp en un geste, et relance la personne au bon moment.
+
+QUAND C’EST DUR DE S’Y METTRE
+Si tu as du mal à t’organiser ou à passer à l’action, y compris avec un TDAH, DoFirst garde les choses simples : une seule question à la fois, de petites étapes, des rappels et une to-do list qui montre d’abord ce qui compte.
 
 SIMPLE ET MOTIVANT
 • Glisse vers la droite pour terminer, vers la gauche pour supprimer
@@ -33,6 +46,6 @@ SIMPLE ET MOTIVANT
 • Disponible en 13 langues
 
 TES DONNÉES T’APPARTIENNENT
-Sans compte et sans publicité. Tes tâches restent sur ton téléphone, et tu peux les exporter dans un fichier de sauvegarde à tout moment. Si tu le souhaites, sauvegarde-les aussi sur ton Google Drive, dans un dossier privé réservé à DoFirst, et retrouve-les sur un nouveau téléphone.
+Sans compte et sans publicité. Tes tâches restent sur ton téléphone, et tu peux les exporter dans un fichier de sauvegarde à tout moment. Si tu le souhaites, sauvegarde-les aussi sur ton Google Drive, dans un dossier privé réservé à DoFirst, et retrouve-les automatiquement sur un nouveau téléphone.
 
-Pour le travail, les études ou la maison, DoFirst remplace ta liste de choses à faire, ton pense-bête et ta checklist du quotidien. Gagne en productivité et en sérénité : fais d’abord ce qui compte.
+Pour le travail, les études ou la maison, DoFirst remplace ta to-do list, ton pense-bête et ta checklist du quotidien. Gagne en productivité et en sérénité : fais d’abord ce qui compte.

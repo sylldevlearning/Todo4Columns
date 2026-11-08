@@ -7,10 +7,20 @@ Beantworte für jede Aufgabe „Ist es dringend?“ und „Ist es wichtig?“. D
 • Abgeben: dringend, aber nicht deine Sache, jemandem übertragen
 • Irgendwann: weder dringend noch wichtig, ganz ohne Druck
 
-GROSSE AUFGABEN AUFTEILEN
-• Teile eine Aufgabe in Schritte zum Abhaken und sieh deinen Fortschritt
-• Gib jedem Schritt einen Tag: heute, morgen oder ein beliebiges Datum
-• Verteile ein Projekt auf Einheiten, zum Beispiel 1 Std. pro Tag an 5 Tagen
+DIKTIERE DEINE AUFGABEN
+• Tippe auf das Mikrofon und sprich: Deine To-Do-Liste füllt sich ohne Tippen
+• „Morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit
+• Die Wörter „dringend“ und „wichtig“ schlagen das passende Feld vor
+
+DEIN TAG AUF EINEN BLICK
+• Monatskalender mit Punkten in den Farben der Felder
+• Zeitleiste für jeden Tag: Fälligkeiten, Schritte und wiederkehrende Aufgaben
+
+SCHRITT FÜR SCHRITT VORAN
+• Teile eine Aufgabe in Schritte zum Abhaken, mit Fortschritt in %
+• Ohne Schritte stellst du den Fortschritt selbst ein, von 0 bis 100 %
+• Verteile ein Projekt in Einheiten auf die Tage deiner Wahl: aufeinanderfolgende Tage, Montag-Mittwoch-Freitag oder bestimmte Daten
+• Halte eine Aufgabe gedrückt, um ihre Schritte mit einer Geste abzuhaken
 
 ERINNERUNGEN, DIE DRANBLEIBEN
 • Benachrichtigungen, bis eine dringende Aufgabe erledigt ist
@@ -25,6 +35,9 @@ DEINE WOCHE IM GRIFF
 
 ABGEBEN OHNE VERGESSEN
 Schick die Aufgabe mit einem Tipp per WhatsApp oder SMS und hak im richtigen Moment nach.
+
+WENN DER ANFANG SCHWERFÄLLT
+Wenn es dir schwerfällt, dich zu organisieren oder anzufangen, auch mit ADHS, hält DoFirst es einfach: eine Frage nach der anderen, kleine Schritte, Erinnerungen und eine To-Do-Liste, die zuerst zeigt, was zählt.
 
 EINFACH UND MOTIVIEREND
 • Nach rechts wischen zum Erledigen, nach links zum Löschen

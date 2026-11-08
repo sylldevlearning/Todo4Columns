@@ -7,10 +7,20 @@ Para cada tarea, responde «¿Es urgente?» y «¿Es importante?». DoFirst la c
 • Delegar: urgente pero no para ti, pásaselo a alguien
 • Si tengo tiempo: ni urgente ni importante, sin presión
 
-DIVIDE LAS TAREAS GRANDES
-• Divide una tarea en pasos para marcar y sigue tu avance
-• Dale un día a cada paso: hoy, mañana o la fecha que quieras
-• Reparte un proyecto en sesiones, por ejemplo 1 h al día durante 5 días
+DICTA TUS TAREAS
+• Toca el micrófono y habla: tu lista de pendientes se llena sin escribir
+• «Mañana a las 15» se convierte en vencimiento con un toque
+• Las palabras «urgente» e «importante» te proponen el cuadrante correcto
+
+TU DÍA DE UN VISTAZO
+• Calendario del mes con puntos del color de cada cuadrante
+• Línea de tiempo de cada día: vencimientos, pasos y tareas recurrentes
+
+AVANZA PASO A PASO
+• Divide una tarea en pasos para marcar, con el % de avance
+• Sin pasos, ajusta tú el avance de 0 a 100 %
+• Reparte un proyecto en sesiones los días que elijas: días seguidos, lunes-miércoles-viernes o fechas específicas
+• Mantén presionada una tarea para marcar sus pasos con un gesto
 
 RECORDATORIOS QUE NO TE SUELTAN
 • Notificaciones y avisos mientras una tarea urgente siga pendiente
@@ -25,6 +35,9 @@ ORGANIZA TU SEMANA
 
 DELEGA SIN OLVIDAR
 Manda la tarea por WhatsApp o SMS con un toque, y recuérdaselo a la persona en el momento justo.
+
+CUANDO CUESTA EMPEZAR
+Si te cuesta organizarte o arrancar, también con TDAH, DoFirst lo hace sencillo: una pregunta a la vez, pasos pequeños, recordatorios y una lista de pendientes que muestra primero lo que importa.
 
 SENCILLA Y MOTIVADORA
 • Desliza a la derecha para terminar y a la izquierda para borrar
