@@ -331,10 +331,15 @@ export const de: Translations = {
         body: "Teil eine große Aufgabe in kleine Schritte zum Abhaken auf, in der Reihenfolge, die du willst (Schritt lange drücken und ziehen). Gib einem Schritt einen Tag, um an diesem Tag erinnert zu werden, um 9:00 oder zur Uhrzeit deiner Wahl, mit „Erledigt“ und „Auf morgen“. Die Aufgabe ist erst erledigt, wenn du sie abhakst.",
         example: "„Vortrag vorbereiten“: Quellen suchen, Gliederung, Einleitung schreiben, üben.",
       },
+      progress: {
+        title: "Fortschritt",
+        body: "Mit Schritten folgt der Fortschritt den abgehakten Schritten. Ohne Schritte stellst du ihn selbst von 0 bis 100 % ein. Er erscheint als dünner Balken auf der Karte.",
+        example: "halte eine Aufgabe gedrückt und tippe auf „50 %“: Die Karte zeigt einen halb gefüllten Balken.",
+      },
       splitSessions: {
         title: "Auf mehrere Tage verteilen",
-        body: "Legt mehrere Arbeitseinheiten auf einmal an, eine pro Tag, jede mit ihrer Erinnerung. Du wählst Anzahl, Dauer, ersten Tag und ob das Wochenende übersprungen wird. Vor dem Bestätigen siehst du eine Vorschau.",
-        example: "5 Einheiten à 1 Std. ab einem Donnerstag, nur werktags: Donnerstag, Freitag, Montag, Dienstag und Mittwoch.",
+        body: "Legt auf einmal mehrere Arbeitseinheiten an, jede mit Erinnerung: aufeinanderfolgende Tage, bestimmte Wochentage (Mo, Mi, Fr …) oder bestimmte Daten aus einem Mini-Kalender. Vor dem Bestätigen erscheint eine Vorschau.",
+        example: "Montag, Mittwoch und Freitag, 1 Std.: 3 Einheiten diese Woche, mit + verlängerbar.",
       },
       backup: {
         title: "Sicherung",
@@ -394,13 +399,23 @@ export const de: Translations = {
       body: "Wenn du eine Aufgabe anlegst, beantworte „Ist es dringend?“ und „Ist es wichtig?“. Die App legt sie für dich ins richtige Feld.",
     },
     gestures: {
-      title: "Erinnerungen und Gesten",
-      body: "Wisch eine Aufgabe nach rechts, um sie zu erledigen, nach links, um sie zu löschen. Erinnerungen kommen als Mitteilungen: Tipp auf „Erledigt“ oder „1 Std. später“, und die App öffnet sich und kümmert sich darum.",
+      title: "Gesten und Schritte",
+      body: "Wische eine Aufgabe nach rechts, um sie zu erledigen, nach links, um sie zu löschen. Halte sie gedrückt, um ihre Schritte abzuhaken oder den Fortschritt einzustellen.",
     },
     reminders: {
       title: "Nichts mehr verpassen",
       body: "DoFirst erinnert dich im richtigen Moment an deine Aufgaben, hakt bei Unerledigtem nach und sagt dir Bescheid, wenn eine Aufgabe dringend wird.",
     },
+    calendar: {
+      title: "Kalender und Diktat",
+      body: "Der Kalender zeigt deine Aufgaben Tag für Tag. Tippe auf das Mikrofon, um eine Aufgabe zu diktieren: „morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit.",
+    },
+    drive: {
+      title: "Sicherung in Google Drive",
+      body: "Freiwillig: Verbinde dein Google-Konto, um eine Kopie deiner Aufgaben in einem privaten Ordner deines Drive zu behalten und sie auf einem neuen Handy zurückzuholen. Das geht auch später in den Einstellungen.",
+    },
+    connect: "Anmelden",
+    driveOn: "Angemeldet: automatische Sicherung ist an",
     enableReminders: "Erinnerungen einschalten",
     remindersOn: "Erinnerungen sind eingeschaltet",
     sampleTask: "Bericht verschicken",
@@ -629,6 +644,44 @@ export const de: Translations = {
     turnOn: "Einschalten",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Fortschritt",
+    value: (n: number) => `${n} %`,
+    auto: "Aus den abgehakten Schritten berechnet",
+    manual: "Fortschritt von Hand einstellen",
+    hint: "Lange drücken: Schritte und Fortschritt",
+    steps: "Schritte",
+    close: "Schließen",
+    changed: (n: number) => `Fortschritt: ${n} %`,
+    stepUnchecked: "Schritt nicht mehr abgehakt",
+  },
+
+  splitModes: {
+    label: "Verteilung",
+    consecutive: "Aufeinanderfolgende Tage",
+    weekdays: "Bestimmte Wochentage",
+    dates: "Bestimmte Daten",
+    datesHint: "Tippe auf die gewünschten Tage (2 bis 14).",
+    tooFew: "Wähle mindestens 2 Tage.",
+    previousMonth: "Vorheriger Monat",
+    nextMonth: "Nächster Monat",
+  },
+
+  quick: {
+    dictate: "Neue Aufgabe diktieren",
+  },
+
+  driveCard: {
+    body: "Sichere deine Aufgaben in deinem Google Drive (freiwillig)",
+    connect: "Anmelden",
+  },
+
+  driveRestore: {
+    title: "Aufgaben wiederhergestellt",
+    body: (date: string) => `Deine Aufgaben wurden wiederhergestellt (Sicherung vom ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -744,7 +797,8 @@ export const de: Translations = {
       backup: "Einstellungen › Sicherung: „Meine Daten exportieren“ erstellt eine Datei, die du aufbewahren kannst, wo du willst; „Sicherung importieren“ spielt sie auf dieses Handy zurück.",
       drive: "Einstellungen › Google Drive: Verbinde dein Google-Konto, um deine Daten online zu sichern – von Hand oder automatisch – und auf einem anderen Handy wiederherzustellen.",
       calendar: "Tippe auf das Kalendersymbol mit Zahlen in der Matrix, um deine Aufgaben Monat für Monat zu sehen; tippe auf einen Tag für seine Zeitleiste.",
-      voice: "Tippe auf das Mikrofon im Titel, um eine Aufgabe zu diktieren, oder halte + gedrückt, um das Formular zu öffnen und sofort zu diktieren.",
+      voice: "Tippe auf das Mikrofon neben + (oder halte + gedrückt), um eine Aufgabe zu diktieren; im Formular macht das Mikrofon im Titel dasselbe.",
+      longPress: "Halte eine Aufgabe gedrückt, um ihre Schritte abzuhaken oder den Fortschritt einzustellen.",
       permission: "Erinnerungen: Die Einführung bietet an, sie einzuschalten. Lehnst du ab, fragt die App nicht bei jedem Start erneut: Wenn du eine Erinnerung einschaltest, bietet sie an, Mitteilungen zu erlauben oder die Handy-Einstellungen zu öffnen. Der Status steht unter Einstellungen › Mitteilungen.",
       quietHours: "Ruhezeit (standardmäßig aus, in den Einstellungen einschalten): Erinnerungen, die hineinfallen würden, kommen, wenn sie endet, und die Aufgabe sagt dir, wenn das passiert.",
       steps: "In der Aufgabe teilt „Schritte“ sie auf: Die Karte zeigt den Fortschritt „2/5“ und den Schritt des Tages. Ein Schritt von einem vergangenen Tag, der nicht erledigt ist, gilt als überfällig.",

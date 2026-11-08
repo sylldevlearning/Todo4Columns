@@ -338,10 +338,15 @@ export const fr = {
         body: "Découpe une grosse tâche en petites étapes à cocher, dans l'ordre que tu veux (appui long sur une étape puis glisser). Donne un jour à une étape pour recevoir un rappel ce jour-là, à 9:00 ou à l'heure choisie, avec « Fait » et « Reporter à demain ». La tâche n'est terminée que quand tu la coches.",
         example: "« Préparer l'exposé » : chercher les sources, faire le plan, rédiger l'intro, répéter.",
       },
+      progress: {
+        title: "Avancement",
+        body: "Avec des étapes, l'avancement suit les étapes cochées. Sans étapes, règle-le toi-même de 0 à 100 %. Il s'affiche en barre fine sur la carte.",
+        example: "garde le doigt sur une tâche, puis touche « 50 % » : la carte montre une barre à moitié pleine.",
+      },
       splitSessions: {
         title: "Répartir sur plusieurs jours",
-        body: "Crée d'un coup plusieurs séances de travail, une par jour, chacune avec son rappel. Tu choisis le nombre de séances, leur durée, le premier jour et si les week-ends sont sautés. Un aperçu s'affiche avant de valider.",
-        example: "5 séances d'1 h à partir d'un jeudi, en semaine seulement : jeudi, vendredi, lundi, mardi et mercredi.",
+        body: "Crée d'un coup plusieurs séances de travail, chacune avec son rappel : des jours d'affilée, certains jours de la semaine (lun, mer, ven…) ou des dates précises choisies sur un mini-calendrier. Un aperçu s'affiche avant de valider.",
+        example: "lundi, mercredi et vendredi, 1 h : 3 séances cette semaine, à prolonger avec + si tu veux.",
       },
       backup: {
         title: "Sauvegarde",
@@ -402,14 +407,24 @@ export const fr = {
       body: "Quand tu crées une tâche, réponds à « C'est urgent ? » et « C'est important ? ». L'app la range toute seule dans la bonne case.",
     },
     gestures: {
-      title: "Rappels et gestes",
-      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Les rappels arrivent en notification : touche « Fait » ou « Reporter 1 h », l'app s'ouvre et s'en occupe.",
+      title: "Gestes et étapes",
+      body: "Glisse une tâche vers la droite pour la terminer, vers la gauche pour la supprimer. Garde le doigt dessus pour cocher ses étapes ou régler son avancement.",
     },
     // Textes des illustrations
     reminders: {
       title: "Ne rate plus rien",
       body: "DoFirst te rappelle tes tâches au bon moment, relance ce qui n'est pas fait et te prévient quand une tâche devient urgente.",
     },
+    calendar: {
+      title: "Calendrier et dictée",
+      body: "Le calendrier montre tes tâches jour par jour. Touche le micro pour dicter une tâche : « demain à 15 h » devient une échéance en un appui.",
+    },
+    drive: {
+      title: "Sauvegarde Google Drive",
+      body: "Facultatif : connecte ton compte Google pour garder une copie de tes tâches dans un dossier privé de ton Drive, et les retrouver sur un nouveau téléphone. Tu peux le faire plus tard dans les Réglages.",
+    },
+    connect: "Se connecter",
+    driveOn: "Connecté : sauvegarde automatique activée",
     enableReminders: "Activer les rappels",
     remindersOn: "Les rappels sont activés",
     sampleTask: "Rendre le dossier",
@@ -651,6 +666,44 @@ export const fr = {
     turnOn: "Activer",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Avancement",
+    value: (n: number) => `${n} %`,
+    auto: "Calculé d'après les étapes cochées",
+    manual: "Règle l'avancement à la main",
+    hint: "Appui long : étapes et avancement",
+    steps: "Étapes",
+    close: "Fermer",
+    changed: (n: number) => `Avancement : ${n} %`,
+    stepUnchecked: "Étape décochée",
+  },
+
+  splitModes: {
+    label: "Répartition",
+    consecutive: "Jours d'affilée",
+    weekdays: "Certains jours de la semaine",
+    dates: "Dates précises",
+    datesHint: "Touche les jours voulus (2 à 14).",
+    tooFew: "Choisis au moins 2 jours.",
+    previousMonth: "Mois précédent",
+    nextMonth: "Mois suivant",
+  },
+
+  quick: {
+    dictate: "Dicter une nouvelle tâche",
+  },
+
+  driveCard: {
+    body: "Sauvegarde tes tâches sur ton Google Drive (facultatif)",
+    connect: "Se connecter",
+  },
+
+  driveRestore: {
+    title: "Tâches restaurées",
+    body: (date: string) => `Tes tâches ont été restaurées (sauvegarde du ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -767,7 +820,8 @@ export const fr = {
       backup: "Réglages › Sauvegarde : « Exporter mes données » crée un fichier à garder où tu veux, « Importer une sauvegarde » le remet sur ce téléphone.",
       drive: "Réglages › Google Drive : connecte ton compte Google pour sauvegarder tes données en ligne, à la main ou automatiquement, et les restaurer sur un autre téléphone.",
       calendar: "Touche l'icône calendrier à chiffres de la matrice pour voir tes tâches mois par mois ; touche un jour pour sa frise horaire.",
-      voice: "Touche le micro du titre pour dicter une tâche, ou garde le doigt sur + pour ouvrir la fiche et dicter tout de suite.",
+      voice: "Touche le micro à côté du + (ou garde le doigt sur +) pour dicter une tâche ; dans la fiche, le micro du titre fait de même.",
+      longPress: "Garde le doigt sur une tâche pour cocher ses étapes ou régler son avancement.",
       permission: "Rappels : la présentation propose de les activer. Si tu refuses, l'app ne te redemande pas à chaque lancement : quand tu actives un rappel, elle te propose de les autoriser ou d'ouvrir les réglages du téléphone. L'état s'affiche dans Réglages › Notifications.",
       quietHours: "Plage silencieuse (désactivée par défaut, à activer dans les Réglages) : les rappels qui tomberaient dedans arrivent à sa fin, et la fiche te prévient quand c'est le cas.",
       steps: "Dans la fiche, « Étapes » découpe une tâche : la carte affiche la progression « 2/5 » et l'étape du jour. Une étape d'un jour passé non faite est marquée en retard.",

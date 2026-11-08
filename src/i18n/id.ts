@@ -329,10 +329,15 @@ export const id: Translations = {
         body: "Pecah tugas besar menjadi langkah kecil untuk dicentang, dengan urutan sesukamu (tekan lama langkah, lalu seret). Beri langkah sebuah hari agar diingatkan hari itu, pukul 09.00 atau jam pilihanmu, dengan “Selesai” dan “Pindah ke besok”. Tugas baru selesai saat kamu mencentangnya.",
         example: "“Siapkan presentasi”: cari sumber, buat kerangka, tulis pembuka, latihan.",
       },
+      progress: {
+        title: "Kemajuan",
+        body: "Dengan langkah, kemajuan mengikuti langkah yang dicentang. Tanpa langkah, atur sendiri dari 0 sampai 100%. Kemajuan tampil sebagai garis tipis di kartu.",
+        example: "tekan lama sebuah tugas, lalu ketuk \"50%\": kartu menampilkan garis setengah penuh.",
+      },
       splitSessions: {
         title: "Bagi ke beberapa hari",
-        body: "Membuat beberapa sesi kerja sekaligus, satu per hari, masing-masing dengan pengingat. Kamu pilih jumlah sesi, durasi, hari pertama, dan apakah akhir pekan dilewati. Pratinjau muncul sebelum kamu konfirmasi.",
-        example: "5 sesi 1 jam mulai hari Kamis, hanya hari kerja: Kamis, Jumat, Senin, Selasa, dan Rabu.",
+        body: "Membuat beberapa sesi kerja sekaligus, masing-masing dengan pengingat: hari berturut-turut, hari tertentu dalam seminggu (Sen, Rab, Jum…), atau tanggal tertentu yang dipilih di kalender mini. Pratinjau muncul sebelum kamu mengonfirmasi.",
+        example: "Senin, Rabu, dan Jumat, 1 jam: 3 sesi minggu ini, bisa ditambah dengan + jika mau.",
       },
       backup: {
         title: "Cadangan",
@@ -392,13 +397,23 @@ export const id: Translations = {
       body: "Saat membuat tugas, jawab “Mendesak?” dan “Penting?”. Aplikasi menaruhnya di kotak yang tepat untukmu.",
     },
     gestures: {
-      title: "Pengingat dan gerakan",
-      body: "Geser tugas ke kanan untuk menyelesaikannya, ke kiri untuk menghapusnya. Pengingat datang sebagai notifikasi: ketuk “Selesai” atau “Tunda 1 jam” dan aplikasi terbuka untuk mengurusnya.",
+      title: "Gerakan dan langkah",
+      body: "Geser tugas ke kanan untuk menyelesaikannya, ke kiri untuk menghapusnya. Tekan lama untuk mencentang langkahnya atau mengatur kemajuannya.",
     },
     reminders: {
       title: "Jangan sampai terlewat",
       body: "DoFirst mengingatkan tugasmu di waktu yang tepat, menagih yang belum selesai, dan memberi tahu saat ada tugas yang jadi mendesak.",
     },
+    calendar: {
+      title: "Kalender dan dikte",
+      body: "Kalender menampilkan tugasmu per hari. Ketuk mikrofon untuk mendikte tugas: \"besok jam 15\" jadi tenggat dengan sekali ketuk.",
+    },
+    drive: {
+      title: "Cadangan Google Drive",
+      body: "Opsional: hubungkan akun Google-mu untuk menyimpan salinan tugas di folder pribadi Drive-mu dan memulihkannya di HP baru. Kamu bisa melakukannya nanti di Pengaturan.",
+    },
+    connect: "Masuk",
+    driveOn: "Terhubung: cadangan otomatis aktif",
     enableReminders: "Nyalakan pengingat",
     remindersOn: "Pengingat sudah menyala",
     sampleTask: "Kirim laporan",
@@ -627,6 +642,44 @@ export const id: Translations = {
     turnOn: "Aktifkan",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Kemajuan",
+    value: (n: number) => `${n}%`,
+    auto: "Dihitung dari langkah yang dicentang",
+    manual: "Atur kemajuan secara manual",
+    hint: "Tekan lama: langkah dan kemajuan",
+    steps: "Langkah",
+    close: "Tutup",
+    changed: (n: number) => `Kemajuan: ${n}%`,
+    stepUnchecked: "Centang langkah dihapus",
+  },
+
+  splitModes: {
+    label: "Pembagian",
+    consecutive: "Hari berturut-turut",
+    weekdays: "Hari tertentu dalam seminggu",
+    dates: "Tanggal tertentu",
+    datesHint: "Ketuk hari yang kamu mau (2 sampai 14).",
+    tooFew: "Pilih minimal 2 hari.",
+    previousMonth: "Bulan sebelumnya",
+    nextMonth: "Bulan berikutnya",
+  },
+
+  quick: {
+    dictate: "Dikte tugas baru",
+  },
+
+  driveCard: {
+    body: "Cadangkan tugasmu ke Google Drive-mu (opsional)",
+    connect: "Masuk",
+  },
+
+  driveRestore: {
+    title: "Tugas dipulihkan",
+    body: (date: string) => `Tugasmu sudah dipulihkan (cadangan ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -742,7 +795,8 @@ export const id: Translations = {
       backup: "Pengaturan › Cadangan: “Ekspor dataku” membuat file untuk disimpan di mana saja; “Impor cadangan” mengembalikannya ke ponsel ini.",
       drive: "Pengaturan › Google Drive: hubungkan akun Google-mu untuk mencadangkan data secara online, manual atau otomatis, lalu memulihkannya di ponsel lain.",
       calendar: "Ketuk ikon kalender bernomor di matriks untuk melihat tugas per bulan; ketuk hari untuk lini waktunya.",
-      voice: "Ketuk mikrofon di judul untuk mendikte tugas, atau tekan lama + untuk membuka formulir dan langsung mendikte.",
+      voice: "Ketuk mikrofon di samping + (atau tekan lama +) untuk mendikte tugas; di formulir, mikrofon di judul melakukan hal yang sama.",
+      longPress: "Tekan lama sebuah tugas untuk mencentang langkahnya atau mengatur kemajuannya.",
       permission: "Pengingat: pengenalan aplikasi menawarkan untuk menyalakannya. Kalau kamu menolak, aplikasi tidak bertanya lagi setiap kali dibuka: saat kamu menyalakan pengingat, aplikasi menawarkan untuk mengizinkan notifikasi atau membuka pengaturan ponsel. Statusnya ada di Pengaturan › Notifikasi.",
       quietHours: "Jam tenang (mati secara bawaan, aktifkan di Pengaturan): pengingat yang jatuh di dalamnya datang saat jam tenang berakhir, dan lembar tugas memberitahumu kalau itu terjadi.",
       steps: "Di lembar tugas, “Langkah” memecah tugas: kartu menampilkan kemajuan “2/5” dan langkah hari ini. Langkah dari hari yang sudah lewat dan belum selesai ditandai terlambat.",

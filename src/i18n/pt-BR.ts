@@ -331,10 +331,15 @@ export const ptBR: Translations = {
         body: "Divida uma tarefa grande em pequenas etapas para marcar, na ordem que quiser (toque e segure uma etapa e depois arraste). Dê um dia para uma etapa para receber um lembrete nesse dia, às 9:00 ou na hora que você escolher, com “Feito” e “Passar para amanhã”. A tarefa só é concluída quando você marcar.",
         example: "“Preparar a apresentação”: buscar fontes, fazer o roteiro, escrever a introdução, ensaiar.",
       },
+      progress: {
+        title: "Progresso",
+        body: "Com etapas, o progresso acompanha as etapas marcadas. Sem etapas, ajuste você mesmo de 0 a 100%. Ele aparece como uma barra fina no cartão.",
+        example: "mantenha uma tarefa pressionada e toque em “50%”: o cartão mostra uma barra pela metade.",
+      },
       splitSessions: {
-        title: "Dividir em vários dias",
-        body: "Cria várias sessões de trabalho de uma vez, uma por dia, cada uma com seu lembrete. Você escolhe quantas sessões, a duração, o primeiro dia e se pula o fim de semana. Uma prévia aparece antes de confirmar.",
-        example: "5 sessões de 1 h a partir de uma quinta, só em dias úteis: quinta, sexta, segunda, terça e quarta.",
+        title: "Distribuir em vários dias",
+        body: "Cria de uma vez várias sessões de trabalho, cada uma com seu lembrete: dias seguidos, alguns dias da semana (seg, qua, sex…) ou datas específicas escolhidas num minicalendário. Uma prévia aparece antes de confirmar.",
+        example: "segunda, quarta e sexta, 1 h: 3 sessões nesta semana, dá para estender com + se quiser.",
       },
       backup: {
         title: "Backup",
@@ -394,13 +399,23 @@ export const ptBR: Translations = {
       body: "Ao criar uma tarefa, responda “É urgente?” e “É importante?”. O app coloca no quadro certo para você.",
     },
     gestures: {
-      title: "Lembretes e gestos",
-      body: "Deslize uma tarefa para a direita para concluir, para a esquerda para excluir. Os lembretes chegam como notificações: toque em “Feito” ou “Adiar 1 h” e o app abre para cuidar disso.",
+      title: "Gestos e etapas",
+      body: "Deslize uma tarefa para a direita para concluí-la e para a esquerda para apagá-la. Mantenha pressionada para marcar as etapas ou ajustar o progresso.",
     },
     reminders: {
       title: "Não perca mais nada",
       body: "O DoFirst lembra você das suas tarefas na hora certa, cobra o que ainda não foi feito e avisa quando uma tarefa fica urgente.",
     },
+    calendar: {
+      title: "Calendário e ditado",
+      body: "O calendário mostra suas tarefas dia a dia. Toque no microfone para ditar uma tarefa: “amanhã às 15h” vira prazo com um toque.",
+    },
+    drive: {
+      title: "Backup no Google Drive",
+      body: "Opcional: conecte sua conta Google para guardar uma cópia das tarefas numa pasta privada do seu Drive e recuperá-las num celular novo. Dá para fazer depois nos Ajustes.",
+    },
+    connect: "Entrar",
+    driveOn: "Conectado: backup automático ativado",
     enableReminders: "Ativar os lembretes",
     remindersOn: "Os lembretes estão ativados",
     sampleTask: "Enviar o relatório",
@@ -629,6 +644,44 @@ export const ptBR: Translations = {
     turnOn: "Ativar",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Progresso",
+    value: (n: number) => `${n}%`,
+    auto: "Calculado pelas etapas marcadas",
+    manual: "Ajuste o progresso à mão",
+    hint: "Toque longo: etapas e progresso",
+    steps: "Etapas",
+    close: "Fechar",
+    changed: (n: number) => `Progresso: ${n}%`,
+    stepUnchecked: "Etapa desmarcada",
+  },
+
+  splitModes: {
+    label: "Distribuição",
+    consecutive: "Dias seguidos",
+    weekdays: "Alguns dias da semana",
+    dates: "Datas específicas",
+    datesHint: "Toque nos dias que quiser (de 2 a 14).",
+    tooFew: "Escolha pelo menos 2 dias.",
+    previousMonth: "Mês anterior",
+    nextMonth: "Próximo mês",
+  },
+
+  quick: {
+    dictate: "Ditar uma nova tarefa",
+  },
+
+  driveCard: {
+    body: "Faça backup das suas tarefas no seu Google Drive (opcional)",
+    connect: "Entrar",
+  },
+
+  driveRestore: {
+    title: "Tarefas restauradas",
+    body: (date: string) => `Suas tarefas foram restauradas (backup de ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -744,7 +797,8 @@ export const ptBR: Translations = {
       backup: "Ajustes › Backup: “Exportar meus dados” cria um arquivo para guardar onde quiser; “Importar um backup” coloca de volta neste celular.",
       drive: "Ajustes › Google Drive: conecte sua conta Google para fazer backup dos seus dados on-line, manualmente ou automaticamente, e restaurá-los em outro celular.",
       calendar: "Toque no ícone de calendário com números da matriz para ver suas tarefas mês a mês; toque em um dia para ver a linha do tempo.",
-      voice: "Toque no microfone do título para ditar uma tarefa, ou mantenha o + pressionado para abrir a ficha e ditar na hora.",
+      voice: "Toque no microfone ao lado do + (ou mantenha o + pressionado) para ditar uma tarefa; na ficha, o microfone do título faz o mesmo.",
+      longPress: "Mantenha uma tarefa pressionada para marcar as etapas ou ajustar o progresso.",
       permission: "Lembretes: a apresentação oferece ativá-los. Se você disser não, o app não pede de novo toda vez que você abre: ao ativar um lembrete, ele oferece permitir as notificações ou abrir os ajustes do celular. O status aparece em Ajustes › Notificações.",
       quietHours: "Horário de silêncio (desativado por padrão, ative nos Ajustes): os lembretes que cairiam nele chegam quando ele termina, e a ficha da tarefa te avisa quando isso acontece.",
       steps: "Na ficha da tarefa, “Etapas” divide uma tarefa: o cartão mostra o progresso “2/5” e a etapa do dia. Uma etapa de um dia que já passou e não foi feita aparece como atrasada.",

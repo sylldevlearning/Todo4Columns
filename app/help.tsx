@@ -32,6 +32,7 @@ const GESTURE_ICONS: Record<Gesture, IconName> = {
   drive: "cloud-done-outline",
   calendar: "calendar-number-outline",
   voice: "mic-outline",
+  longPress: "hand-left-outline",
   permission: "notifications-off-outline",
   quietHours: "moon-outline",
   steps: "list-outline",

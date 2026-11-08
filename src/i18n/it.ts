@@ -335,10 +335,15 @@ export const itIT: Translations = {
         body: "Dividi una grande attività in piccoli passaggi da spuntare, nell'ordine che vuoi (tieni premuto un passaggio, poi trascinalo). Dai un giorno a un passaggio per ricevere un promemoria quel giorno, alle 9:00 o all'ora che scegli, con «Fatto» e «Sposta a domani». L'attività è completata solo quando la spunti.",
         example: "«Preparare la presentazione»: cercare le fonti, fare la scaletta, scrivere l'introduzione, provare.",
       },
+      progress: {
+        title: "Avanzamento",
+        body: "Con i passaggi, l'avanzamento segue quelli spuntati. Senza passaggi, lo regoli tu da 0 a 100%. Compare come una barra sottile sulla scheda.",
+        example: "tieni premuta un'attività e tocca «50%»: la scheda mostra una barra a metà.",
+      },
       splitSessions: {
-        title: "Dividi su più giorni",
-        body: "Crea più sessioni di lavoro in una volta, una al giorno, ognuna con il suo promemoria. Scegli quante sessioni, la durata, il primo giorno e se saltare il fine settimana. Un'anteprima compare prima di confermare.",
-        example: "5 sessioni da 1 h a partire da un giovedì, solo feriali: giovedì, venerdì, lunedì, martedì e mercoledì.",
+        title: "Distribuisci su più giorni",
+        body: "Crea in una volta più sessioni di lavoro, ognuna con il suo promemoria: giorni consecutivi, alcuni giorni della settimana (lun, mer, ven…) o date precise scelte su un mini calendario. Prima di confermare compare un'anteprima.",
+        example: "lunedì, mercoledì e venerdì, 1 h: 3 sessioni questa settimana, da estendere con + se vuoi.",
       },
       backup: {
         title: "Backup",
@@ -398,13 +403,23 @@ export const itIT: Translations = {
       body: "Quando crei un'attività, rispondi a «È urgente?» ed «È importante?». L'app la mette nel riquadro giusto per te.",
     },
     gestures: {
-      title: "Promemoria e gesti",
-      body: "Scorri un'attività a destra per completarla, a sinistra per eliminarla. I promemoria arrivano come notifiche: tocca «Fatto» o «Rimanda 1 h» e l'app si apre per occuparsene.",
+      title: "Gesti e passaggi",
+      body: "Scorri un'attività verso destra per completarla, verso sinistra per eliminarla. Tienila premuta per spuntare i passaggi o regolare l'avanzamento.",
     },
     reminders: {
       title: "Non perderti più niente",
       body: "DoFirst ti ricorda le attività al momento giusto, insiste su quello che non hai fatto e ti avvisa quando un'attività diventa urgente.",
     },
+    calendar: {
+      title: "Calendario e dettatura",
+      body: "Il calendario mostra le attività giorno per giorno. Tocca il microfono per dettare un'attività: «domani alle 15» diventa una scadenza con un tocco.",
+    },
+    drive: {
+      title: "Backup su Google Drive",
+      body: "Facoltativo: collega il tuo account Google per tenere una copia delle attività in una cartella privata del tuo Drive e ritrovarle su un nuovo telefono. Puoi farlo più tardi nelle Impostazioni.",
+    },
+    connect: "Accedi",
+    driveOn: "Connesso: backup automatico attivo",
     enableReminders: "Attiva i promemoria",
     remindersOn: "I promemoria sono attivi",
     sampleTask: "Inviare il report",
@@ -634,6 +649,44 @@ export const itIT: Translations = {
     turnOn: "Attiva",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Avanzamento",
+    value: (n: number) => `${n}%`,
+    auto: "Calcolato dai passaggi spuntati",
+    manual: "Regola l'avanzamento a mano",
+    hint: "Pressione lunga: passaggi e avanzamento",
+    steps: "Passaggi",
+    close: "Chiudi",
+    changed: (n: number) => `Avanzamento: ${n}%`,
+    stepUnchecked: "Passaggio non più spuntato",
+  },
+
+  splitModes: {
+    label: "Distribuzione",
+    consecutive: "Giorni consecutivi",
+    weekdays: "Alcuni giorni della settimana",
+    dates: "Date precise",
+    datesHint: "Tocca i giorni che vuoi (da 2 a 14).",
+    tooFew: "Scegli almeno 2 giorni.",
+    previousMonth: "Mese precedente",
+    nextMonth: "Mese successivo",
+  },
+
+  quick: {
+    dictate: "Detta una nuova attività",
+  },
+
+  driveCard: {
+    body: "Salva le tue attività sul tuo Google Drive (facoltativo)",
+    connect: "Accedi",
+  },
+
+  driveRestore: {
+    title: "Attività ripristinate",
+    body: (date: string) => `Le tue attività sono state ripristinate (backup del ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -749,7 +802,8 @@ export const itIT: Translations = {
       backup: "Impostazioni › Backup: «Esporta i miei dati» crea un file da tenere dove vuoi; «Importa un backup» lo rimette su questo telefono.",
       drive: "Impostazioni › Google Drive: collega il tuo account Google per salvare i tuoi dati online, a mano o in automatico, e ripristinarli su un altro telefono.",
       calendar: "Tocca l'icona del calendario con i numeri nella matrice per vedere le attività mese per mese; tocca un giorno per la sua linea oraria.",
-      voice: "Tocca il microfono nel titolo per dettare un'attività, oppure tieni premuto + per aprire la scheda e dettare subito.",
+      voice: "Tocca il microfono accanto a + (o tieni premuto +) per dettare un'attività; nella scheda, il microfono del titolo fa lo stesso.",
+      longPress: "Tieni premuta un'attività per spuntare i passaggi o regolare l'avanzamento.",
       permission: "Promemoria: la presentazione ti propone di attivarli. Se rifiuti, l'app non te lo richiede a ogni avvio: quando attivi un promemoria, ti propone di consentire le notifiche o di aprire le impostazioni del telefono. Lo stato compare in Impostazioni › Notifiche.",
       quietHours: "Ore di silenzio (disattivate di default, attivale nelle Impostazioni): i promemoria che cadrebbero dentro arrivano quando finiscono, e la scheda dell'attività te lo segnala.",
       steps: "Nella scheda dell'attività, «Passaggi» la divide: la scheda mostra l'avanzamento «2/5» e il passaggio del giorno. Un passaggio di un giorno passato non fatto è segnato in ritardo.",

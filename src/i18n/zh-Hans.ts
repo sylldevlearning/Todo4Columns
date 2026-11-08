@@ -329,10 +329,15 @@ export const zhHans: Translations = {
         body: "把大任务拆成可以勾选的小步骤，顺序随你（长按步骤后拖动）。给步骤设一天，就会在那天 9:00 或你选的时间收到提醒，带「完成」和「改到明天」。只有你勾选任务本身，任务才算完成。",
         example: "「准备演讲」：找资料、列提纲、写开头、排练。",
       },
+      progress: {
+        title: "进度",
+        body: "有步骤时，进度跟随已勾选的步骤。没有步骤时，你可以在 0 到 100% 之间自己设置。进度会以细条显示在卡片上。",
+        example: "长按一个任务，再点“50%”：卡片会显示一半的进度条。",
+      },
       splitSessions: {
-        title: "分成几天做",
-        body: "一次创建多个工作时段，每天一个，各带提醒。你可以选时段数量、时长、第一天，以及是否跳过周末。确认前会先显示预览。",
-        example: "从周四开始的 5 个 1 小时时段，只在工作日：周四、周五、周一、周二和周三。",
+        title: "分到几天完成",
+        body: "一次创建多个工作时段，每个都有提醒：可以是连续几天、每周特定几天（周一、周三、周五…），或在迷你日历上选的日期。确认前会显示预览。",
+        example: "周一、周三、周五各 1 小时：本周 3 个时段，想要更多可以点 +。",
       },
       backup: {
         title: "备份",
@@ -392,13 +397,23 @@ export const zhHans: Translations = {
       body: "创建任务时，回答「紧急吗？」和「重要吗？」。应用会帮你放进正确的格子。",
     },
     gestures: {
-      title: "提醒和手势",
-      body: "向右滑动任务即可完成，向左滑动即可删除。提醒以通知形式送达：点「完成」或「推迟 1 小时」，应用会打开并帮你处理。",
+      title: "手势和步骤",
+      body: "向右滑动任务即可完成，向左滑动即可删除。长按任务可以勾选步骤或设置进度。",
     },
     reminders: {
       title: "再也不错过",
       body: "DoFirst 会在合适的时间提醒你的任务，跟进还没完成的事，并在任务变紧急时通知你。",
     },
+    calendar: {
+      title: "日历和语音输入",
+      body: "日历按天显示你的任务。点麦克风即可口述任务：“明天下午3点”一点就能设为截止时间。",
+    },
+    drive: {
+      title: "Google 云端硬盘备份",
+      body: "可选：连接你的 Google 账号，把任务副本保存在云端硬盘的私密文件夹中，换新手机时也能恢复。之后也可以在设置中开启。",
+    },
+    connect: "登录",
+    driveOn: "已连接：自动备份已开启",
     enableReminders: "开启提醒",
     remindersOn: "提醒已开启",
     sampleTask: "发送报告",
@@ -627,6 +642,44 @@ export const zhHans: Translations = {
     turnOn: "开启",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "进度",
+    value: (n: number) => `${n}%`,
+    auto: "根据已勾选的步骤计算",
+    manual: "手动设置进度",
+    hint: "长按：步骤和进度",
+    steps: "步骤",
+    close: "关闭",
+    changed: (n: number) => `进度：${n}%`,
+    stepUnchecked: "已取消勾选步骤",
+  },
+
+  splitModes: {
+    label: "分配方式",
+    consecutive: "连续几天",
+    weekdays: "每周特定几天",
+    dates: "指定日期",
+    datesHint: "点选想要的日期（2 到 14 天）。",
+    tooFew: "请至少选择 2 天。",
+    previousMonth: "上个月",
+    nextMonth: "下个月",
+  },
+
+  quick: {
+    dictate: "语音输入新任务",
+  },
+
+  driveCard: {
+    body: "把任务备份到你的 Google 云端硬盘（可选）",
+    connect: "登录",
+  },
+
+  driveRestore: {
+    title: "任务已恢复",
+    body: (date: string) => `你的任务已恢复（${date} 的备份）。`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google 云端硬盘",
@@ -742,7 +795,8 @@ export const zhHans: Translations = {
       backup: "设置 › 备份：「导出我的数据」会生成一个文件，存在哪里都行；「导入备份」把它放回这台手机。",
       drive: "设置 › Google 云端硬盘：连接你的 Google 账号，就能手动或自动把数据备份到网上，并在另一台手机上恢复。",
       calendar: "点矩阵上的数字日历图标，按月查看任务；点一天查看它的时间轴。",
-      voice: "点标题里的麦克风口述任务，或长按 + 打开表单并立即开始语音输入。",
+      voice: "点 + 旁边的麦克风（或长按 +）即可口述任务；在表单中，标题里的麦克风也能这样用。",
+      longPress: "长按任务即可勾选步骤或设置进度。",
       permission: "提醒：介绍页面会建议你开启。如果你拒绝了，应用不会每次打开都再问；在你设置提醒时，会建议你允许通知或打开手机设置。状态显示在设置 › 通知中。",
       quietHours: "免打扰时段（默认关闭，在设置中开启）：落在其中的提醒会在时段结束时送达，任务详情会在这种情况下告诉你。",
       steps: "在任务详情里，「步骤」可以拆分任务：卡片会显示进度「2/5」和今天的步骤。过去日期里没完成的步骤会标为延误。",

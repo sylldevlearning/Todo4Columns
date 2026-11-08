@@ -330,10 +330,15 @@ export const tr: Translations = {
         body: "Büyük bir görevi işaretlenecek küçük adımlara böl, istediğin sırayla (bir adıma uzun bas, sonra sürükle). Bir adıma gün verirsen o gün 09:00'da ya da seçtiğin saatte “Bitti” ve “Yarına al” seçenekli bir hatırlatma alırsın. Görev, ancak sen işaretlediğinde tamamlanır.",
         example: "“Sunumu hazırla”: kaynak bul, taslak çıkar, girişi yaz, prova yap.",
       },
+      progress: {
+        title: "İlerleme",
+        body: "Adımlar varsa ilerleme işaretlenen adımlara göre belirlenir. Adım yoksa %0 ile %100 arasında kendin ayarlarsın. Kartta ince bir çubuk olarak görünür.",
+        example: "bir göreve uzun bas ve \"%50\"ye dokun: kartta yarısı dolu bir çubuk görünür.",
+      },
       splitSessions: {
         title: "Birkaç güne yay",
-        body: "Tek seferde birkaç çalışma oturumu oluşturur, her gün bir tane, her birinin kendi hatırlatmasıyla. Oturum sayısını, süreyi, ilk günü ve hafta sonunun atlanıp atlanmayacağını sen seçersin. Onaylamadan önce bir önizleme görünür.",
-        example: "bir perşembeden başlayarak 1 saatlik 5 oturum, sadece hafta içi: perşembe, cuma, pazartesi, salı ve çarşamba.",
+        body: "Her biri hatırlatıcılı birden çok çalışma oturumunu tek seferde oluşturur: art arda günler, haftanın belirli günleri (Pzt, Çar, Cum…) ya da mini takvimden seçilen tarihler. Onaylamadan önce bir önizleme görünür.",
+        example: "Pazartesi, çarşamba ve cuma, 1 saat: bu hafta 3 oturum, istersen + ile artır.",
       },
       backup: {
         title: "Yedek",
@@ -393,13 +398,23 @@ export const tr: Translations = {
       body: "Bir görev oluştururken “Acil mi?” ve “Önemli mi?” sorularını yanıtla. Uygulama onu senin için doğru kutuya koyar.",
     },
     gestures: {
-      title: "Hatırlatmalar ve hareketler",
-      body: "Bir görevi tamamlamak için sağa, silmek için sola kaydır. Hatırlatmalar bildirim olarak gelir: “Bitti” ya da “1 sa ertele”ye dokun, uygulama açılıp halleder.",
+      title: "Hareketler ve adımlar",
+      body: "Bir görevi tamamlamak için sağa, silmek için sola kaydır. Adımlarını işaretlemek ya da ilerlemesini ayarlamak için üzerine uzun bas.",
     },
     reminders: {
       title: "Hiçbir şeyi kaçırma",
       body: "DoFirst görevlerini doğru zamanda hatırlatır, yapılmayanları tekrar hatırlatır ve bir görev acil hale geldiğinde seni uyarır.",
     },
+    calendar: {
+      title: "Takvim ve sesle yazma",
+      body: "Takvim görevlerini gün gün gösterir. Bir görevi sesle yazmak için mikrofona dokun; \"acil\" ve \"önemli\" kelimeleri anahtarları önerir.",
+    },
+    drive: {
+      title: "Google Drive yedeği",
+      body: "İsteğe bağlı: Görevlerinin bir kopyasını Drive'ındaki özel bir klasörde tutmak ve yeni bir telefonda geri almak için Google hesabını bağla. Bunu daha sonra Ayarlar'dan da yapabilirsin.",
+    },
+    connect: "Giriş yap",
+    driveOn: "Bağlandı: otomatik yedekleme açık",
     enableReminders: "Hatırlatıcıları aç",
     remindersOn: "Hatırlatıcılar açık",
     sampleTask: "Raporu gönder",
@@ -628,6 +643,44 @@ export const tr: Translations = {
     turnOn: "Aç",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "İlerleme",
+    value: (n: number) => `%${n}`,
+    auto: "İşaretlenen adımlardan hesaplanır",
+    manual: "İlerlemeyi elle ayarla",
+    hint: "Uzun bas: adımlar ve ilerleme",
+    steps: "Adımlar",
+    close: "Kapat",
+    changed: (n: number) => `İlerleme: %${n}`,
+    stepUnchecked: "Adımın işareti kaldırıldı",
+  },
+
+  splitModes: {
+    label: "Dağıtım",
+    consecutive: "Art arda günler",
+    weekdays: "Haftanın belirli günleri",
+    dates: "Belirli tarihler",
+    datesHint: "İstediğin günlere dokun (2 ile 14 arası).",
+    tooFew: "En az 2 gün seç.",
+    previousMonth: "Önceki ay",
+    nextMonth: "Sonraki ay",
+  },
+
+  quick: {
+    dictate: "Yeni görevi sesle yaz",
+  },
+
+  driveCard: {
+    body: "Görevlerini Google Drive'ına yedekle (isteğe bağlı)",
+    connect: "Giriş yap",
+  },
+
+  driveRestore: {
+    title: "Görevler geri yüklendi",
+    body: (date: string) => `Görevlerin geri yüklendi (${date} tarihli yedek).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -743,7 +796,8 @@ export const tr: Translations = {
       backup: "Ayarlar › Yedek: “Verilerimi dışa aktar” istediğin yerde saklayabileceğin bir dosya oluşturur; “Yedeği içe aktar” onu bu telefona geri yükler.",
       drive: "Ayarlar › Google Drive: Google hesabını bağla; verilerini elle ya da otomatik olarak çevrimiçi yedekle ve başka bir telefonda geri yükle.",
       calendar: "Görevlerini ay ay görmek için matristeki numaralı takvim simgesine dokun; zaman çizelgesi için bir güne dokun.",
-      voice: "Bir görevi sesle yazmak için başlıktaki mikrofona dokun ya da formu açıp hemen sesle yazmak için +'ya uzun bas.",
+      voice: "Bir görevi sesle yazmak için +'nın yanındaki mikrofona dokun (ya da +'ya uzun bas); formda başlıktaki mikrofon da aynısını yapar.",
+      longPress: "Adımlarını işaretlemek ya da ilerlemesini ayarlamak için bir göreve uzun bas.",
       permission: "Hatırlatıcılar: tanıtım ekranı onları açmayı önerir. Reddedersen uygulama her açılışta tekrar sormaz: bir hatırlatıcı açtığında bildirimlere izin vermeyi ya da telefon ayarlarını açmayı önerir. Durum Ayarlar › Bildirimler'de görünür.",
       quietHours: "Sessiz saatler (varsayılan olarak kapalı, Ayarlar'dan aç): bu aralığa düşen hatırlatmalar sessiz saatler bitince gelir, böyle olduğunda görev sayfası seni uyarır.",
       steps: "Görev sayfasında “Adımlar” görevi böler: kart “2/5” ilerlemesini ve günün adımını gösterir. Geçmiş bir güne ait, bitmemiş bir adım gecikmiş olarak işaretlenir.",

@@ -330,10 +330,15 @@ export const en: Translations = {
         body: "Break a big task into small steps to check off, in the order you like (long press a step, then drag it). Give a step a day to get a reminder that day, at 9:00 or at the time you choose, with “Done” and “Move to tomorrow”. The task is only complete when you check it.",
         example: "“Prepare the talk”: find sources, outline, write the intro, rehearse.",
       },
+      progress: {
+        title: "Progress",
+        body: "With steps, progress follows the checked steps. Without steps, set it yourself from 0 to 100%. It shows as a thin bar on the card.",
+        example: "press and hold a task, then tap \"50%\": the card shows a half-full bar.",
+      },
       splitSessions: {
         title: "Spread over several days",
-        body: "Creates several work sessions at once, one per day, each with its reminder. You choose how many sessions, how long, the first day and whether weekends are skipped. A preview shows before you confirm.",
-        example: "5 one-hour sessions starting on a Thursday, weekdays only: Thursday, Friday, Monday, Tuesday and Wednesday.",
+        body: "Creates several work sessions at once, each with its reminder: consecutive days, certain weekdays (Mon, Wed, Fri…) or specific dates picked on a mini calendar. A preview appears before you confirm.",
+        example: "Monday, Wednesday and Friday, 1 hour: 3 sessions this week, extend with + if you like.",
       },
       backup: {
         title: "Backup",
@@ -393,13 +398,23 @@ export const en: Translations = {
       body: "When you create a task, answer “Is it urgent?” and “Is it important?”. The app puts it in the right box for you.",
     },
     gestures: {
-      title: "Reminders and gestures",
-      body: "Swipe a task right to complete it, left to delete it. Reminders arrive as notifications: tap “Done” or “Snooze 1 h” and the app opens to take care of it.",
+      title: "Gestures and steps",
+      body: "Swipe a task right to complete it, left to delete it. Press and hold it to check its steps or set its progress.",
     },
     reminders: {
       title: "Never miss a thing",
       body: "DoFirst reminds you of your tasks at the right time, follows up on what's not done and lets you know when a task becomes urgent.",
     },
+    calendar: {
+      title: "Calendar and dictation",
+      body: "The calendar shows your tasks day by day. Tap the mic to dictate a task: \"tomorrow at 3 pm\" becomes a due date in one tap.",
+    },
+    drive: {
+      title: "Google Drive backup",
+      body: "Optional: connect your Google account to keep a copy of your tasks in a private folder of your Drive and get them back on a new phone. You can do it later in Settings.",
+    },
+    connect: "Sign in",
+    driveOn: "Signed in: automatic backup is on",
     enableReminders: "Turn on reminders",
     remindersOn: "Reminders are on",
     sampleTask: "Send the report",
@@ -628,6 +643,44 @@ export const en: Translations = {
     turnOn: "Turn on",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Progress",
+    value: (n: number) => `${n}%`,
+    auto: "Based on checked steps",
+    manual: "Set progress by hand",
+    hint: "Long press: steps and progress",
+    steps: "Steps",
+    close: "Close",
+    changed: (n: number) => `Progress: ${n}%`,
+    stepUnchecked: "Step unchecked",
+  },
+
+  splitModes: {
+    label: "Schedule",
+    consecutive: "Consecutive days",
+    weekdays: "Certain weekdays",
+    dates: "Specific dates",
+    datesHint: "Tap the days you want (2 to 14).",
+    tooFew: "Pick at least 2 days.",
+    previousMonth: "Previous month",
+    nextMonth: "Next month",
+  },
+
+  quick: {
+    dictate: "Dictate a new task",
+  },
+
+  driveCard: {
+    body: "Back up your tasks to your Google Drive (optional)",
+    connect: "Sign in",
+  },
+
+  driveRestore: {
+    title: "Tasks restored",
+    body: (date: string) => `Your tasks have been restored (backup from ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -743,7 +796,8 @@ export const en: Translations = {
       backup: "Settings › Backup: “Export my data” creates a file to keep wherever you like; “Import a backup” puts it back on this phone.",
       drive: "Settings › Google Drive: connect your Google account to back up your data online, by hand or automatically, and restore it on another phone.",
       calendar: "Tap the numbered calendar icon on the matrix to see your tasks month by month; tap a day for its timeline.",
-      voice: "Tap the mic in the title to dictate a task, or press and hold + to open the form and start dictating right away.",
+      voice: "Tap the mic next to + (or press and hold +) to dictate a task; in the form, the mic in the title does the same.",
+      longPress: "Press and hold a task to check its steps or set its progress.",
       permission: "Reminders: the introduction offers to turn them on. If you say no, the app doesn't ask again every time you open it: when you turn on a reminder, it offers to allow notifications or to open your phone's settings. The status shows in Settings › Notifications.",
       quietHours: "Quiet hours (off by default, turn them on in Settings): reminders that would fall inside arrive when they end, and the task sheet lets you know when that happens.",
       steps: "In the task sheet, “Steps” breaks a task down: the card shows progress “2/5” and today's step. A step from a past day that isn't done is marked late.",

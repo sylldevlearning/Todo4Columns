@@ -330,10 +330,15 @@ export const es: Translations = {
         body: "Divide una tarea grande en pasos pequeños para marcar, en el orden que quieras (mantén pulsado un paso y arrástralo). Dale un día a un paso para recibir un aviso ese día, a las 9:00 o a la hora que elijas, con «Hecho» y «Pasar a mañana». La tarea solo se termina cuando la marcas.",
         example: "«Preparar la presentación»: buscar fuentes, hacer el esquema, escribir la intro, ensayar.",
       },
+      progress: {
+        title: "Progreso",
+        body: "Con pasos, el progreso sigue los pasos marcados. Sin pasos, ajústalo tú de 0 a 100 %. Se muestra como una barra fina en la tarjeta.",
+        example: "mantén pulsada una tarea y toca «50 %»: la tarjeta muestra una barra a medias.",
+      },
       splitSessions: {
         title: "Repartir en varios días",
-        body: "Crea de golpe varias sesiones de trabajo, una por día, cada una con su aviso. Eliges cuántas sesiones, cuánto duran, el primer día y si te saltas los fines de semana. Verás una vista previa antes de confirmar.",
-        example: "5 sesiones de 1 h a partir de un jueves, solo entre semana: jueves, viernes, lunes, martes y miércoles.",
+        body: "Crea de una vez varias sesiones de trabajo, cada una con su aviso: días seguidos, algunos días de la semana (lun, mié, vie…) o fechas concretas elegidas en un minicalendario. Verás una vista previa antes de confirmar.",
+        example: "lunes, miércoles y viernes, 1 h: 3 sesiones esta semana, amplíalas con + si quieres.",
       },
       backup: {
         title: "Copia de seguridad",
@@ -393,13 +398,23 @@ export const es: Translations = {
       body: "Al crear una tarea, responde «¿Es urgente?» y «¿Es importante?». La app la coloca sola en la casilla correcta.",
     },
     gestures: {
-      title: "Avisos y gestos",
-      body: "Desliza una tarea a la derecha para terminarla, a la izquierda para eliminarla. Los avisos llegan como notificación: toca «Hecho» o «Posponer 1 h» y la app se abre y se encarga.",
+      title: "Gestos y pasos",
+      body: "Desliza una tarea a la derecha para terminarla y a la izquierda para eliminarla. Mantenla pulsada para marcar sus pasos o ajustar su progreso.",
     },
     reminders: {
       title: "Que no se te pase nada",
       body: "DoFirst te recuerda tus tareas en el momento justo, insiste con lo que está sin hacer y te avisa cuando una tarea se vuelve urgente.",
     },
+    calendar: {
+      title: "Calendario y dictado",
+      body: "El calendario muestra tus tareas día a día. Toca el micrófono para dictar una tarea: «mañana a las 15» se convierte en vencimiento con un toque.",
+    },
+    drive: {
+      title: "Copia en Google Drive",
+      body: "Opcional: conecta tu cuenta de Google para guardar una copia de tus tareas en una carpeta privada de tu Drive y recuperarlas en un teléfono nuevo. Puedes hacerlo más tarde en Ajustes.",
+    },
+    connect: "Conectarse",
+    driveOn: "Conectado: copia automática activada",
     enableReminders: "Activar los avisos",
     remindersOn: "Los avisos están activados",
     sampleTask: "Entregar el informe",
@@ -628,6 +643,44 @@ export const es: Translations = {
     turnOn: "Activar",
   },
 
+  // Avancement, répartition, dictée rapide, Google Drive (présentation et restauration)
+  progress: {
+    label: "Progreso",
+    value: (n: number) => `${n} %`,
+    auto: "Según los pasos marcados",
+    manual: "Ajusta el progreso a mano",
+    hint: "Pulsación larga: pasos y progreso",
+    steps: "Pasos",
+    close: "Cerrar",
+    changed: (n: number) => `Progreso: ${n} %`,
+    stepUnchecked: "Paso desmarcado",
+  },
+
+  splitModes: {
+    label: "Reparto",
+    consecutive: "Días seguidos",
+    weekdays: "Algunos días de la semana",
+    dates: "Fechas concretas",
+    datesHint: "Toca los días que quieras (de 2 a 14).",
+    tooFew: "Elige al menos 2 días.",
+    previousMonth: "Mes anterior",
+    nextMonth: "Mes siguiente",
+  },
+
+  quick: {
+    dictate: "Dictar una tarea nueva",
+  },
+
+  driveCard: {
+    body: "Guarda tus tareas en tu Google Drive (opcional)",
+    connect: "Conectarse",
+  },
+
+  driveRestore: {
+    title: "Tareas restauradas",
+    body: (date: string) => `Tus tareas se han restaurado (copia del ${date}).`,
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -743,7 +796,8 @@ export const es: Translations = {
       backup: "Ajustes › Copia de seguridad: «Exportar mis datos» crea un archivo para guardar donde quieras; «Importar una copia» lo devuelve a este teléfono.",
       drive: "Ajustes › Google Drive: conecta tu cuenta de Google para guardar tus datos en línea, a mano o automáticamente, y restaurarlos en otro teléfono.",
       calendar: "Toca el icono de calendario con números en la matriz para ver tus tareas mes a mes; toca un día para ver su franja horaria.",
-      voice: "Toca el micrófono del título para dictar una tarea, o mantén pulsado + para abrir la ficha y dictar enseguida.",
+      voice: "Toca el micrófono junto al + (o mantén pulsado +) para dictar una tarea; en la ficha, el micrófono del título hace lo mismo.",
+      longPress: "Mantén pulsada una tarea para marcar sus pasos o ajustar su progreso.",
       permission: "Avisos: la presentación te ofrece activarlos. Si dices que no, la app no vuelve a pedírtelo cada vez que la abres: cuando activas un aviso, te ofrece permitirlos o abrir los ajustes del teléfono. El estado aparece en Ajustes › Notificaciones.",
       quietHours: "Horas de silencio (desactivadas por defecto, actívalas en Ajustes): los avisos que caerían dentro llegan al final, y la ficha de la tarea te lo indica.",
       steps: "En la ficha de la tarea, «Pasos» la divide: la tarjeta muestra el progreso «2/5» y el paso de hoy. Un paso de un día pasado sin hacer se marca con retraso.",
