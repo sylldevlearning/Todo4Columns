@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
+    "test:scripts": "node --test \"scripts/play/**/*.test.mjs\"",
     "assets": "node scripts/generate-assets/generate.js",
     "listing:check": "node scripts/play-listing.mjs",
     "listing:apply": "node scripts/play-listing.mjs --apply",

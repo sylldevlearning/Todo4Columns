@@ -1,7 +1,7 @@
 // Versions Google Play : choix de la version du test interne, promotion en production (100 %),
 // avec les notes de store/release-notes-<langue>.txt.
 // Utilisé par play-release.mjs (promotion seule) et play-ship.mjs (fiche et production ensemble).
-import { appVersion, fail } from "./lib.mjs";
+import { appVersion, fail, releaseSummaries } from "./lib.mjs";
 
 export const FROM = "internal";
 export const TO = "production";
@@ -36,12 +36,22 @@ export function printNotes(notes) {
   }
 }
 
-// Version à promouvoir et version actuellement en production (lecture seule)
-export async function preparePromotion(api, edit, { notes, versionCode }) {
-  const release = pickRelease(await trackReleases(api, edit, FROM), versionCode);
+// Version à promouvoir et version actuellement en production (lecture seule), lues dans la
+// modification ouverte
+export function preparePromotion(api, edit, options) {
+  return planPromotion((track) => trackReleases(api, edit, track), options);
+}
+
+// Même chose sans ouvrir de modification (simulation, vérification de --confirm avant l'ouverture)
+export function previewPromotion(api, packageName, options) {
+  return planPromotion((track) => releaseSummaries(api, packageName, track), options);
+}
+
+async function planPromotion(read, { notes, versionCode }) {
+  const release = pickRelease(await read(FROM), versionCode);
   const versionName = versionNameOf(release);
   if (!versionName) fail("Version du test interne sans nom : impossible de vérifier --confirm");
-  const production = await trackReleases(api, edit, TO);
+  const production = await read(TO);
   if (production.some((r) => r.status === "completed" && codes(r).some((c) => codes(release).includes(c)))) {
     fail(`${versionName} (versionCode ${codes(release).join(", ")}) est déjà en production`);
   }

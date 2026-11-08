@@ -5,7 +5,10 @@
 //
 // node scripts/play-listing.mjs            simulation : vérifie et affiche les différences, n'envoie rien
 // node scripts/play-listing.mjs --apply    envoie, sans soumettre à l'examen
-// Options : --key=<clé du compte de service>, --language=fr-FR (une seule fiche)
+// Options : --key=<clé du compte de service>, --language=fr-FR (une seule fiche),
+//   --skip-upload-check (voir scripts/play/guard.mjs)
+// Même la simulation ouvre une modification (l'API n'a pas d'autre lecture des fiches) : elle n'est
+// ouverte que si aucun envoi EAS n'est en cours.
 // Fiche et production ensemble : scripts/play-ship.mjs
 import { client, commit, packageName, parseArgs, run, withEdit } from "./play/lib.mjs";
 import { applyListingChanges, listingChanges, printLimits, readListings } from "./play/listing.mjs";
@@ -21,7 +24,7 @@ async function main() {
   printLimits(listings);
 
   const api = client(args);
-  await withEdit(api, pkg, async (edit) => {
+  await withEdit(api, pkg, args, async (edit) => {
     const changes = await listingChanges(api, edit, listings, { onlyLanguage });
     if (changes.length === 0) {
       console.log("\n✔ Aucune différence : rien à envoyer.");
