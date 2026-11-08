@@ -242,8 +242,9 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 
 - **Tests sur téléphone :** faits sur le build 9 de la 1.4.1 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
 - **1.5.0, reste à faire (côté développeur) :**
-  - **Publier l'application OAuth** (Google Auth Platform › Audience › « Publier l'application ») : en « Test », seuls les utilisateurs tests (aujourd'hui csgonesse@gmail.com) peuvent se connecter. La console demande d'abord de compléter la page Branding (page d'accueil de l'application). `drive.appdata` est non sensible : pas de validation des scopes, mais Google peut demander une validation de la marque (nom, logo, domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console).
-  - **Adresse d'assistance de l'écran de consentement :** csgonesse@gmail.com (seule proposée par la console : le compte propriétaire du projet). sylldevlearning@gmail.com est ajoutée aux contacts développeur, avec contact@sylldevlearning.fr.
+  - **Publier l'application OAuth** (Google Auth Platform › Audience › « Publier l'application ») : en « Test », seuls les utilisateurs tests (aujourd'hui csgonesse@gmail.com) peuvent se connecter. Branding complet depuis le 08/11/2026 (page d'accueil https://sylldevlearning-legal.vercel.app/dofirst). `drive.appdata` est non sensible : pas de validation des scopes, mais Google peut demander une validation de la marque (nom, logo, domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console).
+  - **Adresse d'assistance de l'écran de consentement :** encore csgonesse@gmail.com. sylldevlearning@gmail.com est propriétaire du projet (IAM, Owner) depuis le 08/11/2026 : une fois l'invitation acceptée, la choisir dans Branding.
+  - **Utilisateur test** à ajouter (Audience) : l'adresse Gmail du téléphone de test. sylldevlearning@gmail.com est ajoutée aux contacts développeur, avec contact@sylldevlearning.fr.
   - **Sécurité des données** à mettre à jour dans la Play Console (`store/data-safety-1.5.0.md`).
   - **Fiches** (Google Drive ajouté dans les 14 langues) à envoyer avec la version : `listing:check` puis `release:ship`.
   - **Notes de version 1.5.0** à écrire, build, tests sur téléphone (connexion, sauvegarde, restauration sur un 2e téléphone, hors ligne, suppression, déconnexion).
