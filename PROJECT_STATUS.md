@@ -1,7 +1,7 @@
 # DoFirst (Todo4Columns) — État de la version 1.5.0
 
 > Mis à jour le 08/11/2026. Branche `version-1.5.0` (créée depuis `master` après la 1.4.1), **non fusionnée**, sans build. Version **1.5.0** dans `app.json`.
-> Vérifié : 689 tests Jest (54 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0).
+> Vérifié (09/11/2026) : 747 tests Jest (56 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
 > **En production :** 1.4.1 (versionCode 9, build `95682b73`), publiée après examen (`RELEASE_LIFECYCLE_STATE_PUBLISHED` relu le 08/11/2026).
 > **Google Cloud (projet `matrice-deisenhower`, compte csgonesse@gmail.com) :** API Google Drive activée ; écran de consentement « DoFirst » (scope `drive.appdata` seul, classé non sensible), règles https://sylldevlearning-legal.vercel.app/dofirst/privacy, domaine autorisé `sylldevlearning-legal.vercel.app` ; deux clients OAuth Android pour `com.saloum.sylla.matriceeisenhower` : clé d'importation EAS (`BD:20:F7:8A…`, client existant « Client Android 1 ») et clé de signature Play (`D7:7B:86:3C…`, « DoFirst Android (clé de signature Play) »). Pas de client Web (la librairie n'en a pas besoin pour un jeton d'accès). **Application OAuth encore en « Test »** : voir « Points ouverts ».
 
@@ -36,6 +36,9 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
 - **1.3.0** : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
 - **1.5.0** (cette branche) :
   - sauvegarde Google Drive facultative (Réglages › Google Drive) : connexion Google, dossier caché `appDataFolder` (scope `drive.appdata`), sauvegarde manuelle et automatique (au plus une par jour, au passage en arrière-plan, si les données ont changé), 5 dernières gardées, restauration avec aperçu et copie de secours, proposée après connexion si une sauvegarde existe, déconnexion, suppression de la sauvegarde en ligne ; textes dans les 13 langues ;
+  - vue calendrier (icône à chiffres sur la matrice) : mois, points par quadrant et nombre de tâches, échéances, étapes prévues, occurrences futures des tâches récurrentes (« Prévue », non modifiables), panneau du jour avec répartition et frise horaire, « Sans heure » ;
+  - dictée du titre (micro dans la fiche, appui long sur « + ») avec la reconnaissance vocale du téléphone, autorisation au premier appui ;
+  - saisie intelligente locale : échéance proposée depuis le titre (chrono-node, 10 langues : pas de coréen, turc ni hindi), « urgent » / « important » suggérés dans les 13 langues ;
   - maintenance : 8 paquets Expo à jour (correctifs du SDK 57), config Jest dans `jest.config.js` (`expo-asset` résolu depuis `expo`), scripts Play : les simulations n'ouvrent plus de modification concurrente.
 - **1.4.1** :
   - présentation : 4e écran « Ne rate plus rien », qui propose d'activer les rappels (autorisation des notifications) ;
@@ -64,6 +67,8 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
 | Stockage | AsyncStorage |
 | Animations / gestes | Reanimated 4, Worklets, Gesture Handler |
 | Tests | Jest (jest-expo), React Native Testing Library |
+| Dictée | `expo-speech-recognition` 57.1.1 (MIT, `SpeechRecognizer` d'Android, `EXTRA_PREFER_OFFLINE`) |
+| Dates en langage naturel | `chrono-node` 2.10.3 (MIT), langues importées une à une (`chrono-node/fr`… ; correspondance dans `jest.config.js`) |
 | Connexion Google | `@react-native-google-signin/google-signin` 16.1.5 (version gratuite, MIT), Android seulement ; API REST Drive v3 par `fetch` |
 | Publication | `googleapis` (API androidpublisher v3, scripts `scripts/play-*.mjs`), `sharp` (comparaison des images) |
 
@@ -96,6 +101,10 @@ src/
                         driveApi.ts (API REST, appDataFolder), driveBackup.ts (état, rotation,
                         règle de la sauvegarde automatique) ; hooks/useDriveBackup.ts (Réglages),
                         components/DriveAutoBackup.tsx (passage en arrière-plan)
+  calendar.ts           Vue calendrier : grille, contenu des jours, frise (app/calendar.tsx,
+                        components/CalendarDayPanel.tsx)
+  smartInput.ts         Dates et mots « urgent » / « important » tirés du titre ;
+                        hooks/useVoiceInput.ts (dictée), components/TitleField.tsx
   guards.ts             isRecord, CATEGORY_KEYS (recovery.ts garde ses propres copies)
   components/           Cartes, formulaires, InfoButton, présentation…
   i18n/                 Textes des 13 langues (fr.ts fait référence ; mêmes clés et mêmes
@@ -248,6 +257,8 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
   - **Sécurité des données** à mettre à jour dans la Play Console (`store/data-safety-1.5.0.md`).
   - **Fiches** (Google Drive ajouté dans les 14 langues) à envoyer avec la version : `listing:check` puis `release:ship`.
   - **Notes de version 1.5.0** à écrire, build, tests sur téléphone (connexion, sauvegarde, restauration sur un 2e téléphone, hors ligne, suppression, déconnexion).
+  - **Permissions :** `RECORD_AUDIO` (dictée) s'ajoute ; règles de confidentialité et `store/data-safety-1.5.0.md` (section Audio) à jour.
+  - **Tests sur téléphone :** dictée (premier appui, refus, « Ouvrir les réglages », silence, langue de l'app, hors ligne), appui long sur +, suggestions, calendrier (glissement, frise, beaucoup de tâches).
   - **iOS :** section Google Drive masquée (pas de client OAuth iOS ni de plugin `iosUrlScheme`).
 - **Poids natif :** non mesuré sans build. Il faut comparer l'AAB 1.2.0 à celui de la 1.1.
 - **iOS :** il n'est ni configuré (pas de `bundleIdentifier`) ni testé. Les polices y sont encore chargées au lancement.
