@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "../src/components/BalanceCard";
+import DriveCard from "../src/components/DriveCard";
 import Fab, { MicFab } from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
 import MatrixGrid from "../src/components/MatrixGrid";
@@ -53,6 +54,7 @@ export default function MatrixScreen() {
 
       <View style={styles.balance}>
         <RemindersCard />
+        <DriveCard />
         <SoonUrgentBanner />
         <BalanceCard />
       </View>
