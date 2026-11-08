@@ -345,6 +345,16 @@ export const es: Translations = {
         body: "Opcional: tus datos se copian en una carpeta oculta de tu Google Drive reservada a DoFirst: no aparece entre tus archivos y nadie más puede acceder, ni siquiera el desarrollador. Se guardan las 5 últimas copias. «Restaurar» sustituye los datos de este teléfono, después de una copia de seguridad.",
         example: "en un teléfono nuevo, conéctate con la misma cuenta: DoFirst te propone restaurar tu última copia.",
       },
+      calendar: {
+        title: "Calendario",
+        body: "Cada día muestra puntos con los colores de los cuadrantes y el número de tareas: vencimientos, pasos previstos y próximas repeticiones de las tareas recurrentes (con borde discontinuo, «Prevista»). Toca un día para ver su franja horaria y luego una tarea para abrirla.",
+        example: "desliza hacia la izquierda para pasar al mes siguiente; «Hoy» te devuelve al día de hoy.",
+      },
+      voice: {
+        title: "Dictado",
+        body: "Toca el micrófono para dictar el título: el texto aparece mientras hablas y la escucha se detiene tras un silencio. Lo hace el reconocimiento de voz del teléfono, en el propio dispositivo cuando es posible; no se graba nada. DoFirst también detecta una fecha («mañana a las 15») o las palabras «urgente» e «importante», y te propone aplicarlas.",
+        example: "di «Llamar al taller el viernes» y toca «Aplicar»: el vencimiento queda el viernes a las 9.",
+      },
       autoEscalate: {
         title: "Tareas con retraso",
         body: "Cuando una tarea «Planificar» pasa su fecha límite, pasa sola a «Hacer», con sus avisos. Un mensaje te avisa, y «Deshacer» la devuelve a «Planificar».",
@@ -581,6 +591,43 @@ export const es: Translations = {
     undoErrorBody: "No se pudo leer la copia de seguridad. No se ha cambiado nada.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Abrir el calendario",
+    title: "Calendario",
+    today: "Hoy",
+    previous: "Mes anterior",
+    next: "Mes siguiente",
+    empty: "Nada previsto este día.",
+    noTime: "Sin hora",
+    planned: "Prevista",
+    step: (title: string) => `Paso: ${title}`,
+    plannedHint: "Repetición prevista de una tarea recurrente, no se puede modificar",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dictar el título",
+    stop: "Detener el dictado",
+    listening: "Escuchando… habla ahora",
+    deniedTitle: "Micrófono no permitido",
+    deniedBody: "Para dictar tus tareas, permite el micrófono para DoFirst en los ajustes del teléfono.",
+    unavailableTitle: "Dictado no disponible",
+    unavailableBody: "El reconocimiento de voz no está disponible en este teléfono.",
+    errorTitle: "Dictado interrumpido",
+    errorBody: "El reconocimiento de voz no pudo iniciarse. Vuelve a intentarlo en un momento.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Vencimiento: ${date}`,
+    apply: "Aplicar",
+    dismiss: "Ignorar",
+    urgent: "El título dice «urgente»",
+    important: "El título dice «importante»",
+    turnOn: "Activar",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -695,6 +742,8 @@ export const es: Translations = {
       nudge: "En el aviso de una tarea encargada, o en el paso 3 del repaso, «Preguntar» prepara un recordatorio corto para enviar.",
       backup: "Ajustes › Copia de seguridad: «Exportar mis datos» crea un archivo para guardar donde quieras; «Importar una copia» lo devuelve a este teléfono.",
       drive: "Ajustes › Google Drive: conecta tu cuenta de Google para guardar tus datos en línea, a mano o automáticamente, y restaurarlos en otro teléfono.",
+      calendar: "Toca el icono de calendario con números en la matriz para ver tus tareas mes a mes; toca un día para ver su franja horaria.",
+      voice: "Toca el micrófono del título para dictar una tarea, o mantén pulsado + para abrir la ficha y dictar enseguida.",
       permission: "Avisos: la presentación te ofrece activarlos. Si dices que no, la app no vuelve a pedírtelo cada vez que la abres: cuando activas un aviso, te ofrece permitirlos o abrir los ajustes del teléfono. El estado aparece en Ajustes › Notificaciones.",
       quietHours: "Horas de silencio (desactivadas por defecto, actívalas en Ajustes): los avisos que caerían dentro llegan al final, y la ficha de la tarea te lo indica.",
       steps: "En la ficha de la tarea, «Pasos» la divide: la tarjeta muestra el progreso «2/5» y el paso de hoy. Un paso de un día pasado sin hacer se marca con retraso.",

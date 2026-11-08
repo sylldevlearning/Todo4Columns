@@ -346,6 +346,16 @@ export const de: Translations = {
         body: "Freiwillig: Deine Daten werden in einen versteckten Ordner deines Google Drive kopiert, der nur DoFirst gehört: Er erscheint nicht bei deinen Dateien, und niemand sonst hat Zugriff, auch nicht der Entwickler. Die letzten 5 Sicherungen bleiben erhalten. „Wiederherstellen“ ersetzt die Daten auf diesem Handy, nach einer Sicherheitskopie.",
         example: "Melde dich auf einem neuen Handy mit demselben Konto an: DoFirst bietet an, deine letzte Sicherung wiederherzustellen.",
       },
+      calendar: {
+        title: "Kalender",
+        body: "Jeder Tag zeigt Punkte in den Quadrantenfarben und die Zahl der Aufgaben: Fälligkeiten, geplante Schritte und kommende Termine wiederkehrender Aufgaben (gestrichelt, „Geplant“). Tippe auf einen Tag für seine Zeitleiste und dann auf eine Aufgabe, um sie zu öffnen.",
+        example: "wische nach links zum nächsten Monat; „Heute“ bringt dich zum heutigen Tag zurück.",
+      },
+      voice: {
+        title: "Diktat",
+        body: "Tippe auf das Mikrofon, um den Titel zu diktieren: Der Text erscheint, während du sprichst, und das Zuhören endet nach einer Pause. Die Spracherkennung des Handys erledigt das, wenn möglich direkt auf dem Gerät; nichts wird aufgenommen. DoFirst erkennt auch ein Datum („morgen um 15 Uhr“) oder die Wörter „dringend“ und „wichtig“ und schlägt vor, sie zu übernehmen.",
+        example: "sag „Werkstatt am Freitag anrufen“ und tippe auf „Übernehmen“: Die Fälligkeit ist Freitag 9 Uhr.",
+      },
       autoEscalate: {
         title: "Überfällige Aufgaben",
         body: "Ist eine „Planen“-Aufgabe überfällig, kommt sie von selbst nach „Erledigen“, mit ihren Erinnerungen. Eine Nachricht sagt dir Bescheid, und „Rückgängig“ legt sie zurück nach „Planen“.",
@@ -582,6 +592,43 @@ export const de: Translations = {
     undoErrorBody: "Die Sicherheitskopie konnte nicht gelesen werden. Es wurde nichts geändert.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Kalender öffnen",
+    title: "Kalender",
+    today: "Heute",
+    previous: "Vorheriger Monat",
+    next: "Nächster Monat",
+    empty: "Für diesen Tag ist nichts geplant.",
+    noTime: "Ohne Uhrzeit",
+    planned: "Geplant",
+    step: (title: string) => `Schritt: ${title}`,
+    plannedHint: "Geplanter Termin einer wiederkehrenden Aufgabe, nicht änderbar",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Titel diktieren",
+    stop: "Diktat beenden",
+    listening: "Ich höre zu … sprich jetzt",
+    deniedTitle: "Mikrofon nicht erlaubt",
+    deniedBody: "Um deine Aufgaben zu diktieren, erlaube DoFirst das Mikrofon in den Handy-Einstellungen.",
+    unavailableTitle: "Diktat nicht verfügbar",
+    unavailableBody: "Auf diesem Handy ist keine Spracherkennung verfügbar.",
+    errorTitle: "Diktat unterbrochen",
+    errorBody: "Die Spracherkennung konnte nicht starten. Versuch es gleich noch einmal.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Fällig: ${date}`,
+    apply: "Übernehmen",
+    dismiss: "Ignorieren",
+    urgent: "Im Titel steht „dringend“",
+    important: "Im Titel steht „wichtig“",
+    turnOn: "Einschalten",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -696,6 +743,8 @@ export const de: Translations = {
       nudge: "In der Erinnerung einer abgegebenen Aufgabe oder in Schritt 3 des Rückblicks bereitet „Nachhaken“ eine kurze Nachricht zum Senden vor.",
       backup: "Einstellungen › Sicherung: „Meine Daten exportieren“ erstellt eine Datei, die du aufbewahren kannst, wo du willst; „Sicherung importieren“ spielt sie auf dieses Handy zurück.",
       drive: "Einstellungen › Google Drive: Verbinde dein Google-Konto, um deine Daten online zu sichern – von Hand oder automatisch – und auf einem anderen Handy wiederherzustellen.",
+      calendar: "Tippe auf das Kalendersymbol mit Zahlen in der Matrix, um deine Aufgaben Monat für Monat zu sehen; tippe auf einen Tag für seine Zeitleiste.",
+      voice: "Tippe auf das Mikrofon im Titel, um eine Aufgabe zu diktieren, oder halte + gedrückt, um das Formular zu öffnen und sofort zu diktieren.",
       permission: "Erinnerungen: Die Einführung bietet an, sie einzuschalten. Lehnst du ab, fragt die App nicht bei jedem Start erneut: Wenn du eine Erinnerung einschaltest, bietet sie an, Mitteilungen zu erlauben oder die Handy-Einstellungen zu öffnen. Der Status steht unter Einstellungen › Mitteilungen.",
       quietHours: "Ruhezeit (standardmäßig aus, in den Einstellungen einschalten): Erinnerungen, die hineinfallen würden, kommen, wenn sie endet, und die Aufgabe sagt dir, wenn das passiert.",
       steps: "In der Aufgabe teilt „Schritte“ sie auf: Die Karte zeigt den Fortschritt „2/5“ und den Schritt des Tages. Ein Schritt von einem vergangenen Tag, der nicht erledigt ist, gilt als überfällig.",

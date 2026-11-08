@@ -344,6 +344,16 @@ export const ko: Translations = {
         body: "선택 기능으로, 데이터는 Google 드라이브 안의 DoFirst 전용 숨김 폴더에 복사되며 내 파일에는 보이지 않고 개발자를 포함해 다른 누구도 볼 수 없어요. 최근 백업 5개가 보관돼요. '복원'을 누르면 안전 사본을 만든 뒤 이 휴대폰의 데이터를 바꿔요.",
         example: "새 휴대폰에서 같은 계정으로 로그인하면 DoFirst가 최근 백업을 복원할지 물어봐요.",
       },
+      calendar: {
+        title: "캘린더",
+        body: "날마다 사분면 색의 점과 할 일 수가 표시돼요. 마감일, 예정된 단계, 반복하는 할 일의 다음 일정(점선, '예정')이 들어가요. 날짜를 누르면 그날의 시간표가 열리고, 할 일을 누르면 자세히 볼 수 있어요.",
+        example: "왼쪽으로 밀면 다음 달로 가고, '오늘'을 누르면 오늘로 돌아와요.",
+      },
+      voice: {
+        title: "음성 입력",
+        body: "마이크를 누르면 제목을 말로 입력할 수 있어요. 말하는 동안 글자가 나타나고, 말을 멈추면 듣기가 끝나요. 휴대폰의 음성 인식이 처리하고, 가능하면 기기 안에서 처리해요. 녹음은 저장되지 않아요. '긴급', '중요' 같은 단어도 찾아서 켤지 물어봐요.",
+        example: "\"긴급 보고서 보내기\"라고 말하면 '긴급함' 스위치를 켤지 물어봐요.",
+      },
       autoEscalate: {
         title: "기한이 지난 할 일",
         body: "“계획하기”의 할 일이 기한을 넘기면 알림과 함께 자동으로 “지금 하기”로 옮겨져요. 메시지로 알려 주고, “실행 취소”를 누르면 “계획하기”로 돌아가요.",
@@ -580,6 +590,43 @@ export const ko: Translations = {
     undoErrorBody: "안전 사본을 읽지 못했어요. 아무것도 바뀌지 않았어요.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "캘린더 열기",
+    title: "캘린더",
+    today: "오늘",
+    previous: "이전 달",
+    next: "다음 달",
+    empty: "이날은 예정된 일이 없어요.",
+    noTime: "시간 없음",
+    planned: "예정",
+    step: (title: string) => `단계: ${title}`,
+    plannedHint: "반복하는 할 일의 예정된 일정이라 바꿀 수 없어요",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "제목 음성 입력",
+    stop: "음성 입력 멈추기",
+    listening: "듣고 있어요… 말해 주세요",
+    deniedTitle: "마이크 권한이 없어요",
+    deniedBody: "할 일을 말로 입력하려면 휴대폰 설정에서 DoFirst의 마이크를 허용해 주세요.",
+    unavailableTitle: "음성 입력을 쓸 수 없어요",
+    unavailableBody: "이 휴대폰에서는 음성 인식을 쓸 수 없어요.",
+    errorTitle: "음성 입력이 멈췄어요",
+    errorBody: "음성 인식을 시작하지 못했어요. 잠시 후 다시 해 주세요.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `마감: ${date}`,
+    apply: "적용",
+    dismiss: "무시",
+    urgent: "제목에 '긴급'이 있어요",
+    important: "제목에 '중요'가 있어요",
+    turnOn: "켜기",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google 드라이브",
@@ -694,6 +741,8 @@ export const ko: Translations = {
       nudge: "맡긴 할 일의 알림이나 돌아보기 3단계에서 “확인하기”를 누르면 보낼 짧은 메시지를 준비해 줘요.",
       backup: "설정 › 백업: “내 데이터 내보내기”는 원하는 곳에 보관할 파일을 만들고, “백업 가져오기”는 그 파일을 이 휴대폰에 되돌려요.",
       drive: "설정 › Google 드라이브: Google 계정을 연결하면 데이터를 직접 또는 자동으로 온라인에 백업하고, 다른 휴대폰에서 복원할 수 있어요.",
+      calendar: "매트릭스의 숫자 달력 아이콘을 누르면 할 일을 달별로 볼 수 있어요. 날짜를 누르면 시간표가 열려요.",
+      voice: "제목의 마이크를 눌러 할 일을 말로 입력하거나, +를 길게 눌러 바로 음성 입력을 시작해요.",
       permission: "알림: 소개 화면에서 켤 수 있어요. 허용하지 않아도 앱을 열 때마다 다시 묻지 않아요. 알림을 설정할 때 알림을 허용하거나 휴대폰 설정을 열도록 안내해요. 상태는 설정 › 알림에서 볼 수 있어요.",
       quietHours: "방해 금지 시간(기본은 꺼짐, 설정에서 켜기): 그 사이 알림은 끝날 때 오고, 그럴 때는 할 일 화면에서 알려 줘요.",
       steps: "할 일 화면의 “단계”로 할 일을 나눠요: 카드에 진행 상황 “2/5”와 오늘의 단계가 보여요. 지난 날짜인데 끝내지 않은 단계는 밀린 것으로 표시돼요.",

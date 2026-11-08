@@ -345,6 +345,16 @@ export const en: Translations = {
         body: "Optional: your data is copied to a hidden folder in your Google Drive that only DoFirst can use: it doesn't show up in your files and nobody else can access it, not even the developer. The last 5 backups are kept. “Restore” replaces the data on this phone, after a safety copy.",
         example: "on a new phone, sign in with the same account: DoFirst offers to restore your latest backup.",
       },
+      calendar: {
+        title: "Calendar",
+        body: "Each day shows dots in the quadrant colors and the number of tasks: due dates, planned steps and upcoming occurrences of recurring tasks (dashed, \"Planned\"). Tap a day to see its timeline, then a task to open it.",
+        example: "swipe left to go to the next month; \"Today\" brings you back to today.",
+      },
+      voice: {
+        title: "Dictation",
+        body: "Tap the mic to dictate the title: the text appears as you speak and listening stops after a pause. Your phone's speech recognition does the work, on the device when it can; nothing is recorded. DoFirst also spots a date (\"tomorrow at 3 pm\") or the words \"urgent\" and \"important\" and offers to apply them.",
+        example: "say \"Call the garage Friday\" then tap \"Apply\": the due date is set to Friday 9 AM.",
+      },
       autoEscalate: {
         title: "Overdue tasks",
         body: "When a “Schedule” task is past its due date, it moves to “Do” on its own, with its reminders. A message lets you know, and “Undo” puts it back in “Schedule”.",
@@ -581,6 +591,43 @@ export const en: Translations = {
     undoErrorBody: "The safety copy couldn't be read. Nothing was changed.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Open the calendar",
+    title: "Calendar",
+    today: "Today",
+    previous: "Previous month",
+    next: "Next month",
+    empty: "Nothing planned this day.",
+    noTime: "No time",
+    planned: "Planned",
+    step: (title: string) => `Step: ${title}`,
+    plannedHint: "Planned occurrence of a recurring task, can't be edited",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dictate the title",
+    stop: "Stop dictation",
+    listening: "Listening… speak now",
+    deniedTitle: "Microphone not allowed",
+    deniedBody: "To dictate your tasks, allow the microphone for DoFirst in your phone settings.",
+    unavailableTitle: "Dictation unavailable",
+    unavailableBody: "Speech recognition isn't available on this phone.",
+    errorTitle: "Dictation stopped",
+    errorBody: "Speech recognition couldn't start. Try again in a moment.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Due: ${date}`,
+    apply: "Apply",
+    dismiss: "Ignore",
+    urgent: "The title says \"urgent\"",
+    important: "The title says \"important\"",
+    turnOn: "Turn on",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -695,6 +742,8 @@ export const en: Translations = {
       nudge: "In a handed-off task's reminder, or in step 3 of the review, “Follow up” prepares a short reminder to send.",
       backup: "Settings › Backup: “Export my data” creates a file to keep wherever you like; “Import a backup” puts it back on this phone.",
       drive: "Settings › Google Drive: connect your Google account to back up your data online, by hand or automatically, and restore it on another phone.",
+      calendar: "Tap the numbered calendar icon on the matrix to see your tasks month by month; tap a day for its timeline.",
+      voice: "Tap the mic in the title to dictate a task, or press and hold + to open the form and start dictating right away.",
       permission: "Reminders: the introduction offers to turn them on. If you say no, the app doesn't ask again every time you open it: when you turn on a reminder, it offers to allow notifications or to open your phone's settings. The status shows in Settings › Notifications.",
       quietHours: "Quiet hours (off by default, turn them on in Settings): reminders that would fall inside arrive when they end, and the task sheet lets you know when that happens.",
       steps: "In the task sheet, “Steps” breaks a task down: the card shows progress “2/5” and today's step. A step from a past day that isn't done is marked late.",

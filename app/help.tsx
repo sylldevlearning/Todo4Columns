@@ -30,6 +30,8 @@ const GESTURE_ICONS: Record<Gesture, IconName> = {
   nudge: "chatbubble-ellipses-outline",
   backup: "cloud-upload-outline",
   drive: "cloud-done-outline",
+  calendar: "calendar-number-outline",
+  voice: "mic-outline",
   permission: "notifications-off-outline",
   quietHours: "moon-outline",
   steps: "list-outline",

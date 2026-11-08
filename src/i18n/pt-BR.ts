@@ -346,6 +346,16 @@ export const ptBR: Translations = {
         body: "Opcional: seus dados são copiados para uma pasta oculta do seu Google Drive, reservada ao DoFirst: ela não aparece nos seus arquivos e ninguém mais tem acesso, nem o desenvolvedor. Os 5 últimos backups ficam guardados. “Restaurar” substitui os dados deste celular, depois de uma cópia de segurança.",
         example: "num celular novo, entre com a mesma conta: o DoFirst oferece restaurar seu último backup.",
       },
+      calendar: {
+        title: "Calendário",
+        body: "Cada dia mostra pontos nas cores dos quadrantes e o número de tarefas: prazos, etapas previstas e próximas ocorrências das tarefas recorrentes (tracejadas, “Prevista”). Toque em um dia para ver a linha do tempo e depois em uma tarefa para abri-la.",
+        example: "deslize para a esquerda para ir ao mês seguinte; “Hoje” volta para o dia de hoje.",
+      },
+      voice: {
+        title: "Ditado",
+        body: "Toque no microfone para ditar o título: o texto aparece enquanto você fala e a escuta para depois de um silêncio. Quem faz o trabalho é o reconhecimento de voz do celular, no próprio aparelho quando possível; nada é gravado. O DoFirst também identifica uma data (“amanhã às 15h”) ou as palavras “urgente” e “importante” e sugere aplicá-las.",
+        example: "diga “Ligar para a oficina sexta” e toque em “Aplicar”: o prazo fica para sexta às 9h.",
+      },
       autoEscalate: {
         title: "Tarefas atrasadas",
         body: "Quando uma tarefa de “Agendar” passa do prazo, ela vai sozinha para “Fazer”, com seus lembretes. Uma mensagem te avisa, e “Desfazer” devolve para “Agendar”.",
@@ -582,6 +592,43 @@ export const ptBR: Translations = {
     undoErrorBody: "Não deu para ler a cópia de segurança. Nada foi alterado.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Abrir o calendário",
+    title: "Calendário",
+    today: "Hoje",
+    previous: "Mês anterior",
+    next: "Próximo mês",
+    empty: "Nada previsto neste dia.",
+    noTime: "Sem horário",
+    planned: "Prevista",
+    step: (title: string) => `Etapa: ${title}`,
+    plannedHint: "Ocorrência prevista de uma tarefa recorrente, não pode ser alterada",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Ditar o título",
+    stop: "Parar o ditado",
+    listening: "Ouvindo… pode falar",
+    deniedTitle: "Microfone não permitido",
+    deniedBody: "Para ditar suas tarefas, permita o microfone para o DoFirst nos ajustes do celular.",
+    unavailableTitle: "Ditado indisponível",
+    unavailableBody: "O reconhecimento de voz não está disponível neste celular.",
+    errorTitle: "Ditado interrompido",
+    errorBody: "O reconhecimento de voz não conseguiu começar. Tente de novo daqui a pouco.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Prazo: ${date}`,
+    apply: "Aplicar",
+    dismiss: "Ignorar",
+    urgent: "O título diz “urgente”",
+    important: "O título diz “importante”",
+    turnOn: "Ativar",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -696,6 +743,8 @@ export const ptBR: Translations = {
       nudge: "No lembrete de uma tarefa passada adiante, ou na etapa 3 da revisão, “Cobrar” prepara um lembrete curto para enviar.",
       backup: "Ajustes › Backup: “Exportar meus dados” cria um arquivo para guardar onde quiser; “Importar um backup” coloca de volta neste celular.",
       drive: "Ajustes › Google Drive: conecte sua conta Google para fazer backup dos seus dados on-line, manualmente ou automaticamente, e restaurá-los em outro celular.",
+      calendar: "Toque no ícone de calendário com números da matriz para ver suas tarefas mês a mês; toque em um dia para ver a linha do tempo.",
+      voice: "Toque no microfone do título para ditar uma tarefa, ou mantenha o + pressionado para abrir a ficha e ditar na hora.",
       permission: "Lembretes: a apresentação oferece ativá-los. Se você disser não, o app não pede de novo toda vez que você abre: ao ativar um lembrete, ele oferece permitir as notificações ou abrir os ajustes do celular. O status aparece em Ajustes › Notificações.",
       quietHours: "Horário de silêncio (desativado por padrão, ative nos Ajustes): os lembretes que cairiam nele chegam quando ele termina, e a ficha da tarefa te avisa quando isso acontece.",
       steps: "Na ficha da tarefa, “Etapas” divide uma tarefa: o cartão mostra o progresso “2/5” e a etapa do dia. Uma etapa de um dia que já passou e não foi feita aparece como atrasada.",

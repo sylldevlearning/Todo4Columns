@@ -353,6 +353,16 @@ export const fr = {
         body: "Facultative : tes données sont copiées dans un dossier caché de ton Google Drive, réservé à DoFirst : il n'apparaît pas dans tes fichiers et personne d'autre n'y a accès, pas même le développeur. Les 5 dernières sauvegardes sont gardées. « Restaurer » remplace les données de ce téléphone, après une copie de secours.",
         example: "sur un nouveau téléphone, connecte-toi avec le même compte : DoFirst propose de restaurer ta dernière sauvegarde.",
       },
+      calendar: {
+        title: "Calendrier",
+        body: "Chaque jour montre des points aux couleurs des quadrants et le nombre de tâches : échéances, étapes prévues et prochaines occurrences des tâches récurrentes (en pointillés, « Prévue »). Touche un jour pour voir sa frise horaire, puis une tâche pour ouvrir sa fiche.",
+        example: "glisse vers la gauche pour passer au mois suivant ; « Aujourd'hui » te ramène au jour même.",
+      },
+      voice: {
+        title: "Dictée",
+        body: "Touche le micro pour dicter le titre : le texte s'affiche pendant que tu parles et l'écoute s'arrête après un silence. La reconnaissance vocale du téléphone fait le travail, sur l'appareil quand il le permet ; rien n'est enregistré. DoFirst repère aussi une date (« demain à 15 h ») ou les mots « urgent » et « important », et te propose de les appliquer.",
+        example: "dis « Appeler le garage vendredi » puis touche « Appliquer » : l'échéance est réglée sur vendredi 9 h.",
+      },
       autoEscalate: {
         title: "Tâches en retard",
         body: "Quand l'échéance d'une tâche « Planifier » est dépassée, elle passe toute seule dans « Faire », avec ses relances. Un message te prévient, et « Annuler » la remet dans « Planifier ».",
@@ -604,6 +614,43 @@ export const fr = {
     undoErrorBody: "La copie de secours n'a pas pu être relue. Rien n'a été modifié.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Ouvrir le calendrier",
+    title: "Calendrier",
+    today: "Aujourd'hui",
+    previous: "Mois précédent",
+    next: "Mois suivant",
+    empty: "Rien de prévu ce jour.",
+    noTime: "Sans heure",
+    planned: "Prévue",
+    step: (title: string) => `Étape : ${title}`,
+    plannedHint: "Occurrence prévue d'une tâche récurrente, non modifiable",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dicter le titre",
+    stop: "Arrêter la dictée",
+    listening: "À l'écoute… parle maintenant",
+    deniedTitle: "Micro non autorisé",
+    deniedBody: "Pour dicter tes tâches, autorise le micro pour DoFirst dans les réglages du téléphone.",
+    unavailableTitle: "Dictée indisponible",
+    unavailableBody: "La reconnaissance vocale n'est pas disponible sur ce téléphone.",
+    errorTitle: "Dictée interrompue",
+    errorBody: "La reconnaissance vocale n'a pas pu démarrer. Réessaie dans un instant.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Échéance : ${date}`,
+    apply: "Appliquer",
+    dismiss: "Ignorer",
+    urgent: "Le titre dit « urgent »",
+    important: "Le titre dit « important »",
+    turnOn: "Activer",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -719,6 +766,8 @@ export const fr = {
       nudge: "Dans la relance d'une tâche confiée ou à l'étape 3 de la revue, « Relancer » prépare un petit rappel à envoyer.",
       backup: "Réglages › Sauvegarde : « Exporter mes données » crée un fichier à garder où tu veux, « Importer une sauvegarde » le remet sur ce téléphone.",
       drive: "Réglages › Google Drive : connecte ton compte Google pour sauvegarder tes données en ligne, à la main ou automatiquement, et les restaurer sur un autre téléphone.",
+      calendar: "Touche l'icône calendrier à chiffres de la matrice pour voir tes tâches mois par mois ; touche un jour pour sa frise horaire.",
+      voice: "Touche le micro du titre pour dicter une tâche, ou garde le doigt sur + pour ouvrir la fiche et dicter tout de suite.",
       permission: "Rappels : la présentation propose de les activer. Si tu refuses, l'app ne te redemande pas à chaque lancement : quand tu actives un rappel, elle te propose de les autoriser ou d'ouvrir les réglages du téléphone. L'état s'affiche dans Réglages › Notifications.",
       quietHours: "Plage silencieuse (désactivée par défaut, à activer dans les Réglages) : les rappels qui tomberaient dedans arrivent à sa fin, et la fiche te prévient quand c'est le cas.",
       steps: "Dans la fiche, « Étapes » découpe une tâche : la carte affiche la progression « 2/5 » et l'étape du jour. Une étape d'un jour passé non faite est marquée en retard.",

@@ -350,6 +350,16 @@ export const itIT: Translations = {
         body: "Facoltativo: i tuoi dati vengono copiati in una cartella nascosta del tuo Google Drive riservata a DoFirst: non compare tra i tuoi file e nessun altro può accedervi, nemmeno lo sviluppatore. Vengono conservati gli ultimi 5 backup. «Ripristina» sostituisce i dati di questo telefono, dopo una copia di sicurezza.",
         example: "su un nuovo telefono, accedi con lo stesso account: DoFirst ti propone di ripristinare l'ultimo backup.",
       },
+      calendar: {
+        title: "Calendario",
+        body: "Ogni giorno mostra punti con i colori dei quadranti e il numero di attività: scadenze, passaggi previsti e prossime ripetizioni delle attività ricorrenti (tratteggiate, «Prevista»). Tocca un giorno per vedere la sua linea oraria e poi un'attività per aprirla.",
+        example: "scorri verso sinistra per passare al mese successivo; «Oggi» ti riporta al giorno corrente.",
+      },
+      voice: {
+        title: "Dettatura",
+        body: "Tocca il microfono per dettare il titolo: il testo compare mentre parli e l'ascolto si ferma dopo una pausa. Lo fa il riconoscimento vocale del telefono, sul dispositivo quando possibile; non viene registrato nulla. DoFirst riconosce anche una data («domani alle 15») o le parole «urgente» e «importante» e ti propone di applicarle.",
+        example: "di' «Chiamare l'officina venerdì» e tocca «Applica»: la scadenza diventa venerdì alle 9.",
+      },
       autoEscalate: {
         title: "Attività scadute",
         body: "Quando un'attività di «Pianifica» supera la scadenza, passa da sola in «Fai», con i suoi promemoria. Un messaggio te lo dice, e «Annulla» la rimette in «Pianifica».",
@@ -587,6 +597,43 @@ export const itIT: Translations = {
     undoErrorBody: "Non è stato possibile leggere la copia di sicurezza. Non è stato cambiato niente.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Apri il calendario",
+    title: "Calendario",
+    today: "Oggi",
+    previous: "Mese precedente",
+    next: "Mese successivo",
+    empty: "Niente in programma questo giorno.",
+    noTime: "Senza orario",
+    planned: "Prevista",
+    step: (title: string) => `Passaggio: ${title}`,
+    plannedHint: "Ripetizione prevista di un'attività ricorrente, non modificabile",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Detta il titolo",
+    stop: "Interrompi la dettatura",
+    listening: "In ascolto… parla ora",
+    deniedTitle: "Microfono non consentito",
+    deniedBody: "Per dettare le tue attività, consenti il microfono a DoFirst nelle impostazioni del telefono.",
+    unavailableTitle: "Dettatura non disponibile",
+    unavailableBody: "Il riconoscimento vocale non è disponibile su questo telefono.",
+    errorTitle: "Dettatura interrotta",
+    errorBody: "Il riconoscimento vocale non è riuscito ad avviarsi. Riprova tra un attimo.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Scadenza: ${date}`,
+    apply: "Applica",
+    dismiss: "Ignora",
+    urgent: "Il titolo dice «urgente»",
+    important: "Il titolo dice «importante»",
+    turnOn: "Attiva",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -701,6 +748,8 @@ export const itIT: Translations = {
       nudge: "Nel promemoria di un'attività affidata, o nel passo 3 della revisione, «Ricorda» prepara un breve messaggio da inviare.",
       backup: "Impostazioni › Backup: «Esporta i miei dati» crea un file da tenere dove vuoi; «Importa un backup» lo rimette su questo telefono.",
       drive: "Impostazioni › Google Drive: collega il tuo account Google per salvare i tuoi dati online, a mano o in automatico, e ripristinarli su un altro telefono.",
+      calendar: "Tocca l'icona del calendario con i numeri nella matrice per vedere le attività mese per mese; tocca un giorno per la sua linea oraria.",
+      voice: "Tocca il microfono nel titolo per dettare un'attività, oppure tieni premuto + per aprire la scheda e dettare subito.",
       permission: "Promemoria: la presentazione ti propone di attivarli. Se rifiuti, l'app non te lo richiede a ogni avvio: quando attivi un promemoria, ti propone di consentire le notifiche o di aprire le impostazioni del telefono. Lo stato compare in Impostazioni › Notifiche.",
       quietHours: "Ore di silenzio (disattivate di default, attivale nelle Impostazioni): i promemoria che cadrebbero dentro arrivano quando finiscono, e la scheda dell'attività te lo segnala.",
       steps: "Nella scheda dell'attività, «Passaggi» la divide: la scheda mostra l'avanzamento «2/5» e il passaggio del giorno. Un passaggio di un giorno passato non fatto è segnato in ritardo.",

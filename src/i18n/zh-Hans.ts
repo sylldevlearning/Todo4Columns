@@ -344,6 +344,16 @@ export const zhHans: Translations = {
         body: "可选功能。你的数据会复制到 Google 云端硬盘中一个 DoFirst 专用的隐藏文件夹：它不会出现在你的文件里，其他任何人都无法访问，开发者也不例外。最近的 5 份备份会被保留。“恢复”会先做一份安全副本，再替换这台手机上的数据。",
         example: "在新手机上用同一个账号登录，DoFirst 会提示恢复你最近的备份。",
       },
+      calendar: {
+        title: "日历",
+        body: "每天显示象限颜色的圆点和任务数：截止时间、计划的步骤，以及重复任务接下来的日程（虚线，“计划”）。点一天查看当天的时间轴，再点任务打开它。",
+        example: "向左滑动进入下个月；点“今天”回到今天。",
+      },
+      voice: {
+        title: "语音输入",
+        body: "点麦克风即可口述标题：说话时文字会实时出现，停顿后自动停止。由手机的语音识别完成，条件允许时在设备上处理；不会保存录音。DoFirst 还会识别日期（“明天下午3点”）或“紧急”“重要”等词，并建议你应用。",
+        example: "说“周五给修车厂打电话”，再点“应用”：截止时间设为周五 9:00。",
+      },
       autoEscalate: {
         title: "逾期任务",
         body: "当「计划」里的任务过了截止时间，它会连同提醒一起自动移到「马上做」。会有消息告诉你，点「撤销」可以放回「计划」。",
@@ -580,6 +590,43 @@ export const zhHans: Translations = {
     undoErrorBody: "无法读取安全副本。没有做任何更改。",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "打开日历",
+    title: "日历",
+    today: "今天",
+    previous: "上个月",
+    next: "下个月",
+    empty: "这一天没有安排。",
+    noTime: "无具体时间",
+    planned: "计划",
+    step: (title: string) => `步骤：${title}`,
+    plannedHint: "重复任务的计划日程，不可修改",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "语音输入标题",
+    stop: "停止语音输入",
+    listening: "正在聆听…请说话",
+    deniedTitle: "未允许使用麦克风",
+    deniedBody: "如需口述任务，请在手机设置中允许 DoFirst 使用麦克风。",
+    unavailableTitle: "无法使用语音输入",
+    unavailableBody: "这台手机不支持语音识别。",
+    errorTitle: "语音输入已中断",
+    errorBody: "语音识别无法启动。请稍后再试。",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `截止：${date}`,
+    apply: "应用",
+    dismiss: "忽略",
+    urgent: "标题里有“紧急”",
+    important: "标题里有“重要”",
+    turnOn: "开启",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google 云端硬盘",
@@ -694,6 +741,8 @@ export const zhHans: Translations = {
       nudge: "在交出去的任务的提醒里，或回顾的第 3 步，「跟进一下」会准备一条简短的消息供你发送。",
       backup: "设置 › 备份：「导出我的数据」会生成一个文件，存在哪里都行；「导入备份」把它放回这台手机。",
       drive: "设置 › Google 云端硬盘：连接你的 Google 账号，就能手动或自动把数据备份到网上，并在另一台手机上恢复。",
+      calendar: "点矩阵上的数字日历图标，按月查看任务；点一天查看它的时间轴。",
+      voice: "点标题里的麦克风口述任务，或长按 + 打开表单并立即开始语音输入。",
       permission: "提醒：介绍页面会建议你开启。如果你拒绝了，应用不会每次打开都再问；在你设置提醒时，会建议你允许通知或打开手机设置。状态显示在设置 › 通知中。",
       quietHours: "免打扰时段（默认关闭，在设置中开启）：落在其中的提醒会在时段结束时送达，任务详情会在这种情况下告诉你。",
       steps: "在任务详情里，「步骤」可以拆分任务：卡片会显示进度「2/5」和今天的步骤。过去日期里没完成的步骤会标为延误。",

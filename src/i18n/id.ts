@@ -344,6 +344,16 @@ export const id: Translations = {
         body: "Opsional: datamu disalin ke folder tersembunyi di Google Drive-mu yang khusus untuk DoFirst: folder ini tidak muncul di filemu dan tidak ada orang lain yang bisa mengaksesnya, bahkan pengembang. 5 cadangan terakhir disimpan. “Pulihkan” mengganti data di ponsel ini, setelah salinan pengaman dibuat.",
         example: "di ponsel baru, masuk dengan akun yang sama: DoFirst menawarkan untuk memulihkan cadangan terakhirmu.",
       },
+      calendar: {
+        title: "Kalender",
+        body: "Setiap hari menampilkan titik berwarna kuadran dan jumlah tugas: tenggat, langkah yang direncanakan, dan kemunculan berikutnya dari tugas berulang (bergaris putus-putus, \"Direncanakan\"). Ketuk hari untuk melihat lini waktunya, lalu ketuk tugas untuk membukanya.",
+        example: "geser ke kiri untuk ke bulan berikutnya; \"Hari ini\" membawamu kembali ke hari ini.",
+      },
+      voice: {
+        title: "Dikte",
+        body: "Ketuk mikrofon untuk mendikte judul: teks muncul saat kamu bicara dan pendengaran berhenti setelah jeda. Pengenalan suara ponsel yang bekerja, langsung di perangkat jika bisa; tidak ada yang direkam. DoFirst juga mengenali tanggal (\"besok jam 3 sore\") atau kata \"mendesak\" dan \"penting\", lalu menawarkan untuk menerapkannya.",
+        example: "dikte \"Telepon bengkel hari Jumat\" lalu ketuk \"Terapkan\": tenggat diatur ke Jumat pukul 9.",
+      },
       autoEscalate: {
         title: "Tugas lewat tenggat",
         body: "Saat tugas “Jadwalkan” melewati tenggatnya, tugas itu pindah sendiri ke “Kerjakan”, beserta pengingatnya. Ada pesan yang memberitahumu, dan “Urungkan” mengembalikannya ke “Jadwalkan”.",
@@ -580,6 +590,43 @@ export const id: Translations = {
     undoErrorBody: "Salinan pengaman tidak bisa dibaca. Tidak ada yang diubah.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Buka kalender",
+    title: "Kalender",
+    today: "Hari ini",
+    previous: "Bulan sebelumnya",
+    next: "Bulan berikutnya",
+    empty: "Tidak ada rencana di hari ini.",
+    noTime: "Tanpa jam",
+    planned: "Direncanakan",
+    step: (title: string) => `Langkah: ${title}`,
+    plannedHint: "Kemunculan terencana dari tugas berulang, tidak bisa diubah",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Dikte judul",
+    stop: "Hentikan dikte",
+    listening: "Mendengarkan… silakan bicara",
+    deniedTitle: "Mikrofon tidak diizinkan",
+    deniedBody: "Untuk mendikte tugas, izinkan mikrofon untuk DoFirst di pengaturan ponsel.",
+    unavailableTitle: "Dikte tidak tersedia",
+    unavailableBody: "Pengenalan suara tidak tersedia di ponsel ini.",
+    errorTitle: "Dikte terhenti",
+    errorBody: "Pengenalan suara tidak bisa dimulai. Coba lagi sebentar lagi.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Tenggat: ${date}`,
+    apply: "Terapkan",
+    dismiss: "Abaikan",
+    urgent: "Judul menyebut \"mendesak\"",
+    important: "Judul menyebut \"penting\"",
+    turnOn: "Aktifkan",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -694,6 +741,8 @@ export const id: Translations = {
       nudge: "Di pengingat tugas yang diserahkan, atau di langkah 3 tinjauan, “Tanyakan” menyiapkan pesan singkat untuk dikirim.",
       backup: "Pengaturan › Cadangan: “Ekspor dataku” membuat file untuk disimpan di mana saja; “Impor cadangan” mengembalikannya ke ponsel ini.",
       drive: "Pengaturan › Google Drive: hubungkan akun Google-mu untuk mencadangkan data secara online, manual atau otomatis, lalu memulihkannya di ponsel lain.",
+      calendar: "Ketuk ikon kalender bernomor di matriks untuk melihat tugas per bulan; ketuk hari untuk lini waktunya.",
+      voice: "Ketuk mikrofon di judul untuk mendikte tugas, atau tekan lama + untuk membuka formulir dan langsung mendikte.",
       permission: "Pengingat: pengenalan aplikasi menawarkan untuk menyalakannya. Kalau kamu menolak, aplikasi tidak bertanya lagi setiap kali dibuka: saat kamu menyalakan pengingat, aplikasi menawarkan untuk mengizinkan notifikasi atau membuka pengaturan ponsel. Statusnya ada di Pengaturan › Notifikasi.",
       quietHours: "Jam tenang (mati secara bawaan, aktifkan di Pengaturan): pengingat yang jatuh di dalamnya datang saat jam tenang berakhir, dan lembar tugas memberitahumu kalau itu terjadi.",
       steps: "Di lembar tugas, “Langkah” memecah tugas: kartu menampilkan kemajuan “2/5” dan langkah hari ini. Langkah dari hari yang sudah lewat dan belum selesai ditandai terlambat.",

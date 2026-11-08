@@ -345,6 +345,16 @@ export const tr: Translations = {
         body: "İsteğe bağlı: verilerin, Google Drive'ında yalnızca DoFirst'e ayrılmış gizli bir klasöre kopyalanır: dosyaların arasında görünmez ve geliştirici dahil kimse erişemez. Son 5 yedek saklanır. \"Geri yükle\", önce bir güvenlik kopyası alır, sonra bu telefondaki verileri değiştirir.",
         example: "yeni bir telefonda aynı hesapla giriş yap: DoFirst son yedeğini geri yüklemeyi önerir.",
       },
+      calendar: {
+        title: "Takvim",
+        body: "Her gün, bölge renklerinde noktalar ve görev sayısını gösterir: son tarihler, planlanan adımlar ve tekrarlanan görevlerin sonraki tekrarları (kesikli çizgili, \"Planlandı\"). Zaman çizelgesini görmek için bir güne, açmak için bir göreve dokun.",
+        example: "sonraki aya geçmek için sola kaydır; \"Bugün\" seni bugüne geri getirir.",
+      },
+      voice: {
+        title: "Sesle yazma",
+        body: "Başlığı sesle yazmak için mikrofona dokun: sen konuşurken metin görünür, kısa bir sessizlikten sonra dinleme durur. İşi telefonun ses tanıma özelliği yapar, mümkünse cihazın üzerinde; hiçbir şey kaydedilmez. DoFirst \"acil\" ve \"önemli\" kelimelerini de fark edip uygulamayı önerir.",
+        example: "\"Acil faturayı öde\" de: DoFirst \"Acil mi?\" anahtarını açmayı önerir.",
+      },
       autoEscalate: {
         title: "Süresi geçen görevler",
         body: "Bir “Planla” görevinin son tarihi geçince, hatırlatmalarıyla birlikte kendiliğinden “Yap” kutusuna geçer. Bir mesaj seni haberdar eder, “Geri al” da onu “Planla” kutusuna geri koyar.",
@@ -581,6 +591,43 @@ export const tr: Translations = {
     undoErrorBody: "Güvenlik kopyası okunamadı. Hiçbir şey değişmedi.",
   },
 
+  // Vue calendrier
+  calendar: {
+    open: "Takvimi aç",
+    title: "Takvim",
+    today: "Bugün",
+    previous: "Önceki ay",
+    next: "Sonraki ay",
+    empty: "Bu gün için plan yok.",
+    noTime: "Saatsiz",
+    planned: "Planlandı",
+    step: (title: string) => `Adım: ${title}`,
+    plannedHint: "Tekrarlanan bir görevin planlanmış tekrarı, değiştirilemez",
+  },
+
+  // Dictée du titre (reconnaissance vocale du téléphone)
+  voice: {
+    start: "Başlığı sesle yaz",
+    stop: "Sesle yazmayı durdur",
+    listening: "Dinliyorum… şimdi konuş",
+    deniedTitle: "Mikrofon izni yok",
+    deniedBody: "Görevlerini sesle yazmak için telefon ayarlarından DoFirst'e mikrofon izni ver.",
+    unavailableTitle: "Sesle yazma kullanılamıyor",
+    unavailableBody: "Bu telefonda ses tanıma kullanılamıyor.",
+    errorTitle: "Sesle yazma durdu",
+    errorBody: "Ses tanıma başlatılamadı. Biraz sonra tekrar dene.",
+  },
+
+  // Saisie intelligente : suggestions tirées du titre
+  smart: {
+    due: (date: string) => `Son tarih: ${date}`,
+    apply: "Uygula",
+    dismiss: "Yoksay",
+    urgent: "Başlıkta \"acil\" geçiyor",
+    important: "Başlıkta \"önemli\" geçiyor",
+    turnOn: "Aç",
+  },
+
   // Sauvegarde Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -695,6 +742,8 @@ export const tr: Translations = {
       nudge: "Devredilen bir görevin hatırlatmasında ya da değerlendirmenin 3. adımında, “Takip et” gönderilecek kısa bir mesaj hazırlar.",
       backup: "Ayarlar › Yedek: “Verilerimi dışa aktar” istediğin yerde saklayabileceğin bir dosya oluşturur; “Yedeği içe aktar” onu bu telefona geri yükler.",
       drive: "Ayarlar › Google Drive: Google hesabını bağla; verilerini elle ya da otomatik olarak çevrimiçi yedekle ve başka bir telefonda geri yükle.",
+      calendar: "Görevlerini ay ay görmek için matristeki numaralı takvim simgesine dokun; zaman çizelgesi için bir güne dokun.",
+      voice: "Bir görevi sesle yazmak için başlıktaki mikrofona dokun ya da formu açıp hemen sesle yazmak için +'ya uzun bas.",
       permission: "Hatırlatıcılar: tanıtım ekranı onları açmayı önerir. Reddedersen uygulama her açılışta tekrar sormaz: bir hatırlatıcı açtığında bildirimlere izin vermeyi ya da telefon ayarlarını açmayı önerir. Durum Ayarlar › Bildirimler'de görünür.",
       quietHours: "Sessiz saatler (varsayılan olarak kapalı, Ayarlar'dan aç): bu aralığa düşen hatırlatmalar sessiz saatler bitince gelir, böyle olduğunda görev sayfası seni uyarır.",
       steps: "Görev sayfasında “Adımlar” görevi böler: kart “2/5” ilerlemesini ve günün adımını gösterir. Geçmiş bir güne ait, bitmemiş bir adım gecikmiş olarak işaretlenir.",
