@@ -1,6 +1,6 @@
 # Play Console › Sécurité des données : réponses pour la 1.5.0
 
-À saisir à la main dans Play Console › Règles et programmes › Contenu de l'application ›
+Saisies le 09/11/2026 (réponse « connexion avec un compte créé en dehors de l'appli » passée à Oui le jour même). À saisir à la main dans Play Console › Règles et programmes › Contenu de l'application ›
 Sécurité des données (l'API ne permet pas de les envoyer). Changement par rapport à la 1.4 :
 la sauvegarde Google Drive, facultative, envoie des données hors du téléphone.
 
@@ -17,10 +17,13 @@ tâches terminées vers le Google Drive de l'utilisateur : il faut donc la décl
 |---|---|
 | Votre application collecte-t-elle ou partage-t-elle des types de données utilisateur requis ? | **Oui** |
 | Toutes les données utilisateur collectées par votre application sont-elles chiffrées en transit ? | **Oui** (HTTPS vers l'API Google Drive) |
-| Proposez-vous un moyen de demander la suppression des données ? | **Oui** : Réglages › Google Drive › « Supprimer ma sauvegarde en ligne » ; ou retrait de l'accès sur myaccount.google.com/permissions |
+| Proposez-vous un moyen de demander la suppression des données ? | **Oui** : Réglages › Google Drive › « Supprimer ma sauvegarde en ligne » ; ou retrait de l'accès sur myaccount.google.com/permissions. URL demandée par la console : https://sylldevlearning-legal.vercel.app/dofirst/privacy (procédure décrite dans les règles) |
 
-Création de compte (question séparée, si elle est posée) : **Non**. DoFirst n'a pas de compte :
-la connexion Google sert seulement à l'accès au Drive et ne crée aucun compte DoFirst.
+Création de compte : **« Mon appli ne permet pas aux utilisateurs de créer un compte »**. DoFirst n'a
+pas de compte : la connexion Google ne crée aucun compte DoFirst.
+
+Connexion avec des comptes créés en dehors de l'appli : **Oui**, méthode **« Autre »**, description :
+« Connexion Google facultative, uniquement pour la sauvegarde Google Drive ».
 
 ## Types de données
 
