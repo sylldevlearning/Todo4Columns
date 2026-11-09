@@ -1,6 +1,7 @@
-# DoFirst (Todo4Columns) — État de la version 1.5.0
+# DoFirst (Todo4Columns) — État de la version 1.6.0 (en cours)
 
-> Mis à jour le 09/11/2026. Branche `version-1.5.0` fusionnée dans `master`, tag `v1.5.0` (branches de version gardées). Version **1.5.0** dans `app.json`.
+> Mis à jour le 09/11/2026. **1.6.0 en cours sur la branche `version-1.6.0`** (synchronisation Google Drive entre plusieurs téléphones) : version **1.6.0** dans `app.json`, pas encore de build. Vérifié : 835 tests Jest (63 suites), `tsc --noEmit`, `expo-doctor` 21/21.
+> 1.5.0 : branche `version-1.5.0` fusionnée dans `master`, tag `v1.5.0` (branches de version gardées).
 > Vérifié (10/11/2026) : 776 tests Jest (60 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
 > **En production :** 1.5.0 (versionCode 11) soumise à l'examen le 09/11/2026 par `release:ship` (production 100 %, 14 fiches avec 7 captures chacune, Sécurité des données) ; relu par l'API : production `1.5.0 [11] completed`, 14 fiches, 7 captures par langue. Précédente : 1.4.1 (versionCode 9).
 > **Google Cloud (projet `matrice-deisenhower`, compte csgonesse@gmail.com) :** API Google Drive activée ; écran de consentement « DoFirst » (scope `drive.appdata` seul, classé non sensible), règles https://sylldevlearning-legal.vercel.app/dofirst/privacy, domaine autorisé `sylldevlearning-legal.vercel.app` ; deux clients OAuth Android pour `com.saloum.sylla.matriceeisenhower` : clé d'importation EAS (`BD:20:F7:8A…`, client existant « Client Android 1 ») et clé de signature Play (`D7:7B:86:3C…`, « DoFirst Android (clé de signature Play) »). Pas de client Web (la librairie n'en a pas besoin pour un jeton d'accès). **Application OAuth publiée (« En production ») le 09/11/2026** : aucune validation requise pour l'accès aux données (pas de scope sensible) ; le Centre de validation indique que le branding (nom « DoFirst ») n'est pas affiché aux utilisateurs tant qu'il n'est pas validé (facultatif, voir « Points ouverts »).
@@ -34,6 +35,14 @@ Les données restent sur le téléphone, sans compte. L'app existe en 13 langues
   - délégation par message ;
   - sauvegarde (export, import, annulation du dernier import).
 - **1.3.0** : étapes des tâches, « Répartir sur plusieurs jours », rappels d'étape, corrections de la revue de code, nouvelles fiches Play Store.
+- **1.6.0** (en cours) : synchronisation Google Drive entre plusieurs téléphones, à la place de la sauvegarde quotidienne de la 1.5 :
+  - données synchronisées : tâches (étapes et avancement compris), journal des fins, revues ; réglages propres à chaque téléphone ;
+  - `modifiedAt` sur chaque tâche, mis à jour à un seul endroit (`stampChanges`, appelée par `setTasks` dans `useTasks`) pour toute modification de contenu ; `updatedAt` reste le point de départ des relances (une étape cochée depuis la carte ne le changeait pas, et ne doit pas relancer les rappels) ; pierres tombales `{ id, deletedAt }` gardées 90 jours ;
+  - fichiers dans `appDataFolder` : `dofirst-sync.json` (l'actuel) et `dofirst-sync-copy-AAAA-MM-JJ.json` (une copie par jour, à la première synchronisation du jour, 5 jours gardés) ;
+  - algorithme (`src/sync/engine.ts`) : télécharger l'actuel s'il a changé (révision Drive), fusionner par id (le plus récent gagne, pierre tombale si plus récente, journal en union), enregistrer, envoyer. Drive v3 ignore `If-Match` : la révision est revérifiée juste avant l'envoi (changée : on retélécharge et refusionne) et l'historique des révisions juste après (écriture glissée entre les deux : refusionnée et renvoyée) ; deux actuels créés en même temps sont fusionnés, le plus ancien reste ;
+  - déclencheurs (`src/sync/controller.ts`, `DriveSync`) : 10 s après le dernier changement, arrière-plan, ouverture et retour dans l'app (30 s au plus), connexion ; hors ligne : nouvel essai à 30 s, 2 min, 10 min puis toutes les 30 min, sans message ;
+  - icône nuage dans l'en-tête de la matrice ; à la connexion, « Fusionner (recommandé) », « Remplacer par Google Drive » (copie de secours) ou « Garder ce téléphone », récupération d'office si le téléphone est vide ; Réglages › Google Drive : Synchroniser maintenant, retour à une copie, synchronisation automatique, déconnexion, suppression des données en ligne ;
+  - migration : la dernière sauvegarde de la 1.5 devient le point de départ (fusionnée, sauf si elle vient de ce téléphone : ses données sont alors déjà plus récentes) ; elle reste dans le Drive et est supprimée avec « Supprimer mes données en ligne ».
 - **1.5.0** (soumise à l'examen le 09/11/2026) :
   - sauvegarde Google Drive facultative (Réglages › Google Drive) : connexion Google, dossier caché `appDataFolder` (scope `drive.appdata`), sauvegarde manuelle et automatique (au plus une par jour, au passage en arrière-plan, si les données ont changé), 5 dernières gardées, restauration avec aperçu et copie de secours, proposée après connexion si une sauvegarde existe, déconnexion, suppression de la sauvegarde en ligne ; textes dans les 13 langues ;
   - vue calendrier (icône à chiffres sur la matrice) : mois, points par quadrant et nombre de tâches, échéances, étapes prévues, occurrences futures des tâches récurrentes (« Prévue », non modifiables), panneau du jour avec répartition et frise horaire, « Sans heure » ;
@@ -131,7 +140,9 @@ store/                  Notes de version (release-notes-<langue>.txt), règles d
 | `SETTINGS` | Réglages (schéma 1, champs ajoutés avec valeurs par défaut ; en 1.2.1, `firstUseAt` et `reviewAskedAt` optionnels pour la demande d'avis ; en 1.4, `language` : `"auto"` par défaut ou une langue) |
 | `COMPLETION_LOG` | Journal `{ date, catégorie }` des tâches terminées, 26 semaines |
 | `WEEKLY_REVIEW_LOG` | Semaines où une revue a été faite |
-| `DRIVE_BACKUP` | Sauvegarde Google Drive (1.5) : compte connecté, sauvegarde automatique, dernière sauvegarde réussie, empreinte des données, dernier essai. À part des réglages : une restauration ne l'écrase pas |
+| `DRIVE_BACKUP` | Connexion Google Drive : compte connecté, synchronisation automatique (`autoBackup`, nom de la 1.5), `lastBackupAt` de la 1.5 (sert à reconnaître une sauvegarde faite par ce téléphone). À part des réglages : une restauration ne l'écrase pas |
+| `DRIVE_SYNC` | État de la synchronisation (1.6) : fichier et révision déjà fusionnés, empreinte, journal à cette révision, entrées retirées, dernière synchronisation, migration faite, jour de la dernière copie |
+| `SYNC_DELETED` | Pierres tombales `{ id, deletedAt }` des tâches supprimées, 90 jours (1.6) |
 | `BACKUP_BEFORE_IMPORT` | Copie des données avant le dernier import |
 | `LAST_HANDLED_NOTIFICATION_RESPONSE` | Dernière réponse de notification appliquée |
 
@@ -141,6 +152,8 @@ Champs ajoutés aux tâches en 1.2 :
 - **v7 (1.3) :** `steps`, liste de `{ id, title, done, doneAt, day (« 2026-10-27 », facultatif), time (« 14:30 », facultatif) }`, vide par défaut.
 
 Les trois champs optionnels (`completedAt`, `priorityWeek`, `nextOccurrenceId`) ne sont pas renseignés par la récupération, qui n'a pas été modifiée.
+
+En 1.6, `modifiedAt` (facultatif, même schéma v8) : absent des tâches enregistrées avant, il vaut alors la plus récente des dates connues (`modifiedAtOf`), le même calcul sur chaque téléphone.
 
 ## 6. Fonctionnalités
 
@@ -251,6 +264,14 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 ## 8. Points ouverts
 
 - **Tests sur téléphone :** faits sur le build 9 de la 1.4.1 (test interne), tout est OK. La liste ci-dessous sert pour les prochaines versions.
+- **1.6.0 (synchronisation) :** à tester sur deux téléphones avec un build (pas encore fait). Limites connues :
+  - **horloge des téléphones :** « la plus récente gagne » se décide avec l'heure de chaque téléphone ; un téléphone en retard de plusieurs minutes perd une modification faite juste après celle d'un autre ;
+  - **pierres tombales de 90 jours :** un téléphone resté hors ligne plus longtemps fait revenir les tâches supprimées entre-temps ;
+  - **historique des révisions :** s'il est indisponible, une écriture croisée n'est rattrapée qu'à la prochaine synchronisation de l'autre téléphone (rien n'est perdu tant qu'il synchronise encore) ; non vérifié sur le vrai Drive (tests sur un Drive simulé) ;
+  - **suppression des données en ligne :** un autre téléphone encore connecté les renvoie (le message le dit) ;
+  - **téléphone resté en 1.5 :** il continue ses sauvegardes `dofirst-backup-*`, ignorées après la migration ;
+  - **journal :** une entrée retirée l'est pour toutes les fins de la même milliseconde et du même quadrant ;
+  - **Sécurité des données :** mêmes types (tâches, journal), toujours facultatifs et stockés dans le Drive de l'utilisateur : pas de changement à déclarer ; les règles de confidentialité parlent encore de « sauvegarde ».
 - **1.5.0 :** soumise à l'examen le 09/11/2026 (production, fiches, captures, Sécurité des données). Suivre l'examen dans la Play Console.
   - **Branding OAuth (facultatif) :** pour afficher « DoFirst » sur l'écran de connexion Google, valider le branding (Google Auth Platform › Centre de validation ; domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console). Sans cela, la connexion fonctionne.
   - **Adresse d'assistance de l'écran de consentement :** encore csgonesse@gmail.com ; sylldevlearning@gmail.com (Owner IAM) peut la remplacer dans Branding.
