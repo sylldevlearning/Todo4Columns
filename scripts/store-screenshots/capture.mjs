@@ -3,6 +3,9 @@
 //   npm run screenshots                         export web, 13 langues, captures rangées dans les fiches
 //   npm run screenshots -- --examples=ja,de,en  quelques langues, dans scripts/store-screenshots/.out/examples
 //   options : --skip-export (réutilise le dernier export web), --only=ja,de (langues de l'app)
+//   npm run screenshots -- --theme=light         version claire (app et cadre clairs), rangée à part
+//                                                dans scripts/store-screenshots/.out/light : les
+//                                                fiches du Play Store gardent les captures sombres
 //
 // 1. Export web de l'app (react-native-web installé sans être enregistré dans package.json ;
 //    googleAccount.web.ts copié le temps de l'export pour afficher la section Google Drive).
@@ -37,6 +40,8 @@ const args = Object.fromEntries(
   })
 );
 const examples = typeof args.examples === "string" ? args.examples.split(",") : null;
+// Thème des captures : sombre par défaut (fiches du Play Store), clair à la demande
+const APPEARANCE = args.theme === "light" ? "light" : "dark";
 const only = examples ?? (typeof args.only === "string" ? args.only.split(",") : null);
 const languages = [...new Set(Object.values(LISTINGS))].filter((l) => !only || only.includes(l));
 
@@ -152,10 +157,10 @@ async function clickBottomButton(page) {
 async function captureLanguage(browser, language, base) {
   const dir = path.join(RAW, language);
   mkdirSync(dir, { recursive: true });
-  const storage = storageFor(language);
+  const storage = storageFor(language, Date.now(), { appearance: APPEARANCE });
   const calendarDay = storage.__calendarDay;
   delete storage.__calendarDay;
-  const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: SCALE, locale: language });
+  const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: SCALE, locale: language, colorScheme: APPEARANCE });
   await context.addInitScript((data) => {
     if (sessionStorage.getItem("seeded")) return;
     localStorage.clear();
@@ -174,8 +179,8 @@ async function captureLanguage(browser, language, base) {
   };
 
   // 1. Matrice : mêmes tâches, sans échéances (cases lisibles)
-  const plainContext = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: SCALE, locale: language });
-  const plain = storageFor(language, Date.now(), { plain: true });
+  const plainContext = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: SCALE, locale: language, colorScheme: APPEARANCE });
+  const plain = storageFor(language, Date.now(), { plain: true, appearance: APPEARANCE });
   delete plain.__calendarDay;
   await plainContext.addInitScript((data) => {
     localStorage.clear();
@@ -262,6 +267,12 @@ const FONT_LINK =
 // Capture calée en bas du téléphone (panneau qui s'ouvre par le bas) plutôt qu'en haut
 const ALIGN_BOTTOM = new Set(["avancement"]);
 
+// Couleurs du cadre (fond, titres, téléphone) selon le thème des captures
+const FRAME = {
+  dark: { base: "#0f1115", title: "#fff", subtitle: "rgba(255,255,255,0.58)", border: "#2a2e37", phone: "#101115", shadow: "rgba(0,0,0,0.45)" },
+  light: { base: "#f6f7f9", title: "#14161a", subtitle: "rgba(20,22,26,0.6)", border: "#e3e6eb", phone: "#ffffff", shadow: "rgba(20,22,26,0.18)" },
+}[APPEARANCE];
+
 function frameHtml(language, index, screenshotUrl) {
   const [line1, line2, subtitle] = TITLES[language][index];
   const theme = THEME_COLORS[THEMES[index]];
@@ -273,13 +284,13 @@ function frameHtml(language, index, screenshotUrl) {
   * { margin: 0; box-sizing: border-box; }
   body { width: 1080px; height: 1920px; overflow: hidden; font-family: ${font}, sans-serif;
     background: radial-gradient(120% 45% at 50% 0%, ${theme.glow}, transparent 70%),
-                linear-gradient(180deg, ${theme.top} 0px, ${theme.top} 180px, #0f1115 980px); }
+                linear-gradient(180deg, ${APPEARANCE === "dark" ? theme.top : FRAME.base} 0px, ${APPEARANCE === "dark" ? theme.top : FRAME.base} 180px, ${FRAME.base} 980px); }
   .titles { position: absolute; top: 96px; left: 60px; right: 60px; text-align: center; }
-  h1 { font-weight: 800; font-size: ${long ? 74 : 88}px; line-height: 1.08; color: #fff; letter-spacing: -0.5px; }
+  h1 { font-weight: 800; font-size: ${long ? 74 : 88}px; line-height: 1.08; color: ${FRAME.title}; letter-spacing: -0.5px; }
   h1 span { display: block; color: ${theme.accent}; }
-  p { margin-top: 26px; font-weight: 500; font-size: 38px; color: rgba(255,255,255,0.58); }
+  p { margin-top: 26px; font-weight: 500; font-size: 38px; color: ${FRAME.subtitle}; }
   .phone { position: absolute; left: 106px; top: 398px; width: 868px; height: 1700px; border-radius: 74px;
-    border: 3px solid #2a2e37; background: #101115; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+    border: 3px solid ${FRAME.border}; background: ${FRAME.phone}; overflow: hidden; box-shadow: 0 30px 80px ${FRAME.shadow}; }
   .phone img { display: block; width: 862px; }
   .phone.bottom img { position: absolute; left: 0; bottom: 178px; }
 </style></head><body>
@@ -317,11 +328,15 @@ try {
   for (const language of languages) {
     console.log(`→ ${language}`);
     const rawDir = await captureLanguage(browser, language, `http://localhost:${PORT}/`);
+    // Version claire : jamais dans les fiches (elles gardent les captures sombres)
+    const light = APPEARANCE === "light";
     const targets = examples
-      ? [path.join(OUT, "examples", language)]
+      ? [path.join(OUT, light ? "examples-light" : "examples", language)]
+      : light
+      ? [path.join(OUT, "light", language)]
       : listingsFor(language).map((l) => path.join(ROOT, "store/listings", l, "images/phoneScreenshots"));
     // Anciennes captures de la fiche remplacées (le .gitkeep reste)
-    if (!examples) for (const dir of targets) if (existsSync(dir)) for (const f of readdirSync(dir)) if (f.endsWith(".png")) rmSync(path.join(dir, f));
+    if (!examples && !light) for (const dir of targets) if (existsSync(dir)) for (const f of readdirSync(dir)) if (f.endsWith(".png")) rmSync(path.join(dir, f));
     await frameLanguage(browser, language, rawDir, targets);
     console.log(`  ${targets.map((t) => path.relative(ROOT, t)).join(", ")}`);
   }
