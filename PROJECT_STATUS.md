@@ -1,6 +1,6 @@
 # DoFirst (Todo4Columns) — État de la version 1.6.0 (en cours)
 
-> Mis à jour le 09/11/2026. **1.6.0 en cours sur la branche `version-1.6.0`** (synchronisation Google Drive entre plusieurs téléphones) : version **1.6.0** dans `app.json`, pas encore de build. Vérifié : 835 tests Jest (63 suites), `tsc --noEmit`, `expo-doctor` 21/21.
+> Mis à jour le 09/11/2026. **1.6.0 en cours sur la branche `version-1.6.0`** (synchronisation Google Drive entre plusieurs téléphones) : version **1.6.0** dans `app.json`, pas encore de build. Revue de la synchronisation faite et ses 10 points corrigés. Vérifié : 855 tests Jest (65 suites), `tsc --noEmit`, `expo-doctor` 21/21.
 > 1.5.0 : branche `version-1.5.0` fusionnée dans `master`, tag `v1.5.0` (branches de version gardées).
 > Vérifié (10/11/2026) : 776 tests Jest (60 suites, fuseau Europe/Paris), 5 tests des scripts Play (`npm run test:scripts`), `tsc --noEmit`, `expo-doctor` 21/21, prebuild Android dans une copie du projet (versionName 1.5.0 ; permission ajoutée : `RECORD_AUDIO`, plus `<queries>` vers le service de reconnaissance de Google). Bundle JS Android : 4 978 805 → 5 378 363 octets (+390 Ko, +8 %, surtout chrono-node) ; natif : module Kotlin d'expo-speech-recognition (~1 900 lignes, sans dépendance native).
 > **En production :** 1.5.0 (versionCode 11) soumise à l'examen le 09/11/2026 par `release:ship` (production 100 %, 14 fiches avec 7 captures chacune, Sécurité des données) ; relu par l'API : production `1.5.0 [11] completed`, 14 fiches, 7 captures par langue. Précédente : 1.4.1 (versionCode 9).
@@ -141,8 +141,8 @@ store/                  Notes de version (release-notes-<langue>.txt), règles d
 | `COMPLETION_LOG` | Journal `{ date, catégorie }` des tâches terminées, 26 semaines |
 | `WEEKLY_REVIEW_LOG` | Semaines où une revue a été faite |
 | `DRIVE_BACKUP` | Connexion Google Drive : compte connecté, synchronisation automatique (`autoBackup`, nom de la 1.5), `lastBackupAt` de la 1.5 (sert à reconnaître une sauvegarde faite par ce téléphone). À part des réglages : une restauration ne l'écrase pas |
-| `DRIVE_SYNC` | État de la synchronisation (1.6) : fichier et révision déjà fusionnés, empreinte, journal à cette révision, entrées retirées, dernière synchronisation, migration faite, jour de la dernière copie |
-| `SYNC_DELETED` | Pierres tombales `{ id, deletedAt }` des tâches supprimées, 90 jours (1.6) |
+| `DRIVE_SYNC` | État de la synchronisation (1.6) : fichier et révision déjà fusionnés (révision effacée si l'historique n'a pas pu être vérifié), empreinte, dernière synchronisation, migration faite, jour de la dernière copie |
+| `SYNC_DELETED` | Suppressions notées au moment où elles se produisent, gardées 90 jours (1.6) : pierres tombales `{ id, deletedAt }` des tâches et retraits du journal `{ key « date\|quadrant », removedAt }` (tâche rouverte) |
 | `BACKUP_BEFORE_IMPORT` | Copie des données avant le dernier import |
 | `LAST_HANDLED_NOTIFICATION_RESPONSE` | Dernière réponse de notification appliquée |
 
@@ -267,11 +267,13 @@ Le prebuild montre ces directives de retrait ; la fusion finale des manifestes n
 - **1.6.0 (synchronisation) :** à tester sur deux téléphones avec un build (pas encore fait). Limites connues :
   - **horloge des téléphones :** « la plus récente gagne » se décide avec l'heure de chaque téléphone ; un téléphone en retard de plusieurs minutes perd une modification faite juste après celle d'un autre ;
   - **pierres tombales de 90 jours :** un téléphone resté hors ligne plus longtemps fait revenir les tâches supprimées entre-temps ;
-  - **historique des révisions :** s'il est indisponible, une écriture croisée n'est rattrapée qu'à la prochaine synchronisation de l'autre téléphone (rien n'est perdu tant qu'il synchronise encore) ; non vérifié sur le vrai Drive (tests sur un Drive simulé) ;
+  - **historique des révisions :** lu sur toutes les pages ; s'il est indisponible ou sans notre révision, la vérification est notée impossible, une écriture croisée n'est rattrapée qu'à la prochaine synchronisation de l'autre téléphone (rien n'est perdu tant qu'il synchronise encore) ; non vérifié sur le vrai Drive (tests sur un Drive simulé) ;
+  - **conflit sur une même tâche :** c'est la tâche entière la plus récente qui gagne (pas champ par champ) : une étape cochée sur un téléphone et un titre changé sur l'autre, presque en même temps, gardent une seule des deux modifications ;
+  - **migration 1.5 :** les dates n'y sont que des estimations ; une étape décochée en 1.5 (sans changer `updatedAt`) peut être recochée par la sauvegarde d'un autre téléphone ;
   - **suppression des données en ligne :** un autre téléphone encore connecté les renvoie (le message le dit) ;
   - **téléphone resté en 1.5 :** il continue ses sauvegardes `dofirst-backup-*`, ignorées après la migration ;
-  - **journal :** une entrée retirée l'est pour toutes les fins de la même milliseconde et du même quadrant ;
-  - **Sécurité des données :** mêmes types (tâches, journal), toujours facultatifs et stockés dans le Drive de l'utilisateur : pas de changement à déclarer ; les règles de confidentialité parlent encore de « sauvegarde ».
+  - **journal :** une entrée retirée l'est pour toutes les fins de la même milliseconde et du même quadrant ; l'archivage du lancement attend la première synchronisation (20 s au plus) ;
+  - **Sécurité des données :** mêmes types (tâches, journal), toujours facultatifs et stockés dans le Drive de l'utilisateur : pas de changement à déclarer. Règles de confidentialité mises à jour le 09/11/2026 (« synchronisation », copies du jour, réglages joints au fichier), publiées sur Vercel.
 - **1.5.0 :** soumise à l'examen le 09/11/2026 (production, fiches, captures, Sécurité des données). Suivre l'examen dans la Play Console.
   - **Branding OAuth (facultatif) :** pour afficher « DoFirst » sur l'écran de connexion Google, valider le branding (Google Auth Platform › Centre de validation ; domaine `sylldevlearning-legal.vercel.app` à valider dans Search Console). Sans cela, la connexion fonctionne.
   - **Adresse d'assistance de l'écran de consentement :** encore csgonesse@gmail.com ; sylldevlearning@gmail.com (Owner IAM) peut la remplacer dans Branding.
