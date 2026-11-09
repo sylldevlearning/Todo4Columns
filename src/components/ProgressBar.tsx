@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { t } from "../i18n";
-import { colors, withAlpha } from "../theme";
+import { colors, withAlpha, themedStyles } from "../theme";
 
 // Barre fine d'avancement (carte, fiche, panneau rapide)
 export default function ProgressBar({ percent, color, height = 4 }: { percent: number; color: string; height?: number }) {
@@ -19,12 +19,14 @@ export default function ProgressBar({ percent, color, height = 4 }: { percent: n
   );
 }
 
-const styles = StyleSheet.create({
-  track: {
-    overflow: "hidden",
-    backgroundColor: colors.border,
-  },
-  fill: {
-    height: "100%",
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    track: {
+      overflow: "hidden",
+      backgroundColor: colors.border,
+    },
+    fill: {
+      height: "100%",
+    },
+  })
+);

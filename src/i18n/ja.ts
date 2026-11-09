@@ -226,6 +226,10 @@ export const ja: Translations = {
     reviewTime: "時刻",
     weekdays: ["日", "月", "火", "水", "木", "金", "土"],
     language: "言語",
+    appearance: "外観",
+    appearanceAuto: "自動",
+    appearanceLight: "ライト",
+    appearanceDark: "ダーク",
     languageAuto: "自動（スマホの言語）",
   },
 
@@ -378,6 +382,11 @@ export const ja: Translations = {
         title: "言語",
         body: "「自動」はスマホの言語に合わせます。DoFirstがその言語に対応していなければ英語になります。言語を選ぶと、常にその言語を使います。通知も含めてすぐに切り替わります。タスク名は翻訳されません。",
         example: "スウェーデン語のスマホでは英語で表示されます。「日本語」を選べば日本語のままにできます。",
+      },
+      appearance: {
+        title: "外観",
+        body: "「自動」はスマホのテーマに合わせて切り替わります。「ライト」「ダーク」は常に同じです。変更はウィジェットも含めてすぐに反映され、この設定はこのスマホだけに適用されます。",
+        example: "スマホが夜にダークになる設定なら、「自動」を選ぶと同じように切り替わります。",
       },
     },
   },

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { isPastDue, isSoonUrgent, isWaiting } from "../notifications/status";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 import { Task } from "../types";
 import InfoButton from "./InfoButton";
 
@@ -63,29 +63,31 @@ export default function TaskAlerts({ task, now, onSnooze, onMove, onMoveToDo }: 
   return null;
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 10,
-  },
-  center: {
-    alignItems: "center",
-  },
-  button: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+      marginTop: 10,
+    },
+    center: {
+      alignItems: "center",
+    },
+    button: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    label: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+    },
+    pressed: {
+      opacity: 0.75,
+    },
+  })
+);

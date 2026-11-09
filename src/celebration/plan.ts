@@ -1,4 +1,5 @@
 import { CATEGORY_BY_KEY } from "../constants/categories";
+import { palette } from "../theme";
 import { Category } from "../types";
 
 // Durées : les confettis retombent en ~1,7 s, le message reste ~2,6 s au total
@@ -19,31 +20,43 @@ export interface CelebrationStyle {
 }
 
 const c = (key: Category) => CATEGORY_BY_KEY[key];
+// Variante claire (thème sombre) ou moyenne (thème clair) d'un quadrant, et confetti neutre
+const sparkle = (key: Category) => palette().quadrants[key].sparkle;
+const neutral = () => palette().confetti;
 
-// Intensité par quadrant : Planifier > Faire > Déléguer > Si j'ai le temps
+// Intensité par quadrant : Planifier > Faire > Déléguer > Si j'ai le temps. Couleurs lues à chaque
+// accès : celles du thème courant
 export const CELEBRATION_STYLES: Record<Category, CelebrationStyle> = {
   // Planifier : la plus forte, bleus du quadrant rehaussés des autres couleurs
   INU: {
     count: 90,
-    colors: [c("INU").color, c("INU").textColor, "#C9DEFF", c("UI").color, c("UDI").color, "#FFFFFF"],
+    get colors() {
+      return [c("INU").color, c("INU").textColor, sparkle("INU"), c("UI").color, c("UDI").color, neutral()];
+    },
     power: 1.25,
     haptic: "success",
   },
   UI: {
     count: 60,
-    colors: [c("UI").color, c("UI").textColor, "#FFC4B2", "#FFFFFF"],
+    get colors() {
+      return [c("UI").color, c("UI").textColor, sparkle("UI"), neutral()];
+    },
     power: 1.1,
     haptic: "success",
   },
   UDI: {
     count: 30,
-    colors: [c("UDI").color, c("UDI").textColor, "#FFE2A3"],
+    get colors() {
+      return [c("UDI").color, c("UDI").textColor, sparkle("UDI")];
+    },
     power: 0.85,
     haptic: "light",
   },
   NDNI: {
     count: 10,
-    colors: [c("NDNI").color, c("NDNI").textColor],
+    get colors() {
+      return [c("NDNI").color, c("NDNI").textColor];
+    },
     power: 0.6,
     haptic: "light",
   },

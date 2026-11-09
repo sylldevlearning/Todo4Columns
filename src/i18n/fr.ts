@@ -234,6 +234,10 @@ export const fr = {
     reviewTime: "Heure",
     weekdays: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
     language: "Langue",
+    appearance: "Apparence",
+    appearanceAuto: "Automatique",
+    appearanceLight: "Clair",
+    appearanceDark: "Sombre",
     languageAuto: "Automatique (langue du téléphone)",
   },
 
@@ -387,6 +391,11 @@ export const fr = {
         title: "Langue",
         body: "« Automatique » suit la langue du téléphone, ou l'anglais si DoFirst n'est pas traduite dans cette langue. Choisis une langue pour l'imposer : tout change tout de suite, notifications comprises. Les titres de tes tâches ne sont pas traduits.",
         example: "un téléphone en suédois affiche l'app en anglais ; choisis « Français » pour la garder en français.",
+      },
+      appearance: {
+        title: "Apparence",
+        body: "« Automatique » suit le thème du téléphone et change avec lui ; « Clair » ou « Sombre » gardent toujours le même. Le changement est immédiat, widgets compris, et ce réglage reste propre à ce téléphone.",
+        example: "choisis « Automatique » pour passer en sombre le soir si ton téléphone le fait.",
       },
     },
   },

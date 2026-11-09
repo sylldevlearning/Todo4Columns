@@ -8,7 +8,7 @@ import { formatDue } from "../format";
 import { syncStatusLine, useDriveSync } from "../hooks/useDriveSync";
 import { t } from "../i18n";
 import { SyncStatus } from "../sync/controller";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import { IconName } from "./IconButton";
 
 // Heure courte « 14:32 » (ou « 2:32 PM »)
@@ -73,21 +73,23 @@ export default function CloudButton() {
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    minWidth: TOUCH_SIZE,
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  caption: {
-    fontFamily: fonts.medium,
-    fontSize: 10,
-    color: colors.textMuted,
-    marginTop: -2,
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    button: {
+      minWidth: TOUCH_SIZE,
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    caption: {
+      fontFamily: fonts.medium,
+      fontSize: 10,
+      color: colors.textMuted,
+      marginTop: -2,
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+  })
+);

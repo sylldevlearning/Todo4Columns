@@ -8,7 +8,7 @@ import { CATEGORY_BY_KEY } from "../constants/categories";
 import { recurrenceLabel } from "../recurrence";
 import { reminderLabel } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
-import { colors } from "../theme";
+import { colors, themedStyles } from "../theme";
 import { Task } from "../types";
 import Chip from "./Chip";
 import { useRemaining } from "./Countdown";
@@ -128,11 +128,13 @@ export default function TaskChips({
   return <View style={styles.row}>{chips}</View>;
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 6,
-    marginTop: 6,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 6,
+      marginTop: 6,
+    },
+  })
+);

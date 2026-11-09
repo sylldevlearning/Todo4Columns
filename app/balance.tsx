@@ -17,7 +17,7 @@ import { CATEGORIES } from "../src/constants/categories";
 import { formatWeekStart } from "../src/format";
 import { t, useLanguage } from "../src/i18n";
 import { selectCompletions, useTasksSelector } from "../src/store/TasksContext";
-import { colors, fonts } from "../src/theme";
+import { colors, fonts, themedStyles, useScheme } from "../src/theme";
 
 
 // Hauteur de la colonne de la semaine la plus chargée
@@ -75,6 +75,7 @@ function WeekColumns({ weeks }: { weeks: WeekCounts[] }) {
 
 // Écran « Bilan » : la semaine en cours, puis les 4 semaines précédentes
 export default function BalanceScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const completed = useTasksSelector(selectCompletions);
   const [current, ...previous] = weeklyHistory(completed, Date.now());
@@ -117,110 +118,112 @@ export default function BalanceScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    gap: 4,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-    gap: 12,
-  },
-  heading: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-    paddingHorizontal: 4,
-    marginTop: 8,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 16,
-    gap: 12,
-  },
-  summary: {
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: colors.text,
-  },
-  legend: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    columnGap: 16,
-    rowGap: 6,
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  legendText: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  columns: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  column: {
-    flex: 1,
-    alignItems: "center",
-    gap: 6,
-  },
-  columnTotal: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.text,
-  },
-  columnTrack: {
-    height: COLUMN_HEIGHT,
-    width: "100%",
-    justifyContent: "flex-end",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  stack: {
-    width: "100%",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    overflow: "hidden",
-    gap: 2,
-  },
-  columnLabel: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  insight: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.textMuted,
-    paddingHorizontal: 4,
-    marginTop: 4,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      gap: 4,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 48,
+      gap: 12,
+    },
+    heading: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+      paddingHorizontal: 4,
+      marginTop: 8,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 16,
+      gap: 12,
+    },
+    summary: {
+      fontFamily: fonts.bold,
+      fontSize: 16,
+      color: colors.text,
+    },
+    legend: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      columnGap: 16,
+      rowGap: 6,
+    },
+    legendItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    dot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    },
+    legendText: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    columns: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    column: {
+      flex: 1,
+      alignItems: "center",
+      gap: 6,
+    },
+    columnTotal: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.text,
+    },
+    columnTrack: {
+      height: COLUMN_HEIGHT,
+      width: "100%",
+      justifyContent: "flex-end",
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    stack: {
+      width: "100%",
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      overflow: "hidden",
+      gap: 2,
+    },
+    columnLabel: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    insight: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.textMuted,
+      paddingHorizontal: 4,
+      marginTop: 4,
+    },
+  })
+);

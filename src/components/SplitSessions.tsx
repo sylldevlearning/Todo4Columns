@@ -16,7 +16,7 @@ import {
   splitSessions,
 } from "../sessions";
 import MiniCalendar from "./MiniCalendar";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";
 import OptionPills from "./OptionPills";
@@ -235,144 +235,146 @@ export default function SplitSessions({ color, onColor, textColor, onCancel, onC
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-  sheet: {
-    maxHeight: "88%",
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    gap: 12,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 20,
-    color: colors.text,
-  },
-  content: {
-    gap: 10,
-    paddingBottom: 8,
-  },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-    marginTop: 4,
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  count: {
-    minWidth: 110,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: colors.text,
-  },
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 52,
-    gap: 12,
-  },
-  switchLabel: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  preview: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  previewRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 12,
-    paddingVertical: 6,
-  },
-  previewTitle: {
-    flexShrink: 1,
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.text,
-  },
-  previewDay: {
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-  },
-  actions: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  cancel: {
-    minHeight: TOUCH_SIZE + 6,
-    paddingHorizontal: 18,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancelText: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  create: {
-    flex: 1,
-    minHeight: TOUCH_SIZE + 6,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  createText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 15,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-  disabled: {
-    opacity: 0.4,
-  },
-  hint: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  weekDays: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 6,
-  },
-  weekDay: {
-    minWidth: 44,
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 8,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  weekDayText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      justifyContent: "flex-end",
+      backgroundColor: colors.backdrop,
+    },
+    sheet: {
+      maxHeight: "88%",
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingTop: 20,
+      paddingHorizontal: 20,
+      gap: 12,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 20,
+      color: colors.text,
+    },
+    content: {
+      gap: 10,
+      paddingBottom: 8,
+    },
+    label: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.4,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    stepper: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    count: {
+      minWidth: 110,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 16,
+      color: colors.text,
+    },
+    switchRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: 52,
+      gap: 12,
+    },
+    switchLabel: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    preview: {
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    previewRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      gap: 12,
+      paddingVertical: 6,
+    },
+    previewTitle: {
+      flexShrink: 1,
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.text,
+    },
+    previewDay: {
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+    },
+    actions: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    cancel: {
+      minHeight: TOUCH_SIZE + 6,
+      paddingHorizontal: 18,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    cancelText: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    create: {
+      flex: 1,
+      minHeight: TOUCH_SIZE + 6,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    createText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 15,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+    disabled: {
+      opacity: 0.4,
+    },
+    hint: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    weekDays: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 6,
+    },
+    weekDay: {
+      minWidth: 44,
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 8,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    weekDayText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.text,
+    },
+  })
+);

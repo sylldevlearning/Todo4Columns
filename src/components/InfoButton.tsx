@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { Animated, Modal, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "../i18n";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 
 export type InfoKey = keyof typeof t.help.info;
 
@@ -95,60 +95,62 @@ export function InfoSheet({ info, onClose }: { info: InfoKey; onClose: () => voi
   );
 }
 
-const styles = StyleSheet.create({
-  // Zone tactile de 44 px sans agrandir la ligne qui l'accueille
-  button: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE,
-    marginVertical: -10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 24,
-    paddingTop: 10,
-    gap: 12,
-  },
-  grabber: {
-    alignSelf: "center",
-    width: 36,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-    marginBottom: 8,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 20,
-    color: colors.text,
-  },
-  body: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.text,
-  },
-  example: {
-    borderRadius: 14,
-    backgroundColor: colors.surfaceRaised,
-    padding: 14,
-  },
-  exampleText: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.textMuted,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    // Zone tactile de 44 px sans agrandir la ligne qui l'accueille
+    button: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE,
+      marginVertical: -10,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 24,
+      paddingTop: 10,
+      gap: 12,
+    },
+    grabber: {
+      alignSelf: "center",
+      width: 36,
+      height: 5,
+      borderRadius: 3,
+      backgroundColor: colors.border,
+      marginBottom: 8,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 20,
+      color: colors.text,
+    },
+    body: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.text,
+    },
+    example: {
+      borderRadius: 14,
+      backgroundColor: colors.surfaceRaised,
+      padding: 14,
+    },
+    exampleText: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.textMuted,
+    },
+  })
+);

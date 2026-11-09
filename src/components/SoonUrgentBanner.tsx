@@ -9,7 +9,7 @@ import { t } from "../i18n";
 import { isSoonUrgent } from "../notifications/status";
 import { sameItems } from "../store/selectableStore";
 import { TasksState, useTaskActions, useTasksSelector } from "../store/TasksContext";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 import { Task } from "../types";
 import InfoButton from "./InfoButton";
 
@@ -104,90 +104,92 @@ function SoonUrgentList({ tasks, onClose }: { tasks: Task[]; onClose: () => void
   );
 }
 
-const styles = StyleSheet.create({
-  banner: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 14,
-    borderWidth: 1,
-    paddingRight: 2,
-  },
-  main: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    minHeight: TOUCH_SIZE,
-    paddingLeft: 12,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  text: {
-    flexShrink: 1,
-    fontFamily: fonts.bold,
-    fontSize: 14,
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-  sheet: {
-    maxHeight: "75%",
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    gap: 8,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 20,
-    color: colors.text,
-  },
-  body: {
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.textMuted,
-  },
-  list: {
-    marginTop: 4,
-  },
-  listContent: {
-    gap: 10,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 6,
-  },
-  rowText: {
-    flex: 1,
-    gap: 2,
-  },
-  rowTitle: {
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  rowDue: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
-  },
-  move: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    justifyContent: "center",
-  },
-  moveText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    banner: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderRadius: 14,
+      borderWidth: 1,
+      paddingRight: 2,
+    },
+    main: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      minHeight: TOUCH_SIZE,
+      paddingLeft: 12,
+    },
+    pressed: {
+      opacity: 0.7,
+    },
+    text: {
+      flexShrink: 1,
+      fontFamily: fonts.bold,
+      fontSize: 14,
+    },
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+    },
+    sheet: {
+      maxHeight: "75%",
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      gap: 8,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 20,
+      color: colors.text,
+    },
+    body: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.textMuted,
+    },
+    list: {
+      marginTop: 4,
+    },
+    listContent: {
+      gap: 10,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      paddingVertical: 6,
+    },
+    rowText: {
+      flex: 1,
+      gap: 2,
+    },
+    rowTitle: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    rowDue: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+    },
+    move: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      borderWidth: 1,
+      justifyContent: "center",
+    },
+    moveText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+    },
+  })
+);

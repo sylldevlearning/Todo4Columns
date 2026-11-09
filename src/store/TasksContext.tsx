@@ -12,6 +12,7 @@ import { AppState } from "react-native";
 import { isForeground } from "../hooks/useForeground";
 import { Escalation, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
 import { setLanguagePreference } from "../i18n";
+import { setAppearancePreference } from "../theme";
 import { showPermissionCard } from "../notifications/permissionCard";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
@@ -152,6 +153,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
   // Réglage « Langue » : appliqué avant les effets, donc avant la reprogrammation des notifications
   useLayoutEffect(() => setLanguagePreference(settings.language), [settings.language]);
+  // Réglage « Apparence » : appliqué avant l'affichage, sans relancer l'app
+  useLayoutEffect(() => setAppearancePreference(settings.appearance), [settings.appearance]);
   // « Automatique » : la langue du téléphone a pu changer pendant que l'app était en arrière-plan
   // (Android ne relance pas l'app). Écouteur ajouté dans un effet de mise en page, donc avant
   // celui de useNotificationSync : la langue est à jour quand les notifications sont reprogrammées.

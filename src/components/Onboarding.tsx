@@ -19,7 +19,7 @@ import { useDriveSync } from "../hooks/useDriveSync";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions } from "../store/TasksContext";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import {
   CalendarVoiceIllustration,
   CreateIllustration,
@@ -222,108 +222,110 @@ export function FirstLaunchOnboarding() {
   return <Onboarding extraSettings={{ onboardingDone: true }} onDone={() => {}} />;
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  top: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    paddingHorizontal: 12,
-    paddingTop: 4,
-    minHeight: TOUCH_SIZE + 4,
-  },
-  skip: {
-    minHeight: TOUCH_SIZE,
-    minWidth: TOUCH_SIZE,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  skipText: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.textMuted,
-  },
-  pager: {
-    flex: 1,
-  },
-  page: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    gap: 32,
-  },
-  text: {
-    gap: 10,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 26,
-    color: colors.text,
-  },
-  body: {
-    fontFamily: fonts.regular,
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.text,
-  },
-  bottom: {
-    paddingHorizontal: 24,
-    gap: 20,
-  },
-  dots: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.border,
-  },
-  dotActive: {
-    width: 22,
-    backgroundColor: colors.text,
-  },
-  next: {
-    minHeight: 54,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: CATEGORY_BY_KEY.UI.color,
-  },
-  nextText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 16,
-    color: CATEGORY_BY_KEY.UI.onColor,
-  },
-  grantedRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  granted: {
-    flexShrink: 1,
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: colors.success,
-  },
-  later: {
-    minHeight: TOUCH_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: -12,
-  },
-  laterText: {
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.textMuted,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    top: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      paddingHorizontal: 12,
+      paddingTop: 4,
+      minHeight: TOUCH_SIZE + 4,
+    },
+    skip: {
+      minHeight: TOUCH_SIZE,
+      minWidth: TOUCH_SIZE,
+      paddingHorizontal: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    skipText: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.textMuted,
+    },
+    pager: {
+      flex: 1,
+    },
+    page: {
+      flexGrow: 1,
+      justifyContent: "center",
+      paddingHorizontal: 24,
+      paddingVertical: 16,
+      gap: 32,
+    },
+    text: {
+      gap: 10,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 26,
+      color: colors.text,
+    },
+    body: {
+      fontFamily: fonts.regular,
+      fontSize: 16,
+      lineHeight: 24,
+      color: colors.text,
+    },
+    bottom: {
+      paddingHorizontal: 24,
+      gap: 20,
+    },
+    dots: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 8,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.border,
+    },
+    dotActive: {
+      width: 22,
+      backgroundColor: colors.text,
+    },
+    next: {
+      minHeight: 54,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: CATEGORY_BY_KEY.UI.color,
+    },
+    nextText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 16,
+      color: CATEGORY_BY_KEY.UI.onColor,
+    },
+    grantedRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    granted: {
+      flexShrink: 1,
+      fontFamily: fonts.bold,
+      fontSize: 16,
+      color: colors.success,
+    },
+    later: {
+      minHeight: TOUCH_SIZE,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: -12,
+    },
+    laterText: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.textMuted,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+  })
+);

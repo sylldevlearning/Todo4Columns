@@ -232,6 +232,10 @@ export const itIT: Translations = {
     reviewTime: "Ora",
     weekdays: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
     language: "Lingua",
+    appearance: "Aspetto",
+    appearanceAuto: "Automatico",
+    appearanceLight: "Chiaro",
+    appearanceDark: "Scuro",
     languageAuto: "Automatica (lingua del telefono)",
   },
 
@@ -384,6 +388,11 @@ export const itIT: Translations = {
         title: "Lingua",
         body: "«Automatica» segue la lingua del telefono, oppure l'inglese se DoFirst non è tradotta in quella lingua. Scegli una lingua per usarla sempre: tutto cambia subito, notifiche comprese. I titoli delle tue attività non vengono tradotti.",
         example: "su un telefono in svedese, l'app compare in inglese; scegli «Italiano» per tenerla in italiano.",
+      },
+      appearance: {
+        title: "Aspetto",
+        body: "«Automatico» segue il tema del telefono e cambia con lui; «Chiaro» o «Scuro» restano sempre uguali. Il cambio è immediato, widget compresi, e questa impostazione vale solo per questo telefono.",
+        example: "scegli «Automatico» per passare allo scuro la sera se il telefono lo fa.",
       },
     },
   },

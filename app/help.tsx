@@ -7,7 +7,7 @@ import IconButton, { IconName } from "../src/components/IconButton";
 import { MatrixIllustration } from "../src/components/OnboardingIllustrations";
 import { CATEGORIES } from "../src/constants/categories";
 import { t, useLanguage } from "../src/i18n";
-import { colors, fonts, withAlpha } from "../src/theme";
+import { colors, fonts, withAlpha, themedStyles, useScheme } from "../src/theme";
 
 type Gesture = keyof typeof t.howTo.gestures;
 
@@ -58,6 +58,7 @@ function Heading({ children }: { children: string }) {
 
 // Page « Comment ça marche » : la méthode d'Eisenhower, les 4 cases et les gestes de l'app
 export default function HelpScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
@@ -126,95 +127,97 @@ export default function HelpScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    gap: 4,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-    gap: 12,
-  },
-  heading: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-    paddingHorizontal: 4,
-    marginTop: 12,
-  },
-  paragraph: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.text,
-  },
-  illustration: {
-    marginVertical: 8,
-  },
-  quadrant: {
-    borderRadius: 20,
-    borderWidth: 1,
-    padding: 16,
-    gap: 6,
-  },
-  quadrantName: {
-    fontFamily: fonts.extrabold,
-    fontSize: 18,
-  },
-  quadrantAxis: {
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  examplesLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.text,
-    marginTop: 4,
-  },
-  example: {
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.textMuted,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 16,
-  },
-  gesture: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
-    paddingVertical: 12,
-  },
-  gestureBorder: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  gestureText: {
-    flex: 1,
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      gap: 4,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 48,
+      gap: 12,
+    },
+    heading: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+      paddingHorizontal: 4,
+      marginTop: 12,
+    },
+    paragraph: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.text,
+    },
+    illustration: {
+      marginVertical: 8,
+    },
+    quadrant: {
+      borderRadius: 20,
+      borderWidth: 1,
+      padding: 16,
+      gap: 6,
+    },
+    quadrantName: {
+      fontFamily: fonts.extrabold,
+      fontSize: 18,
+    },
+    quadrantAxis: {
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    examplesLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.text,
+      marginTop: 4,
+    },
+    example: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.textMuted,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 16,
+    },
+    gesture: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 12,
+      paddingVertical: 12,
+    },
+    gestureBorder: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    gestureText: {
+      flex: 1,
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.text,
+    },
+  })
+);

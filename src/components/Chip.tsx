@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { fonts, withAlpha } from "../theme";
+import { fonts, withAlpha, themedStyles } from "../theme";
 import { fitText } from "./fitText";
 import { IconName } from "./IconButton";
 
@@ -24,18 +24,20 @@ export default function Chip({ icon, label, color, textColor }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  chip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 999,
-    flexShrink: 1,
-  },
-  label: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    chip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 999,
+      flexShrink: 1,
+    },
+    label: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+    },
+  })
+);

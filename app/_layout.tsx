@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import DriveSync from "../src/components/DriveSync";
+import SystemBars from "../src/components/SystemBars";
 import WidgetSync from "../src/widgets/WidgetSync";
 import EscalationNotice from "../src/components/EscalationNotice";
 import LoadErrorGate from "../src/components/LoadErrorGate";
@@ -28,7 +29,7 @@ import {
   useTaskActions,
   useTasksSelector,
 } from "../src/store/TasksContext";
-import { colors } from "../src/theme";
+import { colors, themedStyles, useScheme } from "../src/theme";
 
 // L'écran de démarrage reste affiché jusqu'au premier affichage (Android) ou au chargement
 // des polices (iOS, web)
@@ -96,6 +97,7 @@ function Celebrations({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
+  useScheme(); // redessiné quand le thème change
   const fontsReady = useAppFonts();
   // Langue changée : tout l'arbre se re-rend avec les nouveaux textes, sans relancer l'app
   useLanguage();
@@ -143,6 +145,7 @@ export default function RootLayout() {
             <PermissionCard />
             <ReviewPrompter />
             <DriveSync />
+            <SystemBars />
             <WidgetSync />
           </Celebrations>
         </TasksProvider>
@@ -151,9 +154,11 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+  })
+);

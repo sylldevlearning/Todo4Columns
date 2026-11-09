@@ -227,6 +227,10 @@ export const tr: Translations = {
     reviewTime: "Saat",
     weekdays: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
     language: "Dil",
+    appearance: "Görünüm",
+    appearanceAuto: "Otomatik",
+    appearanceLight: "Açık",
+    appearanceDark: "Koyu",
     languageAuto: "Otomatik (telefonun dili)",
   },
 
@@ -379,6 +383,11 @@ export const tr: Translations = {
         title: "Dil",
         body: "“Otomatik” telefonunun dilini izler; DoFirst o dile çevrilmemişse İngilizce olur. Bir dil seçersen hep o dil kullanılır: bildirimler dahil her şey anında değişir. Görevlerinin adları çevrilmez.",
         example: "İsveççe ayarlı bir telefonda uygulama İngilizce görünür; Türkçe kalması için “Türkçe”yi seç.",
+      },
+      appearance: {
+        title: "Görünüm",
+        body: "\"Otomatik\" telefonun temasını izler ve onunla değişir; \"Açık\" ya da \"Koyu\" hep aynı kalır. Değişiklik widget'lar dahil hemen uygulanır ve bu ayar yalnızca bu telefon içindir.",
+        example: "telefonun akşamları koyu temaya geçiyorsa \"Otomatik\"i seç.",
       },
     },
   },

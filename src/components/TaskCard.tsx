@@ -11,7 +11,7 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { CategoryInfo } from "../constants/categories";
 import { t, useLanguage } from "../i18n";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles, useScheme } from "../theme";
 import { isWaiting } from "../notifications/status";
 import { isPriority } from "../review";
 import { Settings } from "../settings";
@@ -60,6 +60,7 @@ export default React.memo(function TaskCard({
   settings,
   now,
 }: Props) {
+  useScheme(); // mémorisé : redessiné quand le thème change
   useLanguage(); // carte mémoïsée : re-rendue quand la langue change
   const translateX = useSharedValue(0);
   const waiting = isWaiting(task, now);
@@ -218,81 +219,83 @@ export default React.memo(function TaskCard({
   );
 });
 
-const styles = StyleSheet.create({
-  wrapper: {
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  action: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 20,
-  },
-  doneAction: {
-    backgroundColor: colors.success,
-    justifyContent: "flex-start",
-  },
-  deleteAction: {
-    backgroundColor: colors.danger,
-    justifyContent: "flex-end",
-  },
-  actionText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.white,
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 64,
-    paddingVertical: 8,
-    paddingRight: 4,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 16,
-  },
-  cardWaiting: {
-    borderColor: colors.warning,
-    borderWidth: 1.5,
-  },
-  checkArea: {
-    width: TOUCH_SIZE + 8,
-    height: TOUCH_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  body: {
-    flex: 1,
-    paddingVertical: 4,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  title: {
-    flexShrink: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  titleDone: {
-    color: colors.textMuted,
-    textDecorationLine: "line-through",
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    wrapper: {
+      borderRadius: 16,
+      overflow: "hidden",
+    },
+    action: {
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      paddingHorizontal: 20,
+    },
+    doneAction: {
+      backgroundColor: colors.success,
+      justifyContent: "flex-start",
+    },
+    deleteAction: {
+      backgroundColor: colors.danger,
+      justifyContent: "flex-end",
+    },
+    actionText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.white,
+    },
+    card: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: 64,
+      paddingVertical: 8,
+      paddingRight: 4,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 16,
+    },
+    cardWaiting: {
+      borderColor: colors.warning,
+      borderWidth: 1.5,
+    },
+    checkArea: {
+      width: TOUCH_SIZE + 8,
+      height: TOUCH_SIZE,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    circle: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      borderWidth: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    body: {
+      flex: 1,
+      paddingVertical: 4,
+    },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    title: {
+      flexShrink: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    titleDone: {
+      color: colors.textMuted,
+      textDecorationLine: "line-through",
+    },
+  })
+);

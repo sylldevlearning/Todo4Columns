@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "../theme";
+import { colors, themedStyles } from "../theme";
 
 export const FAB_SIZE = 60;
 export const MIC_FAB_SIZE = 52;
@@ -46,33 +46,35 @@ export default function Fab({
   );
 }
 
-const styles = StyleSheet.create({
-  fab: {
-    position: "absolute",
-    right: 20,
-    width: FAB_SIZE,
-    height: FAB_SIZE,
-    borderRadius: FAB_SIZE / 2,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-  },
-  pressed: {
-    transform: [{ scale: 0.96 }],
-  },
-  mic: {
-    width: MIC_FAB_SIZE,
-    height: MIC_FAB_SIZE,
-    borderRadius: MIC_FAB_SIZE / 2,
-    backgroundColor: colors.surfaceRaised,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    fab: {
+      position: "absolute",
+      right: 20,
+      width: FAB_SIZE,
+      height: FAB_SIZE,
+      borderRadius: FAB_SIZE / 2,
+      alignItems: "center",
+      justifyContent: "center",
+      elevation: 6,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.35,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+    },
+    pressed: {
+      transform: [{ scale: 0.96 }],
+    },
+    mic: {
+      width: MIC_FAB_SIZE,
+      height: MIC_FAB_SIZE,
+      borderRadius: MIC_FAB_SIZE / 2,
+      backgroundColor: colors.surfaceRaised,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+  })
+);
 
 
 // Bouton micro, à gauche du « + » : ouvre la fiche et lance la dictée

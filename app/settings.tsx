@@ -19,7 +19,7 @@ import {
   useTaskActions,
   useTasksSelector,
 } from "../src/store/TasksContext";
-import { colors, fonts } from "../src/theme";
+import { colors, fonts, themedStyles, useScheme } from "../src/theme";
 import { showAlert } from "../src/appWindows";
 
 const ABOUT = {
@@ -35,6 +35,7 @@ const selectArchived = ({ tasks }: TasksState) =>
 
 // Écran des réglages : rappels par défaut, plage silencieuse, notifications, archives
 export default function SettingsScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const store = useTaskActions();
   const settings = useSettings();
@@ -119,25 +120,27 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    gap: 4,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      gap: 4,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 48,
+    },
+  })
+);

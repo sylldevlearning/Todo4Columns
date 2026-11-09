@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { TasksState, useTaskActions, useTasksSelector } from "../store/TasksContext";
-import { colors, fonts } from "../theme";
+import { colors, fonts, themedStyles } from "../theme";
 
 const selectLoadError = ({ loadError }: TasksState) => loadError;
 
@@ -37,45 +37,47 @@ export default function LoadErrorGate({ children }: { children: ReactNode }) {
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-    gap: 16,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-    textAlign: "center",
-  },
-  body: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-  retry: {
-    minHeight: 54,
-    minWidth: 200,
-    paddingHorizontal: 24,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 8,
-  },
-  retryText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 16,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    content: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 32,
+      gap: 16,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+      textAlign: "center",
+    },
+    body: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+    retry: {
+      minHeight: 54,
+      minWidth: 200,
+      paddingHorizontal: 24,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 8,
+    },
+    retryText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 16,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+  })
+);

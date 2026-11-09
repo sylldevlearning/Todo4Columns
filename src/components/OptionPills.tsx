@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { ReminderOption } from "../reminders";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 
 interface Props {
   options: ReminderOption[];
@@ -38,24 +38,26 @@ export default function OptionPills({ options, value, onChange, color, onColor }
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  pill: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  label: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    pill: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 16,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    label: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+    },
+  })
+);

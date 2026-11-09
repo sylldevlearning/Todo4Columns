@@ -1,4 +1,5 @@
 import { t } from "../i18n";
+import { palette } from "../theme";
 import { Category } from "../types";
 
 export interface CategoryInfo {
@@ -9,20 +10,24 @@ export interface CategoryInfo {
   description: string; // phrase affichée dans la fiche de création
   urgent: boolean;
   important: boolean;
-  color: string; // couleur du quadrant
-  textColor: string; // texte coloré sur fond sombre
-  onColor: string; // texte posé sur la couleur du quadrant
+  color: string; // couleur du quadrant (thème courant)
+  textColor: string; // texte coloré sur le fond de l'app (thème courant)
+  onColor: string; // texte posé sur la couleur du quadrant (thème courant)
 }
 
-type CategoryStyle = Omit<CategoryInfo, "name" | "subtitle" | "axisLabel" | "description">;
+type CategoryFlags = Pick<CategoryInfo, "key" | "urgent" | "important">;
 
-// Quadrant dont les textes sont lus dans la langue courante à chaque accès
-const category = (info: CategoryStyle): CategoryInfo =>
+// Quadrant dont les textes (langue courante) et les couleurs (thème courant, src/theme.ts) sont lus
+// à chaque accès
+const category = (info: CategoryFlags): CategoryInfo =>
   Object.defineProperties({ ...info } as CategoryInfo, {
     name: { get: () => t.categories[info.key].name, enumerable: true },
     subtitle: { get: () => t.categories[info.key].subtitle, enumerable: true },
     axisLabel: { get: () => t.categories[info.key].axisLabel, enumerable: true },
     description: { get: () => t.categories[info.key].description, enumerable: true },
+    color: { get: () => palette().quadrants[info.key].color, enumerable: true },
+    textColor: { get: () => palette().quadrants[info.key].textColor, enumerable: true },
+    onColor: { get: () => palette().quadrants[info.key].onColor, enumerable: true },
   });
 
 // Ordre de la grille : ligne « Important » puis « Pas important », colonne « Urgent » puis « Pas urgent »
@@ -31,33 +36,21 @@ export const CATEGORIES: CategoryInfo[] = [
     key: "UI",
     urgent: true,
     important: true,
-    color: "#FF7A59",
-    textColor: "#FF9677",
-    onColor: "#1A0F0B",
   }),
   category({
     key: "INU",
     urgent: false,
     important: true,
-    color: "#5B9BFF",
-    textColor: "#8BB8FF",
-    onColor: "#0B1220",
   }),
   category({
     key: "UDI",
     urgent: true,
     important: false,
-    color: "#F2B33D",
-    textColor: "#F5C566",
-    onColor: "#1C1405",
   }),
   category({
     key: "NDNI",
     urgent: false,
     important: false,
-    color: "#8B92A0",
-    textColor: "#B5BAC4",
-    onColor: "#111318",
   }),
 ];
 

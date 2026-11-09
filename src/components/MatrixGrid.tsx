@@ -5,7 +5,7 @@ import { CategoryInfo, CATEGORIES } from "../constants/categories";
 import { t } from "../i18n";
 import { isPriority } from "../review";
 import { stepProgress, stepsOf } from "../steps";
-import { colors, fonts, withAlpha } from "../theme";
+import { colors, fonts, withAlpha, themedStyles } from "../theme";
 import { Category, Task } from "../types";
 import { fitText } from "./fitText";
 import TaskChips from "./TaskChips";
@@ -147,113 +147,115 @@ const AXIS_WIDTH = 22;
 // Lignes du nom d'un quadrant : une seule pour un mot, deux s'il y a des espaces
 export const nameLines = (name: string) => (/\s/.test(name.trim()) ? 2 : 1);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    gap: 10,
-  },
-  topAxis: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  axisLabel: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-  },
-  row: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 10,
-  },
-  sideAxis: {
-    width: AXIS_WIDTH,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  vertical: {
-    flex: 0,
-    width: 160,
-    transform: [{ rotate: "-90deg" }],
-  },
-  cell: {
-    flex: 1,
-    borderRadius: 20,
-    borderWidth: 1,
-    padding: 12,
-    overflow: "hidden",
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-  cellHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  name: {
-    flex: 1,
-    fontFamily: fonts.extrabold,
-    fontSize: 17,
-  },
-  count: {
-    minWidth: 24,
-    height: 24,
-    borderRadius: 12,
-    paddingHorizontal: 6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  countText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 13,
-  },
-  subtitle: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  preview: {
-    marginTop: 10,
-    gap: 8,
-  },
-  previewTask: {
-    gap: 0,
-  },
-  previewTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  previewTitle: {
-    flexShrink: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-    color: colors.text,
-  },
-  progress: {
-    fontFamily: fonts.semibold,
-    fontSize: 11,
-    color: colors.textMuted,
-  },
-  others: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  empty: {
-    fontFamily: fonts.regular,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: 10,
+    },
+    topAxis: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    axisLabel: {
+      flex: 1,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+    },
+    row: {
+      flex: 1,
+      flexDirection: "row",
+      gap: 10,
+    },
+    sideAxis: {
+      width: AXIS_WIDTH,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    vertical: {
+      flex: 0,
+      width: 160,
+      transform: [{ rotate: "-90deg" }],
+    },
+    cell: {
+      flex: 1,
+      borderRadius: 20,
+      borderWidth: 1,
+      padding: 12,
+      overflow: "hidden",
+    },
+    pressed: {
+      opacity: 0.8,
+    },
+    cellHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    name: {
+      flex: 1,
+      fontFamily: fonts.extrabold,
+      fontSize: 17,
+    },
+    count: {
+      minWidth: 24,
+      height: 24,
+      borderRadius: 12,
+      paddingHorizontal: 6,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    countText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 13,
+    },
+    subtitle: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    preview: {
+      marginTop: 10,
+      gap: 8,
+    },
+    previewTask: {
+      gap: 0,
+    },
+    previewTitleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    previewTitle: {
+      flexShrink: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+      color: colors.text,
+    },
+    progress: {
+      fontFamily: fonts.semibold,
+      fontSize: 11,
+      color: colors.textMuted,
+    },
+    others: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    empty: {
+      fontFamily: fonts.regular,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+  })
+);

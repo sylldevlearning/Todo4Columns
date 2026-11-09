@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CategoryInfo } from "../constants/categories";
 import { t } from "../i18n";
 import { lateSteps, stepProgress, stepsOf, todayStep } from "../steps";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import { Task, TaskStep } from "../types";
 
 interface Props {
@@ -58,40 +58,42 @@ export default function StepSummary({ task, category, now, onCheck }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 6,
-    gap: 0,
-  },
-  progress: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  progressText: {
-    fontFamily: fonts.bold,
-    fontSize: 12,
-  },
-  line: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: -12,
-  },
-  checkArea: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE - 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  check: {
-    width: 16,
-    height: 16,
-    borderRadius: 5,
-    borderWidth: 1.5,
-  },
-  lineText: {
-    flexShrink: 1,
-    fontFamily: fonts.medium,
-    fontSize: 13,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      marginTop: 6,
+      gap: 0,
+    },
+    progress: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    progressText: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+    },
+    line: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: -12,
+    },
+    checkArea: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE - 8,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    check: {
+      width: 16,
+      height: 16,
+      borderRadius: 5,
+      borderWidth: 1.5,
+    },
+    lineText: {
+      flexShrink: 1,
+      fontFamily: fonts.medium,
+      fontSize: 13,
+    },
+  })
+);

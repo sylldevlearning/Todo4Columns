@@ -228,6 +228,10 @@ export const de: Translations = {
     reviewTime: "Uhrzeit",
     weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
     language: "Sprache",
+    appearance: "Darstellung",
+    appearanceAuto: "Automatisch",
+    appearanceLight: "Hell",
+    appearanceDark: "Dunkel",
     languageAuto: "Automatisch (Handysprache)",
   },
 
@@ -380,6 +384,11 @@ export const de: Translations = {
         title: "Sprache",
         body: "„Automatisch“ folgt der Sprache deines Handys, oder Englisch, wenn DoFirst nicht in diese Sprache übersetzt ist. Wähl eine Sprache, um sie immer zu nutzen: Alles wechselt sofort, auch die Mitteilungen. Die Titel deiner Aufgaben werden nicht übersetzt.",
         example: "auf einem Handy auf Schwedisch erscheint die App auf Englisch; wähl „Deutsch“, um sie auf Deutsch zu behalten.",
+      },
+      appearance: {
+        title: "Darstellung",
+        body: "„Automatisch“ folgt dem Design des Handys und wechselt mit ihm; „Hell“ oder „Dunkel“ bleiben immer gleich. Die Änderung gilt sofort, auch für Widgets, und diese Einstellung gilt nur für dieses Handy.",
+        example: "wähle „Automatisch“, damit es abends dunkel wird, wenn dein Handy das tut.",
       },
     },
   },

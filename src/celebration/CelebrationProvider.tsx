@@ -24,6 +24,7 @@ import {
   planStepCelebration,
 } from "./plan";
 import { useReduceMotion } from "./useReduceMotion";
+import { themedStyles } from "../theme";
 
 // Délai maximal pour connaître la position de la tâche ; au-delà, l'explosion part du centre
 const ORIGIN_TIMEOUT_MS = 120;
@@ -173,12 +174,14 @@ export function CelebrationProvider({ enabled, children }: { enabled: boolean; c
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    overlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+  })
+);

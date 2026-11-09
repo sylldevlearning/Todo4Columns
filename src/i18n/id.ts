@@ -226,6 +226,10 @@ export const id: Translations = {
     reviewTime: "Jam",
     weekdays: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
     language: "Bahasa",
+    appearance: "Tampilan",
+    appearanceAuto: "Otomatis",
+    appearanceLight: "Terang",
+    appearanceDark: "Gelap",
     languageAuto: "Otomatis (bahasa ponsel)",
   },
 
@@ -378,6 +382,11 @@ export const id: Translations = {
         title: "Bahasa",
         body: "“Otomatis” mengikuti bahasa ponselmu, atau bahasa Inggris kalau DoFirst belum diterjemahkan ke bahasa itu. Pilih satu bahasa untuk selalu memakainya: semuanya langsung berganti, termasuk notifikasi. Judul tugasmu tidak diterjemahkan.",
         example: "di ponsel berbahasa Swedia, aplikasi tampil dalam bahasa Inggris; pilih “Bahasa Indonesia” agar tetap dalam bahasa Indonesia.",
+      },
+      appearance: {
+        title: "Tampilan",
+        body: "\"Otomatis\" mengikuti tema ponsel dan berubah bersamanya; \"Terang\" atau \"Gelap\" selalu tetap. Perubahan langsung berlaku, termasuk widget, dan setelan ini hanya untuk ponsel ini.",
+        example: "pilih \"Otomatis\" agar berubah gelap pada malam hari jika ponselmu begitu.",
       },
     },
   },

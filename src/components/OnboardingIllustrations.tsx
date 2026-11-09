@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { CATEGORIES, CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
-import { colors, fonts, withAlpha } from "../theme";
+import { colors, fonts, withAlpha, themedStyles } from "../theme";
 import { fitText } from "./fitText";
 import { formatDue } from "../format";
 import ProgressBar from "./ProgressBar";
@@ -233,300 +233,302 @@ export function RemindersIllustration() {
   );
 }
 
-const styles = StyleSheet.create({
-  stepRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepBox: {
-    width: 18,
-    height: 18,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepText: {
-    flex: 1,
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    color: colors.text,
-  },
-  stepDone: {
-    color: colors.textMuted,
-    textDecorationLine: "line-through",
-  },
-  progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 4,
-  },
-  progressBar: {
-    flex: 1,
-  },
-  progressText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 13,
-  },
-  week: {
-    flexDirection: "row",
-    gap: 4,
-  },
-  weekCell: {
-    flex: 1,
-    alignItems: "center",
-    gap: 4,
-    paddingVertical: 8,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  weekCellSelected: {
-    borderColor: colors.text,
-  },
-  weekNumber: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  weekDots: {
-    flexDirection: "row",
-    gap: 3,
-    height: 6,
-  },
-  weekDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  voiceRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  mic: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  suggestion: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    padding: 10,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  suggestionText: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-    color: colors.text,
-  },
-  suggestionAction: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-  },
-  matrix: {
-    gap: 8,
-  },
-  axisRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  axis: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 11,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-  },
-  gridRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  cell: {
-    flex: 1,
-    minHeight: 96,
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 12,
-    gap: 4,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  cellName: {
-    fontFamily: fonts.extrabold,
-    fontSize: 16,
-  },
-  cellText: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  stack: {
-    gap: 12,
-  },
-  center: {
-    alignSelf: "center",
-  },
-  panel: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    paddingHorizontal: 16,
-  },
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: 52,
-  },
-  switchLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  track: {
-    width: 44,
-    height: 26,
-    borderRadius: 13,
-    padding: 3,
-  },
-  thumb: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.white,
-  },
-  thumbOn: {
-    alignSelf: "flex-end",
-  },
-  result: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 14,
-  },
-  resultName: {
-    fontFamily: fonts.extrabold,
-    fontSize: 18,
-  },
-  resultText: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    color: colors.text,
-    marginTop: 4,
-  },
-  swipe: {
-    borderRadius: 16,
-    overflow: "hidden",
-    backgroundColor: colors.success,
-  },
-  swipeAction: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: SWIPE_WIDTH, // le texte réduit sa taille pour tenir à côté de la carte
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 14,
-  },
-  swipeActionText: {
-    flexShrink: 1,
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.white,
-  },
-  swipedCard: {
-    marginLeft: SWIPE_WIDTH,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    minHeight: 56,
-    paddingHorizontal: 14,
-    borderRadius: 16,
-    backgroundColor: colors.surfaceRaised,
-  },
-  circle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-  },
-  cardTitle: {
-    flexShrink: 1,
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  hints: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 4,
-  },
-  hint: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-  },
-  notification: {
-    marginTop: 8,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    padding: 14,
-    gap: 2,
-  },
-  notificationHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 4,
-  },
-  appIcon: {
-    width: 14,
-    height: 14,
-    borderRadius: 4,
-  },
-  appName: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  notificationBody: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  notificationActions: {
-    flexDirection: "row",
-    gap: 24,
-    marginTop: 10,
-  },
-  notificationAction: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: CATEGORY_BY_KEY.INU.textColor,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    stepRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    stepBox: {
+      width: 18,
+      height: 18,
+      borderRadius: 5,
+      borderWidth: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepText: {
+      flex: 1,
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: colors.text,
+    },
+    stepDone: {
+      color: colors.textMuted,
+      textDecorationLine: "line-through",
+    },
+    progressRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      marginTop: 4,
+    },
+    progressBar: {
+      flex: 1,
+    },
+    progressText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 13,
+    },
+    week: {
+      flexDirection: "row",
+      gap: 4,
+    },
+    weekCell: {
+      flex: 1,
+      alignItems: "center",
+      gap: 4,
+      paddingVertical: 8,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+    },
+    weekCellSelected: {
+      borderColor: colors.text,
+    },
+    weekNumber: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    weekDots: {
+      flexDirection: "row",
+      gap: 3,
+      height: 6,
+    },
+    weekDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    voiceRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    mic: {
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      borderWidth: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    suggestion: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      padding: 10,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+    },
+    suggestionText: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+      color: colors.text,
+    },
+    suggestionAction: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+    },
+    matrix: {
+      gap: 8,
+    },
+    axisRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    axis: {
+      flex: 1,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 11,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+    },
+    gridRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    cell: {
+      flex: 1,
+      minHeight: 96,
+      borderRadius: 16,
+      borderWidth: 1,
+      padding: 12,
+      gap: 4,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    cellName: {
+      fontFamily: fonts.extrabold,
+      fontSize: 16,
+    },
+    cellText: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    stack: {
+      gap: 12,
+    },
+    center: {
+      alignSelf: "center",
+    },
+    panel: {
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      paddingHorizontal: 16,
+    },
+    switchRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: 52,
+    },
+    switchLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    track: {
+      width: 44,
+      height: 26,
+      borderRadius: 13,
+      padding: 3,
+    },
+    thumb: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      backgroundColor: colors.white,
+    },
+    thumbOn: {
+      alignSelf: "flex-end",
+    },
+    result: {
+      borderRadius: 16,
+      borderWidth: 1,
+      padding: 14,
+    },
+    resultName: {
+      fontFamily: fonts.extrabold,
+      fontSize: 18,
+    },
+    resultText: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: colors.text,
+      marginTop: 4,
+    },
+    swipe: {
+      borderRadius: 16,
+      overflow: "hidden",
+      backgroundColor: colors.success,
+    },
+    swipeAction: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: SWIPE_WIDTH, // le texte réduit sa taille pour tenir à côté de la carte
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 14,
+    },
+    swipeActionText: {
+      flexShrink: 1,
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.white,
+    },
+    swipedCard: {
+      marginLeft: SWIPE_WIDTH,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      minHeight: 56,
+      paddingHorizontal: 14,
+      borderRadius: 16,
+      backgroundColor: colors.surfaceRaised,
+    },
+    circle: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+    },
+    cardTitle: {
+      flexShrink: 1,
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    hints: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 4,
+    },
+    hint: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+    },
+    notification: {
+      marginTop: 8,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      padding: 14,
+      gap: 2,
+    },
+    notificationHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginBottom: 4,
+    },
+    appIcon: {
+      width: 14,
+      height: 14,
+      borderRadius: 4,
+    },
+    appName: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    notificationBody: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    notificationActions: {
+      flexDirection: "row",
+      gap: 24,
+      marginTop: 10,
+    },
+    notificationAction: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: CATEGORY_BY_KEY.INU.textColor,
+    },
+  })
+);

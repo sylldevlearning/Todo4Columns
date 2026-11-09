@@ -226,6 +226,10 @@ export const zhHans: Translations = {
     reviewTime: "时间",
     weekdays: ["日", "一", "二", "三", "四", "五", "六"],
     language: "语言",
+    appearance: "外观",
+    appearanceAuto: "自动",
+    appearanceLight: "浅色",
+    appearanceDark: "深色",
     languageAuto: "自动（手机语言）",
   },
 
@@ -378,6 +382,11 @@ export const zhHans: Translations = {
         title: "语言",
         body: "「自动」跟随手机语言；如果 DoFirst 没有这种语言的翻译，就显示英语。选择一种语言就会一直使用它：所有内容立即切换，包括通知。你的任务标题不会被翻译。",
         example: "在设为瑞典语的手机上，应用会显示英语；选择「简体中文」即可保持中文。",
+      },
+      appearance: {
+        title: "外观",
+        body: "“自动”跟随手机主题一起切换；“浅色”或“深色”则始终不变。更改立即生效（包括小组件），此设置仅适用于这部手机。",
+        example: "如果你的手机晚上会切换到深色，选择“自动”即可同步。",
       },
     },
   },

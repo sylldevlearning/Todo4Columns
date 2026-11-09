@@ -20,7 +20,7 @@ import { CATEGORY_BY_KEY } from "../src/constants/categories";
 import { dayKey, dayStart } from "../src/dates";
 import { currentLanguage, t, useLanguage } from "../src/i18n";
 import { TasksState, useTasksSelector } from "../src/store/TasksContext";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../src/theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles, useScheme } from "../src/theme";
 import { Category } from "../src/types";
 
 // Glissement horizontal minimal pour changer de mois
@@ -30,6 +30,7 @@ const EMPTY: CalendarEntry[] = [];
 
 // Vue calendrier : mois, points de couleur par quadrant, panneau du jour choisi
 export default function CalendarScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const tasks = useTasksSelector(selectTasks);
   const today = dayKey(Date.now());
@@ -141,6 +142,7 @@ const DayCell = memo(function DayCell({
   categories: string; // « UI,INU » : chaîne pour que memo compare par valeur
   onPress: (day: string) => void;
 }) {
+  useScheme(); // mémorisé : redessiné quand le thème change
   const label = new Date(dayStart(day)).toLocaleDateString(t.locale, { weekday: "long", day: "numeric", month: "long" });
   return (
     <Pressable
@@ -167,109 +169,111 @@ const DayCell = memo(function DayCell({
   );
 });
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    gap: 4,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-  },
-  content: {
-    padding: 12,
-    paddingBottom: 48,
-  },
-  monthBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  monthTitle: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 17,
-    color: colors.text,
-  },
-  todayButton: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-    paddingHorizontal: 12,
-    marginLeft: 4,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  todayText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.text,
-  },
-  week: {
-    flexDirection: "row",
-  },
-  weekday: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    color: colors.textMuted,
-    paddingVertical: 6,
-  },
-  cell: {
-    flex: 1,
-    minHeight: 62,
-    alignItems: "center",
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 2,
-  },
-  cellSelected: {
-    backgroundColor: withAlpha(colors.white, 0.08),
-  },
-  dayNumber: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  today: {
-    backgroundColor: colors.white,
-  },
-  dayText: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  todayLabel: {
-    color: colors.bg,
-  },
-  otherMonth: {
-    opacity: 0.35,
-  },
-  dots: {
-    flexDirection: "row",
-    gap: 3,
-    height: 6,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  count: {
-    fontFamily: fonts.bold,
-    fontSize: 11,
-    color: colors.textMuted,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      gap: 4,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+    },
+    content: {
+      padding: 12,
+      paddingBottom: 48,
+    },
+    monthBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    monthTitle: {
+      flex: 1,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 17,
+      color: colors.text,
+    },
+    todayButton: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+      paddingHorizontal: 12,
+      marginLeft: 4,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    todayText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.text,
+    },
+    week: {
+      flexDirection: "row",
+    },
+    weekday: {
+      flex: 1,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      color: colors.textMuted,
+      paddingVertical: 6,
+    },
+    cell: {
+      flex: 1,
+      minHeight: 62,
+      alignItems: "center",
+      paddingVertical: 4,
+      borderRadius: 12,
+      gap: 2,
+    },
+    cellSelected: {
+      backgroundColor: withAlpha(colors.overlay, 0.08),
+    },
+    dayNumber: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    today: {
+      backgroundColor: colors.white,
+    },
+    dayText: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    todayLabel: {
+      color: colors.bg,
+    },
+    otherMonth: {
+      opacity: 0.35,
+    },
+    dots: {
+      flexDirection: "row",
+      gap: 3,
+      height: 6,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    count: {
+      fontFamily: fonts.bold,
+      fontSize: 11,
+      color: colors.textMuted,
+    },
+  })
+);

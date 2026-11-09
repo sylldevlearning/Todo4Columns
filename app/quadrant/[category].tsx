@@ -27,7 +27,7 @@ import {
   useTaskActions,
   useTasksSelector,
 } from "../../src/store/TasksContext";
-import { colors, fonts, TOUCH_SIZE } from "../../src/theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles, useScheme } from "../../src/theme";
 import { Task } from "../../src/types";
 
 const UNDO_DELAY_MS = 5000;
@@ -51,6 +51,7 @@ const allSettings = (settings: Settings) => settings;
 
 // Liste des tâches d'un quadrant
 export default function QuadrantScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const { category: param } = useLocalSearchParams<{ category: string }>();
   const key = isCategory(param) ? param : null;
@@ -332,76 +333,78 @@ export default function QuadrantScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 12,
-    gap: 4,
-  },
-  headerText: {
-    flex: 1,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 28,
-  },
-  subtitle: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.textMuted,
-  },
-  list: {
-    paddingHorizontal: 16,
-    paddingBottom: 180, // place pour le bandeau et le bouton flottant
-  },
-  separator: {
-    height: 10,
-  },
-  empty: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    color: colors.textMuted,
-    textAlign: "center",
-    paddingVertical: 32,
-  },
-  doneHeader: {
-    marginTop: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  doneToggle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    minHeight: TOUCH_SIZE,
-    paddingRight: 8,
-  },
-  doneTitle: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.textMuted,
-  },
-  clearButton: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-    paddingHorizontal: 8,
-  },
-  clearText: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.danger,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      paddingBottom: 12,
+      gap: 4,
+    },
+    headerText: {
+      flex: 1,
+    },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 28,
+    },
+    subtitle: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    list: {
+      paddingHorizontal: 16,
+      paddingBottom: 180, // place pour le bandeau et le bouton flottant
+    },
+    separator: {
+      height: 10,
+    },
+    empty: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      color: colors.textMuted,
+      textAlign: "center",
+      paddingVertical: 32,
+    },
+    doneHeader: {
+      marginTop: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    doneToggle: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      minHeight: TOUCH_SIZE,
+      paddingRight: 8,
+    },
+    doneTitle: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.textMuted,
+    },
+    clearButton: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+      paddingHorizontal: 8,
+    },
+    clearText: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.danger,
+    },
+  })
+);

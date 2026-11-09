@@ -15,7 +15,7 @@ import { requestReviewPrompt } from "../src/reviewPrompt";
 import { sameItems } from "../src/store/selectableStore";
 import { selectCompletions, TasksState, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
 import { nudgeMessage, shareMessage } from "../src/delegation";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../src/theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles, useScheme } from "../src/theme";
 import { Category, Task } from "../src/types";
 
 const STEPS = 3;
@@ -74,6 +74,7 @@ function TaskRow({ task, children }: { task: Task; children?: React.ReactNode })
 
 // Revue de la semaine : 3 étapes (« Passer » sur chacune), puis le résumé
 export default function ReviewScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const actions = useTaskActions();
   const { celebrate } = useCelebration();
@@ -328,193 +329,195 @@ function StepContent({
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    gap: 4,
-  },
-  headerText: {
-    flex: 1,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 20,
-    color: colors.text,
-  },
-  progress: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  skip: {
-    minHeight: TOUCH_SIZE,
-    minWidth: TOUCH_SIZE,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  skipText: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.textMuted,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  step: {
-    gap: 8,
-  },
-  stepTitle: {
-    fontFamily: fonts.extrabold,
-    fontSize: 24,
-  },
-  stepBody: {
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.text,
-  },
-  list: {
-    marginTop: 12,
-    gap: 10,
-  },
-  empty: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.textMuted,
-  },
-  counter: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  row: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 14,
-    gap: 10,
-  },
-  checkRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: TOUCH_SIZE + 12,
-  },
-  disabled: {
-    opacity: 0.45,
-  },
-  rowTitle: {
-    flexShrink: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  rowDetail: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-    marginTop: -6,
-  },
-  choices: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  choice: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 14,
-    borderRadius: TOUCH_SIZE / 2,
-    borderWidth: 1,
-    borderColor: colors.border,
-    justifyContent: "center",
-  },
-  choiceText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  choiceTextSelected: {
-    color: colors.bg,
-  },
-  nudge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    minHeight: TOUCH_SIZE,
-    alignSelf: "flex-start",
-  },
-  nudgeText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    textDecorationLine: "underline",
-  },
-  end: {
-    alignItems: "center",
-    gap: 12,
-    paddingTop: 24,
-  },
-  endTitle: {
-    fontFamily: fonts.extrabold,
-    fontSize: 26,
-    color: colors.text,
-  },
-  streak: {
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: CATEGORY_BY_KEY.INU.textColor,
-  },
-  card: {
-    alignSelf: "stretch",
-    backgroundColor: withAlpha(CATEGORY_BY_KEY.INU.color, 0.08),
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 16,
-    gap: 12,
-    marginTop: 12,
-  },
-  cardTitle: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-  },
-  summary: {
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: colors.text,
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  next: {
-    minHeight: 54,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  nextText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 16,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      gap: 4,
+    },
+    headerText: {
+      flex: 1,
+    },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 20,
+      color: colors.text,
+    },
+    progress: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    skip: {
+      minHeight: TOUCH_SIZE,
+      minWidth: TOUCH_SIZE,
+      paddingHorizontal: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    skipText: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.textMuted,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 32,
+    },
+    step: {
+      gap: 8,
+    },
+    stepTitle: {
+      fontFamily: fonts.extrabold,
+      fontSize: 24,
+    },
+    stepBody: {
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.text,
+    },
+    list: {
+      marginTop: 12,
+      gap: 10,
+    },
+    empty: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    counter: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    row: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 14,
+      gap: 10,
+    },
+    checkRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: TOUCH_SIZE + 12,
+    },
+    disabled: {
+      opacity: 0.45,
+    },
+    rowTitle: {
+      flexShrink: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    rowDetail: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+      marginTop: -6,
+    },
+    choices: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    choice: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 14,
+      borderRadius: TOUCH_SIZE / 2,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: "center",
+    },
+    choiceText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    choiceTextSelected: {
+      color: colors.bg,
+    },
+    nudge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      minHeight: TOUCH_SIZE,
+      alignSelf: "flex-start",
+    },
+    nudgeText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      textDecorationLine: "underline",
+    },
+    end: {
+      alignItems: "center",
+      gap: 12,
+      paddingTop: 24,
+    },
+    endTitle: {
+      fontFamily: fonts.extrabold,
+      fontSize: 26,
+      color: colors.text,
+    },
+    streak: {
+      fontFamily: fonts.bold,
+      fontSize: 16,
+      color: CATEGORY_BY_KEY.INU.textColor,
+    },
+    card: {
+      alignSelf: "stretch",
+      backgroundColor: withAlpha(CATEGORY_BY_KEY.INU.color, 0.08),
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 16,
+      gap: 12,
+      marginTop: 12,
+    },
+    cardTitle: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+    },
+    summary: {
+      fontFamily: fonts.bold,
+      fontSize: 16,
+      color: colors.text,
+    },
+    footer: {
+      paddingHorizontal: 16,
+      paddingTop: 8,
+      paddingBottom: 12,
+    },
+    next: {
+      minHeight: 54,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    nextText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 16,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+  })
+);

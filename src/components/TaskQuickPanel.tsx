@@ -7,7 +7,7 @@ import { t } from "../i18n";
 import { noteUndo } from "../reviewPrompt";
 import { isAutoProgress, PROGRESS_VALUES, taskProgress } from "../progress";
 import { stepsOf } from "../steps";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 import { Task } from "../types";
 import InfoButton from "./InfoButton";
 import ProgressBar from "./ProgressBar";
@@ -118,141 +118,143 @@ export default function TaskQuickPanel({ task, category, onToggleStep, onSetProg
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-  sheet: {
-    maxHeight: "80%",
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    gap: 10,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  title: {
-    flex: 1,
-    fontFamily: fonts.extrabold,
-    fontSize: 19,
-    color: colors.text,
-  },
-  close: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  label: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  percent: {
-    marginLeft: "auto",
-    fontFamily: fonts.extrabold,
-    fontSize: 20,
-  },
-  hint: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  scroll: {
-    flexGrow: 0,
-  },
-  content: {
-    gap: 4,
-    paddingVertical: 4,
-  },
-  section: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-    marginBottom: 4,
-  },
-  step: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    minHeight: TOUCH_SIZE,
-  },
-  box: {
-    width: 24,
-    height: 24,
-    borderRadius: 7,
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepTitle: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  stepDone: {
-    color: colors.textMuted,
-    textDecorationLine: "line-through",
-  },
-  values: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  value: {
-    minWidth: 58,
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  valueText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  undo: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: withAlpha(colors.white, 0.06),
-  },
-  undoText: {
-    flex: 1,
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.text,
-  },
-  undoAction: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 12,
-    justifyContent: "center",
-  },
-  undoActionText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+    },
+    sheet: {
+      maxHeight: "80%",
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingTop: 16,
+      paddingHorizontal: 20,
+      gap: 10,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    title: {
+      flex: 1,
+      fontFamily: fonts.extrabold,
+      fontSize: 19,
+      color: colors.text,
+    },
+    close: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    progressRow: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    label: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    percent: {
+      marginLeft: "auto",
+      fontFamily: fonts.extrabold,
+      fontSize: 20,
+    },
+    hint: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    scroll: {
+      flexGrow: 0,
+    },
+    content: {
+      gap: 4,
+      paddingVertical: 4,
+    },
+    section: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+      marginBottom: 4,
+    },
+    step: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      minHeight: TOUCH_SIZE,
+    },
+    box: {
+      width: 24,
+      height: 24,
+      borderRadius: 7,
+      borderWidth: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepTitle: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    stepDone: {
+      color: colors.textMuted,
+      textDecorationLine: "line-through",
+    },
+    values: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    value: {
+      minWidth: 58,
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 10,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    valueText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    undo: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingLeft: 14,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: withAlpha(colors.overlay, 0.06),
+    },
+    undoText: {
+      flex: 1,
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.text,
+    },
+    undoAction: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 12,
+      justifyContent: "center",
+    },
+    undoActionText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+  })
+);

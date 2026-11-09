@@ -228,6 +228,10 @@ export const ptBR: Translations = {
     reviewTime: "Hora",
     weekdays: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
     language: "Idioma",
+    appearance: "Aparência",
+    appearanceAuto: "Automático",
+    appearanceLight: "Claro",
+    appearanceDark: "Escuro",
     languageAuto: "Automático (idioma do celular)",
   },
 
@@ -380,6 +384,11 @@ export const ptBR: Translations = {
         title: "Idioma",
         body: "“Automático” segue o idioma do celular, ou o inglês se o DoFirst não estiver traduzido nele. Escolha um idioma para usá-lo sempre: tudo muda na hora, inclusive as notificações. Os títulos das suas tarefas não são traduzidos.",
         example: "num celular em sueco, o app aparece em inglês; escolha “Português (Brasil)” para mantê-lo em português.",
+      },
+      appearance: {
+        title: "Aparência",
+        body: "“Automático” segue o tema do celular e muda com ele; “Claro” ou “Escuro” ficam sempre iguais. A mudança é imediata, widgets incluídos, e esta configuração é só deste celular.",
+        example: "escolha “Automático” para passar ao escuro à noite se o seu celular fizer isso.",
       },
     },
   },

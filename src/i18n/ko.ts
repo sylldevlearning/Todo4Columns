@@ -226,6 +226,10 @@ export const ko: Translations = {
     reviewTime: "시간",
     weekdays: ["일", "월", "화", "수", "목", "금", "토"],
     language: "언어",
+    appearance: "화면 모드",
+    appearanceAuto: "자동",
+    appearanceLight: "라이트",
+    appearanceDark: "다크",
     languageAuto: "자동 (휴대폰 언어)",
   },
 
@@ -378,6 +382,11 @@ export const ko: Translations = {
         title: "언어",
         body: "“자동”은 휴대폰 언어를 따라가요. DoFirst가 그 언어를 지원하지 않으면 영어로 나와요. 언어를 고르면 항상 그 언어를 써요: 알림까지 모두 바로 바뀌어요. 할 일 제목은 번역되지 않아요.",
         example: "스웨덴어로 설정된 휴대폰에서는 앱이 영어로 나와요. “한국어”를 고르면 한국어로 유지돼요.",
+      },
+      appearance: {
+        title: "화면 모드",
+        body: "'자동'은 휴대폰 테마를 따라 함께 바뀌고, '라이트'나 '다크'는 항상 그대로예요. 위젯을 포함해 바로 바뀌며, 이 설정은 이 휴대폰에만 적용돼요.",
+        example: "휴대폰이 저녁에 다크 모드로 바뀐다면 '자동'을 고르세요.",
       },
     },
   },
