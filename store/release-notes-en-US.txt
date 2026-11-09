@@ -1,6 +1,4 @@
-• New: calendar view of your due dates, steps and recurring tasks
-• Mic on the matrix: dictate a task, "tomorrow at 3 pm" becomes a due date
-• Progress in %: press and hold a task to check its steps or set it
-• Spread a project over chosen days: Mon/Wed/Fri or specific dates
-• Optional Google Drive backup, restored automatically on a new phone
-• Redesigned introduction, with reminders and backup
+• New: sync your tasks between several phones with Google Drive (optional)
+• Home screen widgets: "Do", "Today" and "Matrix"; check off a task without opening the app
+• Light theme: Settings › Appearance (automatic, light or dark)
+• Cloud icon on the matrix: sync status
