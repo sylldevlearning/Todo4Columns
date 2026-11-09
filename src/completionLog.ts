@@ -59,11 +59,14 @@ export async function loadLog(): Promise<Completion[] | null> {
 }
 
 export async function saveLog(log: Completion[]): Promise<void> {
-  await AsyncStorage.setItem(
-    COMPLETION_LOG_KEY,
-    JSON.stringify({ schemaVersion: COMPLETION_LOG_VERSION, entries: log })
-  );
+  await AsyncStorage.setItem(...logEntry(log));
 }
+
+// Clé et contenu enregistrés du journal, pour une écriture groupée
+export const logEntry = (log: Completion[]): [string, string] => [
+  COMPLETION_LOG_KEY,
+  JSON.stringify({ schemaVersion: COMPLETION_LOG_VERSION, entries: log }),
+];
 
 // Met le journal à jour d'après les tâches modifiées : une tâche qui vient d'être terminée
 // ajoute une entrée, une tâche rouverte (« Annuler ») retire la sienne. Les tâches ajoutées

@@ -1,18 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
+import { loadLog, logEntry, pruneLog, seedLog, updateLog } from "../completionLog";
 import { markDoneIn } from "../hooks/useRecurrence";
 import { setLanguagePreference } from "../i18n";
-import { parseStoredTasks } from "../migrations";
+import { serializeTasks } from "../migrations";
 import { defaultNotifier, Notifier } from "../notifications/service";
 import { loadSettings } from "../settings";
 import { stepsOf, toggleStepIn } from "../steps";
-import { saveTasks, STORAGE_KEY } from "../storage";
+import { loadTasksForUpdate, STORAGE_KEY } from "../storage";
+import { withTasksLock } from "../tasksLock";
 import {
   loadTombstones,
   noteLogAddition,
   noteLogRemoval,
-  persistSyncMarks,
   stampChanges,
+  syncMarksEntry,
 } from "../sync/localChanges";
 import { Task } from "../types";
 import { getLiveApp } from "./liveApp";
@@ -32,29 +33,49 @@ const completeStepIn = (tasks: Task[], taskId: string, stepId: string, now: numb
       : t
   );
 
+// Attente maximale d'une app enregistrée mais pas encore prête (tâches en cours de lecture)
+export const LIVE_APP_WAIT_MS = 5000;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// L'app est-elle (ou devient-elle, en quelques secondes) prête à recevoir la coche ?
+async function readyLiveApp() {
+  const live = getLiveApp();
+  if (!live) return null;
+  for (let waited = 0; !live.isReady() && waited < LIVE_APP_WAIT_MS; waited += 50) await sleep(50);
+  return live.isReady() ? live : null;
+}
+
 // Coche depuis un widget, comme dans l'app : tâche terminée (occurrence suivante d'une tâche
 // récurrente comprise) ou étape cochée, journal des fins, rappels annulés ou reprogrammés,
 // modification notée pour la synchronisation (modifiedAt).
-// - App ouverte : ses propres actions (la synchronisation suit d'elle-même).
-// - App fermée : sur les données enregistrées ; la synchronisation se fera à la prochaine ouverture.
+// - App ouverte, ou en train de lire ses tâches : ses propres actions (la synchronisation suit
+//   d'elle-même).
+// - App fermée : sur les données enregistrées, sous verrou (le chargement des tâches par l'app
+//   attend la fin de l'écriture, et les coches passent l'une après l'autre, chacune relisant les
+//   données) ; la synchronisation se fera à la prochaine ouverture.
 export async function checkFromWidget(
   { taskId, stepId }: WidgetCheck,
   notifier: Notifier = defaultNotifier
 ): Promise<CheckResult> {
-  const live = getLiveApp();
-  if (live?.isReady()) {
+  const live = await readyLiveApp();
+  if (live) {
     if (stepId) live.completeStep(taskId, stepId);
     else live.completeTask(taskId);
     return "live";
   }
+  return withTasksLock(() => checkStored({ taskId, stepId }, notifier));
+}
 
+async function checkStored({ taskId, stepId }: WidgetCheck, notifier: Notifier): Promise<CheckResult> {
   await loadTombstones();
-  const json = await AsyncStorage.getItem(STORAGE_KEY);
-  if (json === null) return "unchanged";
-  const before = parseStoredTasks(json).tasks;
+  // Comme au lancement de l'app : ancien format migré, copie brute gardée avant
+  const before = await loadTasksForUpdate();
+  if (before === null) return "unchanged";
   const settings = await loadSettings();
   setLanguagePreference(settings.language); // textes des rappels reprogrammés
   const now = Date.now();
+  // Tâche déjà terminée (double appui) ou étape déjà cochée : rien ne change
   const changed = stepId ? completeStepIn(before, taskId, stepId, now) : markDoneIn(before, taskId, now, settings);
   if (changed === before || changed.every((t, i) => t === before[i])) return "unchanged";
   const stamped = stampChanges(before, changed, now);
@@ -87,8 +108,7 @@ export async function checkFromWidget(
     final.push({ ...task, notificationIds: ids });
   }
 
-  await saveTasks(final);
-  await saveLog(log);
-  await persistSyncMarks();
+  // Une seule écriture : tâches, journal et suppressions ensemble, ou rien
+  await AsyncStorage.multiSet([[STORAGE_KEY, serializeTasks(final)], logEntry(log), syncMarksEntry()]);
   return "saved";
 }

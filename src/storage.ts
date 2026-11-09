@@ -31,18 +31,22 @@ export async function loadTasks(): Promise<Task[]> {
     }
   }
 
-  let parsed;
   try {
-    parsed = parseStoredTasks(json);
+    return await parseWithBackup(json);
   } catch (e) {
     // Contenu illisible : on le met de côté avant qu'il soit remplacé
     console.warn("Tâches illisibles, copie de sauvegarde conservée :", e);
     await AsyncStorage.setItem(`${CORRUPT_BACKUP_PREFIX}${Date.now()}`, json ?? "");
     return [];
   }
+}
 
+// Lit le contenu enregistré au format courant. Ancien format : une copie brute est écrite une
+// seule fois (TASKS_4COLS_BACKUP_V<n>) avant que la version migrée puisse le remplacer.
+// Lève une erreur si le contenu est illisible.
+async function parseWithBackup(json: string): Promise<Task[]> {
+  const parsed = parseStoredTasks(json);
   if (
-    json !== null &&
     parsed.fromVersion !== null &&
     parsed.fromVersion < TASKS_SCHEMA_VERSION &&
     (await AsyncStorage.getItem(backupKeyFor(parsed.fromVersion))) === null
@@ -50,6 +54,14 @@ export async function loadTasks(): Promise<Task[]> {
     await AsyncStorage.setItem(backupKeyFor(parsed.fromVersion), json);
   }
   return parsed.tasks;
+}
+
+// Lecture pour une modification hors de l'app (coche depuis un widget) : comme loadTasks, copie
+// de l'ancien format comprise, mais sans la récupération des tâches de la toute première app.
+// null : rien d'enregistré ; contenu illisible : erreur (rien ne doit alors être écrit).
+export async function loadTasksForUpdate(): Promise<Task[] | null> {
+  const json = await AsyncStorage.getItem(STORAGE_KEY);
+  return json === null ? null : parseWithBackup(json);
 }
 
 export async function saveTasks(tasks: Task[]): Promise<void> {

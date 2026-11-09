@@ -11,6 +11,7 @@ import {
 } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
 import { loadTasks, saveTasks } from "../storage";
+import { waitForTasksLock } from "../tasksLock";
 import {
   getLogRemovals,
   getTombstones,
@@ -98,6 +99,8 @@ export function useTasks(
     (async () => {
       let loaded: Task[];
       try {
+        // Une coche depuis un widget en cours d'écriture : lue après elle
+        await waitForTasksLock();
         await loadTombstones();
         loaded = await loadTasks();
         setTasksState(loaded);

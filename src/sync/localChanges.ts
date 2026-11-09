@@ -59,13 +59,17 @@ export function loadTombstones(): Promise<void> {
 
 // Écriture des suppressions ; la promesse renvoyée peut être attendue (synchronisation)
 export function persistSyncMarks(): Promise<void> {
+  return AsyncStorage.setItem(...syncMarksEntry()).catch((e) =>
+    console.warn("Enregistrement des suppressions impossible :", e)
+  );
+}
+
+// Clé et contenu enregistrés des suppressions (expirées oubliées), pour une écriture groupée
+export function syncMarksEntry(): [string, string] {
   const oldest = Date.now() - TOMBSTONE_TTL;
   for (const [id, at] of tombstones) if (at < oldest) tombstones.delete(id);
   for (const [key, at] of logRemovals) if (at < oldest) logRemovals.delete(key);
-  return AsyncStorage.setItem(
-    TOMBSTONES_KEY,
-    JSON.stringify({ schemaVersion: 2, deleted: getTombstones(), removedCompletions: getLogRemovals() })
-  ).catch((e) => console.warn("Enregistrement des suppressions impossible :", e));
+  return [TOMBSTONES_KEY, JSON.stringify({ schemaVersion: 2, deleted: getTombstones(), removedCompletions: getLogRemovals() })];
 }
 const persist = () => void persistSyncMarks();
 
