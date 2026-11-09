@@ -126,13 +126,22 @@ export interface DriveRevision {
   modifiedTime: string; // ISO 8601
 }
 
-// Révisions du contenu d'un fichier, de la plus ancienne à la plus récente
+// Toutes les révisions du contenu d'un fichier (toutes les pages), de la plus ancienne à la plus
+// récente
 export async function listRevisions(id: string): Promise<DriveRevision[]> {
-  const params = new URLSearchParams({ pageSize: "200", fields: "revisions(id,modifiedTime)" });
-  const data = (await (await request(`${API}/${encodeURIComponent(id)}/revisions?${params}`)).json()) as {
-    revisions?: DriveRevision[];
-  };
-  return data.revisions ?? [];
+  const all: DriveRevision[] = [];
+  let pageToken: string | undefined;
+  do {
+    const params = new URLSearchParams({ pageSize: "200", fields: "nextPageToken,revisions(id,modifiedTime)" });
+    if (pageToken) params.set("pageToken", pageToken);
+    const data = (await (await request(`${API}/${encodeURIComponent(id)}/revisions?${params}`)).json()) as {
+      revisions?: DriveRevision[];
+      nextPageToken?: string;
+    };
+    all.push(...(data.revisions ?? []));
+    pageToken = data.nextPageToken;
+  } while (pageToken);
+  return all;
 }
 
 export async function downloadRevision(id: string, revision: string): Promise<string> {

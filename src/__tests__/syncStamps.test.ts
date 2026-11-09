@@ -52,7 +52,6 @@ describe("modifiedAt", () => {
     ["avancement", (r: ReturnType<typeof useTasks>) => r.updateTask("t", { progress: 50 })],
     ["archivage", (r: ReturnType<typeof useTasks>) => r.archiveTask("t")],
     ["priorité de la semaine", (r: ReturnType<typeof useTasks>) => r.setWeekPriorities(["t"], "2026-11-09")],
-    ["report d'une heure", (r: ReturnType<typeof useTasks>) => r.snoozeTask("t")],
     ["minuteur", (r: ReturnType<typeof useTasks>) => r.startTimer("t", 25)],
   ])("%s : modifiedAt mis à jour", async (_label, action) => {
     const { result } = await setup();

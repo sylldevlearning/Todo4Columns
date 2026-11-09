@@ -30,6 +30,7 @@ export interface TasksState {
   completions: Completion[]; // journal des fins de tâches (bilan)
   escalation: Escalation | null; // dernière bascule automatique en Faire (« Annuler »)
   loadError: boolean; // lecture des tâches impossible
+  logReady: boolean; // journal des fins lu (la synchronisation attend)
 }
 
 // Journal des fins de tâches (bilan, revue, demande d'avis)
@@ -37,7 +38,7 @@ export const selectCompletions = ({ completions }: TasksState) => completions;
 
 type StoreActions = Omit<
   ReturnType<typeof useTasks>,
-  "tasks" | "isLoaded" | "completions" | "escalation" | "loadError"
+  "tasks" | "isLoaded" | "completions" | "escalation" | "loadError" | "logReady"
 >;
 
 export type TaskActions = StoreActions & {
@@ -132,6 +133,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       completions: store.completions,
       escalation: store.escalation,
       loadError: store.loadError,
+      logReady: store.logReady,
     })
   );
   const [settingsStore] = useState(() => createSelectableStore(settings));
@@ -144,8 +146,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       completions: store.completions,
       escalation: store.escalation,
       loadError: store.loadError,
+      logReady: store.logReady,
     });
-  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation, store.loadError]);
+  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation, store.loadError, store.logReady]);
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
   // Réglage « Langue » : appliqué avant les effets, donc avant la reprogrammation des notifications
   useLayoutEffect(() => setLanguagePreference(settings.language), [settings.language]);

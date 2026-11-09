@@ -5,7 +5,7 @@ import { isWeekKey } from "../balance";
 import { parseStoredTasks, serializeTasks, TASKS_SCHEMA_VERSION } from "../migrations";
 import { parseSettings, SETTINGS_SCHEMA_VERSION, Settings } from "../settings";
 import { Category } from "../types";
-import { RemovedCompletion, SyncData, Tombstone } from "./merge";
+import { modifiedAtOf, RemovedCompletion, SyncData, Tombstone } from "./merge";
 
 // Fichier synchronisé, dans le dossier caché de l'app sur Google Drive (appDataFolder) :
 // « dofirst-sync.json » (l'actuel), plus une copie par jour gardée 5 jours.
@@ -21,6 +21,7 @@ export interface ParsedSyncFile {
   data: SyncData;
   settings: Settings | null;
   writtenAt: number;
+  legacy?: boolean; // sauvegarde de la 1.5
 }
 
 export type SyncFileResult = { ok: true; file: ParsedSyncFile } | { ok: false; reason: "invalid" | "newer" };
@@ -31,8 +32,8 @@ export function buildSyncFile(data: SyncData, settings: Settings | null, now: nu
     kind: "sync",
     syncVersion: SYNC_VERSION,
     writtenAt: now,
-    // Les identifiants de notifications n'ont de sens que sur ce téléphone
-    tasks: JSON.parse(serializeTasks(data.tasks.map((t) => ({ ...t, notificationIds: [] })))),
+    // Les identifiants de notifications et les reports (« Reporter 1 h ») restent sur ce téléphone
+    tasks: JSON.parse(serializeTasks(data.tasks.map((t) => ({ ...t, notificationIds: [], snoozedUntil: null })))),
     deleted: data.deleted,
     completionLog: data.completions,
     removedCompletions: data.removedCompletions,
@@ -86,7 +87,7 @@ export function parseSyncFile(text: string, now: number = Date.now()): SyncFileR
     ok: true,
     file: {
       data: {
-        tasks: tasks.map((t) => ({ ...t, notificationIds: [] })),
+        tasks: tasks.map((t) => ({ ...t, notificationIds: [], snoozedUntil: null })),
         deleted,
         completions: parseCompletions(raw.completionLog),
         removedCompletions,
@@ -98,18 +99,25 @@ export function parseSyncFile(text: string, now: number = Date.now()): SyncFileR
   };
 }
 
-// Sauvegarde de la 1.5 (point de départ de la synchronisation) : mêmes données, sans suppressions
-export function fromLegacyBackup(parsed: Extract<ParsedBackup, { ok: true }>): ParsedSyncFile {
+// Sauvegarde de la 1.5 (point de départ de la synchronisation) : mêmes données, sans suppressions.
+// Les dates de modification n'y sont que des estimations (modifiedAtOf) : plafonnées juste avant
+// l'écriture de la sauvegarde, pour qu'une horloge en avance sur l'autre téléphone ne l'emporte pas
+// sur une modification faite ensuite ici.
+export function fromLegacyBackup(
+  parsed: Extract<ParsedBackup, { ok: true }>,
+  writtenAt: number = parsed.backup.createdAt
+): ParsedSyncFile {
   const { backup } = parsed;
   return {
+    legacy: true,
     data: {
-      tasks: backup.tasks,
+      tasks: backup.tasks.map((t) => ({ ...t, snoozedUntil: null, modifiedAt: Math.min(modifiedAtOf(t), writtenAt - 1) })),
       deleted: [],
       completions: backup.completions,
       removedCompletions: [],
       reviewWeeks: backup.reviewWeeks,
     },
     settings: backup.settings,
-    writtenAt: backup.createdAt,
+    writtenAt,
   };
 }

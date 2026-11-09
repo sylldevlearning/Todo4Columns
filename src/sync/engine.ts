@@ -35,8 +35,6 @@ export interface SyncState {
   fileId: string | null;
   rev: string | null; // révision de l'actuel déjà fusionnée ici
   baseHash: string | null; // empreinte des données à cette révision
-  baseLog: string[]; // entrées du journal à cette révision (pour repérer celles retirées ici)
-  removedLog: RemovedCompletion[];
   lastSyncAt: number | null;
   migrated: boolean; // sauvegarde de la 1.5 déjà reprise (ou écartée)
   copyDay: string | null; // jour de la dernière copie quotidienne
@@ -46,8 +44,6 @@ export const DEFAULT_SYNC_STATE: SyncState = {
   fileId: null,
   rev: null,
   baseHash: null,
-  baseLog: [],
-  removedLog: [],
   lastSyncAt: null,
   migrated: false,
   copyDay: null,
@@ -69,12 +65,6 @@ export function parseSyncState(json: string | null): SyncState {
       fileId: str(d.fileId),
       rev: str(d.rev),
       baseHash: str(d.baseHash),
-      baseLog: Array.isArray(d.baseLog) ? d.baseLog.filter((k): k is string => typeof k === "string") : [],
-      removedLog: Array.isArray(d.removedLog)
-        ? d.removedLog.filter(
-            (r): r is RemovedCompletion => isRecord(r) && typeof r.key === "string" && typeof r.removedAt === "number"
-          )
-        : [],
       lastSyncAt: typeof d.lastSyncAt === "number" ? d.lastSyncAt : null,
       migrated: d.migrated === true,
       copyDay: str(d.copyDay),
@@ -129,17 +119,6 @@ function parseOrThrow(text: string, now: number): ParsedSyncFile {
   return parsed.file;
 }
 
-// Entrées du journal retirées sur ce téléphone depuis la dernière synchronisation (tâche rouverte)
-function withLocalRemovals(data: SyncData, state: SyncState, now: number): SyncData {
-  const present = new Set(data.completions.map(completionKey));
-  const known = new Set(state.removedLog.map((r) => r.key));
-  const removed = [
-    ...state.removedLog.filter((r) => !present.has(r.key)),
-    ...state.baseLog.filter((k) => !present.has(k) && !known.has(k)).map((key) => ({ key, removedAt: now })),
-  ];
-  return { ...data, removedCompletions: [...data.removedCompletions, ...removed] };
-}
-
 export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promise<SyncResult> {
   const { remote, local, store } = deps;
   const clock = deps.now ?? Date.now;
@@ -176,13 +155,16 @@ export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promi
     // 2. Fusionner avec les données du téléphone
     const read = await local.read();
     const settings = read.settings;
-    const localRaw = options.restore ?? read.data;
-    const localData = withLocalRemovals(localRaw, state, now);
+    // Retour à une copie : ses données, avec les suppressions et retraits notés ici
+    const localData = options.restore
+      ? { ...options.restore, deleted: read.data.deleted, removedCompletions: read.data.removedCompletions }
+      : read.data;
     const remoteData = remoteFile?.data ?? null;
     let merged: SyncData;
     if (mode === "replaceLocal") merged = pruneSyncData(remoteData ?? EMPTY_SYNC_DATA, now);
     else if (mode === "keepLocal") merged = overrideWith(localData, remoteData ?? EMPTY_SYNC_DATA, now);
-    else merged = remoteData ? mergeData(localData, remoteData, now) : pruneSyncData(localData, now);
+    // Sauvegarde de la 1.5 : à égalité de date, la version du téléphone gagne
+    else merged = remoteData ? mergeData(localData, remoteData, now, { preferLocal: remoteFile?.legacy === true }) : pruneSyncData(localData, now);
     for (const other of missed) merged = mergeData(merged, other, now);
     missed = [];
     const mergedHash = hashData(merged);
@@ -203,6 +185,9 @@ export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promi
       (remoteHash !== null ? remoteHash === mergedHash : state.baseHash === mergedHash);
     let fileId = head?.id ?? null;
     let rev = head?.rev ?? null;
+    // Écriture faite mais historique des révisions non vérifié : la prochaine synchronisation
+    // retélécharge l'actuel en entier
+    let unverified = false;
     let content: string | null = null;
     if (!upToDate) {
       content = buildSyncFile(merged, settings, now);
@@ -214,6 +199,7 @@ export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promi
         const result = await remote.update(head.id, content, head.rev, merged.tasks.length);
         if (result.status === "changed") continue; // un autre téléphone vient d'écrire
         rev = result.rev;
+        unverified = result.unverified === true;
         missed = result.missed.map((text) => parseOrThrow(text, now).data);
         for (const id of head.duplicates) await remote.remove(id).catch(() => {});
       }
@@ -223,10 +209,8 @@ export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promi
     state = {
       ...state,
       fileId,
-      rev,
+      rev: unverified ? null : rev,
       baseHash: mergedHash,
-      baseLog: merged.completions.map(completionKey),
-      removedLog: merged.removedCompletions,
       lastSyncAt: now,
       migrated: true,
     };

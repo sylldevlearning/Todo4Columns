@@ -96,10 +96,16 @@ class Phone {
     this.edit(id, { isDone: true, completedAt: clock });
     this.data = { ...this.data, completions: [...this.data.completions, { date: clock, category: task.category }] };
   }
+  // Comme useCompletionLog : le retrait de l'entrée est noté au moment où il se produit
   reopen(id: string) {
-    const done = this.task(id)!.completedAt!;
+    const task = this.task(id)!;
+    const done = task.completedAt!;
     this.edit(id, { isDone: false, completedAt: null });
-    this.data = { ...this.data, completions: this.data.completions.filter((c) => c.date !== done) };
+    this.data = {
+      ...this.data,
+      completions: this.data.completions.filter((c) => c.date !== done),
+      removedCompletions: [...this.data.removedCompletions, { key: `${done}|${task.category}`, removedAt: clock }],
+    };
   }
   task = (id: string) => this.data.tasks.find((t) => t.id === id);
   ids = () => this.data.tasks.map((t) => t.id).sort();

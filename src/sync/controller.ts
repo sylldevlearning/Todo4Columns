@@ -2,8 +2,9 @@ import { DriveError } from "../drive/driveApi";
 import { loadDriveState, updateDriveState } from "../drive/driveBackup";
 import { NotSignedInError } from "../drive/googleAccount";
 import { loadReviewWeeks, saveReviewWeeks } from "../review";
-import type { TaskActions } from "../store/TasksContext";
-import { getTombstones } from "./localChanges";
+import type { TaskActions, TasksState } from "../store/TasksContext";
+import { expectFirstSync, markFirstSyncDone, resetFirstSyncForTests } from "./firstSync";
+import { getLogRemovals, getTombstones } from "./localChanges";
 import {
   DEFAULT_SYNC_STATE,
   LocalSide,
@@ -51,7 +52,7 @@ export interface SyncSetup {
   remote: RemoteStore;
   store: StateStore;
   local: LocalSide;
-  canSync: () => boolean; // tâches lues sans erreur
+  canSync: () => boolean; // tâches et journal lus sans erreur
 }
 
 let setup: SyncSetup | null = null;
@@ -66,6 +67,14 @@ export type SyncOutcome = { ok: true; result: SyncResult | null } | { ok: false;
 
 export async function configureSync(next: SyncSetup | null): Promise<void> {
   setup = next;
+  expectFirstSync(
+    next
+      ? async () => {
+          const drive = await loadDriveState();
+          return drive.account !== null && drive.autoBackup;
+        }
+      : null
+  );
   if (!next) return;
   const [drive, state] = await Promise.all([loadDriveState(), next.store.load()]);
   setStatus({ phase: drive.account === null ? "off" : "idle", lastSyncAt: state.lastSyncAt, error: null });
@@ -99,7 +108,16 @@ export function pauseSync(value: boolean): void {
   paused = value;
 }
 
+// Une synchronisation (quel qu'en soit le résultat) : la première libère ce qui l'attendait
 async function run(request: SyncRequest): Promise<SyncOutcome> {
+  try {
+    return await runOnce(request);
+  } finally {
+    markFirstSyncDone();
+  }
+}
+
+async function runOnce(request: SyncRequest): Promise<SyncOutcome> {
   const current = setup;
   if (!current || !current.canSync()) return { ok: true, result: null };
   const drive = await loadDriveState();
@@ -112,7 +130,7 @@ async function run(request: SyncRequest): Promise<SyncOutcome> {
     const state = await current.store.load();
     const { data } = await current.local.read();
     // Même empreinte qu'à la dernière synchronisation (journal compris) : rien à envoyer
-    if (state.rev !== null && state.baseHash === hashData({ ...data, removedCompletions: state.removedLog })) {
+    if (state.rev !== null && state.baseHash === hashData(data)) {
       return { ok: true, result: null };
     }
   }
@@ -216,21 +234,36 @@ export function resetSyncControllerForTests(): void {
   rerun = false;
   paused = false;
   lastStartedAt = 0;
+  resetFirstSyncForTests();
 }
 
-// Données du téléphone vues par la synchronisation : tâches, suppressions, journal (état de
-// l'app) et revues (enregistrées à part)
+// Données du téléphone vues par la synchronisation : tâches, journal (état de l'app),
+// suppressions et retraits du journal (notés au moment où ils se produisent), revues (enregistrées
+// à part). Juste après une application, tant que l'état publié n'a pas été mis à jour par le rendu,
+// read renvoie les données appliquées (jamais l'ancien état).
 export function createLocalSide(actions: TaskActions): LocalSide {
+  let applied: { before: TasksState; tasks: SyncData["tasks"]; completions: SyncData["completions"] } | null = null;
   return {
     async read() {
-      const { tasks, completions } = actions.getTasksState();
+      const state = actions.getTasksState();
+      const fresh = applied === null || state !== applied.before;
+      if (fresh) applied = null;
       return {
-        data: { tasks, deleted: getTombstones(), completions, removedCompletions: [], reviewWeeks: await loadReviewWeeks() },
+        data: {
+          tasks: fresh ? state.tasks : applied!.tasks,
+          completions: fresh ? state.completions : applied!.completions,
+          deleted: getTombstones(),
+          removedCompletions: getLogRemovals(),
+          reviewWeeks: await loadReviewWeeks(),
+        },
         settings: actions.getSettings(),
       };
     },
     async apply(data, { replace, settings }) {
-      actions.applySynced(data, { replace });
+      const before = actions.getTasksState();
+      // Tâches, journal et suppressions écrits avant de rendre la main
+      const result = await actions.applySynced(data, { replace });
+      applied = { before, ...result };
       await saveReviewWeeks(data.reviewWeeks);
       if (settings) actions.updateSettings(settings);
     },

@@ -20,6 +20,7 @@ export interface FakeDriveState {
   files: Map<string, FakeFile>;
   offline: boolean;
   revisionsBroken: boolean; // historique des révisions refusé (403)
+  hideLatestRevision: boolean; // historique sans la dernière révision (pas encore visible)
   rejectToken: string | null; // jeton refusé (401)
   requests: { method: string; url: string; token: string | null }[];
   // Appelée avant chaque requête (pour glisser l'écriture d'un autre téléphone au milieu)
@@ -41,6 +42,7 @@ export function createFakeDrive() {
     files: new Map(),
     offline: false,
     revisionsBroken: false,
+    hideLatestRevision: false,
     rejectToken: null,
     requests: [],
     beforeRequest: null,
@@ -129,7 +131,13 @@ export function createFakeDrive() {
     if (parts[1] === "revisions") {
       if (state.revisionsBroken) return respond(403);
       if (parts.length === 2) {
-        return respond(200, { revisions: file.revisions.map((r) => ({ id: r.id, modifiedTime: r.modifiedTime })) });
+        // Pages de pageSize révisions (200 au plus), de la plus ancienne à la plus récente
+        const all = state.hideLatestRevision ? file.revisions.slice(0, -1) : file.revisions;
+        const size = Math.min(Number(url.searchParams.get("pageSize") ?? 200), 200);
+        const start = Number(url.searchParams.get("pageToken") ?? 0);
+        const page = all.slice(start, start + size).map((r) => ({ id: r.id, modifiedTime: r.modifiedTime }));
+        const next = start + size < all.length ? String(start + size) : undefined;
+        return respond(200, { revisions: page, ...(next ? { nextPageToken: next } : {}) });
       }
       const revision = file.revisions.find((r) => r.id === parts[2]);
       return revision ? respond(200, revision.content) : respond(404);

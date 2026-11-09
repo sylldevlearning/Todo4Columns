@@ -70,7 +70,14 @@ export async function saveLog(log: Completion[]): Promise<void> {
 // ou supprimées ne changent rien (une tâche restaurée est déjà dans le journal).
 // Une entrée déjà présente avant ce passage n'est pas ajoutée deux fois (tâche terminée sur un
 // autre téléphone : son entrée arrive avec le journal synchronisé).
-export function updateLog(log: Completion[], previous: Task[], next: Task[]): Completion[] {
+// onRemoved / onAdded : prévenus de chaque entrée retirée ou ajoutée (clé « date|quadrant »), pour
+// que la synchronisation transmette les retraits sans jamais les deviner.
+export function updateLog(
+  log: Completion[],
+  previous: Task[],
+  next: Task[],
+  notify: { onRemoved?: (key: string) => void; onAdded?: (key: string) => void } = {}
+): Completion[] {
   const before = new Map(previous.map((t) => [t.id, t]));
   const known = new Set(log.map((c) => `${c.date}|${c.category}`));
   let result = log;
@@ -86,9 +93,15 @@ export function updateLog(log: Completion[], previous: Task[], next: Task[]): Co
       // changé de case depuis.
       const exact = result.findIndex((c) => c.date === was && c.category === old.category);
       const index = exact !== -1 ? exact : result.findIndex((c) => c.date === was);
-      if (index !== -1) result = [...result.slice(0, index), ...result.slice(index + 1)];
+      if (index !== -1) {
+        notify.onRemoved?.(`${result[index].date}|${result[index].category}`);
+        result = [...result.slice(0, index), ...result.slice(index + 1)];
+      }
     }
-    if (now !== null && !known.has(`${now}|${task.category}`)) result = [...result, { date: now, category: task.category }];
+    if (now !== null && !known.has(`${now}|${task.category}`)) {
+      notify.onAdded?.(`${now}|${task.category}`);
+      result = [...result, { date: now, category: task.category }];
+    }
   }
   return result;
 }

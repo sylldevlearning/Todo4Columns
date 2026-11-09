@@ -10,8 +10,17 @@ import {
   pickReminderFields,
 } from "../reminders";
 import { DEFAULT_SETTINGS, Settings } from "../settings";
-import { loadTasks } from "../storage";
-import { getTombstones, loadTombstones, replaceTombstones, stampChanges } from "../sync/localChanges";
+import { loadTasks, saveTasks } from "../storage";
+import {
+  getLogRemovals,
+  getTombstones,
+  loadTombstones,
+  persistSyncMarks,
+  replaceLogRemovals,
+  replaceTombstones,
+  stampChanges,
+} from "../sync/localChanges";
+import { waitForFirstSync } from "../sync/firstSync";
 import { EMPTY_SYNC_DATA, mergeData, modifiedAtOf, SyncData, taskContent } from "../sync/merge";
 import { Category, ReminderFields, Task, TaskStep } from "../types";
 import { newId } from "./newId";
@@ -78,7 +87,10 @@ export function useTasks(
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
 
-  const { completions, loadCompletions, replaceCompletions, mergeCompletions } = useCompletionLog(tasks, isLoaded);
+  const { completions, logReady, loadCompletions, replaceCompletions, mergeCompletions } = useCompletionLog(
+    tasks,
+    isLoaded
+  );
 
   // Charger les tâches sauvegardées (au démarrage, ou « Réessayer » après une erreur), puis le
   // journal des fins de tâches
@@ -122,10 +134,17 @@ export function useTasks(
   // Option activée : archive les tâches « Si j'ai le temps » restées 7 jours,
   // au chargement puis dès que l'option est cochée. Désactivée, rien n'est archivé
   // et les tâches déjà archivées le restent.
+  // Compte Google Drive connecté : l'archivage du lancement attend la première synchronisation
+  // (les versions reçues des autres téléphones passent avant).
   useEffect(() => {
-    if (isLoaded && settings.autoArchive) {
-      setTasks((prev) => archiveStaleTasks(prev, Date.now()));
-    }
+    if (!isLoaded || !settings.autoArchive) return;
+    let cancelled = false;
+    void waitForFirstSync().then(() => {
+      if (!cancelled) setTasks((prev) => archiveStaleTasks(prev, Date.now()));
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [isLoaded, settings.autoArchive]);
 
   // Applique une modification à une seule tâche.
@@ -235,7 +254,16 @@ export function useTasks(
   const replaceAll = ({ tasks: next, completions: log }: { tasks: Task[]; completions: Completion[] }) => {
     resetSync();
     dismissEscalation();
-    setTasks(next.map((t) => ({ ...t, notificationIds: [] })));
+    // Une tâche importée modifiée devient la plus récente (date du fichier ignorée) ; inchangée,
+    // elle garde sa date
+    const current = new Map(tasksRef.current.map((t) => [t.id, t]));
+    setTasks(
+      next.map((t) => {
+        const old = current.get(t.id);
+        const same = old !== undefined && taskContent(old) === taskContent(t);
+        return { ...t, notificationIds: [], modifiedAt: same ? old.modifiedAt : undefined };
+      })
+    );
     replaceCompletions(log);
   };
 
@@ -244,30 +272,50 @@ export function useTasks(
   // Les tâches inchangées restent les mêmes objets ; les notifications des tâches modifiées,
   // ajoutées ou supprimées sont reprogrammées comme après une modification (useNotificationSync).
   // Les bandeaux « Annuler » restent valables : ils agissent sur la tâche telle qu'elle est.
-  const applySynced = (data: SyncData, { replace = false }: { replace?: boolean } = {}) => {
+  // Les données obtenues (tâches, journal, suppressions) sont écrites avant que la promesse se
+  // résolve : la synchronisation n'enregistre son état qu'ensuite, et une app tuée entre les deux
+  // ne perd rien.
+  const applySynced = async (
+    data: SyncData,
+    { replace = false }: { replace?: boolean } = {}
+  ): Promise<{ tasks: Task[]; completions: Completion[] }> => {
     const now = Date.now();
-    // Suppressions des deux côtés (une suppression faite ici pendant l'échange est gardée)
-    // (sauf celles d'une tâche modifiée depuis, revenue)
+    // Suppressions des deux côtés (une suppression faite ici pendant l'échange est gardée),
+    // sauf celles d'une tâche modifiée depuis, revenue
     const received = new Map(data.tasks.map((t) => [t.id, modifiedAtOf(t)]));
+    const marks = replace
+      ? { deleted: data.deleted, removedCompletions: data.removedCompletions }
+      : mergeData(
+          { ...EMPTY_SYNC_DATA, deleted: getTombstones(), removedCompletions: getLogRemovals() },
+          { ...EMPTY_SYNC_DATA, deleted: data.deleted, removedCompletions: data.removedCompletions },
+          now
+        );
     const deleted = replace
-      ? data.deleted
-      : mergeData({ ...EMPTY_SYNC_DATA, deleted: getTombstones() }, { ...EMPTY_SYNC_DATA, deleted: data.deleted }, now)
-          .deleted.filter((t) => (received.get(t.id) ?? -Infinity) <= t.deletedAt);
+      ? marks.deleted
+      : marks.deleted.filter((t) => (received.get(t.id) ?? -Infinity) <= t.deletedAt);
     replaceTombstones(deleted);
-    setTasksState((prev) => {
+    replaceLogRemovals(marks.removedCompletions);
+    const compute = (prev: Task[]): Task[] => {
       if (replace) {
         const mine = new Map(prev.map((t) => [t.id, t]));
         return data.tasks.map((t) => {
           const old = mine.get(t.id);
-          if (!old) return { ...t, notificationIds: [] };
+          if (!old) return { ...t, notificationIds: [], snoozedUntil: null };
           return taskContent(old) === taskContent(t) && old.modifiedAt === t.modifiedAt
             ? old
-            : { ...t, notificationIds: old.notificationIds };
+            : { ...t, notificationIds: old.notificationIds, snoozedUntil: old.snoozedUntil };
         });
       }
       return mergeData({ ...EMPTY_SYNC_DATA, tasks: prev, deleted }, data, now).tasks;
-    });
-    mergeCompletions(data.completions, new Set(data.removedCompletions.map((r) => r.key)), replace);
+    };
+    const nextTasks = compute(tasksRef.current);
+    setTasksState(compute);
+    const [, nextLog] = await Promise.all([
+      saveTasks(nextTasks),
+      mergeCompletions(data.completions, marks.removedCompletions, replace),
+      persistSyncMarks(),
+    ]);
+    return { tasks: nextTasks, completions: nextLog };
   };
 
   const { markDone, reopen } = useRecurrence(setTasks, settingsRef);
@@ -364,6 +412,7 @@ export function useTasks(
   return {
     tasks,
     isLoaded,
+    logReady,
     loadError,
     retryLoad,
     completions,

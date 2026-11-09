@@ -50,20 +50,39 @@ export function modifiedAtOf(task: Task): number {
   return latest;
 }
 
-// Contenu d'une tâche, sans ce qui est propre à ce téléphone (identifiants des notifications) ni
-// sa date de modification : deux contenus égaux sont la même version
+// Contenu d'une tâche, sans ce qui est propre à ce téléphone (identifiants des notifications,
+// « Reporter 1 h ») ni sa date de modification : deux contenus égaux sont la même version
 export const taskContent = (task: Task) =>
-  JSON.stringify({ ...task, notificationIds: undefined, modifiedAt: undefined });
+  JSON.stringify({ ...task, notificationIds: undefined, snoozedUntil: undefined, modifiedAt: undefined });
+
+// Ce qui reste propre à ce téléphone quand une autre version d'une tâche est reçue
+const keepLocalFields = (received: Task, mine: Task): Task => ({
+  ...received,
+  notificationIds: mine.notificationIds,
+  snoozedUntil: mine.snoozedUntil,
+});
+
+// Date d'un changement automatique (bascule, archivage, fin du minuteur) : le moment où il devait
+// se produire, pas celui où ce téléphone s'en aperçoit ; toujours après la version modifiée,
+// pour remplacer la version d'avant sur les autres téléphones. Le même calcul partout : une vraie
+// modification faite ailleurs entre-temps garde l'avantage.
+export const automaticStamp = (task: Task, at: number) => Math.max(at, modifiedAtOf(task) + 1);
 
 export const completionKey = (c: Completion) => `${c.date}|${c.category}`;
 
 // Version gagnante d'une tâche : la plus récente ; à égalité, choix fixe (contenu le plus grand)
-// pour que chaque téléphone choisisse la même
-function newer(a: Task, b: Task): Task {
+// pour que chaque téléphone choisisse la même, ou la version locale (preferLocal : reprise d'une
+// sauvegarde de la 1.5, dont les dates ne sont que des estimations)
+function newer(a: Task, b: Task, preferLocal: boolean): Task {
   const ma = modifiedAtOf(a);
   const mb = modifiedAtOf(b);
   if (ma !== mb) return ma > mb ? a : b;
+  if (preferLocal) return a;
   return taskContent(a) >= taskContent(b) ? a : b;
+}
+
+export interface MergeOptions {
+  preferLocal?: boolean; // à égalité de date, la version locale gagne (migration 1.5)
 }
 
 // Union par clé, en gardant la date la plus récente ; les entrées expirées sont oubliées
@@ -109,7 +128,7 @@ function mergeCompletions(a: Completion[], b: Completion[], removed: Set<string>
 // L'ordre de local est gardé ; les tâches venues de remote sont ajoutées à la suite. Une tâche
 // gardée telle quelle reste le même objet (pas de nouveau rendu, notifications inchangées), et
 // garde les identifiants de notifications de ce téléphone.
-export function mergeData(local: SyncData, remote: SyncData, now: number): SyncData {
+export function mergeData(local: SyncData, remote: SyncData, now: number, options: MergeOptions = {}): SyncData {
   const oldest = now - TOMBSTONE_TTL;
   const deletedAll = mergeDated([local.deleted, remote.deleted], (t) => t.id, (t) => t.deletedAt, oldest);
   const deletedAt = new Map(deletedAll.map((t) => [t.id, t.deletedAt]));
@@ -130,15 +149,15 @@ export function mergeData(local: SyncData, remote: SyncData, now: number): SyncD
       keep(mine);
       continue;
     }
-    const winner = newer(mine, theirs);
+    const winner = newer(mine, theirs, options.preferLocal === true);
     if (winner === mine) keep(mine);
     // Même contenu, date plus récente ailleurs : on garde l'objet local, avec cette date (sinon
     // les deux téléphones se renverraient chacun la leur)
     else if (taskContent(winner) === taskContent(mine)) keep({ ...mine, modifiedAt: modifiedAtOf(winner) });
-    else keep({ ...winner, notificationIds: mine.notificationIds });
+    else keep(keepLocalFields(winner, mine));
   }
   for (const theirs of remote.tasks) {
-    if (!localIds.has(theirs.id)) keep({ ...theirs, notificationIds: [] });
+    if (!localIds.has(theirs.id)) keep({ ...theirs, notificationIds: [], snoozedUntil: null });
   }
 
   const removedCompletions = mergeDated(

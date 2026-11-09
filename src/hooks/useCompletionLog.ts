@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import { Completion, loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
-import { EMPTY_SYNC_DATA, mergeData } from "../sync/merge";
+import { noteLogAddition, noteLogRemoval } from "../sync/localChanges";
+import { EMPTY_SYNC_DATA, mergeData, RemovedCompletion } from "../sync/merge";
 import { Task } from "../types";
 import { isForeground } from "./useForeground";
 import { SAVE_DELAY_MS } from "./batching";
@@ -9,8 +10,13 @@ import { SAVE_DELAY_MS } from "./batching";
 // Journal des fins de tâches (bilan) : tenu à jour d'après les tâches, écritures regroupées
 export function useCompletionLog(tasks: Task[], isLoaded: boolean) {
   const [completions, setCompletions] = useState<Completion[]>([]);
-  // Journal lu (ou créé) : avant, rien n'est écrit pour ne pas écraser celui qui existe
+  // Dernier journal rendu (synchronisation : écriture immédiate du journal fusionné)
+  const completionsRef = useRef(completions);
+  completionsRef.current = completions;
+  // Journal lu (ou créé) : avant, rien n'est écrit pour ne pas écraser celui qui existe, et la
+  // synchronisation attend (un journal vide n'est pas un journal lu)
   const logReadyRef = useRef(false);
+  const [logReady, setLogReady] = useState(false);
   // Tâches lors du dernier passage, pour repérer celles qui viennent d'être terminées ou rouvertes
   const loggedTasksRef = useRef<Task[] | null>(null);
 
@@ -24,6 +30,7 @@ export function useCompletionLog(tasks: Task[], isLoaded: boolean) {
       if (saved === null || log !== saved) await saveLog(log);
       logReadyRef.current = true;
       setCompletions((current) => [...log, ...current]);
+      setLogReady(true);
     } catch (e) {
       console.warn("Erreur journal des tâches terminées :", e);
     }
@@ -35,7 +42,15 @@ export function useCompletionLog(tasks: Task[], isLoaded: boolean) {
     const previous = loggedTasksRef.current;
     loggedTasksRef.current = tasks;
     if (previous === null || previous === tasks) return;
-    setCompletions((log) => pruneLog(updateLog(log, previous, tasks), Date.now()));
+    setCompletions((log) =>
+      pruneLog(
+        updateLog(log, previous, tasks, {
+          onRemoved: (key) => noteLogRemoval(key, Date.now()),
+          onAdded: noteLogAddition,
+        }),
+        Date.now()
+      )
+    );
   }, [tasks, isLoaded]);
 
   // Écritures du journal regroupées comme celles des tâches (au plus une toutes les
@@ -78,26 +93,30 @@ export function useCompletionLog(tasks: Task[], isLoaded: boolean) {
 
   // Synchronisation : journal reçu fusionné avec celui-ci (ou le remplaçant), sans les entrées
   // retirées. Les tâches terminées sur un autre téléphone ne sont pas ajoutées une deuxième fois :
-  // updateLog n'ajoute pas une entrée déjà présente.
-  const mergeCompletions = (entries: Completion[], removed: Set<string>, replace: boolean) => {
+  // updateLog n'ajoute pas une entrée déjà présente. Le journal obtenu est écrit tout de suite
+  // (promesse renvoyée) : la synchronisation n'enregistre son état qu'après.
+  const mergeCompletions = async (
+    entries: Completion[],
+    removed: RemovedCompletion[],
+    replace: boolean
+  ): Promise<Completion[]> => {
     const now = Date.now();
-    setCompletions((current) =>
+    const compute = (current: Completion[]) =>
       pruneLog(
         replace
           ? entries
           : mergeData(
               { ...EMPTY_SYNC_DATA, completions: current },
-              {
-                ...EMPTY_SYNC_DATA,
-                completions: entries,
-                removedCompletions: [...removed].map((key) => ({ key, removedAt: now })),
-              },
+              { ...EMPTY_SYNC_DATA, completions: entries, removedCompletions: removed },
               now
             ).completions,
         now
-      )
-    );
+      );
+    const next = compute(completionsRef.current);
+    setCompletions(compute);
+    await saveLog(next);
+    return next;
   };
 
-  return { completions, loadCompletions, replaceCompletions, mergeCompletions };
+  return { completions, logReady, loadCompletions, replaceCompletions, mergeCompletions };
 }

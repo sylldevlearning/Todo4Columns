@@ -7,7 +7,8 @@ import { configureSync, createLocalSide, flushSync, scheduleSync, syncNow, syncO
 import { storageStateStore } from "../sync/engine";
 import { driveRemote } from "../sync/remote";
 
-const selectReady = ({ isLoaded, loadError }: TasksState) => isLoaded && !loadError;
+// Tâches ET journal lus : un journal pas encore lu n'est jamais envoyé
+const selectReady = ({ isLoaded, loadError, logReady }: TasksState) => isLoaded && !loadError && logReady;
 const selectTasks = ({ tasks }: TasksState) => tasks;
 const selectCompletions = ({ completions }: TasksState) => completions;
 
@@ -28,8 +29,8 @@ export default function DriveSync() {
       store: storageStateStore,
       local: createLocalSide(actions),
       canSync: () => {
-        const { isLoaded, loadError } = actions.getTasksState();
-        return isLoaded && !loadError;
+        const { isLoaded, loadError, logReady } = actions.getTasksState();
+        return isLoaded && !loadError && logReady;
       },
     });
     configured.current = true;

@@ -26,7 +26,11 @@ export interface RemoteHead {
 // - changed : l'actuel a changé depuis expectedRev, rien n'a été écrit (retélécharger, refusionner)
 // - written : écrit ; missed = contenus d'autres téléphones écrits entre la vérification et
 //   l'envoi, écrasés par celui-ci (à refusionner et renvoyer)
-export type UpdateResult = { status: "changed" } | { status: "written"; rev: string; missed: string[] };
+// - unverified : historique illisible ou sans notre révision ; la prochaine synchronisation
+//   retélécharge l'actuel en entier
+export type UpdateResult =
+  | { status: "changed" }
+  | { status: "written"; rev: string; missed: string[]; unverified?: boolean };
 
 export interface RemoteCopy {
   id: string;
@@ -77,10 +81,15 @@ export const driveRemote: RemoteStore = {
     const written = await updateContent(id, content, props(tasks));
     const rev = revOf(written);
     let missed: string[] = [];
+    let unverified = false;
     try {
       const revisions = await listRevisions(id);
       const mine = revisions.findIndex((r) => r.id === rev);
       const expected = revisions.findIndex((r) => r.id === expectedRev);
+      if (mine === -1) {
+        unverified = true;
+        console.warn("Vérification des révisions Drive impossible :", "révision envoyée introuvable dans l'historique");
+      }
       // Révisions entre celle qu'on attendait et la nôtre : écrites par un autre téléphone
       if (mine > 0 && revisions[mine - 1].id !== expectedRev) {
         const from = expected >= 0 && expected < mine ? expected + 1 : mine - 1;
@@ -88,9 +97,10 @@ export const driveRemote: RemoteStore = {
       }
     } catch (e) {
       // Historique illisible : l'autre téléphone renverra ses changements à sa prochaine synchronisation
+      unverified = true;
       console.warn("Vérification des révisions Drive impossible :", e instanceof Error ? e.message : "erreur");
     }
-    return { status: "written", rev, missed };
+    return { status: "written", rev, missed, unverified };
   },
 
   remove: deleteFile,
@@ -100,10 +110,9 @@ export const driveRemote: RemoteStore = {
     if (!latest) return null;
     const parsed = parseBackup(await downloadText(latest.id));
     if (!parsed.ok) return null;
-    const file = fromLegacyBackup(parsed);
     // Date d'envoi notée par la 1.5 : sert à reconnaître une sauvegarde faite par ce téléphone
     const createdAt = Number(latest.appProperties?.createdAt);
-    return Number.isFinite(createdAt) ? { ...file, writtenAt: createdAt } : file;
+    return fromLegacyBackup(parsed, Number.isFinite(createdAt) ? createdAt : parsed.backup.createdAt);
   },
 
   async listCopies() {
