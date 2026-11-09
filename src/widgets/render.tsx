@@ -6,6 +6,7 @@ import { setLanguagePreference } from "../i18n";
 import { parseStoredTasks } from "../migrations";
 import { loadSettings, Settings } from "../settings";
 import { STORAGE_KEY } from "../storage";
+import { Scheme } from "../theme";
 import { Task } from "../types";
 import { doWidgetData, matrixWidgetData, todayWidgetData } from "./data";
 import { widgetPalette } from "./palette";
@@ -22,9 +23,18 @@ export interface WidgetSource {
   now: number;
 }
 
-// Rendu d'un widget pour sa taille (dp)
+// Rendu d'un widget pour sa taille (dp), dans le thème choisi dans l'app ; en automatique, les
+// deux versions (Android affiche celle du thème du téléphone, et en change avec lui)
 export function renderWidget(name: string, size: { width: number; height: number }, source: WidgetSource): WidgetRepresentation {
-  const palette = widgetPalette();
+  const appearance = source.settings.appearance;
+  if (appearance === "auto") {
+    return { light: renderIn(name, size, source, "light"), dark: renderIn(name, size, source, "dark") };
+  }
+  return renderIn(name, size, source, appearance);
+}
+
+function renderIn(name: string, size: { width: number; height: number }, source: WidgetSource, scheme: Scheme): React.JSX.Element {
+  const palette = widgetPalette(scheme);
   switch (name) {
     case "DoFirstToday":
       return <TodayWidget items={todayWidgetData(source.tasks, source.now)} palette={palette} height={size.height} now={source.now} />;

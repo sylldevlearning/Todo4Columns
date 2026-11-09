@@ -47,8 +47,10 @@ interface Node {
   props: Record<string, unknown>;
   children?: Node[];
 }
+// Widget dessiné (thème sombre ; en automatique, Android choisit entre les deux versions)
+const pick = (w: unknown) => (w && typeof w === "object" && "dark" in w ? (w as { dark: unknown }).dark : w);
 const tree = (name: string, tasks: Task[], size = { width: 320, height: 320 }, now = NOW) =>
-  buildWidgetTree(renderWidget(name, size, { tasks, settings: DEFAULT_SETTINGS, now })) as Node;
+  buildWidgetTree(pick(renderWidget(name, size, { tasks, settings: DEFAULT_SETTINGS, now }))) as Node;
 const walk = (n: Node, out: Node[] = []) => {
   out.push(n);
   (n.children ?? []).forEach((c) => walk(c, out));
@@ -259,7 +261,7 @@ describe("coche depuis un widget, app fermée", () => {
       clickActionData: { taskId: "t", stepId: null },
       renderWidget: draw,
     });
-    expect(texts(buildWidgetTree(draw.mock.calls[0][0]))).toEqual(["Faire", "  1", "Reste"]);
+    expect(texts(buildWidgetTree(pick(draw.mock.calls[0][0])))).toEqual(["Faire", "  1", "Reste"]);
     expect(requestUpdate.mock.calls.map((c) => c[0].widgetName)).toEqual(["DoFirstToday", "DoFirstMatrix"]);
   });
 
@@ -273,7 +275,7 @@ describe("coche depuis un widget, app fermée", () => {
         widgetAction,
         renderWidget: draw,
       });
-      expect(texts(buildWidgetTree(draw.mock.calls[0][0]))).toEqual(["Do", "  1", "Enregistrée"]);
+      expect(texts(buildWidgetTree(pick(draw.mock.calls[0][0])))).toEqual(["Do", "  1", "Enregistrée"]);
     }
     const draw = jest.fn();
     await widgetTaskHandler({
@@ -334,7 +336,7 @@ describe("app ouverte", () => {
     // Regroupés : un seul rafraîchissement pour deux changements
     await waitFor(() => expect(names()).toEqual([...WIDGET_NAMES]), { timeout: 2000 });
     const rendered = requestUpdate.mock.calls[0][0].renderWidget({ width: 110, height: 200 });
-    expect(texts(buildWidgetTree(rendered))).toEqual(["Faire", "  3", "Tâche", "Nouvelle", "Encore"].slice(0, 5));
+    expect(texts(buildWidgetTree(pick(rendered)))).toEqual(["Faire", "  3", "Tâche", "Nouvelle", "Encore"].slice(0, 5));
     requestUpdate.mockClear();
     await act(async () => {
       await actions.applySynced({ ...EMPTY_SYNC_DATA, tasks: [makeTask({ id: "venue", title: "Venue d'ailleurs", category: "INU", modifiedAt: Date.now() })] });
@@ -344,7 +346,7 @@ describe("app ouverte", () => {
     await act(async () => actions.updateSettings({ ...actions.getSettings(), language: "en" }));
     await waitFor(() => expect(names()).toEqual([...WIDGET_NAMES]), { timeout: 2000 });
     const english = requestUpdate.mock.calls[0][0].renderWidget({ width: 110, height: 200 });
-    expect(texts(buildWidgetTree(english))[0]).toBe("Do");
+    expect(texts(buildWidgetTree(pick(english)))[0]).toBe("Do");
     void WIDGET_REFRESH_DELAY_MS;
   });
 

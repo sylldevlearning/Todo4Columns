@@ -1,6 +1,6 @@
 import type { HexColor, RgbaColor } from "react-native-android-widget";
 import { CATEGORIES } from "../constants/categories";
-import { colors, withAlpha } from "../theme";
+import { PALETTES, Scheme, withAlpha } from "../theme";
 import { Category } from "../types";
 
 type WidgetColor = HexColor | RgbaColor;
@@ -16,18 +16,19 @@ export interface WidgetPalette {
 
 const hex = (c: string) => c as HexColor;
 
-// Palette du thème courant de l'app
-export function widgetPalette(): WidgetPalette {
+// Palette d'un thème de l'app
+export function widgetPalette(scheme: Scheme): WidgetPalette {
+  const p = PALETTES[scheme];
   return {
-    bg: hex(colors.bg),
-    surfaceRaised: hex(colors.surfaceRaised),
-    text: hex(colors.text),
-    textMuted: hex(colors.textMuted),
+    bg: hex(p.bg),
+    surfaceRaised: hex(p.surfaceRaised),
+    text: hex(p.text),
+    textMuted: hex(p.textMuted),
     quadrant: Object.fromEntries(
-      CATEGORIES.map((c) => [
-        c.key,
-        { color: hex(c.color), textColor: hex(c.textColor), tint: withAlpha(c.color, 0.14) as RgbaColor },
-      ])
+      CATEGORIES.map(({ key }) => {
+        const q = p.quadrants[key];
+        return [key, { color: hex(q.color), textColor: hex(q.textColor), tint: withAlpha(q.color, 0.14) as RgbaColor }];
+      })
     ) as WidgetPalette["quadrant"],
   };
 }
