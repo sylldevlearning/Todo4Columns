@@ -406,7 +406,7 @@ export const zhHans: Translations = {
     },
     calendar: {
       title: "日历和语音输入",
-      body: "日历按天显示你的任务。点麦克风即可口述任务：“明天下午3点”一点就能设为截止时间。",
+      body: "日历按天显示你的任务。点麦克风即可口述任务：“明天下午3点”一点就能设为截止时间。你还可以把 DoFirst 小组件添加到主屏幕。",
     },
     drive: {
       title: "Google 云端硬盘同步",
@@ -683,6 +683,15 @@ export const zhHans: Translations = {
     body: (date: string) => `你的任务已恢复（${date} 的备份）。`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "今天",
+    nothingToDo: "现在没有要做的事",
+    nothingToday: "今天没有安排",
+    more: (n) => `还有 ${n} 项`,
+    check: (title) => `勾选 ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google 云端硬盘",
@@ -816,6 +825,7 @@ export const zhHans: Translations = {
       nudge: "在交出去的任务的提醒里，或回顾的第 3 步，「跟进一下」会准备一条简短的消息供你发送。",
       backup: "设置 › 备份：「导出我的数据」会生成一个文件，存在哪里都行；「导入备份」把它放回这台手机。",
       drive: "矩阵上的云朵图标：Google 云端硬盘的同步状态和上次同步时间。点按即可登录或立即同步。设置 › Google 云端硬盘：最近 5 天的副本和退出登录。",
+      widget: "小组件：在主屏幕空白处长按 › 小组件 › DoFirst，然后选择“立即做”“今天”或“矩阵”。点按任务前的圆圈即可勾选，无需打开应用。",
       calendar: "点矩阵上的数字日历图标，按月查看任务；点一天查看它的时间轴。",
       voice: "点 + 旁边的麦克风（或长按 +）即可口述任务；在表单中，标题里的麦克风也能这样用。",
       longPress: "长按任务即可勾选步骤或设置进度。",

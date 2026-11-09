@@ -406,7 +406,7 @@ export const ko: Translations = {
     },
     calendar: {
       title: "캘린더와 음성 입력",
-      body: "캘린더에서 할 일을 날짜별로 볼 수 있어요. 마이크를 눌러 할 일을 말로 입력하고, '긴급'이나 '중요' 같은 단어로 스위치 추천도 받아요.",
+      body: "캘린더에서 할 일을 날짜별로 볼 수 있어요. 마이크를 눌러 할 일을 말로 입력하고, '긴급'이나 '중요' 같은 단어로 스위치 추천도 받아요. 홈 화면에 DoFirst 위젯도 추가할 수 있어요.",
     },
     drive: {
       title: "Google 드라이브 동기화",
@@ -683,6 +683,15 @@ export const ko: Translations = {
     body: (date: string) => `할 일을 복원했어요 (${date} 백업).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "오늘",
+    nothingToDo: "지금 할 일이 없어요",
+    nothingToday: "오늘 예정된 일이 없어요",
+    more: (n) => `외 ${n}개`,
+    check: (title) => `${title} 완료`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google 드라이브",
@@ -816,6 +825,7 @@ export const ko: Translations = {
       nudge: "맡긴 할 일의 알림이나 돌아보기 3단계에서 “확인하기”를 누르면 보낼 짧은 메시지를 준비해 줘요.",
       backup: "설정 › 백업: “내 데이터 내보내기”는 원하는 곳에 보관할 파일을 만들고, “백업 가져오기”는 그 파일을 이 휴대폰에 되돌려요.",
       drive: "매트릭스의 구름 아이콘: Google 드라이브 동기화 상태와 마지막 동기화 시각. 탭해서 로그인하거나 지금 동기화하세요. 설정 › Google 드라이브: 최근 5일 사본과 로그아웃.",
+      widget: "위젯: 홈 화면의 빈 곳을 길게 누르고 › 위젯 › DoFirst에서 '실행', '오늘', '매트릭스' 중 하나를 고르세요. 할 일의 동그라미를 탭하면 앱을 열지 않고 완료할 수 있어요.",
       calendar: "매트릭스의 숫자 달력 아이콘을 누르면 할 일을 달별로 볼 수 있어요. 날짜를 누르면 시간표가 열려요.",
       voice: "+ 옆의 마이크를 누르거나 +를 길게 눌러 할 일을 말로 입력해요. 입력 화면에서는 제목의 마이크도 같은 역할을 해요.",
       longPress: "할 일을 길게 누르면 단계를 체크하거나 진행률을 정할 수 있어요.",

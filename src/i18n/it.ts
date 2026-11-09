@@ -412,7 +412,7 @@ export const itIT: Translations = {
     },
     calendar: {
       title: "Calendario e dettatura",
-      body: "Il calendario mostra le attività giorno per giorno. Tocca il microfono per dettare un'attività: «domani alle 15» diventa una scadenza con un tocco.",
+      body: "Il calendario mostra le attività giorno per giorno. Tocca il microfono per dettare un'attività: «domani alle 15» diventa una scadenza con un tocco. Puoi anche aggiungere un widget di DoFirst alla schermata Home.",
     },
     drive: {
       title: "Sincronizzazione con Google Drive",
@@ -690,6 +690,15 @@ export const itIT: Translations = {
     body: (date: string) => `Le tue attività sono state ripristinate (backup del ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Oggi",
+    nothingToDo: "Niente da fare ora",
+    nothingToday: "Niente in programma oggi",
+    more: (n) => `+ altre ${n}`,
+    check: (title) => `Spunta ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -823,6 +832,7 @@ export const itIT: Translations = {
       nudge: "Nel promemoria di un'attività affidata, o nel passo 3 della revisione, «Ricorda» prepara un breve messaggio da inviare.",
       backup: "Impostazioni › Backup: «Esporta i miei dati» crea un file da tenere dove vuoi; «Importa un backup» lo rimette su questo telefono.",
       drive: "Icona della nuvola nella matrice: stato della sincronizzazione con Google Drive, con l'ora dell'ultima. Toccala per collegarti o sincronizzare ora. Impostazioni › Google Drive: copie degli ultimi 5 giorni e disconnessione.",
+      widget: "Widget: tieni premuto uno spazio vuoto della schermata Home › Widget › DoFirst, poi scegli «Fai», «Oggi» o «Matrice». Tocca il cerchio di un'attività per spuntarla senza aprire l'app.",
       calendar: "Tocca l'icona del calendario con i numeri nella matrice per vedere le attività mese per mese; tocca un giorno per la sua linea oraria.",
       voice: "Tocca il microfono accanto a + (o tieni premuto +) per dettare un'attività; nella scheda, il microfono del titolo fa lo stesso.",
       longPress: "Tieni premuta un'attività per spuntare i passaggi o regolare l'avanzamento.",

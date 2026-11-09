@@ -407,7 +407,7 @@ export const en: Translations = {
     },
     calendar: {
       title: "Calendar and dictation",
-      body: "The calendar shows your tasks day by day. Tap the mic to dictate a task: \"tomorrow at 3 pm\" becomes a due date in one tap.",
+      body: "The calendar shows your tasks day by day. Tap the mic to dictate a task: \"tomorrow at 3 pm\" becomes a due date in one tap. You can also add a DoFirst widget to your home screen.",
     },
     drive: {
       title: "Google Drive sync",
@@ -684,6 +684,15 @@ export const en: Translations = {
     body: (date: string) => `Your tasks have been restored (backup from ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Today",
+    nothingToDo: "Nothing to do right now",
+    nothingToday: "Nothing planned today",
+    more: (n) => `+ ${n} more`,
+    check: (title) => `Check off ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -817,6 +826,7 @@ export const en: Translations = {
       nudge: "In a handed-off task's reminder, or in step 3 of the review, “Follow up” prepares a short reminder to send.",
       backup: "Settings › Backup: “Export my data” creates a file to keep wherever you like; “Import a backup” puts it back on this phone.",
       drive: "Cloud icon on the matrix: Google Drive sync status, with the time of the last sync. Tap it to sign in or to sync now. Settings › Google Drive: copies of the last 5 days and sign-out.",
+      widget: "Widgets: touch and hold an empty spot on your home screen › Widgets › DoFirst, then pick “Do”, “Today” or “Matrix”. Tap a task's circle to check it off without opening the app.",
       calendar: "Tap the numbered calendar icon on the matrix to see your tasks month by month; tap a day for its timeline.",
       voice: "Tap the mic next to + (or press and hold +) to dictate a task; in the form, the mic in the title does the same.",
       longPress: "Press and hold a task to check its steps or set its progress.",

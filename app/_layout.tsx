@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CelebrationProvider, useCelebration } from "../src/celebration/CelebrationProvider";
 import DriveSync from "../src/components/DriveSync";
+import WidgetSync from "../src/widgets/WidgetSync";
 import EscalationNotice from "../src/components/EscalationNotice";
 import LoadErrorGate from "../src/components/LoadErrorGate";
 import PermissionCard from "../src/components/PermissionCard";
@@ -142,6 +143,7 @@ export default function RootLayout() {
             <PermissionCard />
             <ReviewPrompter />
             <DriveSync />
+            <WidgetSync />
           </Celebrations>
         </TasksProvider>
       </SafeAreaProvider>

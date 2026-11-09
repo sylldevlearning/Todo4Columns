@@ -1,7 +1,7 @@
 {
   "name": "todo4columns",
   "version": "1.6.0",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -15,7 +15,8 @@
     "release:notes": "node scripts/play-release.mjs --internal-notes",
     "release:promote": "node scripts/play-release.mjs",
     "release:ship": "node scripts/play-ship.mjs",
-    "screenshots": "npm --prefix scripts/store-screenshots install --no-audit --no-fund && npx --prefix scripts/store-screenshots playwright install chromium && node scripts/store-screenshots/capture.mjs"
+    "screenshots": "npm --prefix scripts/store-screenshots install --no-audit --no-fund && npx --prefix scripts/store-screenshots playwright install chromium && node scripts/store-screenshots/capture.mjs",
+    "assets:widgets": "node scripts/generate-assets/widgets.js"
   },
   "dependencies": {
     "@expo-google-fonts/manrope": "^0.4.2",
@@ -42,6 +43,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-android-widget": "0.26.0",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",

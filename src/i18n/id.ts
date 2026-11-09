@@ -406,7 +406,7 @@ export const id: Translations = {
     },
     calendar: {
       title: "Kalender dan dikte",
-      body: "Kalender menampilkan tugasmu per hari. Ketuk mikrofon untuk mendikte tugas: \"besok jam 15\" jadi tenggat dengan sekali ketuk.",
+      body: "Kalender menampilkan tugasmu per hari. Ketuk mikrofon untuk mendikte tugas: \"besok jam 15\" jadi tenggat dengan sekali ketuk. Kamu juga bisa menambahkan widget DoFirst ke layar utama.",
     },
     drive: {
       title: "Sinkronisasi Google Drive",
@@ -683,6 +683,15 @@ export const id: Translations = {
     body: (date: string) => `Tugasmu sudah dipulihkan (cadangan ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Hari ini",
+    nothingToDo: "Tidak ada yang perlu dikerjakan sekarang",
+    nothingToday: "Tidak ada rencana hari ini",
+    more: (n) => `+ ${n} lagi`,
+    check: (title) => `Centang ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -816,6 +825,7 @@ export const id: Translations = {
       nudge: "Di pengingat tugas yang diserahkan, atau di langkah 3 tinjauan, “Tanyakan” menyiapkan pesan singkat untuk dikirim.",
       backup: "Pengaturan › Cadangan: “Ekspor dataku” membuat file untuk disimpan di mana saja; “Impor cadangan” mengembalikannya ke ponsel ini.",
       drive: "Ikon awan di matriks: status sinkronisasi Google Drive, dengan jam sinkronisasi terakhir. Ketuk untuk masuk atau menyinkronkan sekarang. Setelan › Google Drive: salinan 5 hari terakhir dan keluar.",
+      widget: "Widget: tekan lama area kosong di layar utama › Widget › DoFirst, lalu pilih \"Kerjakan\", \"Hari ini\", atau \"Matriks\". Ketuk lingkaran tugas untuk mencentangnya tanpa membuka app.",
       calendar: "Ketuk ikon kalender bernomor di matriks untuk melihat tugas per bulan; ketuk hari untuk lini waktunya.",
       voice: "Ketuk mikrofon di samping + (atau tekan lama +) untuk mendikte tugas; di formulir, mikrofon di judul melakukan hal yang sama.",
       longPress: "Tekan lama sebuah tugas untuk mencentang langkahnya atau mengatur kemajuannya.",

@@ -408,7 +408,7 @@ export const ptBR: Translations = {
     },
     calendar: {
       title: "Calendário e ditado",
-      body: "O calendário mostra suas tarefas dia a dia. Toque no microfone para ditar uma tarefa: “amanhã às 15h” vira prazo com um toque.",
+      body: "O calendário mostra suas tarefas dia a dia. Toque no microfone para ditar uma tarefa: “amanhã às 15h” vira prazo com um toque. Você também pode adicionar um widget do DoFirst à tela inicial.",
     },
     drive: {
       title: "Sincronização com o Google Drive",
@@ -685,6 +685,15 @@ export const ptBR: Translations = {
     body: (date: string) => `Suas tarefas foram restauradas (backup de ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Hoje",
+    nothingToDo: "Nada para fazer agora",
+    nothingToday: "Nada previsto para hoje",
+    more: (n) => `+ ${n} a mais`,
+    check: (title) => `Marcar ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -818,6 +827,7 @@ export const ptBR: Translations = {
       nudge: "No lembrete de uma tarefa passada adiante, ou na etapa 3 da revisão, “Cobrar” prepara um lembrete curto para enviar.",
       backup: "Ajustes › Backup: “Exportar meus dados” cria um arquivo para guardar onde quiser; “Importar um backup” coloca de volta neste celular.",
       drive: "Ícone de nuvem da matriz: status da sincronização com o Google Drive, com o horário da última. Toque para se conectar ou sincronizar agora. Configurações › Google Drive: cópias dos últimos 5 dias e desconexão.",
+      widget: "Widgets: toque e segure um espaço vazio da tela inicial › Widgets › DoFirst e escolha “Fazer”, “Hoje” ou “Matriz”. Toque no círculo de uma tarefa para marcá-la sem abrir o app.",
       calendar: "Toque no ícone de calendário com números da matriz para ver suas tarefas mês a mês; toque em um dia para ver a linha do tempo.",
       voice: "Toque no microfone ao lado do + (ou mantenha o + pressionado) para ditar uma tarefa; na ficha, o microfone do título faz o mesmo.",
       longPress: "Mantenha uma tarefa pressionada para marcar as etapas ou ajustar o progresso.",

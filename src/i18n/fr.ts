@@ -417,7 +417,7 @@ export const fr = {
     },
     calendar: {
       title: "Calendrier et dictée",
-      body: "Le calendrier montre tes tâches jour par jour. Touche le micro pour dicter une tâche : « demain à 15 h » devient une échéance en un appui.",
+      body: "Le calendrier montre tes tâches jour par jour. Touche le micro pour dicter une tâche : « demain à 15 h » devient une échéance en un appui. Ajoute aussi un widget DoFirst sur ton écran d'accueil.",
     },
     drive: {
       title: "Synchronisation Google Drive",
@@ -707,6 +707,15 @@ export const fr = {
     body: (date: string) => `Tes tâches ont été restaurées (sauvegarde du ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Aujourd'hui",
+    nothingToDo: "Rien à faire maintenant",
+    nothingToday: "Rien de prévu aujourd'hui",
+    more: (n: number) => `+ ${n} de plus`,
+    check: (title: string) => `Cocher ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -841,6 +850,7 @@ export const fr = {
       nudge: "Dans la relance d'une tâche confiée ou à l'étape 3 de la revue, « Relancer » prépare un petit rappel à envoyer.",
       backup: "Réglages › Sauvegarde : « Exporter mes données » crée un fichier à garder où tu veux, « Importer une sauvegarde » le remet sur ce téléphone.",
       drive: "Icône nuage de la matrice : état de la synchronisation Google Drive, avec l'heure de la dernière. Touche-la pour te connecter, ou pour synchroniser maintenant. Réglages › Google Drive : copies des 5 derniers jours et déconnexion.",
+      widget: "Widgets : garde le doigt sur un espace vide de l'écran d'accueil › Widgets › DoFirst, puis choisis « Faire », « Aujourd'hui » ou « Matrice ». Touche le rond d'une tâche pour la cocher sans ouvrir l'app.",
       calendar: "Touche l'icône calendrier à chiffres de la matrice pour voir tes tâches mois par mois ; touche un jour pour sa frise horaire.",
       voice: "Touche le micro à côté du + (ou garde le doigt sur +) pour dicter une tâche ; dans la fiche, le micro du titre fait de même.",
       longPress: "Garde le doigt sur une tâche pour cocher ses étapes ou régler son avancement.",

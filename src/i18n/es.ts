@@ -407,7 +407,7 @@ export const es: Translations = {
     },
     calendar: {
       title: "Calendario y dictado",
-      body: "El calendario muestra tus tareas día a día. Toca el micrófono para dictar una tarea: «mañana a las 15» se convierte en vencimiento con un toque.",
+      body: "El calendario muestra tus tareas día a día. Toca el micrófono para dictar una tarea: «mañana a las 15» se convierte en vencimiento con un toque. También puedes añadir un widget de DoFirst a tu pantalla de inicio.",
     },
     drive: {
       title: "Sincronización con Google Drive",
@@ -684,6 +684,15 @@ export const es: Translations = {
     body: (date: string) => `Tus tareas se han restaurado (copia del ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Hoy",
+    nothingToDo: "Nada que hacer ahora",
+    nothingToday: "Nada previsto hoy",
+    more: (n) => `+ ${n} más`,
+    check: (title) => `Marcar ${title}`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -817,6 +826,7 @@ export const es: Translations = {
       nudge: "En el aviso de una tarea encargada, o en el paso 3 del repaso, «Preguntar» prepara un recordatorio corto para enviar.",
       backup: "Ajustes › Copia de seguridad: «Exportar mis datos» crea un archivo para guardar donde quieras; «Importar una copia» lo devuelve a este teléfono.",
       drive: "Icono de nube de la matriz: estado de la sincronización con Google Drive, con la hora de la última. Tócalo para conectarte o sincronizar ahora. Ajustes › Google Drive: copias de los últimos 5 días y desconexión.",
+      widget: "Widgets: mantén pulsado un espacio vacío de la pantalla de inicio › Widgets › DoFirst y elige «Hacer», «Hoy» o «Matriz». Toca el círculo de una tarea para marcarla sin abrir la app.",
       calendar: "Toca el icono de calendario con números en la matriz para ver tus tareas mes a mes; toca un día para ver su franja horaria.",
       voice: "Toca el micrófono junto al + (o mantén pulsado +) para dictar una tarea; en la ficha, el micrófono del título hace lo mismo.",
       longPress: "Mantén pulsada una tarea para marcar sus pasos o ajustar su progreso.",

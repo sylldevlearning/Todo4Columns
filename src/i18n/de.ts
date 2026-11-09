@@ -408,7 +408,7 @@ export const de: Translations = {
     },
     calendar: {
       title: "Kalender und Diktat",
-      body: "Der Kalender zeigt deine Aufgaben Tag für Tag. Tippe auf das Mikrofon, um eine Aufgabe zu diktieren: „morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit.",
+      body: "Der Kalender zeigt deine Aufgaben Tag für Tag. Tippe auf das Mikrofon, um eine Aufgabe zu diktieren: „morgen um 15 Uhr“ wird mit einem Tippen zur Fälligkeit. Du kannst auch ein DoFirst-Widget auf deinen Startbildschirm legen.",
     },
     drive: {
       title: "Synchronisierung mit Google Drive",
@@ -685,6 +685,15 @@ export const de: Translations = {
     body: (date: string) => `Deine Aufgaben wurden wiederhergestellt (Sicherung vom ${date}).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Heute",
+    nothingToDo: "Gerade nichts zu tun",
+    nothingToday: "Heute nichts geplant",
+    more: (n) => `+ ${n} weitere`,
+    check: (title) => `${title} abhaken`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -818,6 +827,7 @@ export const de: Translations = {
       nudge: "In der Erinnerung einer abgegebenen Aufgabe oder in Schritt 3 des Rückblicks bereitet „Nachhaken“ eine kurze Nachricht zum Senden vor.",
       backup: "Einstellungen › Sicherung: „Meine Daten exportieren“ erstellt eine Datei, die du aufbewahren kannst, wo du willst; „Sicherung importieren“ spielt sie auf dieses Handy zurück.",
       drive: "Wolkensymbol der Matrix: Stand der Synchronisierung mit Google Drive, mit der Uhrzeit der letzten. Tippe darauf, um dich anzumelden oder jetzt zu synchronisieren. Einstellungen › Google Drive: Kopien der letzten 5 Tage und Abmelden.",
+      widget: "Widgets: Halte eine freie Stelle auf dem Startbildschirm gedrückt › Widgets › DoFirst und wähle „Erledigen“, „Heute“ oder „Matrix“. Tippe auf den Kreis einer Aufgabe, um sie abzuhaken, ohne die App zu öffnen.",
       calendar: "Tippe auf das Kalendersymbol mit Zahlen in der Matrix, um deine Aufgaben Monat für Monat zu sehen; tippe auf einen Tag für seine Zeitleiste.",
       voice: "Tippe auf das Mikrofon neben + (oder halte + gedrückt), um eine Aufgabe zu diktieren; im Formular macht das Mikrofon im Titel dasselbe.",
       longPress: "Halte eine Aufgabe gedrückt, um ihre Schritte abzuhaken oder den Fortschritt einzustellen.",

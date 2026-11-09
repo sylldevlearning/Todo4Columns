@@ -407,7 +407,7 @@ export const tr: Translations = {
     },
     calendar: {
       title: "Takvim ve sesle yazma",
-      body: "Takvim görevlerini gün gün gösterir. Bir görevi sesle yazmak için mikrofona dokun; \"acil\" ve \"önemli\" kelimeleri anahtarları önerir.",
+      body: "Takvim görevlerini gün gün gösterir. Bir görevi sesle yazmak için mikrofona dokun; \"acil\" ve \"önemli\" kelimeleri anahtarları önerir. Ana ekranına bir DoFirst widget'ı da ekleyebilirsin.",
     },
     drive: {
       title: "Google Drive eşitlemesi",
@@ -684,6 +684,15 @@ export const tr: Translations = {
     body: (date: string) => `Görevlerin geri yüklendi (${date} tarihli yedek).`,
   },
 
+  // Widgets de l'écran d'accueil (Android)
+  widgets: {
+    today: "Bugün",
+    nothingToDo: "Şu an yapılacak bir şey yok",
+    nothingToday: "Bugün için plan yok",
+    more: (n) => `+ ${n} tane daha`,
+    check: (title) => `${title} görevini işaretle`,
+  },
+
   // Synchronisation Google Drive (facultative)
   drive: {
     section: "Google Drive",
@@ -817,6 +826,7 @@ export const tr: Translations = {
       nudge: "Devredilen bir görevin hatırlatmasında ya da değerlendirmenin 3. adımında, “Takip et” gönderilecek kısa bir mesaj hazırlar.",
       backup: "Ayarlar › Yedek: “Verilerimi dışa aktar” istediğin yerde saklayabileceğin bir dosya oluşturur; “Yedeği içe aktar” onu bu telefona geri yükler.",
       drive: "Matristeki bulut simgesi: Google Drive eşitleme durumu ve son eşitlemenin saati. Bağlanmak ya da şimdi eşitlemek için dokun. Ayarlar › Google Drive: son 5 günün kopyaları ve oturumu kapatma.",
+      widget: "Widget'lar: Ana ekranda boş bir yere basılı tut › Widget'lar › DoFirst, sonra \"Yap\", \"Bugün\" ya da \"Matris\"i seç. Uygulamayı açmadan işaretlemek için bir görevin dairesine dokun.",
       calendar: "Görevlerini ay ay görmek için matristeki numaralı takvim simgesine dokun; zaman çizelgesi için bir güne dokun.",
       voice: "Bir görevi sesle yazmak için +'nın yanındaki mikrofona dokun (ya da +'ya uzun bas); formda başlıktaki mikrofon da aynısını yapar.",
       longPress: "Adımlarını işaretlemek ya da ilerlemesini ayarlamak için bir göreve uzun bas.",
