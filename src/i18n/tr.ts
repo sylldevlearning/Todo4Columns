@@ -599,6 +599,9 @@ export const tr: Translations = {
     undoConfirmTitle: "Son içe aktarma geri alınsın mı?",
     undoConfirmBody: (date) =>
       `Verilerin, ${date} tarihli içe aktarmadan önceki haline döner. O zamandan beri yapılan değişiklikler kaybolur.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `${date} öncesindeki görevler bu telefona geri gelir ve Google Drive verilerine eklenir: Ne burada ne de diğer telefonlarında hiçbir şey silinmez.`,
     undoAction: "Geri yükle",
     undoneTitle: "İçe aktarma geri alındı",
     undoneBody: "İçe aktarmadan önceki verilerin geri geldi.",

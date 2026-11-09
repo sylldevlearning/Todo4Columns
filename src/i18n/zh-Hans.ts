@@ -598,6 +598,9 @@ export const zhHans: Translations = {
     undoConfirmTitle: "撤销上次导入？",
     undoConfirmBody: (date) =>
       `你的数据将恢复到 ${date} 导入之前的状态。之后做的更改会丢失。`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `${date} 之前的任务会回到这部手机，并加入 Google 云端硬盘中的数据：这里和你的其他手机上都不会删除任何内容。`,
     undoAction: "恢复",
     undoneTitle: "已撤销导入",
     undoneBody: "导入前的数据已经回来了。",

@@ -605,6 +605,9 @@ export const itIT: Translations = {
     undoConfirmTitle: "Annullare l'ultima importazione?",
     undoConfirmBody: (date) =>
       `I tuoi dati tornano com'erano prima dell'importazione del ${date}. Le modifiche fatte da allora andranno perse.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `Le attività di prima del ${date} tornano su questo telefono, aggiunte ai dati di Google Drive: non viene eliminato nulla, né qui né sugli altri telefoni.`,
     undoAction: "Ripristina",
     undoneTitle: "Importazione annullata",
     undoneBody: "I tuoi dati di prima dell'importazione sono tornati.",

@@ -604,6 +604,9 @@ export const hi: Translations = {
     undoConfirmTitle: "पिछला इंपोर्ट वापस लें?",
     undoConfirmBody: (date) =>
       `तुम्हारा डेटा ${date} के इंपोर्ट से पहले जैसा हो जाएगा। उसके बाद के बदलाव खो जाएँगे।`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `${date} से पहले के काम इस फ़ोन पर लौट आएँगे और Google Drive के डेटा में जुड़ जाएँगे: न यहाँ, न तुम्हारे दूसरे फ़ोन पर कुछ हटेगा।`,
     undoAction: "वापस लाओ",
     undoneTitle: "इंपोर्ट वापस लिया गया",
     undoneBody: "इंपोर्ट से पहले का तुम्हारा डेटा वापस आ गया।",

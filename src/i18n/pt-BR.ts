@@ -600,6 +600,9 @@ export const ptBR: Translations = {
     undoConfirmTitle: "Desfazer a última importação?",
     undoConfirmBody: (date) =>
       `Seus dados voltam a ser como antes da importação de ${date}. As mudanças feitas desde então vão ser perdidas.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `As tarefas de antes de ${date} voltam para este celular, somadas aos dados do Google Drive: nada é excluído, nem aqui nem nos seus outros celulares.`,
     undoAction: "Restaurar",
     undoneTitle: "Importação desfeita",
     undoneBody: "Seus dados de antes da importação estão de volta.",

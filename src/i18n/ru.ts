@@ -604,6 +604,9 @@ export const ru: Translations = {
     undoConfirmTitle: "Отменить последний импорт?",
     undoConfirmBody: (date) =>
       `Данные вернутся к состоянию до импорта от ${date}. Изменения, сделанные с тех пор, пропадут.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `Задачи до ${date} вернутся на этот телефон и добавятся к данным Google Диска: ничего не удалится ни здесь, ни на других телефонах.`,
     undoAction: "Вернуть",
     undoneTitle: "Импорт отменён",
     undoneBody: "Данные, которые были до импорта, вернулись.",

@@ -1,3 +1,4 @@
+import { automaticStamp } from "./sync/merge";
 import { Task } from "./types";
 
 // Une tâche « Si j'ai le temps » (NDNI) non terminée est archivée après 7 jours dans ce quadrant
@@ -14,10 +15,13 @@ export function shouldArchive(task: Task, now: number): boolean {
   );
 }
 
-// Renvoie la liste avec les tâches à archiver marquées (même tableau si rien ne change)
+// Renvoie la liste avec les tâches à archiver marquées (même tableau si rien ne change).
+// Synchronisation : datée du moment où l'archivage était dû, pas de celui où il est constaté
 export function archiveStaleTasks(tasks: Task[], now: number): Task[] {
   if (!tasks.some((t) => shouldArchive(t, now))) return tasks;
   return tasks.map((t) =>
-    shouldArchive(t, now) ? { ...t, archivedAt: now, updatedAt: now } : t
+    shouldArchive(t, now)
+      ? { ...t, archivedAt: now, updatedAt: now, modifiedAt: automaticStamp(t, t.categoryChangedAt + ARCHIVE_AFTER_MS) }
+      : t
   );
 }

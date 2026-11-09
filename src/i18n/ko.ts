@@ -598,6 +598,9 @@ export const ko: Translations = {
     undoConfirmTitle: "마지막 가져오기를 취소할까요?",
     undoConfirmBody: (date) =>
       `데이터가 ${date} 가져오기 전 상태로 돌아가요. 그 뒤에 바꾼 내용은 사라져요.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `${date} 이전의 할 일이 이 휴대폰으로 돌아와 Google 드라이브 데이터에 더해져요. 여기서도 다른 휴대폰에서도 아무것도 삭제되지 않아요.`,
     undoAction: "복원",
     undoneTitle: "가져오기를 취소했어요",
     undoneBody: "가져오기 전 데이터로 돌아왔어요.",

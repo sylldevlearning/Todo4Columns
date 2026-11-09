@@ -25,6 +25,7 @@ import {
   SyncStatus,
 } from "../sync/controller";
 import { DEFAULT_SYNC_STATE, peekRemote, storageStateStore, SyncFileError } from "../sync/engine";
+import { getLogRemovals, getTombstones } from "../sync/localChanges";
 import { driveRemote, RemoteCopy } from "../sync/remote";
 import { ParsedSyncFile, parseSyncFile } from "../sync/syncFile";
 
@@ -111,7 +112,7 @@ export function useDriveSync() {
           text: t.drive.replace,
           style: "destructive",
           // Copie de secours : « Annuler le dernier import » ramène les données d'avant
-          onPress: choose({ mode: "replaceLocal" }, () => savePreImportCopy(Date.now()).catch(() => {})),
+          onPress: choose({ mode: "replaceLocal" }, () => savePreImportCopy(Date.now(), "sync").catch(() => {})),
         },
         { text: t.drive.merge, onPress: choose({ mode: "merge" }) },
       ],
@@ -150,11 +151,15 @@ export function useDriveSync() {
         return;
       }
       pauseSync(false);
-      const localTasks = actions.getTasksState().tasks.length;
+      const local = actions.getTasksState();
+      const localTasks = local.tasks.length;
       const remoteTasks = remote?.data.tasks.length ?? 0;
+      // Téléphone vide : ni tâches, ni journal, ni suppressions (sinon on demande)
+      const localEmpty =
+        localTasks === 0 && local.completions.length === 0 && getTombstones().length === 0 && getLogRemovals().length === 0;
       if (remote === null || remoteTasks === 0) {
         await syncWith({});
-      } else if (localTasks === 0) {
+      } else if (localEmpty) {
         if (await syncWith({ mode: "replaceLocal", adoptSettings: true })) {
           showAlert(t.driveRestore.title, t.driveRestore.body(formatShortDate(remote.writtenAt)));
         }
@@ -200,7 +205,7 @@ export function useDriveSync() {
               showFailure(parsed.reason === "newer" ? "newer" : "other");
               return;
             }
-            await savePreImportCopy(Date.now()).catch(() => {});
+            await savePreImportCopy(Date.now(), "sync").catch(() => {});
             if (await syncWith({ mode: "keepLocal", restore: parsed.file.data })) {
               setCopies(null);
               showAlert(t.drive.copyDoneTitle, t.drive.copyDoneBody);

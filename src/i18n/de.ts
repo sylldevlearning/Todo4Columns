@@ -600,6 +600,9 @@ export const de: Translations = {
     undoConfirmTitle: "Letzten Import rückgängig machen?",
     undoConfirmBody: (date) =>
       `Deine Daten werden auf den Stand vor dem Import vom ${date} zurückgesetzt. Änderungen seitdem gehen verloren.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `Die Aufgaben von vor dem ${date} kommen auf dieses Handy zurück, zusätzlich zu den Daten in Google Drive: Nichts wird gelöscht, weder hier noch auf deinen anderen Handys.`,
     undoAction: "Wiederherstellen",
     undoneTitle: "Import rückgängig gemacht",
     undoneBody: "Deine Daten von vor dem Import sind zurück.",

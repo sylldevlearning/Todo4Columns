@@ -598,6 +598,9 @@ export const ja: Translations = {
     undoConfirmTitle: "最後の読み込みを取り消しますか？",
     undoConfirmBody: (date) =>
       `データは${date}の読み込み前の状態に戻ります。それ以降の変更は失われます。`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `${date} より前のタスクがこのスマホに戻り、Google ドライブのデータに追加されます。ここでもほかのスマホでも、何も削除されません。`,
     undoAction: "元に戻す",
     undoneTitle: "読み込みを取り消しました",
     undoneBody: "読み込み前のデータに戻りました。",

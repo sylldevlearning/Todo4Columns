@@ -598,6 +598,9 @@ export const id: Translations = {
     undoConfirmTitle: "Urungkan impor terakhir?",
     undoConfirmBody: (date) =>
       `Datamu kembali seperti sebelum impor pada ${date}. Perubahan sejak itu akan hilang.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `Tugas dari sebelum ${date} kembali ke ponsel ini, ditambahkan ke data Google Drive: tidak ada yang dihapus, baik di sini maupun di ponselmu yang lain.`,
     undoAction: "Pulihkan",
     undoneTitle: "Impor diurungkan",
     undoneBody: "Datamu sebelum impor sudah kembali.",

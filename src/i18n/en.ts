@@ -599,6 +599,9 @@ export const en: Translations = {
     undoConfirmTitle: "Undo the last import?",
     undoConfirmBody: (date) =>
       `Your data goes back to how it was before the import on ${date}. Changes made since will be lost.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `The tasks from before ${date} come back on this phone, added to your Google Drive data: nothing is deleted, here or on your other phones.`,
     undoAction: "Restore",
     undoneTitle: "Import undone",
     undoneBody: "Your data from before the import is back.",

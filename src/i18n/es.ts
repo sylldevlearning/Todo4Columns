@@ -599,6 +599,9 @@ export const es: Translations = {
     undoConfirmTitle: "¿Deshacer la última importación?",
     undoConfirmBody: (date) =>
       `Tus datos vuelven a como estaban antes de la importación del ${date}. Se perderán los cambios hechos desde entonces.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date) =>
+      `Las tareas de antes del ${date} vuelven a este teléfono, añadidas a los datos de Google Drive: no se elimina nada, ni aquí ni en tus otros teléfonos.`,
     undoAction: "Restaurar",
     undoneTitle: "Importación deshecha",
     undoneBody: "Tus datos de antes de la importación han vuelto.",

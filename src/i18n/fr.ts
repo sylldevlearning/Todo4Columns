@@ -622,6 +622,9 @@ export const fr = {
     undoConfirmTitle: "Annuler le dernier import ?",
     undoConfirmBody: (date: string) =>
       `Tes données reviennent à leur état d'avant l'import du ${date}. Les changements faits depuis seront perdus.`,
+    // Copie de secours venue de la synchronisation : annulée par fusion
+    undoSyncConfirmBody: (date: string) =>
+      `Les tâches d'avant le ${date} reviennent sur ce téléphone, ajoutées aux données de Google Drive : rien n'est supprimé, ni ici ni sur tes autres téléphones.`,
     undoAction: "Restaurer",
     undoneTitle: "Import annulé",
     undoneBody: "Tes données d'avant l'import sont revenues.",
