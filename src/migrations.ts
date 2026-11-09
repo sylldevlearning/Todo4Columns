@@ -101,6 +101,8 @@ export function normalizeTask(
     steps: parseSteps(raw.steps),
     // Absent avant la v8 : jamais réglé
     progress: parseProgress(raw.progress),
+    // Absente avant la 1.6 (même schéma v8) : calculée au besoin, jamais inventée ici
+    ...(numberOrNull(raw.modifiedAt) !== null ? { modifiedAt: numberOrNull(raw.modifiedAt)! } : {}),
   };
 }
 

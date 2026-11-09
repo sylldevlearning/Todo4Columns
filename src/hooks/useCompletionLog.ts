@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import { Completion, loadLog, pruneLog, saveLog, seedLog, updateLog } from "../completionLog";
+import { EMPTY_SYNC_DATA, mergeData } from "../sync/merge";
 import { Task } from "../types";
 import { isForeground } from "./useForeground";
 import { SAVE_DELAY_MS } from "./batching";
@@ -75,5 +76,28 @@ export function useCompletionLog(tasks: Task[], isLoaded: boolean) {
     setCompletions(pruneLog(log, Date.now()));
   };
 
-  return { completions, loadCompletions, replaceCompletions };
+  // Synchronisation : journal reçu fusionné avec celui-ci (ou le remplaçant), sans les entrées
+  // retirées. Les tâches terminées sur un autre téléphone ne sont pas ajoutées une deuxième fois :
+  // updateLog n'ajoute pas une entrée déjà présente.
+  const mergeCompletions = (entries: Completion[], removed: Set<string>, replace: boolean) => {
+    const now = Date.now();
+    setCompletions((current) =>
+      pruneLog(
+        replace
+          ? entries
+          : mergeData(
+              { ...EMPTY_SYNC_DATA, completions: current },
+              {
+                ...EMPTY_SYNC_DATA,
+                completions: entries,
+                removedCompletions: [...removed].map((key) => ({ key, removedAt: now })),
+              },
+              now
+            ).completions,
+        now
+      )
+    );
+  };
+
+  return { completions, loadCompletions, replaceCompletions, mergeCompletions };
 }

@@ -57,4 +57,8 @@ export interface Task extends ReminderFields {
   // Avancement réglé à la main, 0 à 100 par pas de 10 (1.5, schéma v8) ; null ou absent : jamais
   // réglé. Avec des étapes, l'avancement affiché est calculé (src/progress.ts).
   progress?: number | null;
+  // Dernière modification, pour la synchronisation Google Drive (1.6) : mise à jour à chaque
+  // changement de contenu, y compris ceux qui ne touchent pas à updatedAt (étapes, priorité,
+  // report…). Absente des tâches enregistrées avant la 1.6 : voir modifiedAtOf (src/sync/merge.ts).
+  modifiedAt?: number;
 }

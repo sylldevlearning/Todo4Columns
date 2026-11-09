@@ -69,6 +69,7 @@ const ACTION_NAMES = [
   "undoEscalation",
   "dismissEscalation",
   "replaceAll",
+  "applySynced",
   "retryLoad",
   "getTasksState",
   "startTimer",

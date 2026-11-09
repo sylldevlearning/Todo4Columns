@@ -68,8 +68,11 @@ export async function saveLog(log: Completion[]): Promise<void> {
 // Met le journal à jour d'après les tâches modifiées : une tâche qui vient d'être terminée
 // ajoute une entrée, une tâche rouverte (« Annuler ») retire la sienne. Les tâches ajoutées
 // ou supprimées ne changent rien (une tâche restaurée est déjà dans le journal).
+// Une entrée déjà présente avant ce passage n'est pas ajoutée deux fois (tâche terminée sur un
+// autre téléphone : son entrée arrive avec le journal synchronisé).
 export function updateLog(log: Completion[], previous: Task[], next: Task[]): Completion[] {
   const before = new Map(previous.map((t) => [t.id, t]));
+  const known = new Set(log.map((c) => `${c.date}|${c.category}`));
   let result = log;
   for (const task of next) {
     const old = before.get(task.id);
@@ -85,7 +88,7 @@ export function updateLog(log: Completion[], previous: Task[], next: Task[]): Co
       const index = exact !== -1 ? exact : result.findIndex((c) => c.date === was);
       if (index !== -1) result = [...result.slice(0, index), ...result.slice(index + 1)];
     }
-    if (now !== null) result = [...result, { date: now, category: task.category }];
+    if (now !== null && !known.has(`${now}|${task.category}`)) result = [...result, { date: now, category: task.category }];
   }
   return result;
 }

@@ -57,6 +57,20 @@ export async function loadReviewWeeks(): Promise<WeekKey[]> {
   return parseReviewWeeksJson(await AsyncStorage.getItem(REVIEW_LOG_KEY));
 }
 
+// Semaines des revues, telles quelles (synchronisation : union des deux téléphones)
+export async function saveReviewWeeks(weeks: WeekKey[]): Promise<void> {
+  const next = [...new Set(weeks.filter(isWeekKey))].sort().reverse().slice(0, 60);
+  await AsyncStorage.setItem(REVIEW_LOG_KEY, JSON.stringify({ schemaVersion: 1, weeks: next }));
+  reviewListeners.forEach((l) => l());
+}
+
+// Revue enregistrée (ici ou par la synchronisation) : la synchronisation est prévenue
+const reviewListeners = new Set<() => void>();
+export function subscribeReviews(listener: () => void): () => void {
+  reviewListeners.add(listener);
+  return () => reviewListeners.delete(listener);
+}
+
 // Enregistre la revue de cette semaine et renvoie la série obtenue
 export async function recordReview(now: number): Promise<number> {
   const weeks = await loadReviewWeeks();
@@ -64,5 +78,6 @@ export async function recordReview(now: number): Promise<number> {
   // Un an d'historique suffit pour la série
   const next = [...new Set([...weeks, week])].sort().reverse().slice(0, 60);
   await AsyncStorage.setItem(REVIEW_LOG_KEY, JSON.stringify({ schemaVersion: 1, weeks: next }));
+  reviewListeners.forEach((l) => l());
   return reviewStreak(next, now);
 }
