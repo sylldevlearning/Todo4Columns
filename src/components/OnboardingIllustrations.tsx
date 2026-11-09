@@ -188,7 +188,7 @@ export function CalendarVoiceIllustration() {
   );
 }
 
-// Écran 6 : un nuage et la dernière sauvegarde
+// Écran 6 : un nuage et la dernière synchronisation
 export function DriveIllustration() {
   return (
     <View style={styles.stack} {...hidden}>
@@ -199,7 +199,7 @@ export function DriveIllustration() {
           <Text style={styles.appName}>{t.drive.section}</Text>
         </View>
         <Text style={styles.cardTitle}>{t.drive.auto}</Text>
-        <Text style={styles.notificationBody}>{t.drive.lastBackup(formatDue(Date.now()))}</Text>
+        <Text style={styles.notificationBody}>{t.drive.synced(formatDue(Date.now()))}</Text>
       </View>
     </View>
   );

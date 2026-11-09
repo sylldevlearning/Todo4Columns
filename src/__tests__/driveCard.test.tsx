@@ -70,7 +70,7 @@ describe("carte Google Drive de la matrice (mise à jour)", () => {
     expect(driveCard()).toBeNull();
   });
 
-  it("« Se connecter » : connexion, sauvegarde automatique activée, carte retirée", async () => {
+  it("« Se connecter » : connexion, synchronisation activée, carte retirée", async () => {
     await saveRaw({ ...DEFAULT_SETTINGS, onboardingDone: true, remindersPromptDone: true });
     await launch();
     await fireEvent.press(screen.getByRole("button", { name: "Se connecter" }));

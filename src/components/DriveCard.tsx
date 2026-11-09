@@ -4,8 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { loadDriveState } from "../drive/driveBackup";
 import { isDriveAvailable } from "../drive/googleAccount";
-import { useBackup } from "../hooks/useBackup";
-import { useDriveBackup } from "../hooks/useDriveBackup";
+import { useDriveSync } from "../hooks/useDriveSync";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions, useTasksSelector } from "../store/TasksContext";
@@ -30,8 +29,7 @@ export default function DriveCard() {
   const remindersPending = useSettingsSelector((s) => s.onboardingDone && !s.remindersPromptDone);
   const [permission] = usePermissionState();
   const { updateSettings, getSettings } = useTaskActions();
-  const backup = useBackup();
-  const drive = useDriveBackup(backup.applyBackup);
+  const drive = useDriveSync();
   const [visible, setVisible] = useState(false);
   // Décision prise une seule fois par lancement, quand les réglages et l'autorisation sont connus
   const decided = useRef(false);

@@ -15,8 +15,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { isDriveAvailable } from "../drive/googleAccount";
-import { useBackup } from "../hooks/useBackup";
-import { useDriveBackup } from "../hooks/useDriveBackup";
+import { useDriveSync } from "../hooks/useDriveSync";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions } from "../store/TasksContext";
@@ -68,8 +67,7 @@ export default function Onboarding({ onDone, extraSettings }: Props) {
   const granted = permission === "granted";
   const { requestNotificationPermission, updateSettings, getSettings } = useTaskActions();
   const [asking, setAsking] = useState(false);
-  const backup = useBackup();
-  const drive = useDriveBackup(backup.applyBackup);
+  const drive = useDriveSync();
   const connected = drive.account !== null;
 
   // Écran Google Drive affiché au moins une fois

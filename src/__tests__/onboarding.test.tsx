@@ -132,7 +132,7 @@ describe("présentation au premier lancement", () => {
 
     // Dernier écran : Google Drive, facultatif
     expect(screen.getByLabelText("Écran 6 sur 6")).toBeOnTheScreen();
-    expect(screen.getByRole("header", { name: "Sauvegarde Google Drive" })).toBeOnTheScreen();
+    expect(screen.getByRole("header", { name: "Synchronisation Google Drive" })).toBeOnTheScreen();
     expect(screen.getByRole("button", { name: "Passer" })).toBeOnTheScreen();
     expect(screen.getByRole("button", { name: "Plus tard" })).toBeOnTheScreen();
     expect(mocked.signIn).not.toHaveBeenCalled(); // jamais sans appui
@@ -141,7 +141,7 @@ describe("présentation au premier lancement", () => {
     await act(async () => {});
     expect(mocked.signIn).toHaveBeenCalledTimes(1);
     expect(getDriveState()).toMatchObject({ account: "lea@example.com", autoBackup: true });
-    expect(screen.getByText("Connecté : sauvegarde automatique activée")).toBeOnTheScreen();
+    expect(screen.getByText("Connecté : synchronisation activée")).toBeOnTheScreen();
 
     await fireEvent.press(screen.getByRole("button", { name: "C'est parti" }));
     expect(screen.queryByText(firstTitle)).toBeNull();

@@ -52,16 +52,24 @@ interface Props {
   };
 }
 
-// Sauvegarde Google Drive, facultative
+// Synchronisation Google Drive, facultative
+export interface DriveCopy {
+  id: string;
+  createdAt: number;
+  tasks: number | null;
+}
+
 export interface DriveProps {
   account: string | null; // e-mail du compte connecté, null = non connecté
-  autoBackup: boolean;
-  lastBackupAt: number | null;
+  autoSync: boolean;
+  statusLine: string; // « Synchronisé : … », « Hors ligne… »
   busy: boolean; // opération en cours : boutons désactivés
+  copies: DriveCopy[] | null; // copies du jour, affichées après « Revenir à une copie… »
   onConnect: () => void;
-  onBackupNow: () => void;
-  onRestore: () => void;
-  onAutoBackupChange: (value: boolean) => void;
+  onSyncNow: () => void;
+  onShowCopies: () => void;
+  onRestoreCopy: (copy: DriveCopy) => void;
+  onAutoSyncChange: (value: boolean) => void;
   onSignOut: () => void;
   onDelete: () => void;
 }
@@ -137,7 +145,7 @@ function TextButton({
 }
 
 function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
-  const { account, busy } = drive;
+  const { account, busy, copies } = drive;
   return (
     <Section title={t.drive.section} info="drive">
       {account === null ? (
@@ -150,15 +158,25 @@ function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
           <View style={styles.archived}>
             <Text style={styles.status}>{t.drive.account(account)}</Text>
             <Text style={styles.hint} accessibilityLiveRegion="polite">
-              {busy
-                ? t.drive.working
-                : drive.lastBackupAt === null
-                ? t.drive.never
-                : t.drive.lastBackup(formatDue(drive.lastBackupAt))}
+              {drive.statusLine}
             </Text>
           </View>
-          <TextButton label={t.drive.backupNow} onPress={drive.onBackupNow} disabled={busy} />
-          <TextButton label={t.drive.restore} onPress={drive.onRestore} disabled={busy} />
+          <TextButton label={t.drive.syncNow} onPress={drive.onSyncNow} disabled={busy} />
+          {copies === null ? (
+            <TextButton label={t.drive.copies} onPress={drive.onShowCopies} disabled={busy} />
+          ) : (
+            <View style={styles.archived} testID="drive-copies">
+              <Text style={styles.hint}>{copies.length === 0 ? t.drive.noCopies : t.drive.copiesHint}</Text>
+              {copies.map((copy) => (
+                <TextButton
+                  key={copy.id}
+                  label={t.drive.copy(formatDue(copy.createdAt), copy.tasks)}
+                  onPress={() => drive.onRestoreCopy(copy)}
+                  disabled={busy}
+                />
+              ))}
+            </View>
+          )}
           <View style={styles.separator} />
           <View style={styles.switchRow}>
             <View style={styles.switchText}>
@@ -167,8 +185,8 @@ function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
             </View>
             <Switch
               accessibilityLabel={t.drive.auto}
-              value={drive.autoBackup}
-              onValueChange={drive.onAutoBackupChange}
+              value={drive.autoSync}
+              onValueChange={drive.onAutoSyncChange}
               trackColor={{ false: colors.border, true: color }}
               thumbColor={colors.white}
             />

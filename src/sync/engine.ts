@@ -113,6 +113,8 @@ export interface SyncDeps {
 export interface SyncOptions {
   mode?: SyncMode;
   adoptSettings?: boolean; // téléphone vide : reprend aussi les réglages du fichier
+  // Retour à une copie : ces données remplacent celles du téléphone puis l'actuel (mode keepLocal)
+  restore?: SyncData;
 }
 
 export interface SyncResult {
@@ -172,7 +174,9 @@ export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promi
     }
 
     // 2. Fusionner avec les données du téléphone
-    const { data: localRaw, settings } = await local.read();
+    const read = await local.read();
+    const settings = read.settings;
+    const localRaw = options.restore ?? read.data;
     const localData = withLocalRemovals(localRaw, state, now);
     const remoteData = remoteFile?.data ?? null;
     let merged: SyncData;
@@ -186,7 +190,7 @@ export async function syncOnce(deps: SyncDeps, options: SyncOptions = {}): Promi
     // 3. Enregistrer sur le téléphone
     if (mode !== "merge" || mergedHash !== hashData(localData)) {
       await local.apply(merged, {
-        replace: mode === "replaceLocal",
+        replace: mode === "replaceLocal" || options.restore !== undefined,
         settings: mode === "replaceLocal" && options.adoptSettings ? remoteFile?.settings ?? null : null,
       });
       applied = true;

@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "../src/components/BalanceCard";
+import CloudButton from "../src/components/CloudButton";
 import DriveCard from "../src/components/DriveCard";
 import Fab, { MicFab } from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
@@ -35,6 +36,7 @@ export default function MatrixScreen() {
           </Text>
           <Text style={styles.summary}>{t.matrix.taskCount(openCount)}</Text>
         </View>
+        <CloudButton />
         <IconButton
           icon="calendar-number-outline"
           label={t.calendar.open}
