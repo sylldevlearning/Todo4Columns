@@ -45,6 +45,11 @@ SIMPLE AND MOTIVATING
 • Built-in help: an “i” explains every option
 • Available in 13 languages
 
+ON ALL YOUR PHONES
+• Sync your tasks between several phones with Google Drive (optional)
+• Home screen widgets: “Do”, “Today” and “Matrix”; check off a task without opening the app
+• Light or dark theme, or automatic like your phone
+
 YOUR DATA IS YOURS
 No account, no ads. Your tasks stay on your phone, and you can export them to a backup file at any time. If you like, back them up to your Google Drive too, in a private folder only DoFirst can use, and get them back automatically on a new phone.
 

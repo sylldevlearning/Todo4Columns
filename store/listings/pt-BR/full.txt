@@ -45,6 +45,11 @@ SIMPLES E MOTIVADOR
 • Ajuda integrada: um "i" explica cada opção
 • Disponível em 13 idiomas
 
+EM TODOS OS SEUS CELULARES
+• Sincronize suas tarefas entre vários celulares com o Google Drive (opcional)
+• Widgets na tela inicial: “Fazer”, “Hoje” e “Matriz”; marque uma tarefa sem abrir o app
+• Tema claro ou escuro, ou automático como o seu celular
+
 SEUS DADOS SÃO SEUS
 Sem conta e sem anúncios. Suas tarefas ficam no seu celular, e você pode exportá-las para um arquivo de backup quando quiser. Se quiser, faça também backup no seu Google Drive, numa pasta privada reservada ao DoFirst, e recupere tudo num celular novo.
 
