@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { CelebrationStyle, CONFETTI_MS, makeParticles, Particle, particleOffset } from "./plan";
+import { themedStyles } from "../theme";
 
 export interface Point {
   x: number;
@@ -82,17 +83,19 @@ export default function Confetti({
   );
 }
 
-const styles = StyleSheet.create({
-  layer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  piece: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    layer: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+    piece: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+    },
+  })
+);

@@ -5,7 +5,7 @@ import { CATEGORY_BY_KEY } from "../constants/categories";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions } from "../store/TasksContext";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 
 // Carte discrète de la matrice pour qui a vu la présentation avant la 1.4.1 : l'autorisation des
 // notifications n'a jamais été demandée (Android « undetermined ») ni proposée par l'app.
@@ -66,46 +66,48 @@ export default function RemindersCard() {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    rowGap: 4,
-    columnGap: 8,
-    borderRadius: 14,
-    borderWidth: 1,
-    paddingLeft: 12,
-    paddingRight: 4,
-    paddingVertical: 2,
-  },
-  text: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 140,
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    paddingVertical: 8,
-  },
-  action: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    justifyContent: "center",
-  },
-  enable: {
-    paddingHorizontal: 14,
-  },
-  later: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.textMuted,
-  },
-  enableText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 14,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    card: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "center",
+      rowGap: 4,
+      columnGap: 8,
+      borderRadius: 14,
+      borderWidth: 1,
+      paddingLeft: 12,
+      paddingRight: 4,
+      paddingVertical: 2,
+    },
+    text: {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: 140,
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      paddingVertical: 8,
+    },
+    action: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      justifyContent: "center",
+    },
+    enable: {
+      paddingHorizontal: 14,
+    },
+    later: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    enableText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 14,
+    },
+    pressed: {
+      opacity: 0.7,
+    },
+  })
+);

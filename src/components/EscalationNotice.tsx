@@ -11,7 +11,7 @@ import {
   useTaskActions,
   useTasksSelector,
 } from "../store/TasksContext";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import { FAB_SIZE } from "./Fab";
 
 // Durée d'affichage du message
@@ -63,36 +63,38 @@ export default function EscalationNotice() {
   );
 }
 
-const styles = StyleSheet.create({
-  notice: {
-    position: "absolute",
-    left: 16,
-    right: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingLeft: 16,
-    paddingRight: 4,
-    borderRadius: 14,
-    backgroundColor: colors.surfaceRaised,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  message: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.text,
-    paddingVertical: 12,
-  },
-  action: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 12,
-    justifyContent: "center",
-  },
-  actionText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 14,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    notice: {
+      position: "absolute",
+      left: 16,
+      right: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      paddingLeft: 16,
+      paddingRight: 4,
+      borderRadius: 14,
+      backgroundColor: colors.surfaceRaised,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    message: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.text,
+      paddingVertical: 12,
+    },
+    action: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 12,
+      justifyContent: "center",
+    },
+    actionText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 14,
+      color: colors.text,
+    },
+  })
+);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { t } from "../i18n";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import { showAlert } from "../appWindows";
 
 interface Props {
@@ -79,66 +79,68 @@ export default function TimerModal({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    width: "84%",
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 20,
-    color: colors.text,
-  },
-  subtitle: {
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 2,
-    marginBottom: 16,
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    fontFamily: fonts.semibold,
-    fontSize: 16,
-    color: colors.text,
-    backgroundColor: colors.bg,
-    marginBottom: 20,
-  },
-  buttons: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  button: {
-    flex: 1,
-    minHeight: TOUCH_SIZE,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancel: {
-    backgroundColor: colors.surfaceRaised,
-  },
-  cancelText: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  validateText: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    container: {
+      width: "84%",
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 20,
+      color: colors.text,
+    },
+    subtitle: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      color: colors.textMuted,
+      marginTop: 2,
+      marginBottom: 16,
+    },
+    input: {
+      height: 48,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      fontFamily: fonts.semibold,
+      fontSize: 16,
+      color: colors.text,
+      backgroundColor: colors.bg,
+      marginBottom: 20,
+    },
+    buttons: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    button: {
+      flex: 1,
+      minHeight: TOUCH_SIZE,
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    cancel: {
+      backgroundColor: colors.surfaceRaised,
+    },
+    cancelText: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    validateText: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+    },
+  })
+);

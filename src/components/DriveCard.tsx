@@ -4,15 +4,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CATEGORY_BY_KEY } from "../constants/categories";
 import { loadDriveState } from "../drive/driveBackup";
 import { isDriveAvailable } from "../drive/googleAccount";
-import { useBackup } from "../hooks/useBackup";
-import { useDriveBackup } from "../hooks/useDriveBackup";
+import { useDriveSync } from "../hooks/useDriveSync";
 import { t } from "../i18n";
 import { usePermissionState } from "../notifications/usePermissionState";
 import { useSettingsReady, useSettingsSelector, useTaskActions, useTasksSelector } from "../store/TasksContext";
 
 // Présentation passée avant l'écran Google Drive : carte proposée à partir de ce nombre de tâches
 export const DEFERRED_DRIVE_MIN_TASKS = 10;
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 
 // Carte discrète de la matrice pour qui a vu la présentation avant la 1.5 : propose une seule fois
 // la sauvegarde Google Drive (facultative). Dès son apparition, elle est notée comme proposée.
@@ -30,8 +29,7 @@ export default function DriveCard() {
   const remindersPending = useSettingsSelector((s) => s.onboardingDone && !s.remindersPromptDone);
   const [permission] = usePermissionState();
   const { updateSettings, getSettings } = useTaskActions();
-  const backup = useBackup();
-  const drive = useDriveBackup(backup.applyBackup);
+  const drive = useDriveSync();
   const [visible, setVisible] = useState(false);
   // Décision prise une seule fois par lancement, quand les réglages et l'autorisation sont connus
   const decided = useRef(false);
@@ -87,43 +85,45 @@ export default function DriveCard() {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 8,
-    paddingLeft: 12,
-    paddingRight: 4,
-    paddingVertical: 4,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  text: {
-    flex: 1,
-    minWidth: 140,
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-  },
-  action: {
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 10,
-    justifyContent: "center",
-    borderRadius: 10,
-  },
-  connect: {
-    paddingHorizontal: 12,
-  },
-  later: {
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  connectText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    card: {
+      flexDirection: "row",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 8,
+      paddingLeft: 12,
+      paddingRight: 4,
+      paddingVertical: 4,
+      borderRadius: 14,
+      borderWidth: 1,
+    },
+    text: {
+      flex: 1,
+      minWidth: 140,
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+    },
+    action: {
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 10,
+      justifyContent: "center",
+      borderRadius: 10,
+    },
+    connect: {
+      paddingHorizontal: 12,
+    },
+    later: {
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    connectText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+    },
+    pressed: {
+      opacity: 0.7,
+    },
+  })
+);

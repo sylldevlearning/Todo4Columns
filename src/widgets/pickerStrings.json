@@ -1,0 +1,184 @@
+{
+  "fr": {
+    "do": {
+      "label": "DoFirst · Faire",
+      "description": "Tes tâches à faire maintenant, avec + et le micro"
+    },
+    "today": {
+      "label": "DoFirst · Aujourd'hui",
+      "description": "Échéances et étapes du jour"
+    },
+    "matrix": {
+      "label": "DoFirst · Matrice",
+      "description": "Les 4 cases et leurs tâches"
+    }
+  },
+  "en": {
+    "do": {
+      "label": "DoFirst · Do",
+      "description": "Your tasks to do now, with + and the mic"
+    },
+    "today": {
+      "label": "DoFirst · Today",
+      "description": "Today's due dates and steps"
+    },
+    "matrix": {
+      "label": "DoFirst · Matrix",
+      "description": "The 4 quadrants and their tasks"
+    }
+  },
+  "es": {
+    "do": {
+      "label": "DoFirst · Hacer",
+      "description": "Tus tareas para hacer ahora, con + y el micro"
+    },
+    "today": {
+      "label": "DoFirst · Hoy",
+      "description": "Fechas límite y pasos de hoy"
+    },
+    "matrix": {
+      "label": "DoFirst · Matriz",
+      "description": "Los 4 cuadrantes y sus tareas"
+    }
+  },
+  "pt-BR": {
+    "do": {
+      "label": "DoFirst · Fazer",
+      "description": "Suas tarefas para fazer agora, com + e o microfone"
+    },
+    "today": {
+      "label": "DoFirst · Hoje",
+      "description": "Prazos e etapas de hoje"
+    },
+    "matrix": {
+      "label": "DoFirst · Matriz",
+      "description": "Os 4 quadrantes e suas tarefas"
+    }
+  },
+  "de": {
+    "do": {
+      "label": "DoFirst · Erledigen",
+      "description": "Deine Aufgaben für jetzt, mit + und Mikrofon"
+    },
+    "today": {
+      "label": "DoFirst · Heute",
+      "description": "Fälligkeiten und Schritte von heute"
+    },
+    "matrix": {
+      "label": "DoFirst · Matrix",
+      "description": "Die 4 Felder und ihre Aufgaben"
+    }
+  },
+  "it": {
+    "do": {
+      "label": "DoFirst · Fai",
+      "description": "Le attività da fare ora, con + e il microfono"
+    },
+    "today": {
+      "label": "DoFirst · Oggi",
+      "description": "Scadenze e passaggi di oggi"
+    },
+    "matrix": {
+      "label": "DoFirst · Matrice",
+      "description": "I 4 quadranti e le loro attività"
+    }
+  },
+  "id": {
+    "do": {
+      "label": "DoFirst · Kerjakan",
+      "description": "Tugas yang dikerjakan sekarang, dengan + dan mikrofon"
+    },
+    "today": {
+      "label": "DoFirst · Hari ini",
+      "description": "Tenggat dan langkah hari ini"
+    },
+    "matrix": {
+      "label": "DoFirst · Matriks",
+      "description": "4 kuadran dan tugasnya"
+    }
+  },
+  "ja": {
+    "do": {
+      "label": "DoFirst · 今すぐ",
+      "description": "今やるタスク。+ とマイク付き"
+    },
+    "today": {
+      "label": "DoFirst · 今日",
+      "description": "今日の期限とステップ"
+    },
+    "matrix": {
+      "label": "DoFirst · マトリクス",
+      "description": "4つのマスとそのタスク"
+    }
+  },
+  "ko": {
+    "do": {
+      "label": "DoFirst · 실행",
+      "description": "지금 할 일, + 와 마이크 포함"
+    },
+    "today": {
+      "label": "DoFirst · 오늘",
+      "description": "오늘의 마감과 단계"
+    },
+    "matrix": {
+      "label": "DoFirst · 매트릭스",
+      "description": "4개 사분면과 할 일"
+    }
+  },
+  "zh-Hans": {
+    "do": {
+      "label": "DoFirst · 立即做",
+      "description": "现在要做的任务，带 + 和麦克风"
+    },
+    "today": {
+      "label": "DoFirst · 今天",
+      "description": "今天的截止时间和步骤"
+    },
+    "matrix": {
+      "label": "DoFirst · 矩阵",
+      "description": "4 个象限及其任务"
+    }
+  },
+  "tr": {
+    "do": {
+      "label": "DoFirst · Yap",
+      "description": "Şimdi yapılacak görevlerin, + ve mikrofonla"
+    },
+    "today": {
+      "label": "DoFirst · Bugün",
+      "description": "Bugünün son tarihleri ve adımları"
+    },
+    "matrix": {
+      "label": "DoFirst · Matris",
+      "description": "4 alan ve görevleri"
+    }
+  },
+  "hi": {
+    "do": {
+      "label": "DoFirst · करें",
+      "description": "अभी करने वाले काम, + और माइक के साथ"
+    },
+    "today": {
+      "label": "DoFirst · आज",
+      "description": "आज की समय-सीमाएँ और चरण"
+    },
+    "matrix": {
+      "label": "DoFirst · मैट्रिक्स",
+      "description": "4 खाने और उनके काम"
+    }
+  },
+  "ru": {
+    "do": {
+      "label": "DoFirst · Сделать",
+      "description": "Задачи на сейчас, с + и микрофоном"
+    },
+    "today": {
+      "label": "DoFirst · Сегодня",
+      "description": "Сроки и шаги на сегодня"
+    },
+    "matrix": {
+      "label": "DoFirst · Матрица",
+      "description": "4 квадранта и их задачи"
+    }
+  }
+}

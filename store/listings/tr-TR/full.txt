@@ -45,6 +45,11 @@ BASİT VE MOTİVE EDİCİ
 • Yerleşik yardım: "i" simgesi her seçeneği açıklar
 • 13 dilde kullanılabilir
 
+TÜM TELEFONLARINDA
+• Görevlerini Google Drive ile birden fazla telefon arasında eşitle (isteğe bağlı)
+• Ana ekran widget'ları: "Yap", "Bugün" ve "Matris"; uygulamayı açmadan görevi işaretle
+• Açık ya da koyu tema, veya telefonuna göre otomatik
+
 VERİLERİN SANA AİT
 Hesap yok, reklam yok. Görevlerin telefonunda kalır ve istediğin zaman bir yedek dosyasına aktarabilirsin. İstersen Google Drive'ında, yalnızca DoFirst'e ayrılmış özel bir klasöre de yedekleyip yeni bir telefonda geri yükleyebilirsin.
 

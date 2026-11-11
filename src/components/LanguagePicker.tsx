@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LANGUAGE_NAMES, LANGUAGES, LanguagePreference, t } from "../i18n";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 
 const OPTIONS: LanguagePreference[] = ["auto", ...LANGUAGES];
 
@@ -59,41 +59,43 @@ export default function LanguagePicker({ value, onChange }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  current: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: TOUCH_SIZE,
-    gap: 12,
-  },
-  currentLabel: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  list: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    marginTop: 4,
-    paddingTop: 4,
-  },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: TOUCH_SIZE,
-    gap: 12,
-  },
-  optionLabel: {
-    flex: 1,
-    fontFamily: fonts.regular,
-    fontSize: 15,
-    color: colors.textMuted,
-  },
-  optionSelected: {
-    fontFamily: fonts.bold,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    current: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: TOUCH_SIZE,
+      gap: 12,
+    },
+    currentLabel: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    list: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      marginTop: 4,
+      paddingTop: 4,
+    },
+    option: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: TOUCH_SIZE,
+      gap: 12,
+    },
+    optionLabel: {
+      flex: 1,
+      fontFamily: fonts.regular,
+      fontSize: 15,
+      color: colors.textMuted,
+    },
+    optionSelected: {
+      fontFamily: fonts.bold,
+      color: colors.text,
+    },
+  })
+);

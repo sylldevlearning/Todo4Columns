@@ -11,7 +11,7 @@ import {
   ReminderOption,
 } from "../reminders";
 import { Settings } from "../settings";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles, APPEARANCES } from "../theme";
 import { Task } from "../types";
 import InfoButton, { InfoKey } from "./InfoButton";
 import LanguagePicker from "./LanguagePicker";
@@ -21,6 +21,12 @@ import TimeField from "./TimeField";
 // Dans les réglages, la relance par défaut de « Faire » ne peut pas être « Jamais »
 const DEFAULT_NAG_OPTIONS = DO_NAG_OPTIONS.filter((o) => o.value !== null);
 const MAX_NAGS_OPTIONS: ReminderOption[] = [2, 3, 5].map((n) => ({ label: String(n), value: n }));
+// Apparence : automatique (suit le téléphone), clair, sombre
+const APPEARANCE_OPTIONS: ReminderOption[] = [
+  translated(() => t.settings.appearanceAuto, 0),
+  translated(() => t.settings.appearanceLight, 1),
+  translated(() => t.settings.appearanceDark, 2),
+];
 // Jours de la revue, du lundi au dimanche (0 = dimanche)
 const REVIEW_DAY_OPTIONS: ReminderOption[] = [1, 2, 3, 4, 5, 6, 0].map((day) =>
   translated(() => t.settings.weekdays[day], day)
@@ -52,16 +58,24 @@ interface Props {
   };
 }
 
-// Sauvegarde Google Drive, facultative
+// Synchronisation Google Drive, facultative
+export interface DriveCopy {
+  id: string;
+  createdAt: number;
+  tasks: number | null;
+}
+
 export interface DriveProps {
   account: string | null; // e-mail du compte connecté, null = non connecté
-  autoBackup: boolean;
-  lastBackupAt: number | null;
+  autoSync: boolean;
+  statusLine: string; // « Synchronisé : … », « Hors ligne… »
   busy: boolean; // opération en cours : boutons désactivés
+  copies: DriveCopy[] | null; // copies du jour, affichées après « Revenir à une copie… »
   onConnect: () => void;
-  onBackupNow: () => void;
-  onRestore: () => void;
-  onAutoBackupChange: (value: boolean) => void;
+  onSyncNow: () => void;
+  onShowCopies: () => void;
+  onRestoreCopy: (copy: DriveCopy) => void;
+  onAutoSyncChange: (value: boolean) => void;
   onSignOut: () => void;
   onDelete: () => void;
 }
@@ -137,7 +151,7 @@ function TextButton({
 }
 
 function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
-  const { account, busy } = drive;
+  const { account, busy, copies } = drive;
   return (
     <Section title={t.drive.section} info="drive">
       {account === null ? (
@@ -150,15 +164,25 @@ function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
           <View style={styles.archived}>
             <Text style={styles.status}>{t.drive.account(account)}</Text>
             <Text style={styles.hint} accessibilityLiveRegion="polite">
-              {busy
-                ? t.drive.working
-                : drive.lastBackupAt === null
-                ? t.drive.never
-                : t.drive.lastBackup(formatDue(drive.lastBackupAt))}
+              {drive.statusLine}
             </Text>
           </View>
-          <TextButton label={t.drive.backupNow} onPress={drive.onBackupNow} disabled={busy} />
-          <TextButton label={t.drive.restore} onPress={drive.onRestore} disabled={busy} />
+          <TextButton label={t.drive.syncNow} onPress={drive.onSyncNow} disabled={busy} />
+          {copies === null ? (
+            <TextButton label={t.drive.copies} onPress={drive.onShowCopies} disabled={busy} />
+          ) : (
+            <View style={styles.archived} testID="drive-copies">
+              <Text style={styles.hint}>{copies.length === 0 ? t.drive.noCopies : t.drive.copiesHint}</Text>
+              {copies.map((copy) => (
+                <TextButton
+                  key={copy.id}
+                  label={t.drive.copy(formatDue(copy.createdAt), copy.tasks)}
+                  onPress={() => drive.onRestoreCopy(copy)}
+                  disabled={busy}
+                />
+              ))}
+            </View>
+          )}
           <View style={styles.separator} />
           <View style={styles.switchRow}>
             <View style={styles.switchText}>
@@ -167,8 +191,8 @@ function DriveSection({ drive, color }: { drive: DriveProps; color: string }) {
             </View>
             <Switch
               accessibilityLabel={t.drive.auto}
-              value={drive.autoBackup}
-              onValueChange={drive.onAutoBackupChange}
+              value={drive.autoSync}
+              onValueChange={drive.onAutoSyncChange}
               trackColor={{ false: colors.border, true: color }}
               thumbColor={colors.white}
             />
@@ -214,6 +238,15 @@ export default function SettingsForm({
     <View style={styles.container}>
       <Section title={t.settings.language} info="language">
         <LanguagePicker value={settings.language} onChange={(v) => set("language", v)} />
+      </Section>
+
+      <Section title={t.settings.appearance} info="appearance">
+        <OptionPills
+          options={APPEARANCE_OPTIONS}
+          value={APPEARANCES.indexOf(settings.appearance)}
+          onChange={(v) => v !== null && set("appearance", APPEARANCES[v])}
+          {...pills(doIt)}
+        />
       </Section>
 
       <Section title={t.settings.defaults}>
@@ -447,111 +480,113 @@ export default function SettingsForm({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: 24,
-  },
-  section: {
-    gap: 8,
-  },
-  sectionTitle: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-    paddingHorizontal: 4,
-  },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 16,
-    gap: 12,
-  },
-  field: {
-    gap: 8,
-  },
-  fieldLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: TOUCH_SIZE,
-    gap: 12,
-  },
-  switchText: {
-    flex: 1,
-    gap: 2,
-  },
-  switchLabel: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  hint: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  status: {
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  textButton: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-  },
-  disabled: {
-    opacity: 0.4,
-  },
-  textButtonLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    textDecorationLine: "underline",
-  },
-  archived: {
-    gap: 2,
-  },
-  archivedBorder: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: 12,
-  },
-  archivedTitle: {
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  archivedDate: {
-    fontFamily: fonts.regular,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  archivedActions: {
-    flexDirection: "row",
-    gap: 20,
-  },
-  footnote: {
-    fontFamily: fonts.regular,
-    fontSize: 12,
-    color: colors.textMuted,
-    textAlign: "center",
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      gap: 24,
+    },
+    section: {
+      gap: 8,
+    },
+    sectionTitle: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+      paddingHorizontal: 4,
+    },
+    labelRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 16,
+      gap: 12,
+    },
+    field: {
+      gap: 8,
+    },
+    fieldLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    switchRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: TOUCH_SIZE,
+      gap: 12,
+    },
+    switchText: {
+      flex: 1,
+      gap: 2,
+    },
+    switchLabel: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    hint: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    status: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    textButton: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+    },
+    disabled: {
+      opacity: 0.4,
+    },
+    textButtonLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      textDecorationLine: "underline",
+    },
+    archived: {
+      gap: 2,
+    },
+    archivedBorder: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingTop: 12,
+    },
+    archivedTitle: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    archivedDate: {
+      fontFamily: fonts.regular,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    archivedActions: {
+      flexDirection: "row",
+      gap: 20,
+    },
+    footnote: {
+      fontFamily: fonts.regular,
+      fontSize: 12,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+  })
+);

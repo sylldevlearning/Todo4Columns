@@ -133,26 +133,51 @@ export function parseBackup(json: string, now: number = Date.now()): ParsedBacku
   };
 }
 
+// Origine d'une copie de secours : import d'un fichier, ou action de synchronisation
+// (« Remplacer par Google Drive », « Revenir à une copie »). La seconde s'annule par fusion.
+export type PreImportOrigin = "import" | "sync";
+
+// Copie créée ou supprimée : l'écran Réglages met à jour « Annuler le dernier import »
+const copyListeners = new Set<() => void>();
+export function subscribePreImportCopy(listener: () => void): () => void {
+  copyListeners.add(listener);
+  return () => copyListeners.delete(listener);
+}
+
 // Copie de secours des données actuelles, telles qu'enregistrées, avant de les remplacer
-export async function savePreImportCopy(now: number): Promise<void> {
+export async function savePreImportCopy(now: number, origin: PreImportOrigin = "import"): Promise<void> {
   const keys = [STORAGE_KEY, SETTINGS_KEY, COMPLETION_LOG_KEY, REVIEW_LOG_KEY];
   const values = await AsyncStorage.multiGet(keys);
   await AsyncStorage.setItem(
     PRE_IMPORT_BACKUP_KEY,
-    JSON.stringify({ createdAt: now, data: Object.fromEntries(values) })
+    JSON.stringify({ createdAt: now, origin, data: Object.fromEntries(values) })
   );
+  copyListeners.forEach((l) => l());
 }
 
-// Date de la copie de secours (donc du dernier import), ou null s'il n'y en a pas
-export async function preImportCopyDate(): Promise<number | null> {
+export interface PreImportCopyInfo {
+  createdAt: number;
+  origin: PreImportOrigin;
+}
+
+// Date et origine de la copie de secours (donc du dernier import), ou null s'il n'y en a pas
+export async function preImportCopyInfo(): Promise<PreImportCopyInfo | null> {
   const json = await AsyncStorage.getItem(PRE_IMPORT_BACKUP_KEY);
   if (json === null) return null;
   try {
-    const createdAt = (JSON.parse(json) as { createdAt?: unknown }).createdAt;
-    return typeof createdAt === "number" ? createdAt : 0;
+    const data = JSON.parse(json) as { createdAt?: unknown; origin?: unknown };
+    return {
+      createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
+      origin: data.origin === "sync" ? "sync" : "import",
+    };
   } catch {
-    return 0;
+    return { createdAt: 0, origin: "import" };
   }
+}
+
+// Date de la copie de secours, ou null
+export async function preImportCopyDate(): Promise<number | null> {
+  return (await preImportCopyInfo())?.createdAt ?? null;
 }
 
 // Relit la copie de secours : les données telles qu'elles étaient avant le dernier import.
@@ -176,7 +201,10 @@ export async function readPreImportCopy(now: number = Date.now()): Promise<Backu
   };
 }
 
-export const removePreImportCopy = () => AsyncStorage.removeItem(PRE_IMPORT_BACKUP_KEY);
+export async function removePreImportCopy(): Promise<void> {
+  await AsyncStorage.removeItem(PRE_IMPORT_BACKUP_KEY);
+  copyListeners.forEach((l) => l());
+}
 
 // Écrit les données importées (les tâches et le journal sont aussi remplacés en mémoire)
 export async function writeImported(backup: BackupContent): Promise<void> {

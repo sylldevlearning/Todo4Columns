@@ -59,17 +59,30 @@ export async function loadLog(): Promise<Completion[] | null> {
 }
 
 export async function saveLog(log: Completion[]): Promise<void> {
-  await AsyncStorage.setItem(
-    COMPLETION_LOG_KEY,
-    JSON.stringify({ schemaVersion: COMPLETION_LOG_VERSION, entries: log })
-  );
+  await AsyncStorage.setItem(...logEntry(log));
 }
+
+// Clé et contenu enregistrés du journal, pour une écriture groupée
+export const logEntry = (log: Completion[]): [string, string] => [
+  COMPLETION_LOG_KEY,
+  JSON.stringify({ schemaVersion: COMPLETION_LOG_VERSION, entries: log }),
+];
 
 // Met le journal à jour d'après les tâches modifiées : une tâche qui vient d'être terminée
 // ajoute une entrée, une tâche rouverte (« Annuler ») retire la sienne. Les tâches ajoutées
 // ou supprimées ne changent rien (une tâche restaurée est déjà dans le journal).
-export function updateLog(log: Completion[], previous: Task[], next: Task[]): Completion[] {
+// Une entrée déjà présente avant ce passage n'est pas ajoutée deux fois (tâche terminée sur un
+// autre téléphone : son entrée arrive avec le journal synchronisé).
+// onRemoved / onAdded : prévenus de chaque entrée retirée ou ajoutée (clé « date|quadrant »), pour
+// que la synchronisation transmette les retraits sans jamais les deviner.
+export function updateLog(
+  log: Completion[],
+  previous: Task[],
+  next: Task[],
+  notify: { onRemoved?: (key: string) => void; onAdded?: (key: string) => void } = {}
+): Completion[] {
   const before = new Map(previous.map((t) => [t.id, t]));
+  const known = new Set(log.map((c) => `${c.date}|${c.category}`));
   let result = log;
   for (const task of next) {
     const old = before.get(task.id);
@@ -83,9 +96,15 @@ export function updateLog(log: Completion[], previous: Task[], next: Task[]): Co
       // changé de case depuis.
       const exact = result.findIndex((c) => c.date === was && c.category === old.category);
       const index = exact !== -1 ? exact : result.findIndex((c) => c.date === was);
-      if (index !== -1) result = [...result.slice(0, index), ...result.slice(index + 1)];
+      if (index !== -1) {
+        notify.onRemoved?.(`${result[index].date}|${result[index].category}`);
+        result = [...result.slice(0, index), ...result.slice(index + 1)];
+      }
     }
-    if (now !== null) result = [...result, { date: now, category: task.category }];
+    if (now !== null && !known.has(`${now}|${task.category}`)) {
+      notify.onAdded?.(`${now}|${task.category}`);
+      result = [...result, { date: now, category: task.category }];
+    }
   }
   return result;
 }

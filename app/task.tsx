@@ -13,11 +13,12 @@ import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
 import { hasReminder } from "../src/reminders";
 import { useSettings, useTaskActions, useTasksSelector } from "../src/store/TasksContext";
-import { colors } from "../src/theme";
+import { colors, themedStyles, useScheme } from "../src/theme";
 
 // Fiche (formSheet) de création ou de modification d'une tâche
 // Paramètres : id (modification) ou category (création depuis un quadrant)
 export default function TaskSheet() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   // voice : appui long sur « + » de la matrice, la dictée démarre à l'ouverture
   const { id, category, voice } = useLocalSearchParams<{ id?: string; category?: string; voice?: string }>();
@@ -92,15 +93,17 @@ export default function TaskSheet() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  sheet: {
-    backgroundColor: colors.surface,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 28,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+    },
+    content: {
+      padding: 20,
+      paddingTop: 28,
+    },
+  })
+);

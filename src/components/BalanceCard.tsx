@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { anticipated, lastSevenDays, MIN_FOR_BALANCE, totalOf } from "../balance";
 import { t } from "../i18n";
 import { selectCompletions, useTasksSelector } from "../store/TasksContext";
-import { colors, fonts } from "../theme";
+import { colors, fonts, themedStyles } from "../theme";
 import BalanceBar from "./BalanceBar";
 import InfoButton from "./InfoButton";
 
@@ -40,41 +40,43 @@ export default function BalanceCard() {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    backgroundColor: colors.surface,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingRight: 4,
-    paddingTop: 12,
-  },
-  main: {
-    flex: 1,
-    gap: 8,
-    paddingLeft: 14,
-    paddingBottom: 12,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  title: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-  },
-  summary: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    card: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingRight: 4,
+      paddingTop: 12,
+    },
+    main: {
+      flex: 1,
+      gap: 8,
+      paddingLeft: 14,
+      paddingBottom: 12,
+    },
+    pressed: {
+      opacity: 0.7,
+    },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    title: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+    },
+    summary: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.text,
+    },
+  })
+);

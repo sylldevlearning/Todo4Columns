@@ -1,3 +1,4 @@
+import { automaticStamp } from "../sync/merge";
 import { Dispatch, SetStateAction, useEffect } from "react";
 
 import { t } from "../i18n";
@@ -41,7 +42,8 @@ export function useTimers(
       setTasks((prev) =>
         prev.map((t) =>
           expiredIds.has(t.id)
-            ? { ...t, timerEnd: null, updatedAt: Date.now() }
+            ? // Synchronisation : datée de la fin prévue du minuteur
+              { ...t, timerEnd: null, updatedAt: Date.now(), modifiedAt: automaticStamp(t, t.timerEnd!) }
             : t
         )
       );

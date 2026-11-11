@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Counts, totalOf } from "../balance";
 import { CATEGORIES } from "../constants/categories";
 import { t } from "../i18n";
-import { colors } from "../theme";
+import { colors, themedStyles } from "../theme";
 
 // Résumé lu par les lecteurs d'écran : « Faire 2, Planifier 6… »
 export const describeCounts = (counts: Counts) =>
@@ -30,11 +30,13 @@ export default function BalanceBar({ counts, height = 12 }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  track: {
-    flexDirection: "row",
-    overflow: "hidden",
-    backgroundColor: colors.border,
-    gap: 2,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    track: {
+      flexDirection: "row",
+      overflow: "hidden",
+      backgroundColor: colors.border,
+      gap: 2,
+    },
+  })
+);

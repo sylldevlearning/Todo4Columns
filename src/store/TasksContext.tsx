@@ -12,6 +12,7 @@ import { AppState } from "react-native";
 import { isForeground } from "../hooks/useForeground";
 import { Escalation, SAVE_DELAY_MS, useTasks } from "../hooks/useTasks";
 import { setLanguagePreference } from "../i18n";
+import { setAppearancePreference } from "../theme";
 import { showPermissionCard } from "../notifications/permissionCard";
 import { ensurePermission, PermissionState } from "../notifications/setup";
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, Settings } from "../settings";
@@ -30,6 +31,7 @@ export interface TasksState {
   completions: Completion[]; // journal des fins de tâches (bilan)
   escalation: Escalation | null; // dernière bascule automatique en Faire (« Annuler »)
   loadError: boolean; // lecture des tâches impossible
+  logReady: boolean; // journal des fins lu (la synchronisation attend)
 }
 
 // Journal des fins de tâches (bilan, revue, demande d'avis)
@@ -37,7 +39,7 @@ export const selectCompletions = ({ completions }: TasksState) => completions;
 
 type StoreActions = Omit<
   ReturnType<typeof useTasks>,
-  "tasks" | "isLoaded" | "completions" | "escalation" | "loadError"
+  "tasks" | "isLoaded" | "completions" | "escalation" | "loadError" | "logReady"
 >;
 
 export type TaskActions = StoreActions & {
@@ -69,6 +71,7 @@ const ACTION_NAMES = [
   "undoEscalation",
   "dismissEscalation",
   "replaceAll",
+  "applySynced",
   "retryLoad",
   "getTasksState",
   "startTimer",
@@ -131,6 +134,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       completions: store.completions,
       escalation: store.escalation,
       loadError: store.loadError,
+      logReady: store.logReady,
     })
   );
   const [settingsStore] = useState(() => createSelectableStore(settings));
@@ -143,11 +147,14 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       completions: store.completions,
       escalation: store.escalation,
       loadError: store.loadError,
+      logReady: store.logReady,
     });
-  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation, store.loadError]);
+  }, [tasksStore, store.tasks, store.isLoaded, store.completions, store.escalation, store.loadError, store.logReady]);
   useLayoutEffect(() => settingsStore.set(settings), [settingsStore, settings]);
   // Réglage « Langue » : appliqué avant les effets, donc avant la reprogrammation des notifications
   useLayoutEffect(() => setLanguagePreference(settings.language), [settings.language]);
+  // Réglage « Apparence » : appliqué avant l'affichage, sans relancer l'app
+  useLayoutEffect(() => setAppearancePreference(settings.appearance), [settings.appearance]);
   // « Automatique » : la langue du téléphone a pu changer pendant que l'app était en arrière-plan
   // (Android ne relance pas l'app). Écouteur ajouté dans un effet de mise en page, donc avant
   // celui de useNotificationSync : la langue est à jour quand les notifications sont reprogrammées.

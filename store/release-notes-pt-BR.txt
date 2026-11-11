@@ -1,6 +1,4 @@
-• Novidade: calendário com prazos, etapas e tarefas recorrentes
-• Microfone na matriz: dite uma tarefa, “amanhã às 15h” vira prazo
-• Progresso em %: mantenha uma tarefa pressionada para marcar as etapas ou ajustá-lo
-• Distribua um projeto em dias escolhidos: seg/qua/sex ou datas específicas
-• Backup opcional no Google Drive, restaurado automaticamente num celular novo
-• Apresentação renovada, com lembretes e backup
+• Novo: sincronize suas tarefas entre vários celulares com o Google Drive (opcional)
+• Widgets na tela inicial: “Fazer”, “Hoje” e “Matriz”; marque uma tarefa sem abrir o app
+• Tema claro: Configurações › Aparência (automático, claro ou escuro)
+• Ícone de nuvem na matriz: status da sincronização

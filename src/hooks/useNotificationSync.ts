@@ -4,9 +4,10 @@ import { Notifier } from "../notifications/service";
 import { notificationSettingsKey, Settings } from "../settings";
 import { Task } from "../types";
 
-// Tout ce qui influence les notifications d'une tâche (sauf leurs identifiants et la priorité)
+// Tout ce qui influence les notifications d'une tâche (sauf leurs identifiants, la priorité et la
+// date de modification pour la synchronisation)
 const scheduleSignature = (task: Task) =>
-  JSON.stringify({ ...task, notificationIds: undefined, priorityWeek: undefined });
+  JSON.stringify({ ...task, notificationIds: undefined, priorityWeek: undefined, modifiedAt: undefined });
 
 const sameIds = (a: string[], b: string[]) =>
   a.length === b.length && a.every((id, i) => id === b[i]);

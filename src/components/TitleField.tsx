@@ -5,7 +5,7 @@ import { formatDue } from "../format";
 import { useVoiceInput } from "../hooks/useVoiceInput";
 import { currentLanguage, t } from "../i18n";
 import { analyzeTitle, DateSuggestion } from "../smartInput";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 import InfoButton from "./InfoButton";
 
 interface Props {
@@ -158,69 +158,71 @@ function Suggestion({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: 8,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  input: {
-    flex: 1,
-    minHeight: 52,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    fontFamily: fonts.semibold,
-    fontSize: 17,
-    color: colors.text,
-  },
-  mic: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE,
-    borderRadius: TOUCH_SIZE / 2,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-  listening: {
-    fontFamily: fonts.semibold,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  suggestion: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingLeft: 12,
-    backgroundColor: colors.bg,
-  },
-  suggestionText: {
-    flex: 1,
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.text,
-    paddingVertical: 8,
-  },
-  suggestionButton: {
-    minHeight: TOUCH_SIZE,
-    minWidth: TOUCH_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 8,
-  },
-  suggestionAction: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      gap: 8,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    input: {
+      flex: 1,
+      minHeight: 52,
+      paddingHorizontal: 16,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      fontFamily: fonts.semibold,
+      fontSize: 17,
+      color: colors.text,
+    },
+    mic: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE,
+      borderRadius: TOUCH_SIZE / 2,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+    listening: {
+      fontFamily: fonts.semibold,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    suggestion: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      borderWidth: 1,
+      borderRadius: 14,
+      paddingLeft: 12,
+      backgroundColor: colors.bg,
+    },
+    suggestionText: {
+      flex: 1,
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.text,
+      paddingVertical: 8,
+    },
+    suggestionButton: {
+      minHeight: TOUCH_SIZE,
+      minWidth: TOUCH_SIZE,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 8,
+    },
+    suggestionAction: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+    },
+  })
+);

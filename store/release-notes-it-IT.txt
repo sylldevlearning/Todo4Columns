@@ -1,6 +1,4 @@
-• Novità: calendario con scadenze, passaggi e attività ricorrenti
-• Microfono sulla matrice: detta un'attività, «domani alle 15» diventa una scadenza
-• Avanzamento in %: tieni premuta un'attività per spuntare i passaggi o regolarlo
-• Distribuisci un progetto su giorni scelti: lun/mer/ven o date precise
-• Backup facoltativo su Google Drive, ripristinato in automatico su un nuovo telefono
-• Presentazione rinnovata, con promemoria e backup
+• Novità: sincronizza le attività tra più telefoni con Google Drive (facoltativo)
+• Widget nella schermata Home: «Fai», «Oggi» e «Matrice»; spunta un'attività senza aprire l'app
+• Tema chiaro: Impostazioni › Aspetto (automatico, chiaro o scuro)
+• Icona della nuvola nella matrice: stato della sincronizzazione

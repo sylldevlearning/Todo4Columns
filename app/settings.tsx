@@ -8,7 +8,7 @@ import SettingsForm from "../src/components/SettingsForm";
 import { appVersion, openStoreListing, sendFeedback, shareApp } from "../src/community";
 import { t, useLanguage } from "../src/i18n";
 import { useBackup } from "../src/hooks/useBackup";
-import { useDriveBackup } from "../src/hooks/useDriveBackup";
+import { syncStatusLine, useDriveSync } from "../src/hooks/useDriveSync";
 import { isDriveAvailable } from "../src/drive/googleAccount";
 import { openSystemSettings } from "../src/notifications/setup";
 import { usePermissionState } from "../src/notifications/usePermissionState";
@@ -19,7 +19,7 @@ import {
   useTaskActions,
   useTasksSelector,
 } from "../src/store/TasksContext";
-import { colors, fonts } from "../src/theme";
+import { colors, fonts, themedStyles, useScheme } from "../src/theme";
 import { showAlert } from "../src/appWindows";
 
 const ABOUT = {
@@ -35,6 +35,7 @@ const selectArchived = ({ tasks }: TasksState) =>
 
 // Écran des réglages : rappels par défaut, plage silencieuse, notifications, archives
 export default function SettingsScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const store = useTaskActions();
   const settings = useSettings();
@@ -48,7 +49,7 @@ export default function SettingsScreen() {
     if (section === "quietHours") scroll.current?.scrollTo({ y, animated: false });
   };
   const backup = useBackup();
-  const drive = useDriveBackup(backup.applyBackup);
+  const drive = useDriveSync();
 
   const deleteForever = (id: string) => {
     const task = archived.find((t) => t.id === id);
@@ -94,13 +95,18 @@ export default function SettingsScreen() {
             isDriveAvailable()
               ? {
                   account: drive.account,
-                  autoBackup: drive.autoBackup,
-                  lastBackupAt: drive.lastBackupAt,
+                  autoSync: drive.autoSync,
+                  statusLine: syncStatusLine(drive.status),
                   busy: drive.busy,
+                  copies: drive.copies,
                   onConnect: drive.connect,
-                  onBackupNow: drive.backupNow,
-                  onRestore: drive.restore,
-                  onAutoBackupChange: drive.setAutoBackup,
+                  onSyncNow: drive.syncNow,
+                  onShowCopies: drive.showCopies,
+                  onRestoreCopy: (copy) => {
+                    const found = drive.copies?.find((c) => c.id === copy.id);
+                    if (found) drive.restoreCopy(found);
+                  },
+                  onAutoSyncChange: drive.setAutoSync,
                   onSignOut: drive.disconnect,
                   onDelete: drive.deleteRemote,
                 }
@@ -114,25 +120,27 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    gap: 4,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      gap: 4,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 48,
+    },
+  })
+);

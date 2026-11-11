@@ -27,7 +27,7 @@ import {
   RowLayout,
   todayReminderTime,
 } from "../steps";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 import { TaskStep } from "../types";
 import IconButton from "./IconButton";
 import InfoButton from "./InfoButton";
@@ -456,148 +456,150 @@ export default function StepsEditor({ steps, onChange, onToggled, ...colorProps 
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: 6,
-  },
-  step: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-  },
-  flash: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 11,
-    backgroundColor: withAlpha(colors.success, 0.22),
-  },
-  stepRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: STEP_ROW_HEIGHT - 2,
-  },
-  handle: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkArea: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  check: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepTitle: {
-    flex: 1,
-    minHeight: TOUCH_SIZE,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-    paddingVertical: 0,
-  },
-  stepTitleDone: {
-    color: colors.textMuted,
-    textDecorationLine: "line-through",
-  },
-  dayButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    minHeight: TOUCH_SIZE,
-    minWidth: TOUCH_SIZE,
-    maxWidth: 120,
-    justifyContent: "center",
-    paddingHorizontal: 4,
-  },
-  dayText: {
-    fontFamily: fonts.semibold,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  late: {
-    color: colors.danger,
-  },
-  reminderLine: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingLeft: TOUCH_SIZE * 2,
-    paddingBottom: 8,
-    marginTop: -4,
-  },
-  reminderText: {
-    fontFamily: fonts.medium,
-    fontSize: 12,
-  },
-  dayEditor: {
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingBottom: 8,
-  },
-  addRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  addInput: {
-    flex: 1,
-    minHeight: TOUCH_SIZE + 4,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    minHeight: TOUCH_SIZE + 4,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  addText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-  },
-  splitRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  split: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    minHeight: TOUCH_SIZE,
-    alignSelf: "flex-start",
-  },
-  splitText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    textDecorationLine: "underline",
-  },
-  disabled: {
-    opacity: 0.45,
-  },
-  pressed: {
-    opacity: 0.8,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      gap: 6,
+    },
+    step: {
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+    },
+    flash: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: 11,
+      backgroundColor: withAlpha(colors.success, 0.22),
+    },
+    stepRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: STEP_ROW_HEIGHT - 2,
+    },
+    handle: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    checkArea: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    check: {
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepTitle: {
+      flex: 1,
+      minHeight: TOUCH_SIZE,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+      paddingVertical: 0,
+    },
+    stepTitleDone: {
+      color: colors.textMuted,
+      textDecorationLine: "line-through",
+    },
+    dayButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      minHeight: TOUCH_SIZE,
+      minWidth: TOUCH_SIZE,
+      maxWidth: 120,
+      justifyContent: "center",
+      paddingHorizontal: 4,
+    },
+    dayText: {
+      fontFamily: fonts.semibold,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    late: {
+      color: colors.danger,
+    },
+    reminderLine: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingLeft: TOUCH_SIZE * 2,
+      paddingBottom: 8,
+      marginTop: -4,
+    },
+    reminderText: {
+      fontFamily: fonts.medium,
+      fontSize: 12,
+    },
+    dayEditor: {
+      gap: 4,
+      paddingHorizontal: 12,
+      paddingBottom: 8,
+    },
+    addRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    addInput: {
+      flex: 1,
+      minHeight: TOUCH_SIZE + 4,
+      paddingHorizontal: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    addButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      minHeight: TOUCH_SIZE + 4,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      borderWidth: 1,
+    },
+    addText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+    },
+    splitRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    split: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      minHeight: TOUCH_SIZE,
+      alignSelf: "flex-start",
+    },
+    splitText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      textDecorationLine: "underline",
+    },
+    disabled: {
+      opacity: 0.45,
+    },
+    pressed: {
+      opacity: 0.8,
+    },
+  })
+);

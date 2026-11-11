@@ -1,6 +1,4 @@
-• Nuevo: vista de calendario con vencimientos, pasos y tareas recurrentes
-• Micrófono en la matriz: dicta una tarea, «mañana a las 15» se convierte en vencimiento
-• Progreso en %: mantén pulsada una tarea para marcar sus pasos o ajustarlo
-• Reparte un proyecto en días elegidos: lun/mié/vie o fechas concretas
-• Copia opcional en Google Drive, restaurada automáticamente en un móvil nuevo
-• Presentación renovada, con avisos y copia
+• Nuevo: sincroniza tus tareas entre varios teléfonos con Google Drive (opcional)
+• Widgets en la pantalla de inicio: «Hacer», «Hoy» y «Matriz»; marca una tarea sin abrir la app
+• Tema claro: Ajustes › Apariencia (automático, claro u oscuro)
+• Icono de nube en la matriz: estado de la sincronización

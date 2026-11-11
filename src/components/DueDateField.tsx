@@ -6,7 +6,7 @@ import React from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { formatDue } from "../format";
 import { t } from "../i18n";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 import IconButton from "./IconButton";
 
 interface Props {
@@ -88,30 +88,32 @@ export default function DueDateField({ value, onChange, color }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  field: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    minHeight: TOUCH_SIZE + 4,
-    paddingHorizontal: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-  },
-  text: {
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  placeholder: {
-    color: colors.textMuted,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    field: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      minHeight: TOUCH_SIZE + 4,
+      paddingHorizontal: 14,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+    },
+    text: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    placeholder: {
+      color: colors.textMuted,
+    },
+  })
+);

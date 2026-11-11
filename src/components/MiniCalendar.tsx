@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { addMonths, monthGrid, MonthRef, monthOf, weekStartFor } from "../calendar";
 import { dayKey, dayStart } from "../dates";
 import { currentLanguage, t } from "../i18n";
-import { colors, fonts } from "../theme";
+import { colors, fonts, themedStyles } from "../theme";
 import IconButton from "./IconButton";
 
 interface Props {
@@ -84,57 +84,59 @@ export default function MiniCalendar({ selected, onToggle, color, onColor, max, 
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    padding: 6,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  title: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  week: {
-    flexDirection: "row",
-  },
-  weekday: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: fonts.bold,
-    fontSize: 11,
-    color: colors.textMuted,
-    paddingVertical: 4,
-  },
-  cell: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 2,
-  },
-  circle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dayText: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  faded: {
-    opacity: 0.35,
-  },
-  today: {
-    textDecorationLine: "underline",
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      padding: 6,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    title: {
+      flex: 1,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    week: {
+      flexDirection: "row",
+    },
+    weekday: {
+      flex: 1,
+      textAlign: "center",
+      fontFamily: fonts.bold,
+      fontSize: 11,
+      color: colors.textMuted,
+      paddingVertical: 4,
+    },
+    cell: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 2,
+    },
+    circle: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    dayText: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    faded: {
+      opacity: 0.35,
+    },
+    today: {
+      textDecorationLine: "underline",
+    },
+  })
+);

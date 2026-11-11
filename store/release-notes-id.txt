@@ -1,6 +1,4 @@
-• Baru: kalender berisi tenggat, langkah, dan tugas berulang
-• Mikrofon di matriks: dikte tugas, "besok jam 15" jadi tenggat
-• Kemajuan dalam %: tekan lama tugas untuk mencentang langkah atau mengaturnya
-• Bagi proyek ke hari pilihan: Sen/Rab/Jum atau tanggal tertentu
-• Cadangan opsional ke Google Drive, dipulihkan otomatis di HP baru
-• Pengenalan baru, dengan pengingat dan cadangan
+• Baru: sinkronkan tugas di antara beberapa ponsel dengan Google Drive (opsional)
+• Widget layar utama: "Kerjakan", "Hari ini", dan "Matriks"; centang tugas tanpa membuka app
+• Tema terang: Setelan › Tampilan (otomatis, terang, atau gelap)
+• Ikon awan di matriks: status sinkronisasi

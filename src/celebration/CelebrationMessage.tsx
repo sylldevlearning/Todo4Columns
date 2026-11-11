@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, fonts, withAlpha } from "../theme";
+import { colors, fonts, withAlpha, themedStyles } from "../theme";
 import { CELEBRATION_MS } from "./plan";
 
 const IN_MS = 260;
@@ -55,33 +55,35 @@ export default function CelebrationMessage({ message, color, reduceMotion }: Pro
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    left: 16,
-    right: 16,
-    alignItems: "center",
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    maxWidth: 420,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-    backgroundColor: colors.surfaceRaised,
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.35,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-  },
-  text: {
-    flexShrink: 1,
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    container: {
+      position: "absolute",
+      left: 16,
+      right: 16,
+      alignItems: "center",
+    },
+    card: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      maxWidth: 420,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 20,
+      borderWidth: 1,
+      backgroundColor: colors.surfaceRaised,
+      elevation: 8,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.35,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 6 },
+    },
+    text: {
+      flexShrink: 1,
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+  })
+);

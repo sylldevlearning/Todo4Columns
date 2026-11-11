@@ -1,3 +1,4 @@
+import { automaticStamp } from "../sync/merge";
 import { Dispatch, MutableRefObject, SetStateAction, useEffect, useState } from "react";
 import { AppState } from "react-native";
 import { shouldEscalate } from "../notifications/status";
@@ -58,6 +59,8 @@ export function useEscalation({
               updatedAt: now,
               categoryChangedAt: now,
               snoozedUntil: null,
+              // Synchronisation : datée de l'échéance, pas du moment où ce téléphone s'en aperçoit
+              modifiedAt: automaticStamp(t, t.dueAt!),
             }
           : t
       )

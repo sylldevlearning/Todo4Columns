@@ -4,7 +4,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CATEGORIES } from "../constants/categories";
 import { t } from "../i18n";
-import { colors, fonts } from "../theme";
+import { colors, fonts, themedStyles } from "../theme";
 import { Category, Task } from "../types";
 
 interface Props {
@@ -74,69 +74,71 @@ export default function TaskMenu({ task, onClose, onMove, onTimer }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-  sheet: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
-  taskTitle: {
-    fontFamily: fonts.extrabold,
-    fontSize: 17,
-    color: colors.text,
-    paddingHorizontal: 8,
-    marginBottom: 12,
-  },
-  section: {
-    fontFamily: fonts.bold,
-    fontSize: 12,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-    paddingHorizontal: 8,
-    marginBottom: 4,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    minHeight: 52,
-    paddingHorizontal: 8,
-    borderRadius: 12,
-  },
-  pressed: {
-    backgroundColor: colors.surfaceRaised,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  rowText: {
-    flex: 1,
-  },
-  rowTitle: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  rowSubtitle: {
-    fontFamily: fonts.regular,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: 8,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.backdrop,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 16,
+      paddingTop: 20,
+    },
+    taskTitle: {
+      fontFamily: fonts.extrabold,
+      fontSize: 17,
+      color: colors.text,
+      paddingHorizontal: 8,
+      marginBottom: 12,
+    },
+    section: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+      paddingHorizontal: 8,
+      marginBottom: 4,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      minHeight: 52,
+      paddingHorizontal: 8,
+      borderRadius: 12,
+    },
+    pressed: {
+      backgroundColor: colors.surfaceRaised,
+    },
+    dot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      marginHorizontal: 5,
+    },
+    rowText: {
+      flex: 1,
+    },
+    rowTitle: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    rowSubtitle: {
+      fontFamily: fonts.regular,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: colors.border,
+      marginVertical: 8,
+    },
+  })
+);

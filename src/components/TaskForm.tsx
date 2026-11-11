@@ -24,7 +24,7 @@ import {
   withAnchors,
 } from "../recurrence";
 import { keepStoredChanges, stepsOf } from "../steps";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 import { Category, Recurrence, ReminderFields, Task, TaskStep } from "../types";
 import DueDateField from "./DueDateField";
 import InfoButton, { InfoKey } from "./InfoButton";
@@ -565,242 +565,244 @@ export default function TaskForm({
   );
 }
 
-const styles = StyleSheet.create({
-  progress: {
-    gap: 8,
-  },
-  progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  progressValue: {
-    fontFamily: fonts.extrabold,
-    fontSize: 16,
-  },
-  container: {
-    gap: 16,
-  },
-  heading: {
-    fontFamily: fonts.extrabold,
-    fontSize: 22,
-    color: colors.text,
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    paddingHorizontal: 16,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 60,
-    gap: 12,
-  },
-  switchText: {
-    flex: 1,
-    paddingVertical: 10,
-  },
-  switchLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  switchHint: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  quadrant: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 14,
-  },
-  quadrantName: {
-    fontFamily: fonts.extrabold,
-    fontSize: 18,
-  },
-  quadrantDescription: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.text,
-    marginTop: 4,
-  },
-  field: {
-    gap: 8,
-  },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  fieldLabel: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-  },
-  input: {
-    minHeight: TOUCH_SIZE + 4,
-    paddingHorizontal: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.bg,
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  sendRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  send: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    minHeight: TOUCH_SIZE + 4,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  sendText: {
-    fontFamily: fonts.bold,
-    fontSize: 15,
-  },
-  quiet: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 14,
-    paddingTop: 10,
-  },
-  quietRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 8,
-  },
-  quietText: {
-    flex: 1,
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    lineHeight: 18,
-    color: colors.textMuted,
-  },
-  quietActions: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    columnGap: 20,
-  },
-  days: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 6,
-    marginTop: -6,
-  },
-  day: {
-    minWidth: TOUCH_SIZE,
-    minHeight: TOUCH_SIZE,
-    paddingHorizontal: 8,
-    borderRadius: TOUCH_SIZE / 2,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dayText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.text,
-  },
-  repeats: {
-    gap: 0,
-  },
-  link: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-    alignSelf: "flex-start",
-  },
-  linkText: {
-    fontFamily: fonts.bold,
-    fontSize: 14,
-    color: colors.text,
-    textDecorationLine: "underline",
-  },
-  suggestion: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    columnGap: 8,
-    marginTop: -8,
-  },
-  suggestionText: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  suggestionAction: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-  },
-  suggestionActionText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    textDecorationLine: "underline",
-  },
-  note: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.textMuted,
-  },
-  denied: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 14,
-    paddingTop: 10,
-  },
-  deniedText: {
-    fontFamily: fonts.regular,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  deniedLink: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-  },
-  deniedLinkText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    color: colors.text,
-    textDecorationLine: "underline",
-  },
-  submit: {
-    minHeight: 54,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 4,
-  },
-  submitText: {
-    fontFamily: fonts.extrabold,
-    fontSize: 16,
-  },
-  disabled: {
-    opacity: 0.45,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    progress: {
+      gap: 8,
+    },
+    progressRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    progressValue: {
+      fontFamily: fonts.extrabold,
+      fontSize: 16,
+    },
+    container: {
+      gap: 16,
+    },
+    heading: {
+      fontFamily: fonts.extrabold,
+      fontSize: 22,
+      color: colors.text,
+    },
+    card: {
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      paddingHorizontal: 16,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    switchRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: 60,
+      gap: 12,
+    },
+    switchText: {
+      flex: 1,
+      paddingVertical: 10,
+    },
+    switchLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    switchHint: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    quadrant: {
+      borderRadius: 16,
+      borderWidth: 1,
+      padding: 14,
+    },
+    quadrantName: {
+      fontFamily: fonts.extrabold,
+      fontSize: 18,
+    },
+    quadrantDescription: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.text,
+      marginTop: 4,
+    },
+    field: {
+      gap: 8,
+    },
+    labelRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    fieldLabel: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.4,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+    },
+    input: {
+      minHeight: TOUCH_SIZE + 4,
+      paddingHorizontal: 14,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.bg,
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    sendRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    send: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      minHeight: TOUCH_SIZE + 4,
+      borderRadius: 14,
+      borderWidth: 1,
+    },
+    sendText: {
+      fontFamily: fonts.bold,
+      fontSize: 15,
+    },
+    quiet: {
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 14,
+      paddingTop: 10,
+    },
+    quietRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 8,
+    },
+    quietText: {
+      flex: 1,
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      lineHeight: 18,
+      color: colors.textMuted,
+    },
+    quietActions: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      columnGap: 20,
+    },
+    days: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 6,
+      marginTop: -6,
+    },
+    day: {
+      minWidth: TOUCH_SIZE,
+      minHeight: TOUCH_SIZE,
+      paddingHorizontal: 8,
+      borderRadius: TOUCH_SIZE / 2,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    dayText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.text,
+    },
+    repeats: {
+      gap: 0,
+    },
+    link: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+      alignSelf: "flex-start",
+    },
+    linkText: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: colors.text,
+      textDecorationLine: "underline",
+    },
+    suggestion: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "center",
+      columnGap: 8,
+      marginTop: -8,
+    },
+    suggestionText: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    suggestionAction: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+    },
+    suggestionActionText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      textDecorationLine: "underline",
+    },
+    note: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    denied: {
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 14,
+      paddingTop: 10,
+    },
+    deniedText: {
+      fontFamily: fonts.regular,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    deniedLink: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+    },
+    deniedLinkText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      color: colors.text,
+      textDecorationLine: "underline",
+    },
+    submit: {
+      minHeight: 54,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 4,
+    },
+    submitText: {
+      fontFamily: fonts.extrabold,
+      fontSize: 16,
+    },
+    disabled: {
+      opacity: 0.45,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+  })
+);

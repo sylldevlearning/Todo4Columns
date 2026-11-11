@@ -1,6 +1,4 @@
-• Yeni: son tarihler, adımlar ve tekrarlanan görevler için takvim
-• Matristeki mikrofon: görevi sesle yaz; "acil" ve "önemli" anahtarları önerir
-• % ilerleme: adımları işaretlemek ya da ayarlamak için göreve uzun bas
-• Projeyi seçtiğin günlere yay: Pzt/Çar/Cum ya da belirli tarihler
-• Google Drive'a isteğe bağlı yedek, yeni telefonda otomatik geri yükleme
-• Hatırlatıcılar ve yedeklemeyle yenilenen tanıtım
+• Yeni: Görevlerini Google Drive ile birden fazla telefon arasında eşitle (isteğe bağlı)
+• Ana ekran widget'ları: "Yap", "Bugün" ve "Matris"; uygulamayı açmadan görevi işaretle
+• Açık tema: Ayarlar › Görünüm (otomatik, açık veya koyu)
+• Matristeki bulut simgesi: eşitleme durumu

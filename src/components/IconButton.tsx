@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ComponentProps } from "react";
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
-import { colors, TOUCH_SIZE } from "../theme";
+import { colors, TOUCH_SIZE, themedStyles } from "../theme";
 
 export type IconName = ComponentProps<typeof Ionicons>["name"];
 
@@ -35,15 +35,17 @@ export default function IconButton({
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    width: TOUCH_SIZE,
-    height: TOUCH_SIZE,
-    borderRadius: TOUCH_SIZE / 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    button: {
+      width: TOUCH_SIZE,
+      height: TOUCH_SIZE,
+      borderRadius: TOUCH_SIZE / 2,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+  })
+);

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TIME_PATTERN } from "./dates";
 import { isLanguagePreference, LanguagePreference } from "./i18n";
+import { APPEARANCES, AppearancePreference } from "./theme";
 
 // Réglages des rappels, modifiables dans l'écran Réglages
 export const SETTINGS_KEY = "SETTINGS";
@@ -23,6 +24,7 @@ export interface Settings {
   weeklyReviewTime: string; // heure de la revue, "HH:MM"
   autoEscalate: boolean; // tâches « Planifier » en retard basculées dans « Faire »
   language: LanguagePreference; // « auto » : langue du téléphone (1.4)
+  appearance: AppearancePreference; // thème : « auto » suit le téléphone (1.6), propre au téléphone
   // Demande d'avis (1.2.1), absents des réglages plus anciens
   firstUseAt?: number; // première utilisation, enregistrée à la première occasion de demander
   reviewAskedAt?: number; // dernière demande d'avis
@@ -53,6 +55,7 @@ export const DEFAULT_SETTINGS: Settings = {
   weeklyReviewTime: "18:00",
   autoEscalate: true,
   language: "auto",
+  appearance: "auto",
 };
 
 // Réglages qui changent les notifications programmées (pas les animations ni l'archivage)
@@ -150,6 +153,10 @@ export function parseSettings(json: string | null): Settings {
       typeof s.autoEscalate === "boolean" ? s.autoEscalate : DEFAULT_SETTINGS.autoEscalate,
     // Absent avant la 1.4, ou langue inconnue : langue du téléphone
     language: isLanguagePreference(s.language) ? s.language : DEFAULT_SETTINGS.language,
+    // Absent avant la 1.6 : automatique (suit le téléphone)
+    appearance: APPEARANCES.includes(s.appearance as AppearancePreference)
+      ? (s.appearance as AppearancePreference)
+      : DEFAULT_SETTINGS.appearance,
     // Absents avant la 1.2.1, ou invalides : non renseignés
     ...(isPositiveNumber(s.firstUseAt) ? { firstUseAt: s.firstUseAt } : {}),
     ...(isPositiveNumber(s.reviewAskedAt) ? { reviewAskedAt: s.reviewAskedAt } : {}),

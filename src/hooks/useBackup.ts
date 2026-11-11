@@ -7,16 +7,18 @@ import {
   buildBackup,
   parseBackup,
   pickBackupText,
-  preImportCopyDate,
+  PreImportCopyInfo,
+  preImportCopyInfo,
   readPreImportCopy,
   removePreImportCopy,
   savePreImportCopy,
   shareBackupFile,
+  subscribePreImportCopy,
   writeImported,
 } from "../backup";
 import { formatShortDate } from "../format";
 import { t } from "../i18n";
-import { loadReviewWeeks } from "../review";
+import { loadReviewWeeks, saveReviewWeeks } from "../review";
 import { noteUndo } from "../reviewPrompt";
 import { TaskActions, useTaskActions } from "../store/TasksContext";
 import { showAlert } from "../appWindows";
@@ -30,13 +32,22 @@ export async function collectBackupContent(actions: TaskActions): Promise<Omit<B
 // Export et import de la sauvegarde, depuis les Réglages
 export function useBackup() {
   const actions = useTaskActions();
-  // Date du dernier import annulable (copie de secours présente), ou null
-  const [lastImport, setLastImport] = useState<number | null>(null);
+  // Dernier import annulable (copie de secours présente : date et origine), ou null
+  const [lastImport, setLastImport] = useState<PreImportCopyInfo | null>(null);
 
+  // Relu au montage et à chaque copie créée ou supprimée (aussi par la synchronisation)
   useEffect(() => {
-    preImportCopyDate()
-      .then(setLastImport)
-      .catch(() => setLastImport(null));
+    let active = true;
+    const refresh = () =>
+      preImportCopyInfo()
+        .then((info) => active && setLastImport(info))
+        .catch(() => active && setLastImport(null));
+    refresh();
+    const unsubscribe = subscribePreImportCopy(refresh);
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   // Remplace les données en mémoire ; toutes les notifications sont réconciliées
@@ -73,31 +84,54 @@ export function useBackup() {
       return false;
     }
     replaceInMemory(backup);
-    setLastImport(Date.now());
     if (!quiet) showAlert(t.backup.doneTitle, t.backup.doneBody(backup.tasks.length));
     return true;
+  };
+
+  // Copie venue de la synchronisation : les données d'avant sont fusionnées avec les actuelles,
+  // sans pierre tombale (rien n'est supprimé, ni ici ni sur les autres téléphones). Les tâches
+  // d'avant absentes maintenant reviennent comme les plus récentes, même si l'action de
+  // synchronisation les avait supprimées partout.
+  const restoreByMerge = async () => {
+    const previous = await readPreImportCopy();
+    const now = Date.now();
+    const present = new Set(actions.getTasksState().tasks.map((t) => t.id));
+    await actions.applySynced({
+      tasks: previous.tasks.map((t) => (present.has(t.id) ? t : { ...t, modifiedAt: now })),
+      deleted: [],
+      completions: previous.completions,
+      removedCompletions: [],
+      reviewWeeks: previous.reviewWeeks,
+    });
+    await saveReviewWeeks([...(await loadReviewWeeks()), ...previous.reviewWeeks]);
+    await removePreImportCopy();
   };
 
   // « Annuler le dernier import » : les données d'avant reviennent, la copie est supprimée
   const restore = async () => {
     noteUndo();
     try {
-      const previous = await readPreImportCopy();
-      await writeImported(previous);
-      await removePreImportCopy();
-      replaceInMemory(previous);
+      if (lastImport?.origin === "sync") {
+        await restoreByMerge();
+      } else {
+        const previous = await readPreImportCopy();
+        await writeImported(previous);
+        await removePreImportCopy();
+        replaceInMemory(previous);
+      }
     } catch (e) {
       console.warn("Erreur restauration :", e);
       showAlert(t.backup.undoErrorTitle, t.backup.undoErrorBody);
       return;
     }
-    setLastImport(null);
     showAlert(t.backup.undoneTitle, t.backup.undoneBody);
   };
 
   const undoImport = () => {
     if (lastImport === null) return;
-    showAlert(t.backup.undoConfirmTitle, t.backup.undoConfirmBody(formatShortDate(lastImport)), [
+    const date = formatShortDate(lastImport.createdAt);
+    const body = lastImport.origin === "sync" ? t.backup.undoSyncConfirmBody(date) : t.backup.undoConfirmBody(date);
+    showAlert(t.backup.undoConfirmTitle, body, [
       { text: t.common.cancel, style: "cancel" },
       { text: t.backup.undoAction, style: "destructive", onPress: restore },
     ]);

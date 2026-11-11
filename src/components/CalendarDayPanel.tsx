@@ -5,7 +5,7 @@ import { CATEGORY_BY_KEY } from "../constants/categories";
 import { dayStart } from "../dates";
 import { formatDay } from "../format";
 import { t } from "../i18n";
-import { colors, fonts, TOUCH_SIZE, withAlpha } from "../theme";
+import { colors, fonts, TOUCH_SIZE, withAlpha, themedStyles } from "../theme";
 
 // Hauteur d'une heure sur la frise
 export const HOUR_HEIGHT = 56;
@@ -156,137 +156,139 @@ function EntryRow({
   );
 }
 
-const styles = StyleSheet.create({
-  panel: {
-    marginTop: 16,
-    padding: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    gap: 12,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 18,
-    color: colors.text,
-  },
-  count: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: -8,
-  },
-  empty: {
-    fontFamily: fonts.regular,
-    fontSize: 14,
-    color: colors.textMuted,
-  },
-  breakdown: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  pillText: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-  },
-  timeline: {
-    position: "relative",
-  },
-  hourRow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  hourLabel: {
-    width: 48,
-    fontFamily: fonts.regular,
-    fontSize: 11,
-    color: colors.textMuted,
-    marginTop: -7,
-  },
-  hourLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.border,
-  },
-  blocks: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 52,
-    right: 0,
-  },
-  blockSlot: {
-    position: "absolute",
-    paddingRight: 4,
-  },
-  untimed: {
-    gap: 8,
-  },
-  sectionTitle: {
-    fontFamily: fonts.bold,
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: colors.textMuted,
-  },
-  entry: {
-    minHeight: TOUCH_SIZE,
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 10,
-    borderLeftWidth: 4,
-  },
-  entryCompact: {
-    flex: 1,
-    minHeight: 0,
-    height: "100%",
-    paddingVertical: 2,
-  },
-  planned: {
-    borderWidth: 1,
-    borderLeftWidth: 4,
-    borderStyle: "dashed",
-  },
-  done: {
-    opacity: 0.45,
-  },
-  doneText: {
-    textDecorationLine: "line-through",
-  },
-  entryTitle: {
-    fontFamily: fonts.semibold,
-    fontSize: 14,
-    color: colors.text,
-  },
-  entrySubtitle: {
-    fontFamily: fonts.regular,
-    fontSize: 12,
-    color: colors.textMuted,
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-  fill: {
-    flex: 1,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    panel: {
+      marginTop: 16,
+      padding: 16,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      gap: 12,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 18,
+      color: colors.text,
+    },
+    count: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.textMuted,
+      marginTop: -8,
+    },
+    empty: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    breakdown: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    pill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 999,
+      borderWidth: 1,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    pillText: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+    },
+    timeline: {
+      position: "relative",
+    },
+    hourRow: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      flexDirection: "row",
+      alignItems: "flex-start",
+    },
+    hourLabel: {
+      width: 48,
+      fontFamily: fonts.regular,
+      fontSize: 11,
+      color: colors.textMuted,
+      marginTop: -7,
+    },
+    hourLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    blocks: {
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      left: 52,
+      right: 0,
+    },
+    blockSlot: {
+      position: "absolute",
+      paddingRight: 4,
+    },
+    untimed: {
+      gap: 8,
+    },
+    sectionTitle: {
+      fontFamily: fonts.bold,
+      fontSize: 13,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: colors.textMuted,
+    },
+    entry: {
+      minHeight: TOUCH_SIZE,
+      justifyContent: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 10,
+      borderLeftWidth: 4,
+    },
+    entryCompact: {
+      flex: 1,
+      minHeight: 0,
+      height: "100%",
+      paddingVertical: 2,
+    },
+    planned: {
+      borderWidth: 1,
+      borderLeftWidth: 4,
+      borderStyle: "dashed",
+    },
+    done: {
+      opacity: 0.45,
+    },
+    doneText: {
+      textDecorationLine: "line-through",
+    },
+    entryTitle: {
+      fontFamily: fonts.semibold,
+      fontSize: 14,
+      color: colors.text,
+    },
+    entrySubtitle: {
+      fontFamily: fonts.regular,
+      fontSize: 12,
+      color: colors.textMuted,
+    },
+    pressed: {
+      opacity: 0.6,
+    },
+    fill: {
+      flex: 1,
+    },
+  })
+);

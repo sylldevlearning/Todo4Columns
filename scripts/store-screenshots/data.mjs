@@ -280,7 +280,9 @@ const dayKey = (ts) => {
 
 // Contenu du localStorage d'une langue (clés d'AsyncStorage). plain : sans échéances ni répétitions
 // (matrice : des cases lisibles, comme les captures françaises)
-export function storageFor(language, now = Date.now(), { plain = false } = {}) {
+// appearance : thème de l'app pendant les captures (« dark » pour les fiches, « light » pour une
+// version claire, générée à part)
+export function storageFor(language, now = Date.now(), { plain = false, appearance = "dark" } = {}) {
   const s = SAMPLES[language];
   const base = { isDone: false, timerEnd: null, createdAt: now - 3 * DAY, updatedAt: now - DAY, categoryChangedAt: now - DAY, archivedAt: null, snoozedUntil: null, dueAt: null, reminderOffset: null, nagInterval: null, nagRepeat: false, delegatedTo: null, notificationIds: [], completedAt: null, priorityWeek: null, recurrence: null, nextOccurrenceId: null, escalationSkippedFor: null, steps: [], progress: null };
   const task = (id, title, category, extra = {}) => ({ ...base, id, title, category, ...extra });
@@ -325,7 +327,7 @@ export function storageFor(language, now = Date.now(), { plain = false } = {}) {
     TASKS_4COLS: JSON.stringify({ schemaVersion: 8, tasks: stored }),
     SETTINGS: JSON.stringify({
       schemaVersion: 1,
-      settings: { onboardingDone: true, remindersPromptDone: true, drivePromptDone: true, language, weeklyReview: true, celebrations: false, quietHoursEnabled: false, firstUseAt: now - 30 * DAY, reviewAskedAt: now },
+      settings: { onboardingDone: true, remindersPromptDone: true, drivePromptDone: true, language, appearance, weeklyReview: true, celebrations: false, quietHoursEnabled: false, firstUseAt: now - 30 * DAY, reviewAskedAt: now },
     }),
     COMPLETION_LOG: JSON.stringify({ schemaVersion: 1, entries }),
     WEEKLY_REVIEW_LOG: JSON.stringify({ schemaVersion: 1, weeks: [] }),

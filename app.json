@@ -2,10 +2,10 @@
   "expo": {
     "name": "DoFirst",
     "slug": "matrice-eisenhower",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
@@ -16,7 +16,8 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.SYSTEM_ALERT_WINDOW",
-        "com.google.android.gms.permission.AD_ID"
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.FOREGROUND_SERVICE"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -38,7 +39,7 @@
         {
           "image": "./assets/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#0F1115",
+          "backgroundColor": "#F6F7F9",
           "imageWidth": 180,
           "dark": {
             "image": "./assets/splash-icon.png",
@@ -87,7 +88,51 @@
           "microphonePermission": "DoFirst uses the microphone to let you dictate task titles.",
           "speechRecognitionPermission": "DoFirst uses speech recognition to turn your voice into task titles."
         }
-      ]
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "DoFirstDo",
+              "label": "@string/widget_dofirstdo_label",
+              "description": "@string/widget_dofirstdo_desc",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical",
+              "previewImage": "./assets/widgets/do-preview.png",
+              "updatePeriodMillis": 0
+            },
+            {
+              "name": "DoFirstToday",
+              "label": "@string/widget_dofirsttoday_label",
+              "description": "@string/widget_dofirsttoday_desc",
+              "minWidth": "250dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical",
+              "previewImage": "./assets/widgets/today-preview.png",
+              "updatePeriodMillis": 3600000
+            },
+            {
+              "name": "DoFirstMatrix",
+              "label": "@string/widget_dofirstmatrix_label",
+              "description": "@string/widget_dofirstmatrix_desc",
+              "minWidth": "250dp",
+              "minHeight": "250dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 4,
+              "resizeMode": "horizontal|vertical",
+              "previewImage": "./assets/widgets/matrix-preview.png",
+              "updatePeriodMillis": 0
+            }
+          ]
+        }
+      ],
+      "./plugins/withWidgetStrings"
     ],
     "scheme": "todo4columns"
   }

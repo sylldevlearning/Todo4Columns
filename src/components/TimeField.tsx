@@ -5,7 +5,7 @@ import React from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { hhmm } from "../dates";
 import { t } from "../i18n";
-import { colors, fonts, TOUCH_SIZE } from "../theme";
+import { colors, fonts, TOUCH_SIZE, themedStyles } from "../theme";
 
 interface Props {
   label: string;
@@ -61,31 +61,33 @@ export default function TimeField({ label, value, onChange }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: 56,
-  },
-  label: {
-    fontFamily: fonts.semibold,
-    fontSize: 15,
-    color: colors.text,
-  },
-  value: {
-    minHeight: TOUCH_SIZE,
-    minWidth: 80,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  valueText: {
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: colors.text,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: 56,
+    },
+    label: {
+      fontFamily: fonts.semibold,
+      fontSize: 15,
+      color: colors.text,
+    },
+    value: {
+      minHeight: TOUCH_SIZE,
+      minWidth: 80,
+      paddingHorizontal: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    valueText: {
+      fontFamily: fonts.bold,
+      fontSize: 16,
+      color: colors.text,
+    },
+  })
+);

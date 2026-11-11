@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "../src/components/BalanceCard";
+import CloudButton from "../src/components/CloudButton";
 import DriveCard from "../src/components/DriveCard";
 import Fab, { MicFab } from "../src/components/Fab";
 import IconButton from "../src/components/IconButton";
@@ -13,7 +14,7 @@ import { formatToday } from "../src/format";
 import { t, useLanguage } from "../src/i18n";
 import { sameItems } from "../src/store/selectableStore";
 import { TasksState, useTasksSelector } from "../src/store/TasksContext";
-import { colors, fonts } from "../src/theme";
+import { colors, fonts, themedStyles, useScheme } from "../src/theme";
 
 // La matrice n'affiche que les tâches à faire et non archivées
 const selectOpenTasks = ({ tasks }: TasksState) =>
@@ -21,6 +22,7 @@ const selectOpenTasks = ({ tasks }: TasksState) =>
 
 // Écran d'accueil : la matrice d'Eisenhower
 export default function MatrixScreen() {
+  useScheme(); // redessiné quand le thème change
   useLanguage(); // textes mis à jour quand la langue change
   const tasks = useTasksSelector(selectOpenTasks, sameItems);
   const openCount = tasks.length;
@@ -35,6 +37,7 @@ export default function MatrixScreen() {
           </Text>
           <Text style={styles.summary}>{t.matrix.taskCount(openCount)}</Text>
         </View>
+        <CloudButton />
         <IconButton
           icon="calendar-number-outline"
           label={t.calendar.open}
@@ -77,47 +80,49 @@ export default function MatrixScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 16,
-  },
-  headerText: {
-    flex: 1,
-  },
-  date: {
-    fontFamily: fonts.medium,
-    fontSize: 13,
-    color: colors.textMuted,
-  },
-  title: {
-    fontFamily: fonts.extrabold,
-    fontSize: 30,
-    color: colors.text,
-    marginTop: 2,
-  },
-  summary: {
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  balance: {
-    paddingHorizontal: 12,
-    paddingBottom: 12,
-    gap: 8,
-  },
-  grid: {
-    flex: 1,
-    paddingHorizontal: 12,
-    // Laisse de la place au bouton flottant
-    paddingBottom: 96,
-  },
-});
+const styles = themedStyles(() =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      paddingHorizontal: 20,
+      paddingTop: 12,
+      paddingBottom: 16,
+    },
+    headerText: {
+      flex: 1,
+    },
+    date: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    title: {
+      fontFamily: fonts.extrabold,
+      fontSize: 30,
+      color: colors.text,
+      marginTop: 2,
+    },
+    summary: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    balance: {
+      paddingHorizontal: 12,
+      paddingBottom: 12,
+      gap: 8,
+    },
+    grid: {
+      flex: 1,
+      paddingHorizontal: 12,
+      // Laisse de la place au bouton flottant
+      paddingBottom: 96,
+    },
+  })
+);

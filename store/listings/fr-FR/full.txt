@@ -45,6 +45,11 @@ SIMPLE ET MOTIVANT
 • Aide intégrée : un « i » explique chaque option
 • Disponible en 13 langues
 
+SUR TOUS TES TÉLÉPHONES
+• Synchronise tes tâches entre plusieurs téléphones avec Google Drive (facultatif)
+• Widgets sur l’écran d’accueil : « Faire », « Aujourd’hui » et « Matrice », coche une tâche sans ouvrir l’appli
+• Thème clair ou sombre, ou automatique comme ton téléphone
+
 TES DONNÉES T’APPARTIENNENT
 Sans compte et sans publicité. Tes tâches restent sur ton téléphone, et tu peux les exporter dans un fichier de sauvegarde à tout moment. Si tu le souhaites, sauvegarde-les aussi sur ton Google Drive, dans un dossier privé réservé à DoFirst, et retrouve-les automatiquement sur un nouveau téléphone.
 
